@@ -1,0 +1,42 @@
+{
+  "name": "mm-node",
+  "version": "0.0.0",
+  "description": "mm core",
+  "private": true,
+  "bin": {
+    "mm-node": "./bin/mm-node"
+  },
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "author": {
+    "name": "Joe Ferraro",
+    "email": "ferraro.joseph@gmail.com",
+    "url": "https://github.com/joeferraro"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joeferraro/mm-node"
+  },
+  "license": "MIT",
+  "bugs": "https://github.com/joeferraro/mm-node/issues",
+  "dependencies": {
+    "commander": "2.4.0",
+    "autocmdr": "0.0.7",
+    "jsforce": "latest",
+    "swig": "latest",
+    "winston": "latest",
+    "nconf": "latest",
+    "async": "0.9.0",
+    "q": "2.0.2",
+    "tmp": "0.0.24",
+    "inquirer":"latest",
+    "lodash":"latest",
+    "merge":"latest",
+    "underscore-plus":"latest",
+    "unzip":"latest",
+    "xml2js":"latest"
+  },
+  "devDependencies": {
+  }
+}
