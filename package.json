@@ -21,12 +21,13 @@
   "license": "MIT",
   "bugs": "https://github.com/joeferraro/mm-node/issues",
   "dependencies": {
-    "commander": "2.4.0",
+    "commander": "joeferraro/commander.js",
     "autocmdr": "0.0.7",
     "jsforce": "latest",
     "swig": "latest",
     "winston": "latest",
     "nconf": "latest",
+    "strip-json-comments":"latest",
     "async": "0.9.0",
     "q": "2.0.2",
     "tmp": "0.0.24",
@@ -35,8 +36,16 @@
     "merge":"latest",
     "underscore-plus":"latest",
     "unzip":"latest",
-    "xml2js":"latest"
+    "fs-extra":"latest",
+    "node-uuid":"latest",
+    "minimist":"latest",
+    "xmldoc":"latest",
+    "archiver":"latest",
+    "randomstring":"latest",
+    "events":"latest",
+    "inherits":"latest"
   },
   "devDependencies": {
+    "sinon":"latest"
   }
 }

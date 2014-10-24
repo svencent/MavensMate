@@ -2,92 +2,50 @@
 'use strict';
 
 var program = require('commander');
-var Q = require('q');
-var path = require('path');
-var _ = require('lodash');
-var up = require('underscore-plus');
+var path 		= require('path');
+var _ 			= require('lodash');
+var util  	= require('../lib/util').instance;
 
 global.appRoot = path.resolve(path.join(__dirname, '..'));
 global.program = program;
 
-require('autocmdr/lib/logger')(program);
-require('autocmdr/lib/loader')(program);
-require('autocmdr/lib/completion')(program);
-require('autocmdr/lib/package')(program);
-require('../lib/config')(program);
-require('autocmdr/lib/help')(program);
-
-// program.log.log('info', 'OK IN MMLOG');
-
-program.isHeadless = function() {
-	return this.headless === true;
-};
-
-program.isInteractive = function() {
-	return !program.isHeadless();
-};
-
-program.isUICommand = function() {
-	return this.ui === true;
-};
-
-program.readStdin = function() {
-	var deferred = Q.defer();
-
-	var myJson = '';
-
-	process.stdin.setEncoding('utf8');
-
-	process.stdin.on('readable', function() {
-	  var chunk = process.stdin.read();
-	  if (chunk !== null) {
-	    myJson += chunk;
-	  }
-	});
-
-	process.stdin.on('end', function() {
-	  var jsonObject = JSON.parse(myJson);
-	  _.forOwn(jsonObject, function(value, key) {
-	  	if (key.indexOf('_') >= 0) {
-	  		jsonObject[up.camelize(key)] = jsonObject[key];
-	  		delete jsonObject[key];
-	  	}
-	  });
-	  deferred.resolve(jsonObject);
-	});
-
-	return deferred.promise;
-};
-
-program.respond = function(res, success) {
-  if (this.isHeadless()) {
-  	var response = {};
-  	if (success === undefined) {
-  		success = true;
-  	}
-  	if (_.isArray(res)) {
-  		// TODO
-  	} else if (typeof res === 'object') {
-  		if (!_.has(res, 'success')) {
-  			response.success = success;
-  		}
-  	} else if (_.isString(res)) {
-  		response.body = res;
-  		response.success = success;
-  	}
-  	console.log(response);
-  } else {
-  	console.log(res);
-  }
-};
+// initialize top-level program with global options
+program
+  .version('0.0.1')
+  .option('-l, --log', 'Explicitly enables logging. When in headless mode, debug statements will be placed in "debug" object in JSON response.')
+  .option('--headless', 'Runs in headless mode, requiring piped-JSON for context. Best for use by MavensMate text editor/IDE clients.')
+  .option('-c --client [name]', 'Specifies the plugin client (SUBLIME_TEXT, ATOM)') // no default set
+  .parse(process.argv, true); // parse top-level args, defer subcommand
 
 program
-	.option('--ui', 'Launches the default UI for the selected command.')
-	.option('--headless', 'Runs command in headless mode, requiring piped-JSON for context. Best for use by MavensMate text editor/IDE clients.')
-	.parse(process.argv);
+  .command('new-project');
+
+program.on('--help', function(){
+  console.log('  Examples:');
+  console.log('');
+  console.log('    $ custom-help --help');
+  console.log('    $ custom-help -h');
+  console.log('');
+});
 
 if (program.args.length < 1 ) {
-	console.log('No command specified. See \'mm-node --help\':');
-	program.outputHelp();
-	process.exit(1);
+  console.log('No command specified. See \'mm-node --help\':');
+  program.outputHelp();
+  process.exit(1);
 }
+
+// init global config first, then proceed
+require('../lib/config')(program)
+  .then(function() {
+    
+    require('../lib/logger')(program);
+    require('autocmdr/lib/loader')(program);
+    require('autocmdr/lib/completion')(program);
+    require('autocmdr/lib/package')(program);
+    require('autocmdr/lib/help')(program);
+
+    program.parse(process.argv); // run subcommand if necessary
+  })
+  ['catch'](function(error) {
+    console.error(error);
+  });

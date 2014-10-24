@@ -3,13 +3,13 @@
  */
 'use strict';
 
-var inquirer = require('inquirer');
-var _ = require('lodash');
-var merge = require('merge');
-var Renderer = require('../lib/ui/renderer');
-var Project = require('../lib/project');
-var SalesforceClient = require('../lib/sfdc-client');
-var util = require('../lib/util').instance;
+var inquirer 					= require('inquirer');
+var _ 								= require('lodash');
+var util 							= require('../lib/util').instance;
+var merge 						= require('merge');
+var Renderer 					= require('../lib/ui/renderer');
+var Project 					= require('../lib/project');
+var SalesforceClient 	= require('../lib/sfdc-client');
 
 module.exports = function(program) {
 
@@ -20,51 +20,59 @@ module.exports = function(program) {
 		});
 		return sobjects;
 	};
-
+ 
 	program
 		.command('new-project')
 		.alias('new_project')
+		.option('--ui', 'Launches the default UI for the selected command.')
+		.option('--something', 'does something!')
 		.version('0.0.1')
 		.description('Creates a new Salesforce1 project')
 		.action(function(){
-			if (program.isUICommand()) {
+			var self = this;
+
+			if (util.isUICommand(self)) {
 				var renderer = new Renderer('new-project');
 				renderer.render()
 					.then(function(tmpFileLocation){
-						return program.respond(tmpFileLocation);
+						return util.respond(self, tmpFileLocation);
+					})
+					['catch'](function(error) {
+						return util.respond(self, 'Could not open new-project UI', false, error);
 					});
-			} else if (program.isHeadless()) {
+			} else if (util.isHeadless()) {
 				
 				var jsonPayload;
+				var newProject;
 
-				program.readStdin()
+				util.getPayload()
 					.then(function(stdInResult) {
 						jsonPayload = stdInResult;
 						var sfdcClient = new SalesforceClient(jsonPayload);
-						return sfdcClient.login();
+						return sfdcClient.initialize();
 					})
-					.then(function(loginResult) {
-						var newProject = new Project(jsonPayload);
+					.then(function() {
+						newProject = new Project(jsonPayload);
+						return newProject.initialize(true);
+					})
+					.then(function() {
 						return newProject.retrieveAndWriteToDisk();
 					})
 					.then(function() {
-						console.log('ok all set!');
+						util.respond(self, 'Project created successfully');
 					})
 					['catch'](function(error) {
-						console.log('error!');
-						console.log(error);
+						util.respond(self, 'Could not create project', false, error);
 					})
-					['finally'](function() {
-						// console.log('done!');
-					});
+					.done();
 
-			} else if (program.isInteractive()) {	
+			} else if (util.isInteractive()) {	
 				var userInput;
 
 				inquirer.prompt([
 				  {
 			      type: 'input',
-			      name: 'name',
+			      name: 'projectName',
 			      message: 'What would you like to name your project?'
 			    },
 				  {
@@ -90,7 +98,7 @@ module.exports = function(program) {
 			    },
 			    {
 			      type: 'input',
-			      name: 'token',
+			      name: 'securityToken',
 			      message: 'Please enter your security token (optional)'
 			    }
 				], function( answers ) {
@@ -108,8 +116,8 @@ module.exports = function(program) {
 
 					var sfdcClient = new SalesforceClient(opts);
 
-					sfdcClient.login()
-						.then(function(loginResult) {
+					sfdcClient.initialize()
+						.then(function() {
 							return sfdcClient.describeGlobal();
 						})
 						.then(function(describeResult) {
@@ -180,7 +188,7 @@ module.exports = function(program) {
 					  			  {
 					  		      type: 'checkbox',
 					  		      message: 'Please select the metadata types you wish to download as part of your project',
-					  		      name: 'metadata',
+					  		      name: 'package',
 					  		      choices: unpackagedChoices,
 					  		      validate: function( answer ) {
 					  		        if ( answer.length < 1 ) {
@@ -191,20 +199,36 @@ module.exports = function(program) {
 					  		    }
 					  		  ], function(answers) {
 					  		  	userInput = merge.recursive(answers, userInput);
-					  		  	// sfdcClient.retrieveUnpackaged(answers.metadata);	
+					  		  	// sfdcClient.retrieveUnpackaged(answers.metadata);
+
+				  		  		var sfdcClient = new SalesforceClient(userInput);
+				  		  		sfdcClient.initialize()
+						  		  	.then(function() {
+						  		  		newProject = new Project(userInput);
+						  		  		return newProject.initialize(true);
+						  		  	})
+						  		  	.then(function() {
+						  		  		return newProject.retrieveAndWriteToDisk();
+						  		  	})
+						  		  	['catch'](function(error) {
+						  		  		console.log('error!');
+						  		  		console.log(error.stack);
+						  		  	})
+						  		  	['finally'](function() {
+						  		  		// console.log('done!');
+						  		  	});
+
 					  		  });	
 						  	}
 						  });	
 						})
 						['catch'](function(error) {
-							// console.log('error!');
-							console.log(error);
+							return util.respond(self, 'Could not create project', false, error);
 						})
 						['finally'](function() {
-							// console.log('done!');
+							// TODO: clean up directory if one was created
 						});
 				});
 			}				
-		});
-	
+		});	
 };

@@ -3,6 +3,9 @@
  */
 'use strict';
 
+var util 							= require('../lib/util').instance;
+var Project 					= require('../lib/project');
+
 module.exports = function(program) {
 
 	program
@@ -10,7 +13,26 @@ module.exports = function(program) {
 		.version('0.0.0')
 		.description('Deletes metadata from the salesforce.com server')
 		.action(function(/* Args here */){
-			// Your code goes here
+			var self = this;
+
+			util.getPayload()
+				.then(function() {
+					global.project = new Project();
+					return global.project.initialize();
+				})
+				.then(function() {
+					return global.sfdcClient.deleteMetadata(global.payload.files);
+				})
+				.then(function(result) {
+					// todo: wipe from file system
+				})
+				.then(function(result) {
+					util.respond(self, result);
+				})
+				['catch'](function(error) {
+					util.respond(self, 'Could not delete metadata', false, error);
+				})
+				.done();	
 		});
 	
 };

@@ -3,11 +3,13 @@
  */
 'use strict';
 
+var SalesforceClient = require('../lib/sfdc-client');
+
 module.exports = function(program) {
 
 	program
 		.command('session [username] [password]')
-		.version('0.0.0')
+		.version('0.0.1')
 		// .option('-u <username>', 'salesforce.com username')
 		// .option('-p <password>', 'salesforce.com password')
 		// .option('-o <org_type>', 'Type of org: prod, dev, sandbox, custom')
@@ -18,7 +20,12 @@ module.exports = function(program) {
 				password: password,
 				orgType: 'developer'
 			};
-			require('../lib/sfdc-client')(program, opts);
+			var sfdcClient = new SalesforceClient(opts);
+			sfdcClient.login()
+				.then(function(loginResult) {
+					console.log(loginResult);
+					console.log(global.sfdcClient);
+				});
 		});
 	
 };

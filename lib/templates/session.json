@@ -1,7 +1,7 @@
 {
-  "metadata_server_url": "https:\/\/na14.salesforce.com\/services\/Soap\/m\/30.0\/00Dd0000000cRQK",
-  "endpoint": "https:\/\/www.salesforce.com\/services\/Soap\/u\/30.0",
-  "user_id": "005d0000000xxzsAAA",
-  "server_url": "https:\/\/na14.salesforce.com\/services\/Soap\/u\/30.0\/00Dd0000000cRQK",
-  "sid": "00Dd0000000cRQK!AQoAQB6z1KW7NLXt6omJulKmzBmXqOiXYQP.HLwuV7MQ1Mv5O_Nn5e2EYtod7ZGSmmRLs_YVHa0Jb6mHqDch6hnbK4_2vs8y"
+  "metadata_server_url": "{{metadataServerUrl}}",
+  "endpoint": "{{endpoint}}",
+  "user_id": "{{userId}}",
+  "server_url": "{{serverUrl}}",
+  "sid": "{{token}}"
 }

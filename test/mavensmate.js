@@ -1,19 +1,19 @@
 'use strict';
 
-var assert = require("assert");
+var assert = require('assert');
 var exec = require('child_process').exec;
 var path = require('path');
 
-describe('mm-node bin', function(){
-	var cmd = 'node '+path.join(__dirname, '../bin/mm-node')+' ';
-	console.log(cmd);
-
-	it('--help should run without errors', function(done) {
-		exec(cmd+'--help', function (error, stdout, stderr) {
-			assert(!error);
-			done();
-		});
-	});
+describe('mavensmate bin', function(){
+	var cmd = 'node '+path.join(__dirname, '../bin/mavensmate')+' ';
+	
+	// it('--help should run without errors', function(done) {
+	// 	exec(cmd+'--help', function (error, stdout, stderr) {
+	// 		console.log(error);
+	// 		assert(!error);
+	// 		done();
+	// 	});
+	// });
 
 	it('--version should run without errors', function(done) {
 		exec(cmd+'--version', function (error, stdout, stderr) {

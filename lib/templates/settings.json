@@ -1,0 +1,11 @@
+{
+    "username": "{{username}}", 
+    "project_name": "{{projectName}}", 
+    "org_url": "{{orgUrl}}", 
+    "namespace": "{{namespace}}", 
+    "metadata_container": "{{metadataContainerId}}", 
+    "environment": "{{environment}}", 
+    "workspace": "{{workspace}}", 
+    "id": "{{id}}", 
+    "subscription": {{subscription}}
+}

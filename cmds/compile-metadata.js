@@ -3,14 +3,35 @@
  */
 'use strict';
 
+var util 							= require('../lib/util').instance;
+var Project 					= require('../lib/project');
+
 module.exports = function(program) {
 
 	program
 		.command('compile-metadata')
-		.version('0.0.0')
+		.alias('compile')
+		.version('0.0.1')
 		.description('Compiles metadata')
 		.action(function(/* Args here */){
-			// Your code goes here
+			
+			var self = this;
+
+			util.getPayload()
+				.then(function() {
+					global.project = new Project();
+					return global.project.initialize();
+				})
+				.then(function() {
+					return global.sfdcClient.toolingCompile(global.payload.files);
+				})
+				.then(function(result) {
+					util.respond(self, result);
+				})
+				['catch'](function(error) {
+					util.respond(self, 'Could not compile metadata', false, error);
+				})
+				.done();	
 		});
 	
 };

@@ -3,14 +3,35 @@
  */
 'use strict';
 
+var util 							= require('../lib/util').instance;
+var Project 					= require('../lib/project');
+var SalesforceClient 	= require('../lib/sfdc-client');
+
 module.exports = function(program) {
 
 	program
 		.command('compile-project')
-		.version('0.0.0')
+		.version('0.0.1')
 		.description('Attempts to compile project metadata based on package.xml')
-		.action(function(/* Args here */){
-			// Your code goes here
+		.action(function() {
+			var self = this;
+
+			global.project = new Project();
+			global.project.initialize()
+				.then(function() {
+					return global.project.compile();
+				})
+				.then(function(result) {
+					if (result.success) {
+						util.respond(self, 'Project compiled successfully');
+					} else {
+						util.respond(self, 'Compile failed', false, result);
+					}
+				})
+				['catch'](function(error) {
+					util.respond(self, 'Could not clean project', false, error);
+				})
+				.done();
 		});
 	
 };

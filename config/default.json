@@ -100,6 +100,5 @@
   "mm_download_logs_during_run_all_tests": false,
   "mm_timeout": 10,
   "mm_compare_before_deployment": true,
-  "mm_skip_legacy_check": false,
-  "foo": "barrrr"
+  "mm_skip_legacy_check": false
 }
