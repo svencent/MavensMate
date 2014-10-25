@@ -5,6 +5,7 @@
 
 var util 							= require('../lib/util').instance;
 var Project 					= require('../lib/project');
+var Metadata 					= require('../lib/metadata');
 
 module.exports = function(program) {
 
@@ -23,7 +24,8 @@ module.exports = function(program) {
 					return global.project.initialize();
 				})
 				.then(function() {
-					return global.sfdcClient.toolingCompile(global.payload.files);
+					var metadata = Metadata.classify(global.payload.files);
+					return global.sfdcClient.toolingCompile(metadata);
 				})
 				.then(function(result) {
 					util.respond(self, result);

@@ -43,7 +43,8 @@
     "archiver":"latest",
     "randomstring":"latest",
     "events":"latest",
-    "inherits":"latest"
+    "inherits":"latest",
+    "fstream":"latest"
   },
   "devDependencies": {
     "sinon":"latest"

@@ -181,6 +181,23 @@ module.exports = function(program) {
 					  		  ], function(answers) {
 						  			userInput = merge.recursive(answers, userInput);
 						  			sfdcClient.retrievePackaged(answers.packages);	
+						  			// todo: ensure project creation adds "packages" structure to settings to keep track of packages
+						  			var sfdcClient = new SalesforceClient(userInput);
+				  		  		sfdcClient.initialize()
+						  		  	.then(function() {
+						  		  		newProject = new Project(userInput);
+						  		  		return newProject.initialize(true);
+						  		  	})
+						  		  	.then(function() {
+						  		  		return newProject.retrieveAndWriteToDisk();
+						  		  	})
+						  		  	['catch'](function(error) {
+						  		  		console.log('error!');
+						  		  		console.log(error.stack);
+						  		  	})
+						  		  	['finally'](function() {
+						  		  		// console.log('done!');
+						  		  	});
 					  		  });	
 						  	} else {
 					  			// present list for selection (apex/vf types selected by default)
