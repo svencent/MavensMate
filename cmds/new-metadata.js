@@ -16,17 +16,17 @@ module.exports = function(program) {
 		.action(function() {
 			var self = this;
 
-			//var newMetadata = new Metadata(global.payload);
-			global.project = new Project();
-			global.project.initialize()
+			util.getPayload()
 				.then(function() {
-					//return newMetadata.deploy();
-					//return global.sfdcClient.describe();
-					console.log(global.describe);
+					global.project = new Project();
+					return global.project.initialize();
 				})
 				.then(function() {
-					console.log();
-					util.respond(self, 'Success');
+					var newMetadata = new Metadata(global.payload);
+					return newMetadata.deployToServer();
+				})
+				.then(function(result) {
+					util.respond(self, result);
 				})
 				['catch'](function(error) {
 					util.respond(self, 'Could not create metadata', false, error);

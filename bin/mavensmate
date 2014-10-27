@@ -6,19 +6,19 @@ var path 		= require('path');
 var _ 			= require('lodash');
 var util  	= require('../lib/util').instance;
 
-global.appRoot = path.resolve(path.join(__dirname, '..'));
-global.program = program;
-
 // initialize top-level program with global options
 program
   .version('0.0.1')
-  .option('-l, --log', 'Explicitly enables logging. When in headless mode, debug statements will be placed in "debug" object in JSON response.')
+  .option('--logging', 'Explicitly enables logging. When in headless mode, debug statements will be placed in "debug" object in JSON response.')
   .option('--headless', 'Runs in headless mode, requiring piped-JSON for context. Best for use by MavensMate text editor/IDE clients.')
   .option('-c --client [name]', 'Specifies the plugin client (SUBLIME_TEXT, ATOM)') // no default set
   .parse(process.argv, true); // parse top-level args, defer subcommand
 
-program
-  .command('new-project');
+global.appRoot = path.resolve(path.join(__dirname, '..'));
+global.program = program;
+
+// program
+//   .command('new-project');
 
 program.on('--help', function(){
   console.log('  Examples:');
@@ -43,6 +43,9 @@ require('../lib/config')(program)
     require('autocmdr/lib/completion')(program);
     require('autocmdr/lib/package')(program);
     require('autocmdr/lib/help')(program);
+
+    global.logger.debug('\n\n\n\n=====> RUNNING COMMAND:\n');
+    global.logger.debug('Args: '+JSON.stringify(process.argv));
 
     program.parse(process.argv); // run subcommand if necessary
   })

@@ -25,7 +25,7 @@ module.exports = function(program) {
 				})
 				.then(function() {
 					var metadata = Metadata.classify(global.payload.files);
-					return global.sfdcClient.toolingCompile(metadata);
+					return global.project.compileMetadata(metadata);
 				})
 				.then(function(result) {
 					util.respond(self, result);

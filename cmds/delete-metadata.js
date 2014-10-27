@@ -5,29 +5,30 @@
 
 var util 							= require('../lib/util').instance;
 var Project 					= require('../lib/project');
+var Metadata 					= require('../lib/metadata');
 
 module.exports = function(program) {
 
 	program
 		.command('delete-metadata')
+		.alias('delete')
 		.version('0.0.0')
 		.description('Deletes metadata from the salesforce.com server')
 		.action(function(/* Args here */){
 			var self = this;
-
+			var metadata;
 			util.getPayload()
 				.then(function() {
 					global.project = new Project();
 					return global.project.initialize();
 				})
 				.then(function() {
-					return global.sfdcClient.deleteMetadata(global.payload.files);
+					metadata = Metadata.classify(global.payload.files);
+					return global.project.deleteFromServer(metadata);
 				})
 				.then(function(result) {
-					// todo: wipe from file system
-				})
-				.then(function(result) {
-					util.respond(self, result);
+					Metadata.deleteLocally(metadata);
+					util.respond(self, result);	
 				})
 				['catch'](function(error) {
 					util.respond(self, 'Could not delete metadata', false, error);

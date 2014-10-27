@@ -44,7 +44,11 @@
     "randomstring":"latest",
     "events":"latest",
     "inherits":"latest",
-    "fstream":"latest"
+    "fstream":"latest",
+    "adm-zip":"latest",
+    "findit":"latest",
+    "sax":"latest",
+    "request":"2.47.0"
   },
   "devDependencies": {
     "sinon":"latest"

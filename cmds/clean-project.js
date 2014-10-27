@@ -5,14 +5,13 @@
 
 var util 							= require('../lib/util').instance;
 var Project 					= require('../lib/project');
-var SalesforceClient 	= require('../lib/sfdc-client');
 
 module.exports = function(program) {
 
 	program
 		.command('clean-project')
 		.alias('clean')
-		.version('0.0.0')
+		.version('0.0.1')
 		.description('Retrieves metadata from server based on project package.xml file, resets session')
 		.action(function(/* Args here */){
 			var self = this;

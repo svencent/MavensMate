@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-{% for value in obj %}
-{% if value === "*" %}
+{% for value in obj -%}
+{% if value === "*" -%}
 	<types>
 		<members>*</members>
 		<name>{{ loop.key }}</name>
 	</types>
 {% else %}
 	<types>
-	{% for metadata_element in value if key !== 'unfiled$public' %}
+	{% for metadata_element in value -%}
 	<members>{{ metadata_element }}</members>
-	{% endfor %}
+	{%- endfor %}
 	<name>{{ loop.key }}</name>
 	</types>
-{% endif %}
-{% endfor %}
+{%- endif %}
+{%- endfor %}
 	<version>{{ global.mmApiVersion }}</version>
 </Package>

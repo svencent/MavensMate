@@ -5,7 +5,6 @@
 
 var util 							= require('../lib/util').instance;
 var Project 					= require('../lib/project');
-var SalesforceClient 	= require('../lib/sfdc-client');
 
 module.exports = function(program) {
 
@@ -29,7 +28,7 @@ module.exports = function(program) {
 					}
 				})
 				['catch'](function(error) {
-					util.respond(self, 'Could not clean project', false, error);
+					util.respond(self, 'Could not compile project', false, error);
 				})
 				.done();
 		});

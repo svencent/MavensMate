@@ -56,9 +56,11 @@ module.exports = function(program) {
 						return newProject.initialize(true);
 					})
 					.then(function() {
+						global.logger.debug('Initiated new project, prepping to write to disk');
 						return newProject.retrieveAndWriteToDisk();
 					})
 					.then(function() {
+						global.logger.debug('Written to disk ...');
 						util.respond(self, 'Project created successfully');
 					})
 					['catch'](function(error) {

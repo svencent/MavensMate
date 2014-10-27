@@ -3,14 +3,36 @@
  */
 'use strict';
 
+var util 							= require('../lib/util').instance;
+var Project 					= require('../lib/project');
+var Metadata 					= require('../lib/metadata');
+
 module.exports = function(program) {
 
 	program
 		.command('refresh-metadata')
+		.alias('refresh')
 		.version('0.0.0')
 		.description('Refreshes metadata from the salesforce.com server')
 		.action(function(/* Args here */){
-			// Your code goes here
+			var self = this;
+
+			util.getPayload()
+				.then(function() {
+					global.project = new Project();
+					return global.project.initialize();
+				})
+				.then(function() {
+					var metadata = Metadata.classify(global.payload.files);
+					return global.project.refreshFromServer(metadata);
+				})
+				.then(function() {
+					util.respond(self, 'Metadata successfully refreshed');
+				})
+				['catch'](function(error) {
+					util.respond(self, 'Could not compile metadata', false, error);
+				})
+				.done();	
 		});
 	
 };
