@@ -48,7 +48,8 @@
     "adm-zip":"latest",
     "findit":"latest",
     "sax":"latest",
-    "request":"2.47.0"
+    "request":"2.47.0",
+    "keytar":"2.0.3"
   },
   "devDependencies": {
     "sinon":"latest"
