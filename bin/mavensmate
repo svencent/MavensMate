@@ -9,7 +9,7 @@ var util  	= require('../lib/util').instance;
 // initialize top-level program with global options
 program
   .version('0.0.1')
-  .option('--logging', 'Explicitly enables logging. When in headless mode, debug statements will be placed in "debug" object in JSON response.')
+  .option('-d --debugging', 'Explicitly enables logging. When in headless mode, debug statements will be placed in "debug" object in JSON response.')
   .option('--headless', 'Runs in headless mode, requiring piped-JSON for context. Best for use by MavensMate text editor/IDE clients.')
   .option('-c --client [name]', 'Specifies the plugin client (SUBLIME_TEXT, ATOM)') // no default set
   .parse(process.argv, true); // parse top-level args, defer subcommand
