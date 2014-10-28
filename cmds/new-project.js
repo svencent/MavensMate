@@ -250,7 +250,6 @@ exports.addSubCommand = function(program) {
 		.command('new-project')
 		.alias('new_project')
 		.option('--ui', 'Launches the default UI for the selected command.')
-		.option('--something', 'does something!')
 		.version('0.0.1')
 		.description('Creates a new Salesforce1 project')
 		.action(function(){
