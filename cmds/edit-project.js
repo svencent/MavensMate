@@ -53,6 +53,7 @@ exports.addSubCommand = function(program) {
 		.command('edit-project')
 		.alias('edit_project')
 		.alias('edit')
+		.option('--ui', 'Launches the default UI for the selected command.')
 		.version('0.0.1')
 		.description('Edits an existing project')
 		.action(function(){
