@@ -1,31 +1,30 @@
 <html>
 <head>
     <title>MavensMate</title>
-    <link rel="stylesheet" href="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/bootstrap/css/bootstrap.css"></link> 
-    <link rel="stylesheet" href="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/bootstrap/css/bootstrap-responsive.css"></link> 
-    <link rel="stylesheet" href="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/css/flat-ui.css"></link> 
-    <link rel="stylesheet" href="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/css/mavensmate.css"></link> 
-    <link rel="stylesheet" href="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/css/dynatree.css"></link> 
-    <link rel="stylesheet" href="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/css/font-awesome.min.css"></link>
-    <link rel="stylesheet" href="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/css/prettify.css"></link>
+    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/bootstrap/css/bootstrap.css"></link> 
+    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/bootstrap/css/bootstrap-responsive.css"></link> 
+    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/flat-ui.css"></link> 
+    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/mavensmate.css"></link> 
+    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/dynatree.css"></link> 
+    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/font-awesome.min.css"></link>
+    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/prettify.css"></link>
     <script>
-        var baseLocalServerURL = '{{ base_local_server_url() }}';
-        var project_name = '{{ name }}';
+        var baseLocalServerURL = '{{ mavensmate.ui.getBaseUrl() }}';
     </script>
-    <script src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/js/jquery.js" type="text/javascript"></script>
-    <script src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/js/jqueryui.js" type="text/javascript"></script>
-    <script src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/js/bootstrap.min.js" type="text/javascript"></script>
-    <script src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/js/bootstrap-select.js" type="text/javascript"></script>
-    <script src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/js/flatui-checkbox.js" type="text/javascript"></script>
-    <script src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/js/mavensmate.js" type="text/javascript"></script>    
-    <script src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/js/dynatree2.js" type="text/javascript"></script>
-    <script src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/js/jquery.contextMenu-custom.js" type="text/javascript"></script>
-    <script src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/js/prettify.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/jquery.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/jqueryui.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/bootstrap-select.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/flatui-checkbox.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/mavensmate.js" type="text/javascript"></script>    
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/dynatree2.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/jquery.contextMenu-custom.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/prettify.js" type="text/javascript"></script>
     <script>
         var tree;
 
         $.ajaxSetup({
-            headers: { "mm_plugin_client": "{{ client }}" }
+            headers: { "mm_plugin_client": "{{ mavensmate.ui.util.getClient() }}" }
         });
 
         $(function() {
@@ -59,7 +58,7 @@
 
         function notifyOnloadListeners() {
             console.log('LOADED WINDOW!!!');
-            var client = '{{ client }}';
+            var client = '{{ mavensmate.ui.util.getClient() }}';
             if (client.toLowerCase() === 'atom') {
                 var event = new CustomEvent('mavensmateIframeLoaded', { 'detail': '{{ uid }}' });
                 parent.document.dispatchEvent(event);
@@ -67,7 +66,7 @@
         }
 
         function closeWindow() {
-            var client = '{{ client }}';
+            var client = '{{ mavensmate.ui.util.getClient() }}';
             if (client.toLowerCase() === 'atom') {
                 var event = new CustomEvent('mavensmateCloseIframe', { 'detail': '{{ uid }}' });
                 parent.document.dispatchEvent(event);
@@ -77,8 +76,8 @@
         }
 
         function notifySound() {
-            if ({{ play_sounds()|lower }}) {
-                var snd = new Audio("{{ static_resource_path() }}/{{ support_dir }}/ui/resources/sounds/pling.mp3"); // buffers automatically when created
+            if ({{ mavensmate.ui.config.get('mm_play_sounds') }}) {
+                var snd = new Audio("{{ mavensmate.ui.getStaticResourcePath() }}/sounds/pling.mp3"); // buffers automatically when created
                 snd.play(); 
             }
         }
@@ -93,10 +92,9 @@
                         contentType: 'application/json; charset=utf-8',
                         url      : baseLocalServerURL+"/generic",
                         data     : JSON.stringify({
-                            "project_name"      : project_name,
+                            path                : '{{ mavensmate.ui.getProjectPath() }}',
                             keyword             : filter,
                             ids                 : $("#tree").dynatree("getTree").selectedIds,
-                            project_location    : $("#STATIC-project-location").val(),
                             command             : 'get_indexed_metadata'
                         })
                     }
@@ -115,8 +113,7 @@
                     contentType: 'application/json; charset=utf-8',
                     url      : baseLocalServerURL+"/generic",
                     data     : JSON.stringify({
-                        project_name        : project_name,
-                        project_location    : $("#STATIC-project-location").val(),
+                        path                : '{{ mavensmate.ui.getProjectPath() }}',
                         ids                 : $("#tree").dynatree("getTree").selectedIds,
                         command             : 'get_indexed_metadata'
                     })
@@ -133,8 +130,7 @@
             showLoading("Loading...")
             tree_store.load({
                 params: {
-                    project_name        : '{{ name }}',
-                    project_location    : $("#STATIC-project-location").val()
+                    path : '{{ mavensmate.ui.getProjectPath() }}'
                 },
                 callback:hideLoading
             })
@@ -149,8 +145,7 @@
                 url: baseLocalServerURL+"/generic", 
                 data: JSON.stringify({
                     metadata_types      : mtype,
-                    project_name        : project_name,
-                    project_location    : $("#STATIC-project-location").val(),
+                    path                : '{{ mavensmate.ui.getProjectPath() }}',
                     command             : 'refresh_metadata_index'
                 }),
                 beforeSend: function() { showLoading("Refreshing Metadata Type: "+ mtype +"..."); },
@@ -184,7 +179,7 @@
     <div class="navbar">
         <div class="navbar-inner">
             <div class="container" style="position:relative;">
-                <img src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/images/logo2.png" id="mmlogo"/> 
+                <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/> 
                 <div class="actions-right">
                     {% block buttons %}{% endblock %}
                 </div>
@@ -269,7 +264,7 @@
             function checkRequestStatus(request_id) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ base_local_server_url() }}/status", 
+                    url: "{{ mavensmate.ui.getBaseUrl() }}/status", 
                     data: {
                          id: request_id
                     },
@@ -301,8 +296,5 @@
                 });
             }
         </script>
-
-        <!-- context helpers -->
-        <input type="hidden" id="STATIC-project-location" value="{{ project_location or '' }}"/>
 </body>
 </html>

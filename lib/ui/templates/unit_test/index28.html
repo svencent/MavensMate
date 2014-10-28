@@ -4,7 +4,7 @@
 
 {% block yield %}
 
-<link href="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/css/progress.css" rel="stylesheet" type="text/css"/>
+<link href="{{ mavensmate.ui.getStaticResourcePath() }}/css/progress.css" rel="stylesheet" type="text/css"/>
 
 <style>
 	.results_hidden {
@@ -281,16 +281,15 @@
 	function run_tests() {
 		$.ajax({
 			type: "POST",
-			url: "{{ base_local_server_url() }}/generic/async", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
-				project_name 		: '{{ name }}',
 				classes 			: get_tests_to_run(),
 				debug_categories 	: get_log_levels_json(),
-				project_location	: $("#STATIC-project-location").val(),
 				command 			: 'unit_test',
-				ajax_args 			: ['--html']
+				ajax_args 			: ['--html'],
+				path 				: '{{ mavensmate.ui.getProjectPath() }}'
 			}),
 			beforeSend: function() { toggleRunningIndicator(); $("#btnRunTests").hide() },
 			complete: function(data){

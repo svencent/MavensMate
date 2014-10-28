@@ -9,7 +9,7 @@
 
 <div class="content">
 	<div style="width:250px;margin:0 auto;margin-bottom:20px;">
-		<img src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/images/github-logo.png" style=""/>
+		<img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/github-logo.png" style=""/>
 	</div>	
 	<div class="alert alert-info">
 		<p>The social enterprise needs a social IDE. MavensMate is providing deeper integration with GitHub to enable teams working on projects, public and private alike, to collaborate in a more meaningful way directly from the development environment. </p>
@@ -42,7 +42,7 @@
 		function connect() {
 			$.ajax({
 				type: "POST",
-				url: "{{ base_local_server_url() }}/generic", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
 				data: JSON.stringify({

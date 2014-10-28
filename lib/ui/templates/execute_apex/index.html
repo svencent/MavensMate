@@ -1,7 +1,7 @@
 {% extends "layouts/base.html" %}
 {% block yield %}
-<script src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/editor/ace.js" type="text/javascript" charset="utf-8"></script>
-<script src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/editor/mode-java.js" type="text/javascript" charset="utf-8"></script>
+<script src="{{ mavensmate.ui.getStaticResourcePath() }}/editor/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="{{ mavensmate.ui.getStaticResourcePath() }}/editor/mode-java.js" type="text/javascript" charset="utf-8"></script>
 <style>
 	#editor {
         position:absolute; 
@@ -277,14 +277,13 @@ var line;
 function execute_apex() {
 	$.ajax({
 		type: "POST",
-		url: "{{ base_local_server_url() }}/generic/async", 
+		url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
 		dataType: "json",
 		contentType: 'application/json; charset=utf-8',
 		data: JSON.stringify({
+			 path 				: '{{ mavensmate.ui.getProjectPath() }}',
 			 body 				: editor.getValue(),
-			 project_name 		: '{{ name }}',
 			 debug_categories 	: get_log_levels_json(),
-			 project_location	: $("#STATIC-project-location").val(),
 			 command 			: 'execute_apex'
 		}),
 		beforeSend: function() { 

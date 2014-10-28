@@ -55,10 +55,9 @@
 			operation = "get_templates";
 			$.ajax({
 				type: "GET",
-				url: "{{ base_local_server_url() }}/generic", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
 				data: JSON.stringify({
-					project_name 		: '{{ name }}',
-					project_location	: $("#STATIC-project-location").val(),
+					path 				: '{{ mavensmate.ui.getProjectPath() }}',
 					command 			: "get_templates"	
 				}),
 				beforeSend: function() { showLoading('Creating new Ma'); },
@@ -82,10 +81,9 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ base_local_server_url() }}/generic/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
 				data: JSON.stringify({
-					project_name 		: '{{ name }}',
-					project_location	: $("#STATIC-project-location").val(),
+					path 				: '{{ mavensmate.ui.getProjectPath() }}',
 					command 			: 'new_metadata',
 					params 				: paramPayload,
 					metadata_type		: '{{ metadata_type }}',
@@ -117,9 +115,7 @@
 				hideLoading();
 			}
 		}
-	
-		var user_action = "{{ user_action }}";
-			
+				
 		$(function() {		   									
 		    
 		    $("#template").change(function() {

@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 {% block yield %}
-<script src="{{ static_resource_path() }}/{{ support_dir }}/ui/resources/js/jquery.tablesorter.min.js" type="text/javascript"></script>
+<script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/jquery.tablesorter.min.js" type="text/javascript"></script>
 <style>
 	.deploy_options label, .deploy_options div.divlabel {
 		width:180px;
@@ -544,12 +544,11 @@
 		operation = "index"
 		$.ajax({
 			type: "POST",
-			url: "{{ base_local_server_url() }}/generic/async", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
-				project_name 		: '{{ name }}',
-				project_location	: $("#STATIC-project-location").val(),
+				path 				: '{{ mavensmate.ui.getProjectPath() }}',
 				command 			: 'index_metadata'
 			}),
 			beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs.<br/><br/>Thanks for being patient! :)'); },
@@ -717,7 +716,7 @@
 		operation = "compare"
 		$.ajax({
 			type: "POST",
-			url: "{{ base_local_server_url() }}/generic/async", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
@@ -726,13 +725,12 @@
 			    run_tests 			: isRunTests(),
 			    rollback_on_error 	: isRollbackOnError(),
 			    package 			: get_tree(),
-			    project_name 		: '{{ name }}',
 			    new_deployment_name : $("#new_deployment_name").val(),
 			    debug_categories 	: get_log_levels_json(),
-			    project_location	: $("#STATIC-project-location").val(),
 			    finish 				: false,
 			    command 			: 'deploy',
-			    ajax_args 			: ['--html']
+			    ajax_args 			: ['--html'],
+			    path 				: '{{ mavensmate.ui.getProjectPath() }}'
 			}),
 			beforeSend: function() { toggleRunningIndicator(); $("#btnDeploy").hide(); $("#btnCompare").hide();  },
 			complete: function(data){
@@ -745,7 +743,7 @@
 		operation = "deploy"
 		$.ajax({
 			type: "POST",
-			url: "{{ base_local_server_url() }}/generic/async", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
@@ -754,13 +752,12 @@
 			    run_tests 			: isRunTests(),
 			    rollback_on_error 	: isRollbackOnError(),
 			    package 			: get_tree(),
-			    project_name 		: '{{ name }}',
 			    new_deployment_name : $("#new_deployment_name").val(),
 			    debug_categories 	: get_log_levels_json(),
-			    project_location	: $("#STATIC-project-location").val(),
 			    finish 				: true,
 			    command 			: 'deploy',
-			    ajax_args 			: ['--html']
+			    ajax_args 			: ['--html'],
+			    path 				: '{{ mavensmate.ui.getProjectPath() }}'
 			}),
 			beforeSend: function() { toggleRunningIndicator(); $("#btnDeploy").hide(); $("#btnCompare").hide();  },
 			complete: function(data){
@@ -776,12 +773,11 @@
 	function listConnections() {
 		$.ajax({
 			type: "GET",
-			url: "{{ base_local_server_url() }}/generic", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: {
-				 project_name		: '{{name}}',
-				 project_location	: $("#STATIC-project-location").val(),
+				 path 				: '{{ mavensmate.ui.getProjectPath() }}',
 				 command 			: 'list_connections'
 			},
 			beforeSend: function() { showLoading('Listing connections'); },
@@ -808,11 +804,10 @@
 			type: "POST",
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
-			url: "{{ base_local_server_url() }}/generic", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
 			data: JSON.stringify({
-				project_name		: '{{name}}',
 				id 					: id,
-				project_location	: $("#STATIC-project-location").val(),
+				path 				: '{{ mavensmate.ui.getProjectPath() }}',
 				command 			: 'delete_connection'
 			}),
 			beforeSend: function() { showLoading('Removing connection'); },
@@ -839,13 +834,12 @@
 			type: "POST",
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
-			url: "{{ base_local_server_url() }}/generic", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
 			data: JSON.stringify({
 				username 		 : $("#connection_un").val(), 
 				password 		 : $("#connection_pw").val(), 
 				org_type 		 : $("#org_type").val(),
-				project_name 	 : '{{name}}',
-				project_location : $("#STATIC-project-location").val(),
+				path 			 : '{{ mavensmate.ui.getProjectPath() }}',
 				command 		 : 'new_connection'
 			}),
 			beforeSend: function() { showLoading('Adding connection'); },

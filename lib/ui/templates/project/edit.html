@@ -66,8 +66,8 @@
 					<div class="clearfix">
 						<label for="subscription" style="font-weight:bold;">Metadata Subscription List</label> 
 						<select name="huge" class="select-block mbl info" style="display:none;" id="subscription" multiple="multiple" data-placeholder="Select 1 or more metadata types..." data-selected-text-format="count>3" data-size="20">
-							{% for m in metadata_types() %}
-								{% if m['xmlName'] in project_settings()['subscription'] %}
+							{% for m in mavensmate.ui.getProject().describe %}
+								{% if m['xmlName'] in mavensmate.ui.getProject().getSubscription() %}
 									{% set selected = 'selected="selected"' %}
 								{% else %}
 									{% set selected = '' %}
@@ -125,7 +125,7 @@
 
 {% block body_js %}
 	<script>
-		var has_indexed_metadata = {{ has_indexed_metadata|lower }};
+		var has_indexed_metadata = {{ mavensmate.ui.getProject().hasIndexedMetadata() }};
 		var operation;
 		
 		function updateProjectCreds() {
@@ -135,16 +135,15 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ base_local_server_url() }}/generic", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
 				data: JSON.stringify({
 					username 			: $("#un").val(),
 			    	password 			: $("#pw").val(),
 			    	org_type 			: $(".org_type").val(),
 			    	override_session 	: true,
 			    	defer_connection 	: true,
-			    	project_name 		: '{{ name }}',
 			    	org_url 			: $("#custom-url").val(), 
-			    	project_location	: $("#STATIC-project-location").val(),
+			    	path 				: '{{ mavensmate.ui.getProjectPath() }}',
 			    	command 			: "update_credentials"
 				}),
 				beforeSend: function() { showLoading('Updating project credentials'); },
@@ -168,10 +167,9 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ base_local_server_url() }}/generic", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
 				data: JSON.stringify({
-			    	project_name 		: '{{ name }}',
-			    	project_location	: $("#STATIC-project-location").val(),
+			    	path 				: '{{ mavensmate.ui.getProjectPath() }}',
 			    	subscription 		: $("#subscription").val(),
 			    	command 			: "update_subscription"
 				}),
@@ -198,11 +196,10 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ base_local_server_url() }}/generic/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
 				data: JSON.stringify({
 					package 			: get_tree(),
-					project_name 		: '{{ name }}',
-					project_location	: $("#STATIC-project-location").val(),
+					path 				: '{{ mavensmate.ui.getProjectPath() }}',
 					command 			: 'edit_project'
 				}),
 				beforeSend: function() { showLoading('Updating project'); },
@@ -219,10 +216,9 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ base_local_server_url() }}/generic/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
 				data: JSON.stringify({
-					project_name 		: '{{ name }}',
-					project_location	: $("#STATIC-project-location").val(),
+					path 				: '{{ mavensmate.ui.getProjectPath() }}',
 					command 			: 'index_metadata'
 				}),
 				beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs.<br/><br/>Thanks for being patient! :)'); },
@@ -265,12 +261,12 @@
 		}
 			
 		$(function() {		
-			$("#pn").val("{{ name }}");  
-			$("#un").val("{{ username }}");
-			$("#pw").val("{{ password }}");
-			$("select.org_type").val("{{ org_type }}");
+			$("#pn").val("{{ mavensmate.ui.getProject().getName() }}");  
+			$("#un").val("{{ mavensmate.ui.getSalesforceClient().getUsername() }}");
+			$("#pw").val("{{ mavensmate.ui.getSalesforceClient().getPassword() }}");
+			$("select.org_type").val("{{ mavensmate.ui.getSalesforceClient().getOrgType() }}");
 			$("select.org_type").change();
-			$("#custom-url").val("{{ org_url }}");
+			$("#custom-url").val("{{ org_url }}"); //TODO
 			if ($("#custom-url").val() != '') {
 				$("#custom-url").show()
 			}

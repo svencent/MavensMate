@@ -37,7 +37,7 @@
 					<div class="control-group large">
 						<select id="workspace" class="select-block mbl info span12" 
 							data-placeholder="Select a workspace" data-size="5">
-							{% for m in workspaces %}
+							{% for m in mavensmate.ui.getWorkspaces() %}
 								<option value="{{ m }}">{{ m }}</option>
 							{% endfor %}
 						</select>
@@ -123,7 +123,7 @@
 		var isSubscriptionListBuilt = false;
 		var developer_metadata_types = ['ApexClass', 'ApexComponent', 'ApexTrigger', 'ApexPage', 'StaticResource'];
 		var default_subscription = [
-			"{{ client_subscription_list()|join('", "') }}"
+			"{{ mavensmate.ui.getDefaultSubscription()|join('", "') }}"
 		];
 
 		function new_custom_project() {
@@ -132,7 +132,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ base_local_server_url() }}/generic/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
 				data: JSON.stringify({
 					 project_name 	: $("#pn").val(), 
 					 username 		: $("#un").val(), 
@@ -174,9 +174,7 @@
 				hideLoading();
 			}
 		}
-	
-		var user_action = "{{ user_action }}";
-			
+				
 		$(function() {		   									
 		    
 			$(window).resize(function() {
@@ -219,7 +217,7 @@
 		function populateMetadataTree(message) {
 			$.ajax({
 				type: "GET",
-				url: "{{ base_local_server_url() }}/generic", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
 				data: {
 					 username 		: $("#un").val(), 
 					 password 		: $("#pw").val(), 
