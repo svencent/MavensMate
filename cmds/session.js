@@ -27,10 +27,12 @@ exports.command = Command;
 exports.addSubCommand = function(program) {
 	program
 		.command('session [username] [password] [org_type]')
+		.alias('get-active-session')
 		.version('0.0.1')
 		.option('-u <username>', 'salesforce.com username')
 		.option('-p <password>', 'salesforce.com password')
 		.option('-o <org_type>', 'Type of org: prod, dev, sandbox, custom')
+		.option('--verbose', 'Returns server urls and describe information')
 		.description('Creates new salesforce.com session, returns session id')
 		.action(function(username, password, orgType) {
 			Command.execute(this, username, password, orgType);	
