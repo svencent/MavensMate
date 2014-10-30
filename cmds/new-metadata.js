@@ -18,6 +18,7 @@ Command.execute = function(command) {
 			return global.project.initialize();
 		})
 		.then(function() {
+			// TODO: add to local store
 			var newMetadata = new Metadata(global.payload);
 			return newMetadata.deployToServer();
 		})

@@ -8,19 +8,17 @@ var Project 					= require('../lib/project');
 
 var Command = function(){};
 
-Command.execute = function(command) {
-	var self = command;
-
+Command.execute = function() {
 	global.project = new Project();
 	global.project.initialize()
 		.then(function() {
 			return global.project.clean();
 		})
 		.then(function() {
-			util.respond(self, 'Project cleaned successfully');
+			util.respond('Project cleaned successfully');
 		})
 		['catch'](function(error) {
-			util.respond(self, 'Could not clean project', false, error);
+			util.respond('Could not clean project', false, error);
 		})
 		.done();
 };
@@ -33,6 +31,6 @@ exports.addSubCommand = function(program) {
 		.version('0.0.1')
 		.description('Retrieves metadata from server based on project package.xml file, resets session')
 		.action(function(/* Args here */){
-			Command.execute(this);	
+			Command.execute();	
 		});
 };

@@ -54,6 +54,8 @@
     "temp":"0.8.1"
   },
   "devDependencies": {
-    "sinon":"latest"
+    "sinon":"latest",
+    "chai":"latest",
+    "chai-as-promised":"latest"
   }
 }

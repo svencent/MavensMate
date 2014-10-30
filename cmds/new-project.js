@@ -3,13 +3,16 @@
  */
 'use strict';
 
+var Q 								= require('q');
 var inquirer 					= require('inquirer');
 var _ 								= require('lodash');
 var util 							= require('../lib/util').instance;
 var merge 						= require('merge');
 var Renderer 					= require('../lib/ui/renderer');
 var Project 					= require('../lib/project');
+var BaseCommand 			= require('../lib/command');
 var SalesforceClient 	= require('../lib/sfdc-client');
+var inherits      		= require('inherits');
 
 var _getSobjectList = function(describeResult) {
 	var sobjects = [];
@@ -19,21 +22,28 @@ var _getSobjectList = function(describeResult) {
 	return sobjects;
 };
 
-var Command = function(){};
+function Command() {
+	Command.super_.apply(this, arguments);
+}
 
-Command.execute = function(command) {
-	var self = command;
+inherits(Command, BaseCommand);
 
-	if (util.isUICommand(self)) {
+Command.prototype.execute = function(callback) {
+	Command.super_.prototype.execute.call(this, callback);
+
+	var self = this;
+
+	if (self.isUICommand()) {
 		var renderer = new Renderer('new-project');
 		renderer.render()
 			.then(function(tmpFileLocation){
-				return util.respond(self, tmpFileLocation);
+				self.respond(tmpFileLocation);
 			})
 			['catch'](function(error) {
-				return util.respond(self, 'Could not open new-project UI', false, error);
-			});
-	} else if (util.isHeadless()) {
+				self.respond('Could not generate UI', error);
+			})
+			.done();
+	} else if (self.isHeadless()) {
 		
 		var jsonPayload;
 		var newProject;
@@ -241,7 +251,7 @@ Command.execute = function(command) {
 					// TODO: clean up directory if one was created
 				});
 		});
-	}		
+	}	
 };
 
 exports.command = Command;
@@ -253,6 +263,6 @@ exports.addSubCommand = function(program) {
 		.version('0.0.1')
 		.description('Creates a new Salesforce1 project')
 		.action(function(){
-			Command.execute(this);			
+			new Command(this).execute();			
 		});	
 };
