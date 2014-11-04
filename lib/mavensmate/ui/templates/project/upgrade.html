@@ -76,7 +76,7 @@
 			    	defer_connection 	: true,
 			    	org_url 			: $("#custom-url").val(),
 			    	path 				: '{{ mavensmate.ui.getProjectPath() }}',
-			    	command 			: "upgrade_project"
+			    	command 			: "upgrade-project"
 				}),
 				beforeSend: function() { showLoading('Upgrading your project'); },
 				complete: function(data){	

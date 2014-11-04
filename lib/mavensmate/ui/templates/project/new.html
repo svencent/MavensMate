@@ -143,7 +143,7 @@
 					 subscription 	: $("#subscription").val(),
 					 action 		: "new",
 					 org_url 		: $("#custom-url").val(),
-					 command 		: 'new_project'
+					 command 		: 'new-project'
 				}),
 				beforeSend: function() { showLoading('Creating new MavensMate project'); },
 				complete: function(data){
@@ -224,7 +224,7 @@
 					 org_type 		: $("#org_type").val(),
 					 subscription 	: $("#subscription").val(),
 					 org_url 		: $("#custom-url").val(),
-					 command 		: 'get_active_session'
+					 command 		: 'get-active-session'
 				},
 				beforeSend: function() { showLoading(message); },
 				complete: function(data){

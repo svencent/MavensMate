@@ -144,7 +144,7 @@
 			    	defer_connection 	: true,
 			    	org_url 			: $("#custom-url").val(), 
 			    	path 				: '{{ mavensmate.ui.getProjectPath() }}',
-			    	command 			: "update_credentials"
+			    	command 			: "update-credentials"
 				}),
 				beforeSend: function() { showLoading('Updating project credentials'); },
 				complete: function(data){
@@ -171,7 +171,7 @@
 				data: JSON.stringify({
 			    	path 				: '{{ mavensmate.ui.getProjectPath() }}',
 			    	subscription 		: $("#subscription").val(),
-			    	command 			: "update_subscription"
+			    	command 			: "update-subscription"
 				}),
 				beforeSend: function() { showLoading('Updating project subscription'); },
 				complete: function(data){
@@ -200,7 +200,7 @@
 				data: JSON.stringify({
 					package 			: get_tree(),
 					path 				: '{{ mavensmate.ui.getProjectPath() }}',
-					command 			: 'edit_project'
+					command 			: 'edit-project'
 				}),
 				beforeSend: function() { showLoading('Updating project'); },
 				complete: function(data){
@@ -219,7 +219,7 @@
 				url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
 				data: JSON.stringify({
 					path 				: '{{ mavensmate.ui.getProjectPath() }}',
-					command 			: 'index_metadata'
+					command 			: 'index-metadata'
 				}),
 				beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs.<br/><br/>Thanks for being patient! :)'); },
 				complete: function(data, status, xhr){

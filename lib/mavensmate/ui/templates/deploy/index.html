@@ -549,7 +549,7 @@
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
 				path 				: '{{ mavensmate.ui.getProjectPath() }}',
-				command 			: 'index_metadata'
+				command 			: 'index-metadata'
 			}),
 			beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs.<br/><br/>Thanks for being patient! :)'); },
 			complete: function(data, status, xhr){
@@ -778,7 +778,7 @@
 			contentType: 'application/json; charset=utf-8',
 			data: {
 				 path 				: '{{ mavensmate.ui.getProjectPath() }}',
-				 command 			: 'list_connections'
+				 command 			: 'get-connections'
 			},
 			beforeSend: function() { showLoading('Listing connections'); },
 			complete: function(data){
@@ -808,7 +808,7 @@
 			data: JSON.stringify({
 				id 					: id,
 				path 				: '{{ mavensmate.ui.getProjectPath() }}',
-				command 			: 'delete_connection'
+				command 			: 'delete-connection'
 			}),
 			beforeSend: function() { showLoading('Removing connection'); },
 			complete: function(data){
@@ -840,7 +840,7 @@
 				password 		 : $("#connection_pw").val(), 
 				org_type 		 : $("#org_type").val(),
 				path 			 : '{{ mavensmate.ui.getProjectPath() }}',
-				command 		 : 'new_connection'
+				command 		 : 'new-connection'
 			}),
 			beforeSend: function() { showLoading('Adding connection'); },
 			complete: function(data){

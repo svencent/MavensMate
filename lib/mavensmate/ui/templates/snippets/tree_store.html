@@ -5,7 +5,7 @@ tree_store = new Ext.data.TreeStore({
         url: "{{ mavensmate.ui.getBaseUrl() }}/generic",
         extraParams: {
         path: '{{ mavensmate.ui.getProjectPath() }}',
-            command: 'get_indexed_metadata'
+            command: 'get-metadata-index'
         },
         headers: {
             'Content-Type'  : 'application/json; charset=UTF-8',

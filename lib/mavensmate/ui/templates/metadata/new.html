@@ -58,7 +58,7 @@
 				url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
 				data: JSON.stringify({
 					path 				: '{{ mavensmate.ui.getProjectPath() }}',
-					command 			: "get_templates"	
+					command 			: "get-templates"	
 				}),
 				beforeSend: function() { showLoading('Creating new Ma'); },
 				complete: function(data){
@@ -84,7 +84,7 @@
 				url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
 				data: JSON.stringify({
 					path 				: '{{ mavensmate.ui.getProjectPath() }}',
-					command 			: 'new_metadata',
+					command 			: 'new-metadata',
 					params 				: paramPayload,
 					metadata_type		: '{{ metadata_type }}',
 					github_template		: selectedTemplate

@@ -95,7 +95,7 @@
                             path                : '{{ mavensmate.ui.getProjectPath() }}',
                             keyword             : filter,
                             ids                 : $("#tree").dynatree("getTree").selectedIds,
-                            command             : 'get_indexed_metadata'
+                            command             : 'get-metadata-index'
                         })
                     }
                 );
@@ -115,7 +115,7 @@
                     data     : JSON.stringify({
                         path                : '{{ mavensmate.ui.getProjectPath() }}',
                         ids                 : $("#tree").dynatree("getTree").selectedIds,
-                        command             : 'get_indexed_metadata'
+                        command             : 'get-metadata-index'
                     })
                 }
             );
@@ -146,7 +146,7 @@
                 data: JSON.stringify({
                     metadata_types      : mtype,
                     path                : '{{ mavensmate.ui.getProjectPath() }}',
-                    command             : 'refresh_metadata_index'
+                    command             : 'refresh-metadata-index'
                 }),
                 beforeSend: function() { showLoading("Refreshing Metadata Type: "+ mtype +"..."); },
                 complete: function(data){

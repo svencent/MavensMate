@@ -115,7 +115,7 @@
 				 path 				: '{{ mavensmate.ui.getProjectPath() }}',
 				 debug_categories 	: get_log_levels_json_tooling(),
 				 expiration 		: $("#expiration").val(),
-				 command 			: 'new_log'
+				 command 			: 'new-log'
 			}),
 			beforeSend: function() { showLoading('Creating Debug Log...'); },
 			complete: function(data){	

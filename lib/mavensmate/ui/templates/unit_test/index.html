@@ -293,7 +293,7 @@
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
 				path 				: '{{ mavensmate.ui.getProjectPath() }}',
-				command 			: "unit_test",
+				command 			: "test",
 				ajax_args 			: ['--html'],
 				classes 			: get_tests_to_run(),
 				generate_logs		: $("#enable_logging").is(":checked")
