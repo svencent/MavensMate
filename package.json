@@ -23,7 +23,7 @@
   "dependencies": {
     "commander": "joeferraro/commander.js",
     "autocmdr": "0.0.7",
-    "jsforce": "latest",
+    "jsforce": "joeferraro/jsforce",
     "swig": "latest",
     "winston": "latest",
     "nconf": "latest",
@@ -51,7 +51,9 @@
     "request":"2.47.0",
     "keytar":"2.0.3",
     "xml2js":"0.4.4",
-    "temp":"0.8.1"
+    "temp":"0.8.1",
+    "loophole":"latest",
+    "body-parser":"latest"
   },
   "devDependencies": {
     "sinon":"latest",

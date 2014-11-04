@@ -1,0 +1,65 @@
+#!/usr/bin/env node
+'use strict';
+
+var program 		= require('commander');
+var mavensmate 	= require('../lib/mavensmate');
+
+// initialize top-level program with global options
+program
+  .version('0.0.1')
+  .option('-d --debugging', 'Explicitly enables logging. When in headless mode, debug statements will be placed in "debug" object in JSON response.')
+  .option('-h --headless', 'Runs in headless mode, requiring piped-JSON for context. Best for use by MavensMate text editor/IDE clients.')
+  .option('-c --client [name]', 'Specifies the plugin client (SUBLIME_TEXT, ATOM)') // no default set
+  .parse(process.argv, true); // parse top-level args, defer subcommand
+
+var cliClient = mavensmate.createClient({
+	editor: program.client,
+	headless: program.headless,
+	debugging: program.debugging,
+	program: program
+});
+
+var logger = require('winston');
+  
+// output top-line help
+program.on('--help', function(){
+  console.log('  Examples:');
+  console.log('');
+  console.log('    $ mavensmate -c sublime new-project');
+  console.log('    $ mavensmate --debugging edit-project --ui');
+  console.log('');
+});
+
+// if no command is specified and help is not specified, show help
+if (program.args.length < 1 ) {
+  program.outputHelp();
+  process.exit(1);
+}
+
+program.log = logger; // because autocmdr uses program.log (TODO: remove reliance on autocmdr)
+
+require('../lib/mavensmate/loader')(cliClient);
+require('autocmdr/lib/completion')(program);
+require('autocmdr/lib/package')(program);
+require('autocmdr/lib/help')(program);
+
+logger.debug('\n\n\n\n=====> RUNNING COMMAND:\n');
+logger.debug('Args: '+JSON.stringify(process.argv));
+
+var projectExemptCommands = [
+  'new-project'
+];
+var commandName = program.args[0];
+
+// not all command needs a project
+if (projectExemptCommands.indexOf(commandName) === -1) {
+  cliClient.setProject(process.cwd(), function(err) {
+    if (err) {
+      console.error('Could not set project: '+err.message);
+      process.exit(1);
+    }
+    program.parse(process.argv); // run subcommand if necessary
+  });
+} else {
+  program.parse(process.argv); // run subcommand if necessary
+}
