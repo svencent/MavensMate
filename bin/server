@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+'use strict';
+
+var mavensmate 	= require('../lib/mavensmate');
+
+var client = mavensmate.createClient({
+	editor: 'sublime',
+	headless: true,
+	debugging: true
+});

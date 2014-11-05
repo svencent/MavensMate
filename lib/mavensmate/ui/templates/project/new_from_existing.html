@@ -81,7 +81,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
 				data: JSON.stringify({
 					 project_name 	: $("#pn").val(), 
 					 username 		: $("#un").val(), 
@@ -95,15 +95,15 @@
 				}),
 				beforeSend: function() { showLoading('Creating new MavensMate project'); },
 				complete: function(data){
-					global_init_handler(data);
+					responseHandler(data);
 				} 
 		 	});
 		}
 
-		function handle_response(response) {
+		function handleResponse(response) {
 			if (operation == "checkout" || operation == "new") {
 				if (response["success"] == false) {
-					$("#error_message").html(response["body"]);
+					$("#error_message").html(response["result"]);
 					$("#result_output").show()
 				} else {
 					closeWindow();
@@ -111,7 +111,7 @@
 				hideLoading();
 			} else if (operation == "check_creds") {
 				if (response["success"] === false) {
-					$("#error_message").html(response["body"]);
+					$("#error_message").html(response["result"]);
 					$("#result_output").show();
 				} else {
 					$('#sid').val(response["sid"]);

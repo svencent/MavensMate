@@ -47,7 +47,8 @@ logger.debug('\n\n\n\n=====> RUNNING COMMAND:\n');
 logger.debug('Args: '+JSON.stringify(process.argv));
 
 var projectExemptCommands = [
-  'new-project'
+  'new-project',
+  'session'
 ];
 var commandName = program.args[0];
 

@@ -65,7 +65,7 @@
 		function upgrade() {
 			$.ajax({
 				type: "POST",
-				url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
 				data: JSON.stringify({
@@ -80,19 +80,19 @@
 				}),
 				beforeSend: function() { showLoading('Upgrading your project'); },
 				complete: function(data){	
-					global_init_handler(data);			
+					responseHandler(data);			
 				} 
 			});
 		}
 
-		function handle_response(response) {
+		function handleResponse(response) {
 			if (response["success"] === false) {
-				show_message(response["body"]);
+				showMessage(response["result"]);
 				notifySound();
 			} else {
 				$("#btnSubmit").remove();
 				$("#btnCancel").html("Done");
-				show_message("Your project has been successfully upgraded. Happy coding :)", 'success', true);
+				showMessage("Your project has been successfully upgraded. Happy coding :)", 'success', true);
 				notifySound();
 			}
 			hideLoading();

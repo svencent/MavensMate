@@ -245,8 +245,8 @@
 
 <script>
 
-	function handle_response(response) {
-		$("#result_wrapper").html(response["body"])
+	function handleResponse(response) {
+		$("#result_wrapper").html(response["result"])
 
 		$("#class_coverage_wrapper").html(
 			$("#class_wrapper").html()
@@ -281,7 +281,7 @@
 	function run_tests() {
 		$.ajax({
 			type: "POST",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
@@ -293,7 +293,7 @@
 			}),
 			beforeSend: function() { toggleRunningIndicator(); $("#btnRunTests").hide() },
 			complete: function(data){
-				global_init_handler(data)				
+				responseHandler(data)				
 			} 
 		});
 	}

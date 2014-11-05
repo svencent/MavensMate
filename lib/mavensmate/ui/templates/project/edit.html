@@ -135,7 +135,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
 				data: JSON.stringify({
 					username 			: $("#un").val(),
 			    	password 			: $("#pw").val(),
@@ -151,9 +151,9 @@
 					console.log(data)				
 					var response = JSON.parse(data.responseText)
 					if (response["success"] == false) {
-						show_message(response["body"])
+						showMessage(response["result"])
 					} else {
-						show_message(response["body"], 'success', true)
+						showMessage(response["result"], 'success', true)
 					}
 					hideLoading();
 				}
@@ -167,7 +167,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
 				data: JSON.stringify({
 			    	path 				: '{{ mavensmate.ui.getProjectPath() }}',
 			    	subscription 		: $("#subscription").val(),
@@ -178,9 +178,9 @@
 					console.log(data)				
 					var response = JSON.parse(data.responseText)
 					if (response["success"] == false) {
-						show_message(response["body"])
+						showMessage(response["result"])
 					} else {
-						show_message_with_custom_action(response["body"], 'success', 'Refresh Index', 'hide_message();index_org(true)')
+						showMessage_with_custom_action(response["result"], 'success', 'Refresh Index', 'hideMessage();index_org(true)')
 					}
 					hideLoading();
 				}
@@ -196,15 +196,15 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
 				data: JSON.stringify({
-					package 			: get_tree(),
+					package 			: getTree(),
 					path 				: '{{ mavensmate.ui.getProjectPath() }}',
 					command 			: 'edit-project'
 				}),
 				beforeSend: function() { showLoading('Updating project'); },
 				complete: function(data){
-					global_init_handler(data)
+					responseHandler(data)
 				} 
 			});
 		}
@@ -216,22 +216,22 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
 				data: JSON.stringify({
 					path 				: '{{ mavensmate.ui.getProjectPath() }}',
 					command 			: 'index-metadata'
 				}),
 				beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs.<br/><br/>Thanks for being patient! :)'); },
 				complete: function(data, status, xhr){
-					global_init_handler(data)				
+					responseHandler(data)				
 				} 
 			});
 		}
 
-		function handle_response(response) {
+		function handleResponse(response) {
 			if (operation == "index") {
 				if (response["success"] == false) {
-					show_message(response["body"])
+					showMessage(response["result"])
 				} else {
 					if (tree === undefined) {
 						renderTree()  
@@ -243,9 +243,9 @@
 				hideLoading();
 			} else if (operation == "update") {
 				if (response["success"] == false) {
-					show_message(response["body"])
+					showMessage(response["result"])
 				} else {
-					show_message("Project updated successfully.", "success", true)
+					showMessage("Project updated successfully.", "success", true)
 				}
 				notifySound()
 				hideLoading();

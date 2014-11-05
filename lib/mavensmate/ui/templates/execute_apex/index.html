@@ -277,7 +277,7 @@ var line;
 function execute_apex() {
 	$.ajax({
 		type: "POST",
-		url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
+		url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
 		dataType: "json",
 		contentType: 'application/json; charset=utf-8',
 		data: JSON.stringify({
@@ -293,12 +293,12 @@ function execute_apex() {
 			editor.setReadOnly(true); 
 		},
 		complete: function(data){	
-			global_init_handler(data)		
+			responseHandler(data)		
 		} 
 	});
 }
 
-function handle_response(response) {
+function handleResponse(response) {
 	console.log(response)
 	try {
 		if (response["success"] == true) {
@@ -308,7 +308,7 @@ function handle_response(response) {
 			$("#log_selector").html(debug_log)
 			$(".results_hidden").show();
 			$("#a_result").click();
-			hide_message()
+			hideMessage()
 		} else {
 			var return_message = ''
 			var error_message = response["compileProblem"]
@@ -340,12 +340,12 @@ function handle_response(response) {
 			  text: return_message,
 			  type: "error" // also warning and information
 			}]);
-			show_message(return_message);
+			showMessage(return_message);
 			notifySound();
 		}
 	} catch(e) {
 		console.log(e)
-		$("#log_coverage_wrapper").html(response["body"])
+		$("#log_coverage_wrapper").html(response["result"])
 		$(".results_hidden").show();
 		$("#a_result").click();
 	}

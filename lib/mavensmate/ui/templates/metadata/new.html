@@ -55,14 +55,14 @@
 			operation = "get_templates";
 			$.ajax({
 				type: "GET",
-				url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
 				data: JSON.stringify({
 					path 				: '{{ mavensmate.ui.getProjectPath() }}',
 					command 			: "get-templates"	
 				}),
 				beforeSend: function() { showLoading('Creating new Ma'); },
 				complete: function(data){
-					global_init_handler(data);
+					responseHandler(data);
 				} 
 		 	});	
 		}
@@ -81,7 +81,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
 				data: JSON.stringify({
 					path 				: '{{ mavensmate.ui.getProjectPath() }}',
 					command 			: 'new-metadata',
@@ -91,15 +91,15 @@
 				}),
 				beforeSend: function() { showLoading('Creating new metadata...'); },
 				complete: function(data){
-					global_init_handler(data);
+					responseHandler(data);
 				} 
 		 	});
 		}
 
-		function handle_response(response) {
+		function handleResponse(response) {
 			if (operation == "get_templates") {
 				if (response["success"] === false) {
-					show_message(response["body"]);
+					showMessage(response["result"]);
 					notifySound();
 				} else {
 					//
@@ -107,7 +107,7 @@
 				hideLoading();
 			} else if (operation == "new_metadata") {
 				if (response["success"] === false) {
-					show_message(response["body"]);
+					showMessage(response["result"]);
 					notifySound();
 				} else {
 					closeWindow();

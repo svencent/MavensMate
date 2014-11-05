@@ -544,7 +544,7 @@
 		operation = "index"
 		$.ajax({
 			type: "POST",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
@@ -553,7 +553,7 @@
 			}),
 			beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs.<br/><br/>Thanks for being patient! :)'); },
 			complete: function(data, status, xhr){
-				global_init_handler(data)				
+				responseHandler(data)				
 			} 
 		});
 	}
@@ -575,7 +575,7 @@
 		return ts
 	}
 
-	function handle_response(response) {
+	function handleResponse(response) {
 		console.log('handling responsE!!');
 		console.log(operation);
 		console.log(response);
@@ -583,11 +583,11 @@
 			console.log('handling deploy finishhhhh')
 			$(".compare_results_hidden").addClass('hidden');
 			if (response["success"] === false) {
-				show_message(response["body"])
+				showMessage(response["result"])
 			} else {
 				$(".result_wrapper").remove()
 
-				$("#result").html(response["body"]);
+				$("#result").html(response["result"]);
 
 				$("#dropdown-destinations").html($("#destination_options ul").html());
 				$("#destination_options").remove()
@@ -623,7 +623,7 @@
 			console.log('wooooo!!!!');
 			$(".result_wrapper").remove()
 
-			$("#result").html(response["body"]);
+			$("#result").html(response["result"]);
 
 			$("#dropdown-destinations").html($("#destination_options ul").html());
 			$("#destination_options").remove()
@@ -657,7 +657,7 @@
 		} else if (operation == "compare") {
 			$(".results_hidden").hide();
 			if (response["success"] === false) {
-				show_message(response["body"])
+				showMessage(response["result"])
 			} else {
 				hasCompared = true;
 
@@ -666,7 +666,7 @@
 
 				$(".result_wrapper").remove()
 
-				$("#result").html(response["body"]);
+				$("#result").html(response["result"]);
 
 				$("#dropdown-compare-destinations").html($("#destination_compare_options ul").html());
 				$("#destination_compare_options").remove()
@@ -698,7 +698,7 @@
 			notifySound();
 		} else if (operation == "index") {
 			if (response["success"] == false) {
-				show_message(response["body"])
+				showMessage(response["result"])
 			} else {
 				if (tree === undefined) {
 					renderTree(140)  
@@ -716,7 +716,7 @@
 		operation = "compare"
 		$.ajax({
 			type: "POST",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
@@ -724,7 +724,7 @@
 			    check_only 			: isValidateOnly(),
 			    run_tests 			: isRunTests(),
 			    rollback_on_error 	: isRollbackOnError(),
-			    package 			: get_tree(),
+			    package 			: getTree(),
 			    new_deployment_name : $("#new_deployment_name").val(),
 			    debug_categories 	: get_log_levels_json(),
 			    finish 				: false,
@@ -734,7 +734,7 @@
 			}),
 			beforeSend: function() { toggleRunningIndicator(); $("#btnDeploy").hide(); $("#btnCompare").hide();  },
 			complete: function(data){
-				global_init_handler(data)
+				responseHandler(data)
 			} 
 	 	});	
 	}
@@ -743,7 +743,7 @@
 		operation = "deploy"
 		$.ajax({
 			type: "POST",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
@@ -751,7 +751,7 @@
 			    check_only 			: isValidateOnly(),
 			    run_tests 			: isRunTests(),
 			    rollback_on_error 	: isRollbackOnError(),
-			    package 			: get_tree(),
+			    package 			: getTree(),
 			    new_deployment_name : $("#new_deployment_name").val(),
 			    debug_categories 	: get_log_levels_json(),
 			    finish 				: true,
@@ -761,7 +761,7 @@
 			}),
 			beforeSend: function() { toggleRunningIndicator(); $("#btnDeploy").hide(); $("#btnCompare").hide();  },
 			complete: function(data){
-				global_init_handler(data)
+				responseHandler(data)
 			} 
 	 	});
 	} 
@@ -773,7 +773,7 @@
 	function listConnections() {
 		$.ajax({
 			type: "GET",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: {
@@ -804,7 +804,7 @@
 			type: "POST",
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
-			url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
 			data: JSON.stringify({
 				id 					: id,
 				path 				: '{{ mavensmate.ui.getProjectPath() }}',
@@ -816,7 +816,7 @@
 				console.log(data)				
 				var response = JSON.parse(data.responseText)
 				if (response["success"] == false) {
-					$("#connection_error_message").html(response["body"])
+					$("#connection_error_message").html(response["result"])
 					$("#connection_error_wrapper").show()
 					hideLoading()	
 				} else {
@@ -834,7 +834,7 @@
 			type: "POST",
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
-			url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
 			data: JSON.stringify({
 				username 		 : $("#connection_un").val(), 
 				password 		 : $("#connection_pw").val(), 
@@ -848,7 +848,7 @@
 				console.log(data)				
 				var response = JSON.parse(data.responseText)
 				if (response["success"] == false) {
-					$("#connection_error_message").html(response["body"])
+					$("#connection_error_message").html(response["result"])
 					$("#connection_error_wrapper").show()
 					hideLoading()	
 				} else {

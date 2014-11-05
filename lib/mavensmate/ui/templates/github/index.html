@@ -42,7 +42,7 @@
 		function connect() {
 			$.ajax({
 				type: "POST",
-				url: "{{ mavensmate.ui.getBaseUrl() }}/generic", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
 				data: JSON.stringify({
@@ -55,12 +55,12 @@
 					console.log(data);
 					var response = JSON.parse(data.responseText);
 					if (response["success"] == false) {
-						show_message(response["body"]);
+						showMessage(response["result"]);
 						notifySound();
 					} else {
 						$("#btnSubmit").remove();
 						$("#btnCancel").html("Done");
-						show_message("MavensMate and GitHub are now BFFs. Happy coding :)", 'success', true);
+						showMessage("MavensMate and GitHub are now BFFs. Happy coding :)", 'success', true);
 						notifySound();
 					}
 					hideLoading();	

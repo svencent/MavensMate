@@ -105,7 +105,7 @@
 	function new_log() {
 		$.ajax({
 			type: "POST",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/generic/async", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
 			dataType: "json",
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
@@ -119,18 +119,18 @@
 			}),
 			beforeSend: function() { showLoading('Creating Debug Log...'); },
 			complete: function(data){	
-				global_init_handler(data);		
+				responseHandler(data);		
 			} 
 		});
 	}
 
-	function handle_response(response) {
+	function handleResponse(response) {
 		console.log(response);
 		try {
 			if (response["success"] == true) {
-				show_message("Debug log created successfully.", 'success', true);
+				showMessage("Debug log created successfully.", 'success', true);
 			} else {
-				show_message(response["message"]);
+				showMessage(response["message"]);
 			}
 		} catch(e) {
 			console.log(e);

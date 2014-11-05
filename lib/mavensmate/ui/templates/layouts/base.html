@@ -24,7 +24,7 @@
         var tree;
 
         $.ajaxSetup({
-            headers: { "mm_plugin_client": "{{ mavensmate.ui.util.getClient() }}" }
+            headers: { "mm_plugin_client": "{{ mavensmate.ui.getClient().editor }}" }
         });
 
         $(function() {
@@ -90,7 +90,7 @@
                         type     : "POST",
                         dataType : "json",
                         contentType: 'application/json; charset=utf-8',
-                        url      : baseLocalServerURL+"/generic",
+                        url      : baseLocalServerURL+"/execute",
                         data     : JSON.stringify({
                             path                : '{{ mavensmate.ui.getProjectPath() }}',
                             keyword             : filter,
@@ -111,7 +111,7 @@
                     type     : "POST",
                     dataType : "json",
                     contentType: 'application/json; charset=utf-8',
-                    url      : baseLocalServerURL+"/generic",
+                    url      : baseLocalServerURL+"/execute",
                     data     : JSON.stringify({
                         path                : '{{ mavensmate.ui.getProjectPath() }}',
                         ids                 : $("#tree").dynatree("getTree").selectedIds,
@@ -142,7 +142,7 @@
                 type: "POST",
                 dataType : "json",
                 contentType: 'application/json; charset=utf-8',
-                url: baseLocalServerURL+"/generic", 
+                url: baseLocalServerURL+"/execute", 
                 data: JSON.stringify({
                     metadata_types      : mtype,
                     path                : '{{ mavensmate.ui.getProjectPath() }}',
@@ -278,7 +278,7 @@
                                 if (response["status"] == 'pending') {
                                     setTimeout(function() { checkRequestStatus(request_id); }, CHECK_STATUS_INTERVAL); //poll for completed async request
                                 } else {
-                                    handle_response(response);
+                                    handleResponse(response);
                                 }
                             } catch(e) {
                                 console.log('error handling response');

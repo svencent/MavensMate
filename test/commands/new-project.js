@@ -10,15 +10,28 @@ var path 				= require('path');
 var assert = chai.assert;
 var should = chai.should();
 
+// afterEach(function(done) {
+// 	if (testClient && _.isFunction(testClient.destroy)) {
+// 		testClient.destroy();		
+// 	}
+// 	done();
+// });
+
 describe('mavensmate new-project', function(){
 	// var cmd = 'node '+path.join(__dirname, '../bin/mavensmate')+' ';
-	
+	var testClient;
+
+	afterEach(function(done) {
+		testClient.destroy();
+		done();
+	});
+
 	it('--ui flag should return new tmp html file', function(done) {
 		
-		this.timeout(2000);
+		this.timeout(1000000);
 
-		var testClient = mavensmate.createClient({
-			name: 'sublime',
+		testClient = mavensmate.createClient({
+			editor: 'sublime',
 			headless: true,
 			debugging: true
 		});
@@ -30,7 +43,8 @@ describe('mavensmate new-project', function(){
 		}, function(err, response) {
 			should.equal(err, null);
 			response.should.have.property('result');
-			done();
+			console.log(response);
+			// done();
 		});
 
 		// mavensmate.execute('new-project', {
