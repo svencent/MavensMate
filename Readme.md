@@ -1,4 +1,4 @@
-mm-node
+mavensmate
 =============
 
 # Description
@@ -7,13 +7,13 @@ mm core
 
 # Usage
 
-To install mm-node from npm, run:
+To install mavensmate from npm, run:
 
 ```
-$ npm install -g mm-node
+$ npm install -g mavensmate
 ```
 
-```node ./bin/mm-node --help```
+```node ./bin/mavensmate --help```
 
 # License
 
