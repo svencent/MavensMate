@@ -222,11 +222,13 @@
 		});
 
 		function buildSubcriptionList(orgMetadataTypes) {
+			console.log('building sub list!');
+			console.log(orgMetadataTypes);
 			var htmlWithSelectOptions = '';
 			for (var t in orgMetadataTypes) {
 				var xmlName = orgMetadataTypes[t].xmlName;
 				if ($.inArray( xmlName, defaultSubscription ) >= 0) {
-					htmlWithSelectOptions += '<option value="'+xmlName+'"" selected>'+xmlName+'</option>';
+					htmlWithSelectOptions += '<option value="'+xmlName+'" selected>'+xmlName+'</option>';
 				} else {
 					htmlWithSelectOptions += '<option value="'+xmlName+'">'+xmlName+'</option>';
 				}
@@ -262,13 +264,15 @@
 							showMessage(response.error);
 							notifySound();
 						} else {
-							console.log(response);
-							renderBufferedTree(response['metadata']);
-							$('#sid').val(response['sid']);	
-							$('#metadata_server_url').val(response['metadata_server_url'])
-							$('#server_url').val(response['server_url'])
-							if (!isSubscriptionListBuilt)
-								buildSubcriptionList(response['org_metadata_types']);
+							var result = response.result;
+							renderBufferedTree(result.index);
+							$('#sid').val(result['sid']);	
+							$('#metadata_server_url').val(result.metadata_server_url);
+							$('#server_url').val(result.server_url);
+							if (!isSubscriptionListBuilt) {
+								console.log('GOT TO');
+								buildSubcriptionList(result.metadataTypes);
+							}
 							hideMessage();
 						}
 						resizeProjectWrapper(10);
