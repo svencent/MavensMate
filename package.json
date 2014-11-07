@@ -1,10 +1,13 @@
 {
-  "name": "mm-node",
-  "version": "0.0.0",
+  "name": "mavensmate",
+  "version": "0.0.1",
   "description": "mm core",
   "private": true,
   "bin": {
-    "mm-node": "./bin/mm-node"
+    "mavensmate": "./bin/mavensmate"
+  },
+  "main": {
+    "mavensmate": "./lib/mavensmate"
   },
   "scripts": {
     "test": "mocha -R spec"
@@ -16,15 +19,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/joeferraro/mm-node"
+    "url": "https://github.com/joeferraro/mavensmate"
   },
   "license": "MIT",
-  "bugs": "https://github.com/joeferraro/mm-node/issues",
+  "bugs": "https://github.com/joeferraro/mavensmate/issues",
   "dependencies": {
     "commander": "joeferraro/commander.js",
     "autocmdr": "0.0.7",
     "jsforce": "joeferraro/jsforce",
-    "swig": "latest",
+    "swig": "joeferraro/swig",
     "winston": "latest",
     "nconf": "latest",
     "strip-json-comments":"latest",
@@ -54,7 +57,8 @@
     "temp":"0.8.1",
     "loophole":"latest",
     "body-parser":"latest",
-    "portfinder":"latest"
+    "portfinder":"latest",
+    "loophole":"latest"
   },
   "devDependencies": {
     "sinon":"latest",

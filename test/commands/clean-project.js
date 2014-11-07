@@ -1,5 +1,4 @@
 'use strict';
-
 var mavensmate 	= require('../../lib/mavensmate');
 var chai 				= require('chai');
 var exec 				= require('child_process').exec;
