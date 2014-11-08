@@ -15,5 +15,5 @@
 	</types>
 {%- endif %}
 {%- endfor %}
-	<version>{{ global.mmApiVersion }}</version>
+	<version>{{ config.get('mm_api_version') }}</version>
 </Package>

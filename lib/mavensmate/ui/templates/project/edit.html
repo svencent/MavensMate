@@ -65,24 +65,28 @@
 				<fieldset>
 					<div class="clearfix">
 						<label for="subscription" style="font-weight:bold;">Metadata Subscription List</label> 
-						<select name="huge" class="select-block mbl info" style="display:none;" id="subscription" multiple="multiple" data-placeholder="Select 1 or more metadata types..." data-selected-text-format="count>3" data-size="20">
-							{% for m in mavensmate.ui.getProject().describe %}
-								{% if m['xmlName'] in mavensmate.ui.getProject().getSubscription() %}
-									{% set selected = 'selected="selected"' %}
-								{% else %}
-									{% set selected = '' %}
-								{% endif %}
-								<option {{ selected }} value="{{ m['xmlName'] }}">
-									{{ m['xmlName'] }}
-								</option>
-							{% endfor %} 
-						</select>	
+						<div class="row">
+							<div class="span8">
+								<select name="huge" class="select-block mbl info" style="display:none;" id="subscription" multiple="multiple" data-placeholder="Select 1 or more metadata types..." data-selected-text-format="count>3" data-size="20">
+									{% for m in mavensmate.ui.getMetadataObjects() %}
+										{% if mavensmate.ui.getProjectSubscription().indexOf(m['xmlName']) >= 0 %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ m['xmlName'] }}">
+											{{ m['xmlName'] }}
+										</option>
+									{% endfor %} 
+								</select>	
+							</div>
+							<div class="span4">
+								<a class="btn btn-success btn-embossed" onclick="updateSubscription();">
+									Update Subscription
+								</a>
+							</div>
+						</div>
 					</div>
-					<div class="clearfix" style="margin-top:0px;">
-						<a class="btn btn-success btn-embossed" onclick="updateSubscription();">
-							Update Subscription
-						</a>
-					</div> 
 					<div class="alert alert-info" style="margin-top:20px">
 						<ul>
 							<li>
@@ -130,7 +134,7 @@
 		
 		function updateProjectCreds() {
 			console.log('updating project creds')
-			operation = "update_creds"
+			operation = "update-creds"
 			$.ajax({
 				type: "POST",
 				dataType: 'json',
@@ -139,19 +143,17 @@
 				data: JSON.stringify({
 					username 			: $("#un").val(),
 			    	password 			: $("#pw").val(),
-			    	org_type 			: $(".org_type").val(),
-			    	override_session 	: true,
-			    	defer_connection 	: true,
-			    	org_url 			: $("#custom-url").val(), 
+			    	orgType 			: $(".org_type").val(),
+			    	loginUrl 			: $("#custom-url").val(), 
 			    	path 				: '{{ mavensmate.ui.getProjectPath() }}',
-			    	command 			: "update-credentials"
+			    	command 			: "update-creds"
 				}),
 				beforeSend: function() { showLoading('Updating project credentials'); },
 				complete: function(data){
 					console.log(data)				
 					var response = JSON.parse(data.responseText)
-					if (response["success"] == false) {
-						showMessage(response["result"])
+					if (response.error) {
+						showMessage(response.error)
 					} else {
 						showMessage(response["result"], 'success', true)
 					}
@@ -175,12 +177,11 @@
 				}),
 				beforeSend: function() { showLoading('Updating project subscription'); },
 				complete: function(data){
-					console.log(data)				
 					var response = JSON.parse(data.responseText)
-					if (response["success"] == false) {
-						showMessage(response["result"])
+					if (response.error) {
+						showMessage(response.error);
 					} else {
-						showMessage_with_custom_action(response["result"], 'success', 'Refresh Index', 'hideMessage();index_org(true)')
+						showMessageWithCustomAction(response.result, 'success', 'Refresh Index', 'hideMessage();index_org(true)')
 					}
 					hideLoading();
 				}

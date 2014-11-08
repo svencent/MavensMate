@@ -164,8 +164,8 @@
         <div class="container">
             <div class="main-wrapper">
                 <div style="text-align:center;">
-                    {% if 'project_name' in project_settings %}
-                        {{ project_settings['project_name'] }} ({{ project_settings['username'] }})
+                    {% if mavensmate.ui.getProject() %}
+                        {{ mavensmate.ui.getProject().getName() }} ({{ mavensmate.ui.getProject().sfdcClient.getUsername() }})
                     {% elif operation == 'github' %}
                         {{ 'Github Connection' }}
                     {% else %}
