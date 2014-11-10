@@ -122,22 +122,30 @@
 			<form class="form-stacked" style="padding-top:10px;">
 				<fieldset>
 					<div class="clearfix">
-						<label for="un_list" style="font-weight:bold;">Deployment Targets</label> 
-							<select name="huge" class="select-block mbl info" style="display:none;" id="un_list" multiple="multiple" data-placeholder="Select 1 or more connections...">
-								{% for c in connections %}
-									{% if loop.index0 == 0 %}
-										{% set selected = 'selected="selected"' %}
-									{% else %}
-										{% set selected = '' %}
-									{% endif %}
-									<option {{ selected }} value="{{ c['username'] }};{{c['environment']}};{{c['id']}}">
-										{{ c['username'] }}
-									</option>
-								{% endfor %} 
-							</select>	
+						<div class="row">
+							<div class="span8">
+								<label for="un_list" style="font-weight:bold;">Deployment Targets</label> 
+								<select name="huge" class="select-block mbl info" style="display:none;" id="un_list" multiple="multiple" data-placeholder="Select 1 or more connections...">
+									{% for c in connections %}
+										{% if loop.index0 == 0 %}
+											{% set selected = 'selected="selected"' %}
+										{% else %}
+											{% set selected = '' %}
+										{% endif %}
+										<option {{ selected }} value="{{ c['username'] }};{{c['environment']}};{{c['id']}}">
+											{{ c['username'] }}
+										</option>
+									{% endfor %} 
+								</select>
+							</div>
+						</div>	
 					</div>	
 					<div class="control-group large">
-						<input class="span12" style="width:100%" placeholder="Deployment Name, e.g. QA Deployment (optional)" type="text" id="new_deployment_name">
+						<div class="row">
+							<div class="span8">
+								<input style="width:100%" placeholder="Deployment Name, e.g. QA Deployment (optional)" type="text" id="new_deployment_name">
+							</div>
+						</div>
 					</div>			
 				</fieldset>
 			</form>
@@ -145,20 +153,24 @@
 			<form>
 				<fieldset class="deploy_options" style="margin:0;padding-top:0px;">
 					
-					<div class="row-fluid" style="margin-bottom:30px;">
-						<div class="span4">
+					<div class="row-fluid" style="margin-bottom:10px;">
+						<div class="span12">
 							<label class="checkbox" for="check_only">
 							  <input type="checkbox" checked="checked" value="" id="check_only" data-toggle="checkbox">
 							  Validate Only
 							</label>
 						</div>
-						<div class="span4">
+					</div>
+					<div class="row" style="margin-bottom:10px;">
+						<div class="span12">
 							<label class="checkbox" for="run_tests">
 							  <input type="checkbox" value="" id="run_tests" data-toggle="checkbox">
 							  Run Tests
 							</label>
 						</div>
-						<div class="span4">
+					</div>
+					<div class="row" style="margin-bottom:10px;">
+						<div class="span12">
 							<label class="checkbox" for="rollback">
 							  <input type="checkbox" checked="checked" value="" id="rollback" data-toggle="checkbox">
 							  Rollback on Error

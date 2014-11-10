@@ -19,8 +19,15 @@
 		border:1px solid #f2f2f2;
 	}
 
+	.coverage-wrapper {
+		max-height:450px;
+		overflow-y: scroll;
+		border-bottom: 1px solid #CCC;
+		display: none;
+		margin-bottom: 20px;
+	}
+
 	table.code {
-		display:none;
 		margin-bottom:20px;
 	}
 
@@ -174,10 +181,10 @@
 				<div class="item-search class-list">
 					<div class="control-group large">
 					    <div class="row">
-					    	<div class="span7">
+					    	<div class="span8">
 					    		<input style="height:34px;width:100%" class="" type="text" placeholder="Search">
 					    	</div>
-					    	<div class="span2">
+					    	<div class="span4">
 					    		<button class="btn btn-embossed btn-mini btn-primary" onclick="selectAllTests()">
 					    			All
 					    		</button>
@@ -185,21 +192,15 @@
 					    			None
 					    		</button>
 					    	</div>
-					    	<div class="span3" id="enable_logging_wrapper">
-					    		<label class="checkbox" for="enable_logging" style="margin:0px;">
-					    		  <input type="checkbox" value="" id="enable_logging" data-classname="" data-toggle="checkbox" checked>
-					    		  Enable logging
-					    		</label>
-					    	</div>
 					    </div>
 					    
 					</div>
 				</div>
 				<div id="class-list-wrapper">
-					{% for cls in classes %}
+					{% for cls in mavensmate.ui.getTestClasses() %}
 						<div class="alert alert-info" style="padding:10px;margin-bottom:5px;">
 							<label class="checkbox" for="chk-{{cls}}" style="margin:0px;">
-							  <input type="checkbox" value="" id="chk-{{cls}}" data-classname="{{cls}}" data-toggle="checkbox" {% if cls in selected %}checked{% endif %}>
+							  <input type="checkbox" value="" id="chk-{{cls}}" data-classname="{{cls}}" data-toggle="checkbox">
 							  {{ cls }}
 							</label>
 						</div>
@@ -246,7 +247,7 @@
 
 
 	{% block buttons %}					
-		<input type="button" class="btn btn-info btn-embossed" value="Run Tests" onclick="run_tests()" id="btnRunTests"> 
+		<input type="button" class="btn btn-info btn-embossed" value="Run Tests" onclick="runTests()" id="btnRunTests"> 
 		{% include 'snippets/cancel_button.html' %}
 		{% include 'snippets/running_indicator.html' %}
 	{% endblock %}
@@ -257,35 +258,73 @@
 <script>
 
 	function handleResponse(response) {
-		$("#result_wrapper").html(response["result"])
+		if (response.error) {
+			// todo: message
+		} else {
+			$("#result_wrapper").html(response.result)
 
-		$("#class_coverage_wrapper").html(
-			$("#class_wrapper").html()
-			)
-		$("#trigger_coverage_wrapper").html(
-			$("#trigger_wrapper").html()
-			)
-		$("#log_coverage_wrapper").html(
-			$("#log_wrapper").html()
-			)
-		$("#class_wrapper").remove()
-		$("#trigger_wrapper").remove()
-		$("#log_wrapper").remove()
+			$("#class_coverage_wrapper").html(
+				$("#class_wrapper").html()
+				)
+			$("#trigger_coverage_wrapper").html(
+				$("#trigger_wrapper").html()
+				)
+			$("#log_coverage_wrapper").html(
+				$("#log_wrapper").html()
+				)
+			$("#class_wrapper").remove()
+			$("#trigger_wrapper").remove()
+			$("#log_wrapper").remove()
 
-		$(".results_hidden").show();
-		if ($("#arcade").css("display") == "none") {
-			//$(".results_hidden ul li:first-child").click();
-			$("li.active").removeClass('active')
-			$("div.active").removeClass('active')
-			$('a.test_result_link').tab('show');
+			$(".results_hidden").show();
+			if ($("#arcade").css("display") == "none") {
+				//$(".results_hidden ul li:first-child").click();
+				$("li.active").removeClass('active')
+				$("div.active").removeClass('active')
+				$('a.test_result_link').tab('show');
+			}
+
+			toggleRunningIndicator();
+			$("#btnRunTests").show();
+			notifySound();
 		}
-
-		toggleRunningIndicator();
-		$("#btnRunTests").show();
-		notifySound()
 	}
 
-	function run_tests() {
+	function showCoverage(el, apexClassOrTriggerName, type, domId, uncoveredLines) {
+		if ($('#'+domId).hasClass('retrieved')) {
+			if ($(el).html() === 'Show Coverage') {
+				$(el).html('Hide Coverage').removeClass('btn-info');
+			} else {
+				$(el).html('Show Coverage').addClass('btn-info');
+			}
+			$('#'+domId).toggle();
+		} else {
+			$.ajax({
+			    type: "POST",
+			    dataType : "json",
+			    contentType: 'application/json; charset=utf-8',
+			    url: baseLocalServerURL+"/execute", 
+			    data: JSON.stringify({
+			        apexClassOrTriggerName  : apexClassOrTriggerName,
+			        type 					: type,
+			        uncoveredLines 			: uncoveredLines,
+			        ui 						: true,
+			        path                	: '{{ mavensmate.ui.getProjectPath() }}',
+			        command             	: 'get-coverage'
+			    }),
+			    beforeSend: function() {  },
+			    complete: function(data){
+					var response = JSON.parse(data.responseText);
+					$('#'+domId).html(response.result);
+					$(el).html('Hide Coverage').removeClass('btn-info');
+					$('#'+domId).show();
+					$('#'+domId).addClass('retrieved');
+			    } 
+			});	
+		}
+	}
+
+	function runTests() {
 		$.ajax({
 			type: "POST",
 			url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
@@ -293,10 +332,9 @@
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
 				path 				: '{{ mavensmate.ui.getProjectPath() }}',
-				command 			: "test",
-				ajax_args 			: ['--html'],
-				classes 			: get_tests_to_run(),
-				generate_logs		: $("#enable_logging").is(":checked")
+				command 			: "run-tests",
+				ui 					: true,
+				classes 			: getTestsToRun()
 			}),
 			beforeSend: function() { toggleRunningIndicator(); $("#btnRunTests").hide() },
 			complete: function(data){
@@ -305,14 +343,14 @@
 		});
 	}
 
-	function get_tests_to_run() {
-		tests_to_run = []
+	function getTestsToRun() {
+		var testsToRun = [];
 		$("#class-list-wrapper").find("div.alert label input[type='checkbox']").each(function() {
 			if ($(this).attr('checked') === 'checked') {
-				tests_to_run.push($(this).data("classname"))
+				testsToRun.push($(this).data("classname"))
 			}
 		});
-		return tests_to_run
+		return testsToRun;
 	}
 
 	$(function(){	
@@ -372,7 +410,7 @@
 			resize_arcade()
 		});
 		window.resizeTo(950, 700)
-
+		$("#class-list-wrapper").height($(window).height() - 270)
 		resize_arcade()
 		centerWindow()
 	});
@@ -389,16 +427,6 @@
 			$(this).attr('checked', false);
 			$(this).parent().removeClass('checked')
 		});
-	}
-
-	function toggleSourceButton(el, index, type) {
-		console.log($(el).html())
-		if ($(el).html() == "Show Coverage") {
-			$(el).html("Hide Coverage").removeClass("btn-info");
-		} else {
-			$(el).html("Show Coverage").addClass("btn-info");
-		}
-		$("#"+type+"_code_result_"+index).toggle();        
 	}
 
 	$("#result_wrapper").height($(window).height() - 210)
