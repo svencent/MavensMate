@@ -52,7 +52,7 @@
 		var selectedTemplate = null;
 		
 		function getTemplateDefinition() {
-			operation = "get_templates";
+			operation = "get-templates";
 			$.ajax({
 				type: "GET",
 				url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
@@ -76,7 +76,7 @@
 				paramPayload[paramName] = paramValue;
 			})
 
-			operation = "new_metadata";
+			operation = "new-metadata";
 			$.ajax({
 				type: "POST",
 				dataType: 'json',
@@ -97,17 +97,17 @@
 		}
 
 		function handleResponse(response) {
-			if (operation == "get_templates") {
-				if (response["success"] === false) {
-					showMessage(response["result"]);
+			if (operation === "get_templates") {
+				if (response.error) {
+					showMessage(response.error);
 					notifySound();
 				} else {
 					//
 				}
 				hideLoading();
 			} else if (operation == "new_metadata") {
-				if (response["success"] === false) {
-					showMessage(response["result"]);
+				if (response.error) {
+					showMessage(response.error);
 					notifySound();
 				} else {
 					closeWindow();

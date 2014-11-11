@@ -168,7 +168,7 @@
 				}
 				hideLoading();
 			} else if (operation === 'check_creds') {
-				if (response['success'] === false) {
+				if (response.error) {
 					showMessage(response['result'], 'info');
 					notifySound();
 				} else {
@@ -259,9 +259,9 @@
 				complete: function(data){
 					try {
 						var response = JSON.parse(data.responseText);
-						if (response.error) {
+						if (response.result.error) {
 							$('#project_details_tab').click();
-							showMessage(response.error);
+							showMessage(response.result.error);
 							notifySound();
 						} else {
 							var result = response.result;
