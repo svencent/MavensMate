@@ -59,7 +59,8 @@
     "loophole":"latest",
     "body-parser":"latest",
     "portfinder":"latest",
-    "loophole":"latest"
+    "loophole":"latest",
+    "which":"latest"
   },
   "devDependencies": {
     "sinon":"latest",
