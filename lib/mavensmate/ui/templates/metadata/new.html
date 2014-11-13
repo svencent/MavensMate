@@ -10,7 +10,7 @@
 <div class="content">
 		 
 	<ul class="nav nav-tabs nav-append-content">
-		<li class="active"><a id="project_details_tab" href="#form" data-toggle="tab">New {{metadata_type}} Details</a></li>
+		<li class="active"><a id="project_details_tab" href="#form" data-toggle="tab">New {{metadataType}} Details</a></li>
 	</ul>
 	
 	<div class="tab-content" id="main-tab-content">
@@ -20,7 +20,7 @@
 					<div class="control-group large">
 						<select id="template" class="select-block mbl info span12">
 							<option value="">Select a metadata template</option>
-							{% for t in template_list %}
+							{% for t in templates %}
 								<option value="{{ t['name'] }}">{{ t['name'] }}</option>
 							{% endfor %}
 						</select>
@@ -48,25 +48,9 @@
 	<script type="text/javascript">
 		var response;
 		var operation;
-		var templates = {{ templates }};
+		var templates = {{ JSON.stringify(templates) }};
 		var selectedTemplate = null;
 		
-		function getTemplateDefinition() {
-			operation = "get-templates";
-			$.ajax({
-				type: "GET",
-				url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
-				data: JSON.stringify({
-					path 				: '{{ mavensmate.ui.getProjectPath() }}',
-					command 			: "get-templates"	
-				}),
-				beforeSend: function() { showLoading('Creating new Ma'); },
-				complete: function(data){
-					responseHandler(data);
-				} 
-		 	});	
-		}
-
 		function newMetadata() {
 			paramPayload = {}
 
@@ -81,12 +65,11 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/metadata/create",
 				data: JSON.stringify({
 					path 				: '{{ mavensmate.ui.getProjectPath() }}',
-					command 			: 'new-metadata',
 					params 				: paramPayload,
-					metadata_type		: '{{ metadata_type }}',
+					metadata_type		: '{{ metadataType }}',
 					github_template		: selectedTemplate
 				}),
 				beforeSend: function() { showLoading('Creating new metadata...'); },
@@ -97,23 +80,19 @@
 		}
 
 		function handleResponse(response) {
-			if (operation === "get_templates") {
-				if (response.error) {
-					showMessage(response.error);
+			if (response.error) {
+				showMessage(response.error);
+				notifySound();
+			} else {
+				if (response.result && response.result.success) {
+					showMessage('{{ metadataType }} successfully created!', 'info');
+					// closeWindow();
+				} else if (response.result && !response.result.success) {
+					showMessage('Could not create metadata. Please check logs or try again.');
 					notifySound();
-				} else {
-					//
 				}
-				hideLoading();
-			} else if (operation == "new_metadata") {
-				if (response.error) {
-					showMessage(response.error);
-					notifySound();
-				} else {
-					closeWindow();
-				}
-				hideLoading();
 			}
+			hideLoading();
 		}
 				
 		$(function() {		   									

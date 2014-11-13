@@ -60,7 +60,8 @@
     "body-parser":"latest",
     "portfinder":"latest",
     "loophole":"latest",
-    "which":"latest"
+    "which":"latest",
+    "shelly":"0.0.3"
   },
   "devDependencies": {
     "sinon":"latest",

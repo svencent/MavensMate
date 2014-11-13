@@ -139,7 +139,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-creds", 
 				data: JSON.stringify({
 					username 			: $("#un").val(),
 			    	password 			: $("#pw").val(),
@@ -169,7 +169,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-subscription", 
 				data: JSON.stringify({
 			    	path 				: '{{ mavensmate.ui.getProjectPath() }}',
 			    	subscription 		: $("#subscription").val(),
@@ -197,7 +197,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update", 
 				data: JSON.stringify({
 					package 			: getTree(),
 					path 				: '{{ mavensmate.ui.getProjectPath() }}',
@@ -217,7 +217,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/index-metadata", 
 				data: JSON.stringify({
 					path 				: '{{ mavensmate.ui.getProjectPath() }}',
 					command 			: 'index-metadata'

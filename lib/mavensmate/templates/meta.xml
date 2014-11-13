@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <{{ metadata.getType().xmlName }} xmlns="http://soap.sforce.com/2006/04/metadata">
-	<apiVersion>{{ global.mmApiVersion }}</apiVersion>
+	<apiVersion>{{ apiVersion }}</apiVersion>
 {% if metadata.getType().xmlName === 'ApexPage' or metadata.getType().xmlName == 'ApexComponent' %}
 	<label>{{ metadata.getName() }}</label>
 	<description></description>
