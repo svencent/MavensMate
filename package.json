@@ -1,8 +1,8 @@
 {
   "name": "mavensmate",
   "version": "0.0.1",
-  "description": "mm core",
-  "private": true,
+  "description": "Core APIs that drive MavensMate IDEs for Salesforce1/Force.com",
+  "private": false,
   "bin": {
     "mavensmate": "./bin/mavensmate"
   },
