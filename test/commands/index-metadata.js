@@ -1,37 +1,27 @@
 'use strict';
-var mavensmate 	= require('../../lib/mavensmate');
+
+var helper 			= require('../test-helper');
 var chai 				= require('chai');
-var exec 				= require('child_process').exec;
-var path 				= require('path');
-// var sinon 		= require('sinon');
-
-// chai.use(chaiAsPromised);
-var assert = chai.assert;
-var should = chai.should();
-
-var testClient;
+// var assert 			= chai.assert;
+var should 			= chai.should();
 
 describe('mavensmate index-metadata', function(){
-	// var cmd = 'node '+path.join(__dirname, '../bin/mavensmate')+' ';
-	
-	it('should index metadata from the server', function(done) {
+
+	it('should index metadata based on the project subscription', function(done) {
 		
-		this.timeout(10000);
+		this.timeout(80000);
 
-		testClient = mavensmate.createClient({
-			editor: 'sublime',
-			headless: true,
-			debugging: true
-		});
+		var testClient = helper.createClient('atom');
 
-		testClient.setProject('/Users/josephferraro/Development/summer14/force', function(err, response) {
+		helper.setProject(testClient, 'existing-project', function() {
 			testClient.executeCommand('index-metadata', function(err, response) {
-				//should.equal(err, null);
-				//response.should.have.property('result');
+				should.equal(err, null);
+				response.should.have.property('result');
+				response.result.should.equal('Metadata successfully indexed');
 				done();
 			});
 		});
-	
+
 	});
 
 });

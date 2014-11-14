@@ -1,0 +1,57 @@
+<apex:page standardController="Account" extensions="ConvertAccountLeads_Controller" tabStyle="Account">
+	<script type="text/javascript">
+		function checkAll() {
+			var checkbox_state = document.getElementById("{!$Component.form.hidden_checkbox_state}").value;
+
+			var select_all_button = document.getElementById("{!$Component.form.btnCheckAll}");
+			var select_none_button = document.getElementById("{!$Component.form.btnCheckNone}");
+			
+			if (checkbox_state == 'None')
+				select_all_button.click();
+			else if (checkbox_state == 'All')
+				select_none_button.click();
+		}
+	</script>
+	<apex:sectionHeader title="{!account.Name}" subtitle="Convert leads associated with this account" />
+	
+	<apex:form id="form">
+		<apex:outputPanel id="hidden_panel">
+			<apex:inputHidden id="hidden_checkbox_state" value="{!checkbox_state}" />
+			<apex:commandButton action="{!selectAll}" value="" id="btnCheckAll" style="display: none" rerender="hidden_panel, table" />
+			<apex:commandButton action="{!selectNone}" value="" id="btnCheckNone" style="display: none" rerender="hidden_panel, table" />
+		</apex:outputPanel>	
+		
+		<apex:pageMessage strength="3" rendered="{!ISNULL(matchingLeads)}" severity="warning" title="oops..." detail="We didn't find any open leads from this company.">
+		  	<span style="padding-left:6px;width:200px;" >
+		  		<apex:commandButton action="{!cancel}" value="Return to the account page" rendered="{!ISNULL(matchingLeads)}"/>
+	  		</span>
+	  	</apex:pageMessage>
+	  	
+  	  	<apex:pageBlock title="Matching Leads" rendered="{!NOT(ISNULL(matchingLeads))}" id="foo">
+  	  	  	
+  	  	  	<apex:pageBlockButtons >
+  	  	  	  	<apex:commandButton action="{!processSelected}" value="Convert Selected Leads" disabled="{!ISNULL(matchingLeads)}"/>
+  	  	  	  	<apex:commandButton action="{!cancel}" value="Cancel"/>
+  	  	  	</apex:pageBlockButtons> 
+  	  	  	
+			<apex:pageBlockTable value="{!matchingLeads}" var="l" id="table"> 
+	            <apex:column headerValue="">
+					<apex:facet name="header"> 
+						<apex:inputCheckbox value="{!all_checkbox_selected}" id="chk_select_all_or_none" onchange="checkAll()"/>
+					</apex:facet>
+	            	<div>  
+						<apex:inputCheckbox value="{!l.selected}" id="chkSelected"/>
+	            	</div>
+	            </apex:column> 
+	            <apex:column value="{!l.lead.firstname}"/> 
+	            <apex:column value="{!l.lead.lastname}"/> 
+	            <apex:column value="{!l.lead.title}"/> 
+	            <apex:column value="{!l.lead.email}"/> 
+	            <apex:column value="{!l.lead.company}"/> 
+	            <apex:column headerValue="Created By" value="{!l.lead.createdby.name}"/> 
+	            <apex:column value="{!l.lead.createddate}"/> 
+	        </apex:pageBlockTable> 
+	        
+  	  	</apex:pageBlock>
+  	</apex:form>
+</apex:page>

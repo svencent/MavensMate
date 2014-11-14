@@ -1,40 +1,31 @@
 'use strict';
 
-var mavensmate 	= require('../../lib/mavensmate');
+var helper 			= require('../test-helper');
 var chai 				= require('chai');
-var exec 				= require('child_process').exec;
-var path 				= require('path');
-// var sinon 		= require('sinon');
-
-// chai.use(chaiAsPromised);
-var assert = chai.assert;
-var should = chai.should();
-
-var testClient;
+var should 			= chai.should();
 
 describe('mavensmate refresh-metadata', function(){
-	// var cmd = 'node '+path.join(__dirname, '../bin/mavensmate')+' ';
-	
-	it('should refresh a list of files', function(done) {
+
+	it('should refresh a list of files from the server', function(done) {
 		
 		this.timeout(20000);
 
-		testClient = mavensmate.createClient({
-			editor: 'sublime',
-			headless: true,
-			debugging: true
-		});
+		var testClient = helper.createClient('atom');
 
-		testClient.setProject('/Users/josephferraro/Development/summer14/force', function(err, response) {
-			testClient.executeCommand('refresh-metadata', {
-				files : [ '/Users/josephferraro/Development/summer14/force/src/classes/AUTOTEST.cls' ]
-			}, function(err, response) {
+		helper.setProject(testClient, 'existing-project', function() {
+			
+			var payload = {
+				files : helper.getProjectFiles(testClient.getProject(), 'ApexClass')
+			};
+
+			testClient.executeCommand('refresh-metadata', payload, function(err, response) {
 				should.equal(err, null);
 				response.should.have.property('result');
+				response.result.should.equal('Metadata successfully refreshed');
 				done();
 			});
 		});
-	
+
 	});
 
 });

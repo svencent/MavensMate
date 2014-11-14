@@ -1,51 +1,60 @@
 'use strict';
 
-var afterEach   = require('../test-helper');
-var mavensmate 	= require('../../lib/mavensmate');
+var helper 			= require('../test-helper');
 var chai 				= require('chai');
-var exec 				= require('child_process').exec;
-var path 				= require('path');
-// var sinon 		= require('sinon');
-
-// chai.use(chaiAsPromised);
-var assert = chai.assert;
-var should = chai.should();
-
-var testClient;
+var should 			= chai.should();
+var path				= require('path');
 
 describe('mavensmate delete-metadata', function(){
-	// var cmd = 'node '+path.join(__dirname, '../bin/mavensmate')+' ';
-	
-	it('should delete a list of files', function(done) {
+
+	it('should create then delete metadata from server', function(done) {
 		
-		this.timeout(10000);
+		this.timeout(100000);
 
-		testClient = mavensmate.createClient({
-			editor: 'sublime',
-			headless: true,
-			debugging: false
-		});
+		var testClient = helper.createClient('atom');
 
-		testClient.setProject('/Users/josephferraro/Development/summer14/force', function(err, response) {
-			testClient.executeCommand('delete-metadata', {
-				files : [ '/Users/josephferraro/Development/summer14/force/src/classes/AUTOTEST.cls' ]
-			}, function(err, response) {
+		helper.setProject(testClient, 'existing-project', function() {
+			
+			var payload = {
+		    metadataType: 'ApexClass', 
+		    params: {'api_name': 'unittestapexclass'}, 
+		    githubTemplate: {
+		        author: 'MavensMate', 
+		        name: 'Default', 
+		        description: 'The default template for an Apex Class', 
+		        file_name: 'ApexClass.cls', 
+		        params: [
+	            {
+	                default: 'MyApexClass', 
+	                name: 'api_name', 
+	                description: 'Apex Class API Name'
+	            }
+		        ]
+		    }
+			};
+
+			testClient.executeCommand('new-metadata', payload, function(err, response) {
 				should.equal(err, null);
 				response.should.have.property('result');
-				done();
+				response.result.success.should.equal(true);
+				response.result.status.should.equal('Succeeded');
+			
+				var payload = {
+					files: [path.join(testClient.getProject().path, 'src', 'classes', 'unittestapexclass.cls')]
+				};
+
+				testClient.executeCommand('delete-metadata', payload, function(err, response) {
+					should.equal(err, null);
+					response.should.have.property('result');
+					response.result.success.should.equal(true);
+					response.result.status.should.equal('Succeeded');
+					done();
+				});
+
 			});
-		});
 		
-		// mavensmate.execute('new-project', {
-		// 	args: {
-		// 		ui : true,
-		// 		client : 'sublime'
-		// 	}
-		// }, function(err, response) {
-		// 	should.equal(err, null);
-		// 	response.should.have.property('result');
-		// 	done();
-		// });
+
+		});
 
 	});
 

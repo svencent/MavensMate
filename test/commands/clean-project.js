@@ -1,37 +1,27 @@
 'use strict';
-var mavensmate 	= require('../../lib/mavensmate');
+
+var helper 			= require('../test-helper');
 var chai 				= require('chai');
-var exec 				= require('child_process').exec;
-var path 				= require('path');
-// var sinon 		= require('sinon');
-
-// chai.use(chaiAsPromised);
-var assert = chai.assert;
-var should = chai.should();
-
-var testClient;
+// var assert 			= chai.assert;
+var should 			= chai.should();
 
 describe('mavensmate clean-project', function(){
-	// var cmd = 'node '+path.join(__dirname, '../bin/mavensmate')+' ';
-	
-	it('should clean refresh the project from server', function(done) {
+
+	it('should revert the project to server state based on package.xml', function(done) {
 		
-		this.timeout(10000);
+		this.timeout(20000);
 
-		testClient = mavensmate.createClient({
-			editor: 'sublime',
-			headless: true,
-			debugging: true
-		});
+		var testClient = helper.createClient('atom');
 
-		testClient.setProject('/Users/josephferraro/Development/summer14/force', function(err, response) {
+		helper.setProject(testClient, 'existing-project', function() {
 			testClient.executeCommand('clean-project', function(err, response) {
 				should.equal(err, null);
 				response.should.have.property('result');
+				response.result.should.equal('Project cleaned successfully');
 				done();
 			});
 		});
-	
+
 	});
 
 });

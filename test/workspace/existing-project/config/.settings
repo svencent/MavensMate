@@ -1,0 +1,16 @@
+{
+    "projectName": "meow",
+    "username": "joeferraro@force.com",
+    "id": "df826eb0-6bb4-11e4-8a91-918eb35e3b78",
+    "environment": "production",
+    "workspace": "/Users/josephferraro/Development/summer14",
+    "subscription": [
+        "ApexClass",
+        "ApexComponent",
+        "ApexPage",
+        "ApexTrigger",
+        "StaticResource",
+        "CustomObject",
+        "Profile"
+    ]
+}

@@ -1,42 +1,28 @@
 'use strict';
-var mavensmate 	= require('../../lib/mavensmate');
+
+var _ 					= require('lodash');
+var helper 			= require('../test-helper');
 var chai 				= require('chai');
-var exec 				= require('child_process').exec;
-var path 				= require('path');
-// var sinon 		= require('sinon');
+var should 			= chai.should();
 
-// chai.use(chaiAsPromised);
-var assert = chai.assert;
-var should = chai.should();
+describe('mavensmate org-index', function(){
 
-var testClient;
-
-describe('mavensmate index-service', function(){
-	// var cmd = 'node '+path.join(__dirname, '../bin/mavensmate')+' ';
-	
-	it('should select metadata', function(done) {
+	it('should select metadata based on package.xml', function(done) {
 		
 		this.timeout(10000);
 
-		testClient = mavensmate.createClient({
-			editor: 'sublime',
-			headless: true,
-			debugging: true
-		});
+		var testClient = helper.createClient('atom');
 
-		testClient.setProject('/Users/josephferraro/Development/summer14/force', function(err, response) {
+		helper.setProject(testClient, 'existing-project', function() {
 			testClient.getProject().getOrgMetadata()
 				.then(function(m) {
-					console.log(m);
+					var apexClass = _.find(m, {id:'ApexClass'});
+					apexClass.select.should.equal(true);
 					done();
-				})
-				['catch'](function(err) {
-					console.log(err);
-					done();
-				})
-				.done();
+				});
 		});
-	
+
 	});
 
 });
+

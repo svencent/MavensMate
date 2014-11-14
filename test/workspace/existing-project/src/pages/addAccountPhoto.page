@@ -1,0 +1,25 @@
+<apex:page standardController="Account" extensions="AccountPhotoExtension" action="{!init}">
+    <apex:sectionHeader title="Upload your Account Photo"/>
+    <apex:outputPanel id="pageMessages">
+        <apex:pageMessages />
+    </apex:outputPanel>
+    <apex:form >
+        <apex:pageBlock title="Upload Wizard">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!doUpload}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons> 
+            <apex:pageBlockSection >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel for="newImage" rendered="{!photo.Id != ''}">Select a Photo</apex:outputLabel>
+                    <apex:inputFile value="{!newPhoto.body}" id="newImage" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel for="currentImage" rendered="{!photo.Id != ''}">Current Photo</apex:outputLabel>
+                    <apex:image value="{!URLFOR($Action.Attachment.Download, photo.Id)}" id="currentImage"
+                        style="max-width:500px;" rendered="{!photo.Id != ''}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form> 
+</apex:page>

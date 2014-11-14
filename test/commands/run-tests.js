@@ -1,43 +1,36 @@
 'use strict';
 
-var mavensmate 	= require('../../lib/mavensmate');
+var helper 			= require('../test-helper');
 var chai 				= require('chai');
-var exec 				= require('child_process').exec;
-var path 				= require('path');
-// var sinon 		= require('sinon');
-
-// chai.use(chaiAsPromised);
-var assert = chai.assert;
-var should = chai.should();
-
-var testClient;
+var should 			= chai.should();
 
 describe('mavensmate run-tests', function(){
-	// var cmd = 'node '+path.join(__dirname, '../bin/mavensmate')+' ';
-	
-	it('should unit test provided classes', function(done) {
+
+	it('should compile a list of files', function(done) {
 		
 		this.timeout(20000);
 
-		testClient = mavensmate.createClient({
-			editor: 'sublime',
-			headless: true,
-			debugging: true
-		});
+		var testClient = helper.createClient('atom');
 
-		testClient.setProject('/Users/josephferraro/Development/summer14/force', function(err, response) {
-			testClient.executeCommand('run-tests', {
-				classes : [ 'MyTest.cls' ],
-				ui: true
-			}, function(err, response) {
-				console.log('woah!');
-				console.log(response.result.coverageResults.classes);
-				// should.equal(err, null);
-				// response.should.have.property('result');
+		helper.setProject(testClient, 'existing-project', function() {
+			
+			var payload = {
+				classes : [ 'MyTestClass.cls' ]
+			};
+
+			testClient.executeCommand('run-tests', payload, function(err, response) {
+				should.equal(err, null);
+				response.should.have.property('result');
+				response.result.should.have.property('testResults');
+				response.result.should.have.property('coverageResults');
+				response.result.testResults.should.have.property('MyTestClass');
+				response.result.coverageResults.should.have.property('classes');
+				response.result.coverageResults.should.have.property('triggers');
 				done();
 			});
 		});
-		
+
 	});
 
 });
+

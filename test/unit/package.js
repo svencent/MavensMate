@@ -1,42 +1,28 @@
 'use strict';
-var mavensmate 	= require('../../lib/mavensmate');
+
+var _ 					= require('lodash');
+var helper 			= require('../test-helper');
 var chai 				= require('chai');
-var exec 				= require('child_process').exec;
-var path 				= require('path');
-// var sinon 		= require('sinon');
-
-// chai.use(chaiAsPromised);
-var assert = chai.assert;
-var should = chai.should();
-
-var testClient;
+var should 			= chai.should();
 
 describe('mavensmate package', function(){
-	// var cmd = 'node '+path.join(__dirname, '../bin/mavensmate')+' ';
-	
+
 	it('should parse package.xml', function(done) {
 		
 		this.timeout(10000);
 
-		testClient = mavensmate.createClient({
-			editor: 'sublime',
-			headless: true,
-			debugging: true
+		var testClient = helper.createClient('atom');
+
+		helper.setProject(testClient, 'existing-project', function() {
+			testClient.getProject()._parsePackageXml()
+				.then(function(pkg) {
+					pkg.should.have.property('ApexClass');
+					pkg.should.have.property('ApexPage');
+					pkg.ApexClass.should.equal('*');
+					done();
+				});
 		});
 
-		testClient.setProject('/Users/josephferraro/Development/summer14/force', function(err, response) {
-			testClient.getProject()._parsePackageXml()
-				.then(function(m) {
-					console.log(m);
-					done();
-				})
-				['catch'](function(err) {
-					console.log(err);
-					done();
-				})
-				.done();
-		});
-	
 	});
 
 });
