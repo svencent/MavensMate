@@ -21,6 +21,17 @@
     "type": "git",
     "url": "https://github.com/joeferraro/mavensmate"
   },
+  "keywords": [
+    "tools",
+    "salesforce",
+    "salesforce1",
+    "force.com",
+    "visualforce",
+    "apex",
+    "lightning",
+    "mavensmate",
+    "ide"
+  ],
   "license": "MIT",
   "bugs": "https://github.com/joeferraro/mavensmate/issues",
   "dependencies": {
