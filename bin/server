@@ -9,6 +9,6 @@ var client = mavensmate.createClient({
 	debugging: true
 });
 
-client.setProject('/Users/josephferraro/Development/summer14/unitunit', function(err, response) {
+client.setProject('/Users/josephferraro/Development/summer14/force', function(err, response) {
 	
 });
