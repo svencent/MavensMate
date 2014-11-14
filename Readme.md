@@ -4,6 +4,8 @@ MavensMate is a powerful open source tool for building Salesforce1 IDEs. Develop
 
 For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 
+**IMPORTANT: the core MavensMate API has undergone a major rewrite for stability and performance. This README is changing rapidly!**
+
 - [MavensMate API](#api)
 - [MavensMate Plugins](#active-plugins)
 - [Bugs and Feature Requests](#bugs-and-feature-requests)
