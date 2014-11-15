@@ -1,9 +1,12 @@
 {
-    "projectName": "meow",
-    "username": "joeferraro@force.com",
-    "id": "df826eb0-6bb4-11e4-8a91-918eb35e3b78",
+    "projectName": "existing-project",
+    "username": "mm@force.com",
+    "password": "force",
+    "id": "2970ab40-6c0a-11e4-83e5-fdbcab7d596a",
     "environment": "production",
     "workspace": "/Users/josephferraro/Development/summer14",
+    "namespace": "",
+    "orgUrl":"",
     "subscription": [
         "ApexClass",
         "ApexComponent",

@@ -15,7 +15,7 @@ describe('mavensmate run-tests', function(){
 		helper.setProject(testClient, 'existing-project', function() {
 			
 			var payload = {
-				classes : [ 'MyTestClass.cls' ]
+				classes : [ 'MyTest.cls' ]
 			};
 
 			testClient.executeCommand('run-tests', payload, function(err, response) {

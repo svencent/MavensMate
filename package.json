@@ -10,7 +10,7 @@
     "mavensmate": "./lib/mavensmate"
   },
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "mocha $(find test -name '*.js')"
   },
   "author": {
     "name": "Joe Ferraro",
@@ -76,6 +76,7 @@
   "devDependencies": {
     "sinon": "latest",
     "chai": "latest",
-    "chai-as-promised": "latest"
+    "chai-as-promised": "latest",
+    "chai-fs":"latest"
   }
 }

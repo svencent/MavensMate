@@ -16,6 +16,8 @@ public with sharing class MultiselectController {
             options.add(new SelectOption(EncodingUtil.urlDecode(parts[i*2], 'UTF-8'), 
               EncodingUtil.urlDecode(parts[(i*2)+1], 'UTF-8')));
         }
+        String foo = 'bar';
+        foo.isNumeric();
     }
     
     // Backing for hidden text field containing the options from the
