@@ -6,30 +6,52 @@ For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 
 **IMPORTANT: the core MavensMate API has undergone a major rewrite for stability and performance. This README is changing rapidly!**
 
-- [MavensMate API](#api)
+- [MavensMate API](#mavensmate-api)
 - [MavensMate Plugins](#active-plugins)
 - [Bugs and Feature Requests](#bugs-and-feature-requests)
 - [Documentation](#documentation)
 
 [![Circle CI](https://circleci.com/gh/joeferraro/MavensMate.png?style=badge)](https://circleci.com/gh/joeferraro/MavensMate)
 
-## API
+## MavensMate API
 
-MavensMate plugins can be built by integrating with the APIs in this project. More documentation to come!
+You can build Salesforce1 IDEs by integrating with the APIs exposed in this project. For Node.js project, you can simply `require('mavensmate')`. For other types of project, you may can use the command line interface (more documentation to come).
+
+### Node.js Projects
+
+To use MavensMate to build a Salesforce1 IDE for your Node.js project:
+
+#### Install
+
+`npm install mavensmate`
+
+#### Usage
+
+```
+var mavensmate = require('mavensmate');
+var client = mavensmate.createClient({
+	editor: '<editor_name>',
+	headless: true,
+	debugging: true
+});
+client.setProject('path/to/some/project', function(err, response) {
+	client.executeCommand('compile-project', function(err, response) {
+		// full list of commands can be found in lib/mavensmate/commands
+	});
+});
+```
 
 ## Active Plugins
 
-### MavensMate for Sublime Text
+### [MavensMate for Sublime Text][stp]
 
 MavensMate for Sublime Text is a Sublime Text plugin that uses the `mm` command line tool to provide a rich IDE experience in the editor. The bulk of the MM for ST codebase is used focused on integration with the Sublime Text APIs. The interaction with the Force.com APIs are still handled by `mm`.
 
-[MavensMate for Sublime Text][stp]
+**IMPORTANT:** MavensMate for Sublime Text will eventually be ported to use the APIs in this project.
 
-### MavensMate for Atom (alpha)
+### [MavensMate for Atom (alpha)][atom]
 
 MavensMate for Atom is still in active development.
-
-[MavensMate for Atom][atom]
 
 
 ## Bugs and feature requests
