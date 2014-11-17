@@ -15,7 +15,7 @@ For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 
 ## MavensMate API
 
-You can build Salesforce1 IDEs by integrating with the APIs exposed in this project. For Node.js project, you can simply `require('mavensmate')`. For other types of project, you may use the command line interface (more documentation to come).
+You can build Salesforce1 IDEs by integrating with the APIs exposed in this project. For Node.js projects, you can simply `require('mavensmate')`. For other types of projects, you may use the command line interface (documentation to come).
 
 ### Node.js Projects
 
