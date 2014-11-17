@@ -30,7 +30,7 @@ exports.createClient = function(editor) {
 	return mavensmate.createClient({
 		editor: editor,
 		headless: true,
-		debugging: true,
+		debugging: false,
 		settings: {
 			mm_use_keyring: false
 		}

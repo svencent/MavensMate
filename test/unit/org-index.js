@@ -30,8 +30,6 @@ describe('mavensmate org-index', function(){
 
       testClient.getProject().getOrgMetadata()
 				.then(function(m) {
-					console.log('got it!');
-          console.log(m);
           var apexClass = _.find(m, {id:'ApexClass'});
 					apexClass.select.should.equal(true);
 					done();
