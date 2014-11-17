@@ -41,6 +41,7 @@
     "body-parser": "1.9.2",
     "commander": "joeferraro/commander.js",
     "events": "1.0.2",
+    "express":"4.10.2",
     "findit": "2.0.0",
     "fs-extra": "0.12.0",
     "fstream": "1.0.2",
