@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-var mavensmate 	= require('../lib/mavensmate');
+var mavensmate  = require('../lib/mavensmate');
 var parseArgs   = require('minimist');
 
 var args = parseArgs(process.argv);
@@ -9,15 +9,15 @@ var project = args.project;
 var editor = args.editor || 'sublime';
 
 var client = mavensmate.createClient({
-	editor: editor,
-	headless: true,
-	debugging: true
+  editor: editor,
+  headless: true,
+  debugging: true
 });
 
 if (project) {
-	client.setProject(project, function(err, response) {
-		console.log('set client project response ...');
-		console.log(err);
-		console.log(response);
-	});
+  client.setProject(project, function(err, response) {
+    console.log('set client project response ...');
+    console.log(err);
+    console.log(response);
+  });
 }

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
-var program 		= require('commander');
-var mavensmate 	= require('../lib/mavensmate');
+var program     = require('commander');
+var mavensmate  = require('../lib/mavensmate');
 
 // initialize top-level program with global options
 program
@@ -13,10 +13,10 @@ program
   .parse(process.argv, true); // parse top-level args, defer subcommand
 
 var cliClient = mavensmate.createClient({
-	editor: program.client,
-	headless: program.headless,
-	debugging: program.debugging,
-	program: program
+  editor: program.client,
+  headless: program.headless,
+  debugging: program.debugging,
+  program: program
 });
 
 var logger = require('winston');
