@@ -5,20 +5,16 @@ var chai 					= require('chai');
 var path 					= require('path');
 var assert 				= chai.assert;
 var should 				= chai.should();
-var util 					= require('../../lib/mavensmate/util').instance;
-var sinon 				= require('sinon');
-var EditorService = require('../../lib/mavensmate/editor');
 
 chai.use(require('chai-fs'));
 
 describe('mavensmate new-project', function(){
 
-	afterEach( function() { 
-		helper.cleanUpWorkspace();
-	});
+  helper.unlinkEditor();
+  var testClient = helper.createClient('atom');
+  helper.ensureTestProject(testClient, 'new-project-existing');
 
 	it('should require username and password', function(done) {
-		var testClient = helper.createClient('atom');
 		testClient.executeCommand('new-project', {}, function(err, response) {
 			should.equal(response, undefined);
 			err.should.have.property('error');
@@ -28,9 +24,8 @@ describe('mavensmate new-project', function(){
 	});
 
 	it('should prompt that project directory already exists', function(done) {
-		var testClient = helper.createClient('atom');
-		var payload = {
-			projectName: 'existing-project',
+    var payload = {
+			projectName: 'new-project-existing',
 			username: 'mm@force.com',
 			password: 'force',
 			workspace: path.join(helper.baseTestDirectory(),'workspace')
@@ -41,14 +36,15 @@ describe('mavensmate new-project', function(){
 			err.error.should.equal('Could not initiate new Project instance: Error: Directory already exists!');
 			done();
 		});
+
+    helper.cleanUpTestProject('new-project-existing');
 	});
 
-	it('should prompt because of bad salesforce creds', function(done) {
-		this.timeout(10000);
+	it('should prompt because of bad salesforce creds', function(done) {		
+    this.timeout(10000);
 
-		var testClient = helper.createClient('atom');
 		var payload = {
-			projectName: 'existing-project',
+			projectName: 'new-project-bad-creds',
 			username: 'thiswontwork@force.com',
 			password: 'thisisabadpassword',
 			workspace: path.join(helper.baseTestDirectory(),'workspace')
@@ -63,14 +59,10 @@ describe('mavensmate new-project', function(){
 
 	it('should create project in specified workspace', function(done) {
 		
-		sinon.stub(EditorService.prototype, 'open').returns(null);
-
 		this.timeout(50000);
-
-		var testClient = helper.createClient('atom');
 		
 		var payload = {
-			projectName: 'unittest',
+			projectName: 'new-project',
 			username: 'mm@force.com',
 			password: 'force',
 			workspace: path.join(helper.baseTestDirectory(),'workspace')
@@ -80,11 +72,11 @@ describe('mavensmate new-project', function(){
 			should.equal(err, null);
 			response.should.have.property('result');
 			response.result.should.equal('Project created successfully');
-			assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'unittest'),  'Project directory does not exist');
-			assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'unittest', 'config'),  'Project config directory does not exist');
-			assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'unittest', 'src'),  'Project src directory does not exist');
-			assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'unittest', 'src', 'package.xml'),  'Project package.xml does not exist');
-			helper.setProject(testClient, 'unittest', function() {
+			assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project'),  'Project directory does not exist');
+			assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'config'),  'Project config directory does not exist');
+			assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src'),  'Project src directory does not exist');
+			assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src', 'package.xml'),  'Project package.xml does not exist');
+			helper.setProject(testClient, 'new-project', function() {
 				var project = testClient.getProject();
 				project.settings.username.should.equal('mm@force.com');
 				project.settings.password.should.equal('force');
@@ -92,6 +84,9 @@ describe('mavensmate new-project', function(){
 				done();
 			});
 		});
+
+    helper.cleanUpTestProject('new-project');
+
 	});
 
 });

@@ -3,6 +3,10 @@
  	padding-right:0px;
  }
 
+ body.atom #btnCancel {
+ 	display: none;
+ }
+
  a.btn {
  	font-weight: bold;
  }
