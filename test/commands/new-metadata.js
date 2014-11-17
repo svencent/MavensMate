@@ -1,18 +1,18 @@
 'use strict';
 
-var helper 			= require('../test-helper');
-var chai 				= require('chai');
-var should 			= chai.should();
+var helper      = require('../test-helper');
+var chai        = require('chai');
+var should      = chai.should();
 var path        = require('path');
 
 describe('mavensmate new-metadata', function(){
 
-	var testClient = helper.createClient('atom');
+  var testClient = helper.createClient('atom');
   helper.ensureTestProject(testClient, 'new-metadata');
 
-	it('should create metadata from server', function(done) {
-		
-		helper.unlinkEditor();
+  it('should create metadata from server', function(done) {
+    
+    helper.unlinkEditor();
     this.timeout(100000);
 
     helper.setProject(testClient, 'new-metadata', function() {
@@ -30,7 +30,7 @@ describe('mavensmate new-metadata', function(){
     var filesToDelete = [path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'classes', 'NewMetadataClass.cls')];
     helper.cleanUpTestData(testClient, filesToDelete);
     helper.cleanUpTestProject('new-metadata');
-	});
+  });
 
 });
 
