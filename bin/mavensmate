@@ -9,13 +9,13 @@ program
   .version('0.0.1')
   .option('-d --debugging', 'Explicitly enables logging. When in headless mode, debug statements will be placed in "debug" object in JSON response.')
   .option('-h --headless', 'Runs in headless mode, requiring piped-JSON for context. Best for use by MavensMate text editor/IDE clients.')
-  .option('-c --client [name]', 'Specifies the plugin client (SUBLIME_TEXT, ATOM)') // no default set
+  .option('-e --editor [name]', 'Specifies the plugin client (SUBLIME_TEXT, ATOM)') // no default set
   .parse(process.argv, true); // parse top-level args, defer subcommand
 
 var cliClient = mavensmate.createClient({
-  editor: program.client,
-  headless: program.headless,
-  debugging: program.debugging,
+  editor: program.editor || 'atom',
+  headless: program.headless || false,
+  debugging: program.debugging || false,
   program: program
 });
 
