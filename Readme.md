@@ -11,6 +11,8 @@ For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 - [Bugs and Feature Requests](#bugs-and-feature-requests)
 - [Documentation](#documentation)
 
+[![Circle CI](https://circleci.com/gh/joeferraro/MavensMate.png?style=badge)](https://circleci.com/gh/joeferraro/MavensMate)
+
 ## API
 
 MavensMate plugins can be built by integrating with the APIs in this project. More documentation to come!
