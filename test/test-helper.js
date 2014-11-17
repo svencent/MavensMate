@@ -86,9 +86,6 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
 
 exports.setProject = function(testClient, projectName, callback) {
 	testClient.setProject(path.join(this.baseTestDirectory(),'workspace', projectName), function(err, response) {
-		console.log('set it!');
-    console.log(err);
-    console.log(response);
     callback(err, response);
 	});
 };
@@ -96,8 +93,8 @@ exports.setProject = function(testClient, projectName, callback) {
 exports.getProjectFiles = function(testClient, typeXmlName, numberOfFiles) {
 	var metadataService = new MetadataService({ sfdcClient: testClient.getProject().sfdcClient });
 	var metadataType = metadataService.getTypeByName(typeXmlName);
-  console.log(this.baseTestDirectory());
-  console.log(testClient.getProject());
+  // console.log(this.baseTestDirectory());
+  // console.log(testClient.getProject());
 	var projectPath = path.join(this.baseTestDirectory(),'workspace', testClient.getProject().getName());
 	var metadataDirectory = path.join(projectPath, 'src', metadataType.directoryName);
 	if (!numberOfFiles) {
@@ -199,8 +196,8 @@ exports.getNewMetadataPayload = function(typeXmlName, apiName, templateFileName)
     templateService.getTemplatesForType(typeXmlName)
       .then(function(templates) {
         var template = _.find(templates, { file_name : templateFileName });
-        console.log(template);
-        console.log('\n\n\n\n');
+        // console.log(template);
+        // console.log('\n\n\n\n');
         var payload = {
           metadataType: typeXmlName, 
           params: { 'api_name': apiName }, 
