@@ -1,20 +1,20 @@
 'use strict';
 
-var _ 							= require('lodash');
-var mavensmate 			= require('../lib/mavensmate');
+var _               = require('lodash');
+var mavensmate      = require('../lib/mavensmate');
 var MetadataService = require('../lib/mavensmate/metadata').MetadataService;
-var fs 							= require('fs-extra');
-var path 						= require('path');
-var Q 							= require('q');
-var sinon 					= require('sinon');
-var EditorService 	= require('../lib/mavensmate/editor');
+var fs              = require('fs-extra');
+var path            = require('path');
+var Q               = require('q');
+var sinon           = require('sinon');
+var EditorService   = require('../lib/mavensmate/editor');
 var temp            = require('temp');
 var TemplateService = require('../lib/mavensmate/template');
 
 exports.ensureTestProject = function(testClient, name, testWorkspace) {
-	var self = this;
-	before(function(done) {
-		testWorkspace = testWorkspace || path.join(self.baseTestDirectory(),'workspace');
+  var self = this;
+  before(function(done) {
+    testWorkspace = testWorkspace || path.join(self.baseTestDirectory(),'workspace');
     if (!fs.existsSync(path.join(testWorkspace, name))) {
       fs.copySync(path.join(self.baseTestDirectory(),'fixtures', 'test-project'), path.join(testWorkspace, name));
       var settings = fs.readJsonSync(path.join(testWorkspace, name, 'config', '.settings'));
@@ -23,26 +23,26 @@ exports.ensureTestProject = function(testClient, name, testWorkspace) {
       fs.writeJsonSync(path.join(testWorkspace, name, 'config', '.settings'), settings);
     } 
     done();
-	});
+  });
 };
 
 exports.createClient = function(editor) {
-	return mavensmate.createClient({
-		editor: editor,
-		headless: true,
-		debugging: false,
-		settings: {
-			mm_use_keyring: false
-		}
-	});
+  return mavensmate.createClient({
+    editor: editor,
+    headless: true,
+    debugging: false,
+    settings: {
+      mm_use_keyring: false
+    }
+  });
 };
 
 exports.baseTestDirectory = function() {
-	return __dirname;
+  return __dirname;
 };
 
 exports.unlinkEditor = function() {
-	try {
+  try {
     sinon.stub(EditorService.prototype, 'open').returns(null);
   } catch(e) {
     if (e.message.indexOf('Attempted to wrap open which is already wrapped') === -1) {
@@ -52,65 +52,65 @@ exports.unlinkEditor = function() {
 };
 
 exports.createProject = function(testClient, name, pkg, testWorkspace) {
-	var deferred = Q.defer();	
-	this.unlinkEditor();
+  var deferred = Q.defer(); 
+  this.unlinkEditor();
 
-	if (!testWorkspace) {
-		testWorkspace = temp.mkdirSync({ prefix: 'mm_testworkspace_' });
-	}	
+  if (!testWorkspace) {
+    testWorkspace = temp.mkdirSync({ prefix: 'mm_testworkspace_' });
+  } 
 
-	var payload = {
-		projectName: name,
-		username: 'mm@force.com',
-		password: 'force',
-		workspace: testWorkspace,
-		package: pkg || {}
-	};
+  var payload = {
+    projectName: name,
+    username: 'mm@force.com',
+    password: 'force',
+    workspace: testWorkspace,
+    package: pkg || {}
+  };
 
-	testClient.executeCommand('new-project', payload, function(err) {
-		if (err) {
-			deferred.reject(err);
-		} else {
-			testClient.setProject(path.join(testWorkspace, name), function(err) {
-				if (err) {
-					deferred.reject(err);
-				} else {
-					deferred.resolve(path.join(testWorkspace, name));
-				}
-			});
-		}
-	});
+  testClient.executeCommand('new-project', payload, function(err) {
+    if (err) {
+      deferred.reject(err);
+    } else {
+      testClient.setProject(path.join(testWorkspace, name), function(err) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve(path.join(testWorkspace, name));
+        }
+      });
+    }
+  });
 
-	return deferred.promise;
+  return deferred.promise;
 };
 
 exports.setProject = function(testClient, projectName, callback) {
-	testClient.setProject(path.join(this.baseTestDirectory(),'workspace', projectName), function(err, response) {
+  testClient.setProject(path.join(this.baseTestDirectory(),'workspace', projectName), function(err, response) {
     callback(err, response);
-	});
+  });
 };
 
 exports.getProjectFiles = function(testClient, typeXmlName, numberOfFiles) {
-	var metadataService = new MetadataService({ sfdcClient: testClient.getProject().sfdcClient });
-	var metadataType = metadataService.getTypeByName(typeXmlName);
+  var metadataService = new MetadataService({ sfdcClient: testClient.getProject().sfdcClient });
+  var metadataType = metadataService.getTypeByName(typeXmlName);
   // console.log(this.baseTestDirectory());
   // console.log(testClient.getProject());
-	var projectPath = path.join(this.baseTestDirectory(),'workspace', testClient.getProject().getName());
-	var metadataDirectory = path.join(projectPath, 'src', metadataType.directoryName);
-	if (!numberOfFiles) {
-		numberOfFiles = 1;
-	}
-	var files = [];
-	if (fs.existsSync(metadataDirectory)) {
-		fs.readdirSync(metadataDirectory).forEach(function(filename) {
-			if (files.length < numberOfFiles) {
-				if (filename.indexOf('-meta.xml') === -1) {
-					files.push(path.join(metadataDirectory, filename));
-				}
-			}
-		});
-	}
-	return files;
+  var projectPath = path.join(this.baseTestDirectory(),'workspace', testClient.getProject().getName());
+  var metadataDirectory = path.join(projectPath, 'src', metadataType.directoryName);
+  if (!numberOfFiles) {
+    numberOfFiles = 1;
+  }
+  var files = [];
+  if (fs.existsSync(metadataDirectory)) {
+    fs.readdirSync(metadataDirectory).forEach(function(filename) {
+      if (files.length < numberOfFiles) {
+        if (filename.indexOf('-meta.xml') === -1) {
+          files.push(path.join(metadataDirectory, filename));
+        }
+      }
+    });
+  }
+  return files;
 };
 
 exports.cleanUpTestProject = function(name, testWorkspace) {
@@ -168,7 +168,7 @@ exports.createNewMetadata = function(testClient, typeXmlName, name) {
 };
 
 exports.getNewMetadataPayload = function(typeXmlName, apiName, templateFileName) {
-	var deferred = Q.defer();
+  var deferred = Q.defer();
   apiName = apiName || 'unittestitem';
   var template;
   if (!templateFileName) {
