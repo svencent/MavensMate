@@ -31,12 +31,11 @@ describe('mavensmate run-tests', function(){
               response.should.have.property('result');
               response.result.should.have.property('testResults');
               response.result.should.have.property('coverageResults');
-              response.result.testResults.should.have.property('MyTestClass');
+              response.result.testResults.should.have.property('RunTestsApexClass');
               response.result.coverageResults.should.have.property('classes');
               response.result.coverageResults.should.have.property('triggers');
               done();
             }); 
-            done();
           });
         })
         .done();
