@@ -131,7 +131,8 @@
 	<script>
 		var has_indexed_metadata = {{ mavensmate.ui.getProject().hasIndexedMetadata() }};
 		var operation;
-		
+		var PROJECT_WRAPPER_OFFSET = 20;
+
 		function updateProjectCreds() {
 			console.log('updating project creds')
 			operation = "update-creds"
@@ -235,7 +236,7 @@
 					showMessage(response["result"])
 				} else {
 					if (tree === undefined) {
-						renderTree()  
+						renderTree(PROJECT_WRAPPER_OFFSET)  
 					} else {
 						$("#tree").dynatree("getTree").reload();
 					}
@@ -251,7 +252,7 @@
 				notifySound()
 				hideLoading();
 			}
-			resizeProjectWrapper()
+			resizeProjectWrapper(PROJECT_WRAPPER_OFFSET)
 		}
 
 		function positionInputIcons() {
@@ -275,7 +276,7 @@
 			$("#pn").prop('disabled', true);  
 
 			$(window).resize(function() {
-				resizeProjectWrapper();
+				resizeProjectWrapper(PROJECT_WRAPPER_OFFSET);
 				positionInputIcons();
 			});
 
@@ -334,8 +335,8 @@
 		    centerWindow()
 
 		    if (has_indexed_metadata) {
-		    	renderTree()
-		    	setTimeout(resizeProjectWrapper(),500)
+		    	renderTree(PROJECT_WRAPPER_OFFSET)
+		    	setTimeout(resizeProjectWrapper(PROJECT_WRAPPER_OFFSET),500)
 		    } else {
 		    	index_org()
 		    }

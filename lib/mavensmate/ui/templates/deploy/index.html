@@ -125,7 +125,7 @@
 						<div class="row">
 							<div class="span8">
 								<label for="un_list" style="font-weight:bold;">Deployment Targets</label> 
-								<select name="huge" class="select-block mbl info" style="display:none;" id="un_list" multiple="multiple" data-placeholder="Select 1 or more connections...">
+								<select name="huge" data-none-selected-text="No targets selected (You can create targets via the org connections tab)" class="select-block mbl info" style="display:none;" id="un_list" multiple="multiple" data-placeholder="Select 1 or more connections...">
 									{% for c in connections %}
 										{% if loop.index0 == 0 %}
 											{% set selected = 'selected="selected"' %}
@@ -365,7 +365,7 @@
 					{% endfor %}
 				</select>
 			</div> -->
-			<div class="alert alert-info" id="filter">
+			<!-- <div class="alert alert-info" id="filter">
 				<input type="text" placeholder="Search for metadata" id="txtFilter" style="width:300px;height:35px;" />
 				<a href="#" class="btn btn-success btn-embossed" id="search-btn" style="right:45px"><i class="icon-search"></i></a>
 				<a href="#" class="btn btn-select btn-embossed" id="select-btn" ><i class="icon-check-empty"></i></a>
@@ -379,7 +379,7 @@
 						<option value="{{d.location}}">{{d.label}}</option>
 					{% endfor %}
 				</select>
-			</div>
+			</div> -->
 
 			<div id="project_wrapper">
 								
@@ -413,6 +413,7 @@
 <script type="text/javascript">
 	var hasIndexedMetadata = {{ hasIndexedMetadata }};
 	var operation;
+	var PROJECT_WRAPPER_OFFSET = 20;
 
 	function isValidateOnly() {
 		return $("#check_only").is(":checked");
@@ -469,15 +470,15 @@
 
 		$(window).resize(function() {
 			resize_arcade(280)
-			resizeProjectWrapper(140)
+			resizeProjectWrapper(PROJECT_WRAPPER_OFFSET)
 		});
 
 		//render tree when tab is clicked, otherwise there's an extjs and it doesnt render
 		$('a[data-toggle="tab"]').on('shown', function (e) {
 			if (e.target.href.indexOf("metadata") != -1) {
 				if (tree === undefined) {
-					renderTree(140)
-					setTimeout(resizeProjectWrapper(140),500)
+					renderTree(PROJECT_WRAPPER_OFFSET)
+					setTimeout(resizeProjectWrapper(PROJECT_WRAPPER_OFFSET),500)
 					resizeFilter()
 				}
 			}
@@ -523,7 +524,7 @@
 		resize_arcade(280)
 		window.resizeTo(1000, 850)
 		centerWindow()
-		setTimeout(resizeProjectWrapper(140),500)
+		setTimeout(resizeProjectWrapper(PROJECT_WRAPPER_OFFSET),500)
 	});
 
 	function repopulateConnectionList(conns) {
@@ -616,12 +617,12 @@
 				showMessage(response["result"])
 			} else {
 				if (tree === undefined) {
-					renderTree(140)  
+					renderTree(PROJECT_WRAPPER_OFFSET)  
 				} else {
 					$("#tree").dynatree("getTree").reload();
 				}
 			}
-			resizeProjectWrapper(140);
+			resizeProjectWrapper(PROJECT_WRAPPER_OFFSET);
 			notifySound();
 			hideLoading();
 		}
