@@ -163,17 +163,25 @@
 					</div>
 					<div class="row" style="margin-bottom:10px;">
 						<div class="span12">
+							<label class="checkbox" for="rollback">
+							  <input type="checkbox" checked="checked" value="" id="rollback" data-toggle="checkbox">
+							  Rollback on Error
+							</label>
+						</div>
+					</div>
+					<div class="row" style="margin-bottom:10px;">
+						<div class="span12">
 							<label class="checkbox" for="run_tests">
 							  <input type="checkbox" value="" id="run_tests" data-toggle="checkbox">
-							  Run Tests
+							  Run All Tests
 							</label>
 						</div>
 					</div>
 					<div class="row" style="margin-bottom:10px;">
 						<div class="span12">
 							<label class="checkbox" for="rollback">
-							  <input type="checkbox" checked="checked" value="" id="rollback" data-toggle="checkbox">
-							  Rollback on Error
+							  <input type="checkbox" value="" id="ignoreWarnings" data-toggle="checkbox">
+							  Ignore Warnings
 							</label>
 						</div>
 					</div>
@@ -396,7 +404,6 @@
 
 
 {% block buttons %}					
-	<!-- <input id="btnCompare" type="button" class="btn btn-info btn-embossed" value="Compare" onclick='compare()'> -->
 	<input id="btnDeploy" type="button" class="btn btn-info btn-embossed" value="Validate Deployment">
 	{% include 'snippets/cancel_button.html' %}
 	{% include 'snippets/running_indicator.html' %}
@@ -404,64 +411,42 @@
 
 {% block body_js %}
 <script type="text/javascript">
-	var has_indexed_metadata = {{ has_indexed_metadata|lower }};
+	var hasIndexedMetadata = {{ hasIndexedMetadata }};
 	var operation;
-	var compareModeEnabled = {{compare|lower}};
-	var hasCompared = false;
-	var isFinish = false;
 
 	function isValidateOnly() {
-		return $("#check_only").is(":checked")
+		return $("#check_only").is(":checked");
 	}
 
 	function isRunTests() {
-		return $("#run_tests").is(":checked")
+		return $("#run_tests").is(":checked");
 	}
 
 	function isRollbackOnError() {
-		return $("#rollback").is(":checked")
+		return $("#rollback").is(":checked");
 	}
 
-	function setHasCompared(value) {
-		hasCompared = value;
-		if (!hasCompared) {
-			var deployButtonLabel = $("#btnDeploy").val();
-			if (deployButtonLabel.indexOf('Finish ') >= 0) {
-				deployButtonLabel = deployButtonLabel.replace('Finish ', '');
-			}
-			$("#btnDeploy").val(deployButtonLabel);
-		}
+	function isIgnoreWarnings() {
+		return $("#ignoreWarnings").is(":checked");
 	}
 
 	$(function() {
 		$("#btnDeploy").click(function() {
-			if (compareModeEnabled && !hasCompared) {
-				compare();
-			} else {
-				deploy();
-			}
+			deploy();
 		});
 
 	    $("#un_list").change(function() {
-	    	setHasCompared(false);
+	    	
 	    });
 
 	    $("#project_wrapper").click(function() {
-	    	setHasCompared(false);
+	    	
 	    });
 
 		$("#check_only").change(function() {
 			var text = (this.checked)? 'Validate Deployment' : 'Deploy to Server';
 			$("#btnDeploy").val(text);
-			setHasCompared(false);
-		});
-
-		$("#run_tests").change(function() {
-			setHasCompared(false);
-		});
-
-		$("#rollback").change(function() {
-			setHasCompared(false);
+			
 		});
 		
 		$("#un_list").change(function() {
@@ -498,8 +483,8 @@
 			}
 		})
 		
-		if (!has_indexed_metadata) {
-			index_org();
+		if (!hasIndexedMetadata) {
+			indexOrg();
 		}
 
 		$("#select-btn").click(function() {
@@ -529,7 +514,7 @@
 		});
 
 		$("#selected_deployment_name").change(function() {
-			setHasCompared(false);
+			
 			console.log(this.value);
 			renderTree(140, this.value); 
 		});
@@ -541,7 +526,7 @@
 		setTimeout(resizeProjectWrapper(140),500)
 	});
 
-	function repopulate_connection_list(conns) {
+	function repopulateConnectionList(conns) {
 		var connHtml = ''
 		for (c in conns) {
 			connHtml += '<option value="'+conns[c]['username']+';'+conns[c]['environment']+';'+conns[c]['id']+'">'
@@ -552,7 +537,7 @@
 		$('#un_list').trigger("liszt:updated");
 	}
 
-	function index_org(refresh) {
+	function indexOrg(refresh) {
 		operation = "index"
 		$.ajax({
 			type: "POST",
@@ -570,19 +555,19 @@
 		});
 	}
 
-	function get_target_json() {
+	function getTargetJson() {
 		var targets = $("#un_list").val();
 		var ts = []
 		for (t in targets) {
-			console.log(targets[t])
-			var username = targets[t].split(';')[0]
-			var type = targets[t].split(';')[1]
-			var id = targets[t].split(';')[2]
-			var t = {}
-			t.username = username
-			t.org_type = type
-			t.id = id
-			ts.push(t)
+			console.log(targets[t]);
+			var username = targets[t].split(';')[0];
+			var type = targets[t].split(';')[1];
+			var id = targets[t].split(';')[2];
+			var t = {};
+			t.username = username;
+			t.org_type = type;
+			t.id = id;
+			ts.push(t);
 		}
 		return ts
 	}
@@ -591,47 +576,7 @@
 		console.log('handling responsE!!');
 		console.log(operation);
 		console.log(response);
-		if (operation === "deploy" && isFinish === true) {
-			console.log('handling deploy finishhhhh')
-			$(".compare_results_hidden").addClass('hidden');
-			if (response["success"] === false) {
-				showMessage(response["result"])
-			} else {
-				$(".result_wrapper").remove()
-
-				$("#result").html(response["result"]);
-
-				$("#dropdown-destinations").html($("#destination_options ul").html());
-				$("#destination_options").remove()
-
-				if (response["deploy_success"] == true){
-					$("#check_only").attr('checked', false);
-					$("#check_only").parent().removeClass('checked')
-					$("#btnDeploy").val('Deploy to Server');
-				}
-
-				$("#main-tab-content").append($("#extra_tabs").html());
-				$("#extra_tabs").remove()
-
-				$('.nav-tabs a').click(function (e) {
-				  e.preventDefault();
-				  $(this).tab('show');
-				})
-
-				$(".results_hidden").show();
-				if ($("#arcade").css("display") == "none") {
-					$("ul#main-tabs > li.active").removeClass('active')
-					$("div#main-tab-content > div.active").removeClass('active')
-					$("#result-0").addClass('active')
-					$('li.dropdown ul li a.test_result_link').tab('show');
-					$(".results_hidden").addClass('active');
-				}
-			}
-			toggleRunningIndicator();
-			$("#btnDeploy").show();
-			$("#btnCompare").show();
-			notifySound();
-		} else if (operation === "deploy") {
+		if (operation === "deploy") {
 			console.log('wooooo!!!!');
 			$(".result_wrapper").remove()
 
@@ -666,48 +611,6 @@
 			toggleRunningIndicator();
 			$("#btnDeploy").show();
 			notifySound();
-		} else if (operation == "compare") {
-			$(".results_hidden").hide();
-			if (response["success"] === false) {
-				showMessage(response["result"])
-			} else {
-				hasCompared = true;
-
-				var deployButtonLabel = $("#btnDeploy").val();
-				$("#btnDeploy").val('Finish '+deployButtonLabel);
-
-				$(".result_wrapper").remove()
-
-				$("#result").html(response["result"]);
-
-				$("#dropdown-compare-destinations").html($("#destination_compare_options ul").html());
-				$("#destination_compare_options").remove()
-
-				if (response["compare_success"] == true){
-					isFinish = true;
-				}
-
-				$("#main-tab-content").append($("#extra_compare_tabs").html());
-				$("#extra_compare_tabs").remove()
-
-				$('.nav-tabs a').click(function (e) {
-				  e.preventDefault();
-				  $(this).tab('show');
-				})
-				$("table.tablesorter").tablesorter();
-				$(".compare_results_hidden").removeClass('hidden');
-				if ($("#arcade").css("display") == "none") {
-					$("ul#main-tabs > li.active").removeClass('active')
-					$("div#main-tab-content > div.active").removeClass('active')
-					$("#result-compare-0").addClass('active')
-					$('li.dropdown ul li a.test_result_link').tab('show');
-					$(".compare_results_hidden").addClass('active');
-				}
-			}
-			toggleRunningIndicator();
-			$("#btnDeploy").show();
-			$("#btnCompare").show();
-			notifySound();
 		} else if (operation == "index") {
 			if (response["success"] == false) {
 				showMessage(response["result"])
@@ -724,52 +627,26 @@
 		}
 	}
 
-	function compare() {
-		operation = "compare"
-		$.ajax({
-			type: "POST",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			data: JSON.stringify({
-				destinations 		: get_target_json(),
-			    check_only 			: isValidateOnly(),
-			    run_tests 			: isRunTests(),
-			    rollback_on_error 	: isRollbackOnError(),
-			    package 			: getTree(),
-			    new_deployment_name : $("#new_deployment_name").val(),
-			    debug_categories 	: get_log_levels_json(),
-			    finish 				: false,
-			    command 			: 'deploy',
-			    ajax_args 			: ['--html'],
-			    path 				: '{{ mavensmate.ui.getProjectPath() }}'
-			}),
-			beforeSend: function() { toggleRunningIndicator(); $("#btnDeploy").hide(); $("#btnCompare").hide();  },
-			complete: function(data){
-				responseHandler(data)
-			} 
-	 	});	
-	}
-
 	function deploy() {
 		operation = "deploy"
 		$.ajax({
 			type: "POST",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/app/deploy/execute", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
-				destinations 		: get_target_json(),
-			    check_only 			: isValidateOnly(),
-			    run_tests 			: isRunTests(),
-			    rollback_on_error 	: isRollbackOnError(),
+				destinations 		: getTargetJson(),
 			    package 			: getTree(),
 			    new_deployment_name : $("#new_deployment_name").val(),
 			    debug_categories 	: get_log_levels_json(),
-			    finish 				: true,
-			    command 			: 'deploy',
-			    ajax_args 			: ['--html'],
-			    path 				: '{{ mavensmate.ui.getProjectPath() }}'
+			    ui 					: true,
+			    deployOptions 		: {
+			    	rollbackOnError: isRollbackOnError(),
+			    	performRetrieve: true,
+			    	checkOnly: isValidateOnly(),
+			    	ignoreWarnings: isIgnoreWarnings(),
+			    	runAllTests: isRunTests()
+			    }
 			}),
 			beforeSend: function() { toggleRunningIndicator(); $("#btnDeploy").hide(); $("#btnCompare").hide();  },
 			complete: function(data){
@@ -779,7 +656,7 @@
 	} 
 
 	function refresh_index() {
-		index_org(true);
+		indexOrg(true);
 	}
 
 	function listConnections() {
@@ -794,16 +671,18 @@
 			},
 			beforeSend: function() { showLoading('Listing connections'); },
 			complete: function(data){
+				// todo catch error
 				var connHtml = ''
 				console.log(data)				
-				var conns = JSON.parse(data.responseText)
+				var conns = JSON.parse(data.responseText).result;
+				console.log(conns);
 				for (c in conns) {
 					connHtml += '<tr>'
 					connHtml += '<td>'+conns[c]['username']+' ('+conns[c]['environment']+')</td>'
 					connHtml += '<td><a href="javascript:void(0);" onclick="deleteConnection(\''+conns[c]['id']+'\')">Remove</a></td>'
 					connHtml += '</tr>'
 				}
-				repopulate_connection_list(conns)	
+				repopulateConnectionList(conns)	
 				$("#connections_list").html(connHtml)
 				hideLoading()			
 			}
@@ -811,7 +690,7 @@
 	}
 
 	function deleteConnection(id) {
-		setHasCompared(false);
+		
 		$.ajax({
 			type: "POST",
 			dataType: 'json',
@@ -841,7 +720,7 @@
 	}
 	
 	function newConnection() {
-		setHasCompared(false);
+		
 		$.ajax({
 			type: "POST",
 			dataType: 'json',
@@ -859,8 +738,10 @@
 				$("#connection_error_message").html('')
 				console.log(data)				
 				var response = JSON.parse(data.responseText)
-				if (response["success"] == false) {
-					$("#connection_error_message").html(response["result"])
+				console.log('response from adding new connection');
+				console.log(response);
+				if (response.error) {
+					$("#connection_error_message").html(response.error)
 					$("#connection_error_wrapper").show()
 					hideLoading()	
 				} else {

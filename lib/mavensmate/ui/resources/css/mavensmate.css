@@ -501,6 +501,10 @@ form.form-stacked input.span12, form.form-stacked select {
 	max-width:580px;
 }
 
+.open > .dropdown-menu {
+	border-bottom: 3px solid #ccc;
+}
+
 /*
 	Adding Icons
 
