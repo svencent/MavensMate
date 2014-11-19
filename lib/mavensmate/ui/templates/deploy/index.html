@@ -659,16 +659,12 @@
 		indexOrg(true);
 	}
 
-	function listConnections() {
+	function getConnections() {
 		$.ajax({
 			type: "GET",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/app/deploy/get-connections", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
-			data: {
-				 path 				: '{{ mavensmate.ui.getProjectPath() }}',
-				 command 			: 'get-connections'
-			},
 			beforeSend: function() { showLoading('Listing connections'); },
 			complete: function(data){
 				// todo catch error
@@ -695,11 +691,9 @@
 			type: "POST",
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
-			url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/app/deploy/delete-connection", 
 			data: JSON.stringify({
-				id 					: id,
-				path 				: '{{ mavensmate.ui.getProjectPath() }}',
-				command 			: 'delete-connection'
+				id : id
 			}),
 			beforeSend: function() { showLoading('Removing connection'); },
 			complete: function(data){
@@ -713,7 +707,7 @@
 				} else {
 					$("#connection_error_wrapper").hide()
 					hideLoading()	
-					listConnections()
+					getConnections()
 				}		
 			}
 	 	});
@@ -725,12 +719,11 @@
 			type: "POST",
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
-			url: "{{ mavensmate.ui.getBaseUrl() }}/execute", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new-connection", 
 			data: JSON.stringify({
 				username 		 : $("#connection_un").val(), 
 				password 		 : $("#connection_pw").val(), 
 				org_type 		 : $("#org_type").val(),
-				path 			 : '{{ mavensmate.ui.getProjectPath() }}',
 				command 		 : 'new-connection'
 			}),
 			beforeSend: function() { showLoading('Adding connection'); },
@@ -749,7 +742,7 @@
 					$("#connection_pw").val('')
 					$("#connection_error_wrapper").hide()
 					hideLoading()	
-					listConnections()
+					getConnections()
 				}
 			}
 	 	});
