@@ -24,6 +24,9 @@ describe('mavensmate new-project', function(){
   });
 
   it('should prompt that project directory already exists', function(done) {
+    
+    this.timeout(5000);
+
     var payload = {
       projectName: 'new-project-existing',
       username: 'mm@force.com',
