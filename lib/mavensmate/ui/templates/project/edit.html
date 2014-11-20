@@ -223,7 +223,7 @@
 					path 				: '{{ mavensmate.ui.getProjectPath() }}',
 					command 			: 'index-metadata'
 				}),
-				beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs.<br/><br/>Thanks for being patient! :)'); },
+				beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs. To minimize indexing time, limit your project\'s subscription to only those metadata types you absolutely need.<br/><br/>Thanks for being patient! :)'); },
 				complete: function(data, status, xhr){
 					responseHandler(data)				
 				} 
