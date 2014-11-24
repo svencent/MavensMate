@@ -1,15 +1,16 @@
 'use strict';
 
-var _               = require('lodash');
-var mavensmate      = require('../lib/mavensmate');
-var MetadataService = require('../lib/mavensmate/metadata').MetadataService;
-var fs              = require('fs-extra');
-var path            = require('path');
-var Q               = require('q');
-var sinon           = require('sinon');
-var EditorService   = require('../lib/mavensmate/editor');
-var temp            = require('temp');
-var TemplateService = require('../lib/mavensmate/template');
+var _                 = require('lodash');
+var mavensmate        = require('../lib/mavensmate');
+var MetadataService   = require('../lib/mavensmate/metadata').MetadataService;
+var fs                = require('fs-extra');
+var path              = require('path');
+var Q                 = require('q');
+var sinon             = require('sinon');
+var EditorService     = require('../lib/mavensmate/editor');
+var temp              = require('temp');
+var TemplateService   = require('../lib/mavensmate/template');
+var SalesforceClient  = require('../lib/mavensmate/sfdc-client');
 
 exports.ensureTestProject = function(testClient, name, testWorkspace) {
   var self = this;
@@ -30,7 +31,7 @@ exports.createClient = function(editor) {
   return mavensmate.createClient({
     editor: editor,
     headless: true,
-    debugging: false,
+    debugging: true,
     settings: {
       mm_use_keyring: false
     }
@@ -49,6 +50,18 @@ exports.unlinkEditor = function() {
       throw e;
     }
   }
+};
+
+exports.goOffline = function() {
+  try {
+    var deferred = Q.defer();
+    deferred.resolve({});
+    sinon.stub(SalesforceClient.prototype, 'initialize').returns(deferred.promise);
+  } catch(e) {
+    if (e.message.indexOf('Attempted to wrap open which is already wrapped') === -1) {
+      throw e;
+    }
+  }  
 };
 
 exports.createProject = function(testClient, name, pkg, testWorkspace) {
