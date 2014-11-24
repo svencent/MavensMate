@@ -436,18 +436,9 @@
 			deploy();
 		});
 
-	    $("#un_list").change(function() {
-	    	
-	    });
-
-	    $("#project_wrapper").click(function() {
-	    	
-	    });
-
 		$("#check_only").change(function() {
 			var text = (this.checked)? 'Validate Deployment' : 'Deploy to Server';
 			$("#btnDeploy").val(text);
-			
 		});
 		
 		$("#un_list").change(function() {
@@ -578,7 +569,6 @@
 		console.log(operation);
 		console.log(response);
 		if (operation === "deploy") {
-			console.log('wooooo!!!!');
 			$(".result_wrapper").remove()
 
 			$("#result").html(response["result"]);
@@ -586,7 +576,16 @@
 			$("#dropdown-destinations").html($("#destination_options ul").html());
 			$("#destination_options").remove()
 
-			if (response["deploy_success"] == true){
+			var targets = Object.keys(response.result);
+			var isSuccess = true;
+			for (var i in targets) {
+				var targetUsername = targets[i];
+				if (!response.result[targetUsername].success) {
+					isSuccess = false;
+					break;
+				}
+			}
+			if (isSuccess) {
 				$("#check_only").attr('checked', false);
 				$("#check_only").parent().removeClass('checked')
 				$("#btnDeploy").val('Deploy to Server');
