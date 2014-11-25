@@ -31,9 +31,9 @@ describe('mavensmate compile-metadata', function(){
         .done();
     });
     
-    var filesToDelete = [path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls')];
-    helper.cleanUpTestData(testClient, filesToDelete);
-    helper.cleanUpTestProject('compile-metadata');
+    // var filesToDelete = [path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls')];
+    // helper.cleanUpTestData(testClient, filesToDelete);
+    // helper.cleanUpTestProject('compile-metadata');
   });
 
   it('should compile a meta.xml file via the metadata api', function(done) {

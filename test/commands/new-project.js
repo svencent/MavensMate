@@ -44,7 +44,7 @@ describe('mavensmate new-project', function(){
   });
 
   it('should prompt because of bad salesforce creds', function(done) {    
-    this.timeout(10000);
+    this.timeout(20000);
 
     var payload = {
       projectName: 'new-project-bad-creds',

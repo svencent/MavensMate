@@ -31,13 +31,10 @@ describe('mavensmate new-metadata', function(){
           
           testClient.getProject()._parsePackageXml()
             .then(function(pkg) {
-              // pkg.should.have.property('ApexClass');
-              // pkg.should.have.property('ApexPage');
-              // pkg.ApexClass.should.equal('*');
-              // pkg.ApexPage.should.equal('*');
-              // done();
-              console.log('PACKAGE!!!');
-              console.log(pkg);
+              pkg.should.have.property('ApexClass');
+              pkg.ApexClass.length.should.equal(1);
+              // console.log('PACKAGE!!!');
+              // console.log(pkg);
               done();
             });
         })
