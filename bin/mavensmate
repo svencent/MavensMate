@@ -56,7 +56,7 @@ var commandName = program.args[0];
 if (projectExemptCommands.indexOf(commandName) === -1) {
   cliClient.setProject(process.cwd(), function(err) {
     if (err) {
-      console.error('Could not set project: '+err.message);
+      console.error('Could not set project: '+err.message+ ', '+err.stack);
       process.exit(1);
     }
     program.parse(process.argv); // run subcommand if necessary
