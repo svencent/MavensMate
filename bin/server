@@ -16,8 +16,10 @@ var client = mavensmate.createClient({
 
 if (project) {
   client.setProject(project, function(err, response) {
-    console.log('set client project response ...');
-    console.log(err);
-    console.log(response);
+    if (err) {
+      console.log('could not set project: '+err.message);
+    } else {
+      console.log('set project to path: '+response.path);
+    }
   });
 }

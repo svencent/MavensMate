@@ -141,8 +141,6 @@
 
 	<ul class="nav nav-tabs nav-append-content">
 	  <li class="active"><a href="#tests_content" data-toggle="tab">Apex Code</a></li>
-	  <li><a href="#debug_content" data-toggle="tab">Debug Options</a></li>
-	  <li class="results_hidden"><a href="#log" id="a_result" data-toggle="tab">Log</a></li>
 	</ul> 
 
 	<div class="tab-content"  id="main-tab-content">
@@ -151,110 +149,6 @@
   			<div id="editor"></div>
   		</div>
 	  </div>
-	  	<div id="debug_content" class="tab-pane debug-tab-pane">
-	  		<div class="row-fluid">
-	  			<div class="span12">
-	  				<div class="alert alert-info">
-	              		<i class="icon-cogs icon-2x pull-left"></i>
-	              		Debug levels control the level of granularity in a debug log.
-	            		</div>
-	        		</div>
-	  		</div>
-	  		<div class="row-fluid">
-	  			<div class="span6">
-	  				<label for="select-Db" >Database Log Level</label>
-	  				<select id="select-Db">
-	  					<option value="">None</option>
-	  					<option value="ERROR">ERROR</option>
-	  					<option value="WARN">WARN</option>
-	  					<option value="INFO">INFO</option>
-	  					<option value="DEBUG">DEBUG</option>
-	  					<option value="FINE">FINE</option>
-	  					<option value="FINER">FINER</option>
-	  					<option value="FINEST">FINEST</option>
-	  				</select>
-	  			</div>
-	  			<div class="span6">
-	  				<label for="select-Workflow" >Workflow Log Level</label>
-	  				<select id="select-Workflow">
-	  					<option value="">None</option>
-	  					<option value="ERROR">ERROR</option>
-	  					<option value="WARN">WARN</option>
-	  					<option value="INFO">INFO</option>
-	  					<option value="DEBUG">DEBUG</option>
-	  					<option value="FINE">FINE</option>
-	  					<option value="FINER">FINER</option>
-	  					<option value="FINEST">FINEST</option>
-	  				</select>
-	  			</div>
-	  		</div>
-
-	  		<div class="row-fluid">
-	  			<div class="span6">
-	  				<label for="select-Validation" >Validation Log Level</label>
-	  				<select id="select-Validation">
-	  					<option value="">None</option>
-	  					<option value="ERROR">ERROR</option>
-	  					<option value="WARN">WARN</option>
-	  					<option value="INFO">INFO</option>
-	  					<option value="DEBUG">DEBUG</option>
-	  					<option value="FINE">FINE</option>
-	  					<option value="FINER">FINER</option>
-	  					<option value="FINEST">FINEST</option>
-	  				</select>
-	  			</div>
-	  			<div class="span6">
-	  				<label for="select-Callout" >Callout Log Level</label>
-	  				<select id="select-Callout">
-	  					<option value="">None</option>
-	  					<option value="ERROR">ERROR</option>
-	  					<option value="WARN">WARN</option>
-	  					<option value="INFO">INFO</option>
-	  					<option value="DEBUG">DEBUG</option>
-	  					<option value="FINE">FINE</option>
-	  					<option value="FINER">FINER</option>
-	  					<option value="FINEST">FINEST</option>
-	  				</select>
-	  			</div>
-	  		</div>
-
-	  		<div class="row-fluid">
-	  			<div class="span6">
-	  				<label for="select-Apex_code" >Apex Code Log Level</label>
-	  				<select id="select-Apex_code">
-	  					<option value="">None</option>
-	  					<option value="ERROR">ERROR</option>
-	  					<option value="WARN">WARN</option>
-	  					<option value="INFO">INFO</option>
-	  					<option value="DEBUG" selected="selected">DEBUG</option>
-	  					<option value="FINE">FINE</option>
-	  					<option value="FINER">FINER</option>
-	  					<option value="FINEST">FINEST</option>
-	  				</select>
-	  			</div>
-	  			<div class="span6">
-	  				<label for="select-Apex_profiling" >Apex Profiling Log Level</label>
-	  				<select id="select-Apex_profiling">
-	  					<option value="">None</option>
-	  					<option value="ERROR">ERROR</option>
-	  					<option value="WARN">WARN</option>
-	  					<option value="INFO">INFO</option>
-	  					<option value="DEBUG">DEBUG</option>
-	  					<option value="FINE">FINE</option>
-	  					<option value="FINER">FINER</option>
-	  					<option value="FINEST">FINEST</option>
-	  				</select>
-	  			</div>
-	  		</div>
-	  	</div>
-	  <div class="tab-pane" id="log">
-	    <div id="log_coverage_wrapper" style="-webkit-border-radius: 4px 4px 4px 4px;overflow-y:auto;padding:0px;position:relative;">
-			<a href="javascript:void(0)" class="btn btn-success btn-embossed" onclick="$('#log_selector').selectText();" style="padding: 3px 5px;font-size: .9em;top:0;right:10px;position:absolute;">Select Log Text</a>
-			<div style="padding:10px;" id="log_selector">
-				
-			</div>
-		</div>
-	  </div>
 	</div> 
 </div>
 
@@ -262,7 +156,7 @@
 
 
 {% block buttons %}					
-	<input type="button" class="btn btn-info btn-embossed" value="Execute" onclick="execute_apex()" id="btnExecuteApex"> 
+	<input type="button" class="btn btn-info btn-embossed" value="Execute" onclick="executeApex()" id="btnExecuteApex"> 
 	{% include 'snippets/cancel_button.html' %}
 	{% include 'snippets/running_indicator.html' %}
 {% endblock %}
@@ -274,14 +168,13 @@
 var editor;
 var line;
 
-function execute_apex() {
+function executeApex() {
 	$.ajax({
 		type: "POST",
-		url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
+		url: "{{ mavensmate.ui.getBaseUrl() }}/app/apex/execute", 
 		dataType: "json",
 		contentType: 'application/json; charset=utf-8',
 		data: JSON.stringify({
-			 path 				: '{{ mavensmate.ui.getProjectPath() }}',
 			 body 				: editor.getValue(),
 			 debug_categories 	: get_log_levels_json(),
 			 command 			: 'execute-apex'
@@ -299,49 +192,48 @@ function execute_apex() {
 }
 
 function handleResponse(response) {
-	console.log(response)
+	// console.log(response);
 	try {
-		if (response["success"] == true) {
-			debug_log = response["log"]
-			console.log(debug_log)
-			debug_log = debug_log.replace(/\n/g, "<br />");
-			$("#log_selector").html(debug_log)
-			$(".results_hidden").show();
-			$("#a_result").click();
-			hideMessage()
-		} else {
-			var return_message = ''
-			var error_message = response["compileProblem"]
-			var exception_message = response["exceptionMessage"]
-			var log = response["log"]
-			if (log != null) {
-				var debug_log = log.replace(/\n/g, "<br />");
-				$("#log_selector").html(debug_log)
-				$(".results_hidden").show()
-				$("#a_result").click();
-			}
-			if (error_message != null) {
-				return_message += error_message;
-			}
-			if (exception_message != null && exception_message != "") {
-				if (return_message == '') {
-					return_message = exception_message
-				} else {
-					return_message += "<br/><br/>" + exception_message
-				}
-			}
-			line = (parseInt(response["line"]) == -1) ? 0 : (parseInt(response["line"]) - 1)
-			if (line == -1)
-				line = 0
-			var column = (parseInt(response["column"]) == -1) ? 0 : (parseInt(response["column"]) - 1)
-			editor.getSession().setAnnotations([{
-			  row: line,
-			  column: column,
-			  text: return_message,
-			  type: "error" // also warning and information
-			}]);
-			showMessage(return_message);
+		if (response.error) {
+			showMessage(response.error);
 			notifySound();
+		} else {
+			var response = response.result;
+			if (response.success) {
+				hideMessage();
+			} else {
+				var returnMessage = '';
+				var errorMessage = response["compileProblem"];
+				var exceptionMessage = response["exceptionMessage"];
+				if (errorMessage !== null) {
+					returnMessage += errorMessage;
+				}
+				if (exceptionMessage) {
+					if (returnMessage === '') {
+						returnMessage = exceptionMessage;
+					} else {
+						returnMessage += "<br/><br/>" + exceptionMessage;
+					}
+				}
+				line = (parseInt(response["line"]) === -1) ? 0 : (parseInt(response["line"]) - 1)
+				if (line === -1) {
+					line = 0;
+				}
+				var column = (parseInt(response["column"]) === -1) ? 0 : (parseInt(response["column"]) - 1)
+				
+				console.log(line);
+				console.log(column);
+				console.log(returnMessage);
+
+				editor.getSession().setAnnotations([{
+				  row: line,
+				  column: column,
+				  text: returnMessage,
+				  type: 'error' // also warning and information
+				}]);
+				showMessage(returnMessage);
+				notifySound();
+			}
 		}
 	} catch(e) {
 		console.log(e)
@@ -355,7 +247,7 @@ function handleResponse(response) {
 	editor.setReadOnly(false);
 }
 
-function resize_editor() {
+function resizeEditor() {
 	$("#editor_wrapper").css("width", $(window).width() - 95)
 	$("#editor_wrapper").css("height", $(window).height() - 210)
 }
@@ -368,7 +260,7 @@ $(function(){
 	editor.getSession().setUseWrapMode(true);
 	editor.setFontSize(16);
 	editor.getSession().setTabSize(4);
-	resize_editor()
+	resizeEditor()
 	editor.resize()
 	editor.focus()
 
@@ -379,7 +271,7 @@ $(function(){
 $("#log_coverage_wrapper").height($(window).height() - 175)
 $(window).resize(function() {
 	$("#log_coverage_wrapper").height($(window).height() - 175)
-    resize_editor()  
+    resizeEditor()  
 });
 
 </script>
