@@ -569,51 +569,58 @@
 		console.log(operation);
 		console.log(response);
 		if (operation === "deploy") {
-			$(".result_wrapper").remove()
+			if (response.error) {
+				showMessage(response.error);
+				toggleRunningIndicator();
+				$("#btnDeploy").show();
+				notifySound();
+			} else {
+				$(".result_wrapper").remove()
 
-			$("#result").html(response["result"]);
+				$("#result").html(response.result.html);
 
-			$("#dropdown-destinations").html($("#destination_options ul").html());
-			$("#destination_options").remove()
+				$("#dropdown-destinations").html($("#destination_options ul").html());
+				$("#destination_options").remove()
 
-			var targets = Object.keys(response.result);
-			var isSuccess = true;
-			for (var i in targets) {
-				var targetUsername = targets[i];
-				if (!response.result[targetUsername].success) {
-					isSuccess = false;
-					break;
+				var targets = Object.keys(response.result.object);
+				var isSuccess = true;
+				for (var i in targets) {
+					var targetUsername = targets[i];
+					if (!response.result.object[targetUsername].success) {
+						isSuccess = false;
+						break;
+					}
 				}
+				if (isSuccess) {
+					$("#check_only").attr('checked', false);
+					$("#check_only").parent().removeClass('checked')
+					$("#btnDeploy").val('Deploy to Server');
+				}
+
+				$("#main-tab-content").append($("#extra_tabs").html());
+				$("#extra_tabs").remove()
+
+				$('.nav-tabs a').click(function (e) {
+				  e.preventDefault();
+				  $(this).tab('show');
+				})
+
+				$(".results_hidden").show();
+				if ($("#arcade").css("display") == "none") {
+					$("ul#main-tabs > li.active").removeClass('active')
+					$("div#main-tab-content > div.active").removeClass('active')
+					$("#result-0").addClass('active')
+					$('li.dropdown ul li a.test_result_link').tab('show');
+					$(".results_hidden").addClass('active');
+				}
+
+				toggleRunningIndicator();
+				$("#btnDeploy").show();
+				notifySound();
 			}
-			if (isSuccess) {
-				$("#check_only").attr('checked', false);
-				$("#check_only").parent().removeClass('checked')
-				$("#btnDeploy").val('Deploy to Server');
-			}
-
-			$("#main-tab-content").append($("#extra_tabs").html());
-			$("#extra_tabs").remove()
-
-			$('.nav-tabs a').click(function (e) {
-			  e.preventDefault();
-			  $(this).tab('show');
-			})
-
-			$(".results_hidden").show();
-			if ($("#arcade").css("display") == "none") {
-				$("ul#main-tabs > li.active").removeClass('active')
-				$("div#main-tab-content > div.active").removeClass('active')
-				$("#result-0").addClass('active')
-				$('li.dropdown ul li a.test_result_link').tab('show');
-				$(".results_hidden").addClass('active');
-			}
-
-			toggleRunningIndicator();
-			$("#btnDeploy").show();
-			notifySound();
 		} else if (operation == "index") {
-			if (response["success"] == false) {
-				showMessage(response["result"])
+			if (response.error) {
+				showMessage(response.error)
 			} else {
 				if (tree === undefined) {
 					renderTree(PROJECT_WRAPPER_OFFSET)  
