@@ -31,7 +31,7 @@ exports.createClient = function(editor) {
   return mavensmate.createClient({
     editor: editor,
     headless: true,
-    debugging: false,
+    debugging: process.env.MAVENSMATE_DEBUG_TESTS || false,
     settings: {
       mm_use_keyring: false
     }
@@ -140,7 +140,7 @@ exports.cleanUpTestProject = function(name, testWorkspace) {
 
 exports.cleanUpTestData = function(testClient, files) {
   after(function(done) {
-    this.timeout(20000);
+    this.timeout(40000);
     var payload = {
       files: files
     };

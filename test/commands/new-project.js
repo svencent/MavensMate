@@ -62,13 +62,17 @@ describe('mavensmate new-project', function(){
 
   it('should create project in specified workspace', function(done) {
     
-    this.timeout(50000);
+    this.timeout(30000);
     
     var payload = {
       projectName: 'new-project',
       username: 'mm@force.com',
       password: 'force',
-      workspace: path.join(helper.baseTestDirectory(),'workspace')
+      workspace: path.join(helper.baseTestDirectory(),'workspace'),
+      package: {
+        ApexPage: '*',
+        CustomObject: ['Account']
+      }
     };
 
     testClient.executeCommand('new-project', payload, function(err, response) {

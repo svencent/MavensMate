@@ -10,7 +10,7 @@
     "mavensmate": "./lib/mavensmate"
   },
   "scripts": {
-    "test": "mocha $(find test -name '*.js')"
+    "test": "HTTP_MAX_SOCKETS=5000 mocha $(find test -name '*.js')"
   },
   "author": {
     "name": "Joe Ferraro",
