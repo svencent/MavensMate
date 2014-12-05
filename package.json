@@ -10,7 +10,8 @@
     "mavensmate": "./lib/mavensmate"
   },
   "scripts": {
-    "test": "HTTP_MAX_SOCKETS=5000 mocha $(find test -name '*.js')"
+    "test": "HTTP_MAX_SOCKETS=5000 mocha $(find test -name '*.js')",
+    "postinstall": "node postInstall"
   },
   "author": {
     "name": "Joe Ferraro",
@@ -57,6 +58,7 @@
     "moment": "2.8.3",
     "nconf": "0.6.9",
     "node-uuid": "1.4.1",
+    "open":"0.0.3",
     "portfinder": "0.2.1",
     "q": "2.0.2",
     "randomstring": "1.0.3",
