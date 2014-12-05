@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "HTTP_MAX_SOCKETS=5000 mocha $(find test -name '*.js')",
-    "postinstall": "node postInstall"
+    "postinstall": "node bin/postInstall"
   },
   "author": {
     "name": "Joe Ferraro",
