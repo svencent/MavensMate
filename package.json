@@ -1,14 +1,12 @@
 {
   "name": "mavensmate",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Core APIs that drive MavensMate IDEs for Salesforce1/Force.com",
   "private": false,
   "bin": {
     "mavensmate": "./bin/mavensmate"
   },
-  "main": {
-    "mavensmate": "./lib/mavensmate"
-  },
+  "main": "./lib/mavensmate",
   "scripts": {
     "test": "HTTP_MAX_SOCKETS=5000 mocha $(find test -name '*.js')",
     "postinstall": "node bin/postInstall"
