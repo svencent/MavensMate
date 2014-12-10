@@ -15,6 +15,7 @@ var SalesforceClient  = require('../lib/mavensmate/sfdc-client');
 exports.ensureTestProject = function(testClient, name, testWorkspace) {
   var self = this;
   before(function(done) {
+    this.timeout(4000);
     testWorkspace = testWorkspace || path.join(self.baseTestDirectory(),'workspace');
     if (!fs.existsSync(path.join(testWorkspace, name))) {
       fs.copySync(path.join(self.baseTestDirectory(),'fixtures', 'test-project'), path.join(testWorkspace, name));
