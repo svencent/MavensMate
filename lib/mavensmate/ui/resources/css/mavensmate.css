@@ -11,6 +11,10 @@
  	display: none;
  }
 
+ body.atom li.game {
+ 	display: none;
+ }
+
  a.btn {
  	font-weight: bold;
  }
