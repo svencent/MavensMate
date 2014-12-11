@@ -147,7 +147,7 @@
 					 workspace 		: $('#workspace').val(),
 					 subscription 	: $('#subscription').val(),
 					 action 		: 'new',
-					 orgUrl 		: $('#custom-url').val()
+					 instanceUrl 	: $('#custom-url').val()
 				}),
 				beforeSend: function() { showLoading('Creating new MavensMate project'); },
 				complete: function(data){
@@ -251,7 +251,7 @@
 					 password 		: $('#pw').val(), 
 					 orgType 		: $('#org_type').val(),
 					 subscription 	: $('#subscription').val(),
-					 orgUrl 		: $('#custom-url').val(),
+					 instanceUrl 	: $('#custom-url').val(),
 					 command 		: 'session'
 				},
 				beforeSend: function() { showLoading(message); },
