@@ -15,6 +15,10 @@
  	display: none;
  }
 
+ body.atom div.alert span#error_message a.btn {
+ 	display: none;
+ }
+
  a.btn {
  	font-weight: bold;
  }
