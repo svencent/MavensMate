@@ -71,9 +71,9 @@ MavensMate for Sublime Text is a Sublime Text plugin that uses the `mm` command 
 
 **IMPORTANT:** MavensMate for Sublime Text will eventually be ported to use the APIs in this project.
 
-### [MavensMate for Atom (alpha)][atom]
+### [MavensMate for Atom (beta)][atom]
 
-MavensMate for Atom is still in active development.
+MavensMate for Atom is still in active development. If you're interested in beta-testing the plugin, you are encouraged to install it.
 
 
 ## Bugs and feature requests
