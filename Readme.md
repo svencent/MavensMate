@@ -23,9 +23,11 @@ To use MavensMate to build a Salesforce1 IDE for your Node.js project:
 
 #### Install
 
-`npm install mavensmate`
+`npm install mavensmate -g`
 
 #### Usage
+
+##### Node Application
 
 ```
 var mavensmate = require('mavensmate');
@@ -40,6 +42,22 @@ client.setProject('path/to/some/project', function(err, response) {
 	});
 });
 ```
+
+##### Command Line
+
+`mavensmate <command>`
+
+###### Examples
+
+`mavensmate new-project`
+
+`mavensmate edit-project <<< '{"package": { "ApexClass":[ "MyClass", "MyOtherClass" ], "ApexPage":"*" } }'` 
+
+`mavensmate compile-project`
+
+`mavensmate compile-metadata <<< '{ "files" : [ "/path/to/MyClass.cls", "/path/to/MyPage.page" ] }'`
+
+For a full list of commands, see the `commands` directory. We will continue to build out this documentation with a full list of commands, including payload parameters.
 
 #### Run Functional/Unit Tests
 
