@@ -47,7 +47,6 @@
     "inherits": "2.0.1",
     "inquirer": "0.8.0",
     "jsforce": "joeferraro/jsforce",
-    "keytar": "2.0.3",
     "lodash": "2.4.1",
     "loophole": "1.0.0",
     "mavensmate": "0.0.1",
@@ -73,6 +72,9 @@
     "winston": "0.8.3",
     "xml2js": "0.4.4",
     "xmldoc": "0.1.2"
+  },
+  "optionalDependencies" : {
+    "keytar": "2.0.3"
   },
   "devDependencies": {
     "sinon": "latest",
