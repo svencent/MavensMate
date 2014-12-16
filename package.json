@@ -1,6 +1,6 @@
 {
   "name": "mavensmate",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Core APIs that drive MavensMate IDEs for Salesforce1/Force.com",
   "private": false,
   "bin": {
@@ -49,7 +49,6 @@
     "jsforce": "joeferraro/jsforce",
     "lodash": "2.4.1",
     "loophole": "1.0.0",
-    "mavensmate": "0.0.1",
     "merge": "1.2.0",
     "minimist": "1.1.0",
     "moment": "2.8.3",
