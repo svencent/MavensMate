@@ -56,14 +56,6 @@
             $("input[type='text']:first").focus(); //focus first input element
         });
 
-        function notifyOnloadListeners() {
-            var client = '{{ mavensmate.ui.getClient().editor }}';
-            if (client.toLowerCase() === 'atom') {
-                var event = new CustomEvent('mavensmateIframeLoaded', { 'detail': '{{ uid }}' });
-                parent.document.dispatchEvent(event);
-            }   
-        }
-
         function closeWindow() {
             var client = '{{ mavensmate.ui.getClient().editor }}';
             if (client.toLowerCase() === 'atom') {
@@ -155,7 +147,7 @@
         }
     </script>
 </head>
-<body id="body" class="{{ mavensmate.ui.getClient().editor }} {% block body_class %}{% endblock %}" onload="notifyOnloadListeners()">
+<body id="body" class="{{ mavensmate.ui.getClient().editor }} {% block body_class %}{% endblock %}">
   	
     {% include 'snippets/context-menu.html' %}
 
