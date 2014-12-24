@@ -74,9 +74,9 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
   } 
 
   var payload = {
-    projectName: name,
-    username: 'mm@force.com',
-    password: 'force',
+    name: name,
+    username: process.env.username || 'mm@force.com',
+    password: process.env.password || 'force',
     workspace: testWorkspace,
     package: pkg || {}
   };
@@ -109,7 +109,7 @@ exports.getProjectFiles = function(testClient, typeXmlName, numberOfFiles) {
   var metadataType = metadataService.getTypeByName(typeXmlName);
   // console.log(this.baseTestDirectory());
   // console.log(testClient.getProject());
-  var projectPath = path.join(this.baseTestDirectory(),'workspace', testClient.getProject().getName());
+  var projectPath = path.join(this.baseTestDirectory(),'workspace', testClient.getProject().name);
   var metadataDirectory = path.join(projectPath, 'src', metadataType.directoryName);
   if (!numberOfFiles) {
     numberOfFiles = 1;

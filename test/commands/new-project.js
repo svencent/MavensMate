@@ -28,7 +28,7 @@ describe('mavensmate new-project', function(){
     this.timeout(5000);
 
     var payload = {
-      projectName: 'new-project-existing',
+      name: 'new-project-existing',
       username: 'mm@force.com',
       password: 'force',
       workspace: path.join(helper.baseTestDirectory(),'workspace')
@@ -47,7 +47,7 @@ describe('mavensmate new-project', function(){
     this.timeout(20000);
 
     var payload = {
-      projectName: 'new-project-bad-creds',
+      name: 'new-project-bad-creds',
       username: 'thiswontwork@force.com',
       password: 'thisisabadpassword',
       workspace: path.join(helper.baseTestDirectory(),'workspace')
@@ -65,9 +65,9 @@ describe('mavensmate new-project', function(){
     this.timeout(30000);
     
     var payload = {
-      projectName: 'new-project',
-      username: 'mm@force.com',
-      password: 'force',
+      name: 'new-project',
+      username: process.env.username || 'mm@force.com',
+      password: process.env.password || 'force',
       workspace: path.join(helper.baseTestDirectory(),'workspace'),
       package: {
         ApexPage: '*',
@@ -76,6 +76,7 @@ describe('mavensmate new-project', function(){
     };
 
     testClient.executeCommand('new-project', payload, function(err, response) {
+      console.log(err);
       should.equal(err, null);
       response.should.have.property('result');
       response.result.should.equal('Project created successfully');

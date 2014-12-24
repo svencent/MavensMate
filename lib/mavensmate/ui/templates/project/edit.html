@@ -263,7 +263,7 @@
 		}
 			
 		$(function() {		
-			$("#pn").val("{{ mavensmate.ui.getProject().getName() }}");  
+			$("#pn").val("{{ mavensmate.ui.getProject().name }}");  
 			$("#un").val("{{ mavensmate.ui.getSalesforceClient().getUsername() }}");
 			$("#pw").val("{{ mavensmate.ui.getSalesforceClient().getPassword() }}");
 			$("select.org_type").val("{{ mavensmate.ui.getSalesforceClient().getOrgType() }}");
