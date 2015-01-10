@@ -6,8 +6,26 @@ var should      = chai.should();
 
 describe('mavensmate index-metadata', function(){
 
-  var testClient = helper.createClient('atom');
-  helper.ensureTestProject(testClient, 'index-metadata');
+  var project;
+  var testClient;
+
+  before(function(done) {
+    this.timeout(4000);
+    testClient = helper.createClient('atom');
+    helper.unlinkEditor();
+    helper.putTestProjectInTestWorkspace(testClient, 'index-metadata');
+    helper.setProject(testClient, 'index-metadata', function(err, proj) {
+      project = proj;
+      done();
+    });
+  });
+
+  after(function(done) {
+    helper.cleanUpTestProject('index-metadata')
+      .then(function() {
+        done();
+      });
+  });
 
   it('should index metadata based on the project subscription', function(done) {
     
@@ -22,9 +40,6 @@ describe('mavensmate index-metadata', function(){
         done();
       });
     });
-
-    helper.cleanUpTestProject('index-metadata');
-
   });
 
 });

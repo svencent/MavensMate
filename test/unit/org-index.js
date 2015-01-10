@@ -10,8 +10,25 @@ var path          = require('path');
 
 describe('mavensmate org-index', function(){
 
-  var testClient = helper.createClient('atom');
-  helper.ensureTestProject(testClient, 'org-index');
+  var project;
+  var testClient;
+
+  before(function(done) {
+    this.timeout(4000);
+    testClient = helper.createClient('atom');
+    helper.putTestProjectInTestWorkspace(testClient, 'org-index');
+    helper.setProject(testClient, 'org-index', function(err, proj) {
+      project = proj;
+      done();
+    });
+  });
+
+  after(function(done) {
+    helper.cleanUpTestProject('org-index')
+      .then(function() {
+        done();
+      });
+  });
 
   it('should select metadata based on package.xml', function(done) {
     
@@ -21,24 +38,22 @@ describe('mavensmate org-index', function(){
     var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
     fs.writeFileSync(path.join(helper.baseTestDirectory(), 'workspace', 'org-index', 'src', 'package.xml'), packageXml);
 
-    helper.setProject(testClient, 'org-index', function() {
       
-      fs.copySync(
-        path.join(helper.baseTestDirectory(), 'fixtures', 'org-index.json'), 
-        path.join(helper.baseTestDirectory(), 'workspace', 'org-index', 'config', '.org_metadata')
-      );
+    fs.copySync(
+      path.join(helper.baseTestDirectory(), 'fixtures', 'org-index.json'), 
+      path.join(helper.baseTestDirectory(), 'workspace', 'org-index', 'config', '.org_metadata')
+    );
 
-      testClient.getProject().getOrgMetadata()
-        .then(function(m) {
-          var apexClass = _.find(m, {id:'ApexClass'});
-          apexClass.select.should.equal(true);
-          done();
-        })
-        ['catch'](function(err) {
-          done(err);
-        })
-        .done();
-    });
+    testClient.getProject().getOrgMetadataIndexWithSelections()
+      .then(function(m) {
+        var apexClass = _.find(m, {id:'ApexClass'});
+        apexClass.select.should.equal(true);
+        done();
+      })
+      ['catch'](function(err) {
+        done(err);
+      })
+      .done();
 
   });
 
@@ -79,7 +94,6 @@ describe('mavensmate org-index', function(){
       })
       .done();
 
-    helper.cleanUpTestProject('org-index');
   });
 
 });

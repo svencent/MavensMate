@@ -10,9 +10,28 @@ chai.use(require('chai-fs'));
 
 describe('mavensmate new-project', function(){
 
-  helper.unlinkEditor();
-  var testClient = helper.createClient('atom');
-  helper.ensureTestProject(testClient, 'new-project-existing');
+  var project;
+  var testClient;
+
+  before(function(done) {
+    this.timeout(4000);
+    testClient = helper.createClient('atom');
+    helper.unlinkEditor();
+    helper.putTestProjectInTestWorkspace(testClient, 'new-project-existing');
+    helper.setProject(testClient, 'new-project-existing', function(err, proj) {
+      project = proj;
+      done();
+    });
+  });
+
+  after(function(done) {
+    this.timeout(4000);
+    helper.cleanUpTestProject('new-project-existing')
+      .then(helper.cleanUpTestProject('new-project'))
+      .then(function() {
+        done();
+      });
+  });
 
   it('should require username and password', function(done) {
     testClient.executeCommand('new-project', {}, function(err, response) {
@@ -39,8 +58,6 @@ describe('mavensmate new-project', function(){
       err.error.should.equal('Could not initiate new Project instance: Error: Directory already exists!');
       done();
     });
-
-    helper.cleanUpTestProject('new-project-existing');
   });
 
   it('should prompt because of bad salesforce creds', function(done) {    
@@ -86,15 +103,12 @@ describe('mavensmate new-project', function(){
       assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src', 'package.xml'),  'Project package.xml does not exist');
       helper.setProject(testClient, 'new-project', function() {
         var project = testClient.getProject();
-        project.settings.username.should.equal('mm@force.com');
-        project.settings.password.should.equal('force');
+        project.settings.username.should.equal(process.env.username || 'mm@force.com');
+        project.settings.password.should.equal(process.env.password || 'force');
         project.settings.environment.should.equal('developer');
         done();
       });
     });
-
-    helper.cleanUpTestProject('new-project');
-
   });
 
 });

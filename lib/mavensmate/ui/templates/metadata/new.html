@@ -67,10 +67,9 @@
 				contentType: 'application/json; charset=utf-8',
 				url: "{{ mavensmate.ui.getBaseUrl() }}/app/metadata/create",
 				data: JSON.stringify({
-					path 				: '{{ mavensmate.ui.getProjectPath() }}',
-					params 				: paramPayload,
-					metadata_type		: '{{ metadataType }}',
-					github_template		: selectedTemplate
+					metadataTypeXmlName : '{{ metadataType }}',
+					paramValues 		: paramPayload,
+					template			: selectedTemplate
 				}),
 				beforeSend: function() { showLoading('Creating new metadata...'); },
 				complete: function(data){

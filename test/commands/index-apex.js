@@ -10,26 +10,45 @@ chai.use(require('chai-fs'));
 
 describe('mavensmate index-apex', function(){
 
-  var testClient = helper.createClient('atom');
-  helper.ensureTestProject(testClient, 'index-apex');
+  var project;
+  var testClient;
 
-  it('should index project apex symbols', function(done) {
-    
-    this.timeout(40000);
+  before(function(done) {
+    this.timeout(4000);
+    testClient = helper.createClient('atom');
+    helper.unlinkEditor();
+    helper.putTestProjectInTestWorkspace(testClient, 'index-apex');
+    helper.setProject(testClient, 'index-apex', function(err, proj) {
+      project = proj;
+      done();
+    });
+  });
 
-    helper.setProject(testClient, 'index-apex', function() {
-      testClient.executeCommand('index-apex', function(err, response) {
-        should.equal(err, null);
-        response.should.have.property('result');
-        response.result.should.equal('Symbols successfully indexed');
-        assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'config', '.symbols'),  'Symbols directory does not exist');
+  after(function(done) {
+    this.timeout(10000);
+    var filesToDelete = [path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'src', 'classes', 'IndexMySymbolsClass.cls')];
+    helper.cleanUpTestData(testClient, filesToDelete)
+      .then(function() {
+        return helper.cleanUpTestProject('index-apex');
+      })
+      .then(function() {
         done();
       });
+  });
+
+  it('should index project apex symbols', function(done) {    
+    this.timeout(40000);
+
+    testClient.executeCommand('index-apex', function(err, response) {
+      should.equal(err, null);
+      response.should.have.property('result');
+      response.result.should.equal('Symbols successfully indexed');
+      assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'config', '.symbols'),  'Symbols directory does not exist');
+      done();
     });
   });
 
   it('should index apex symbols for a specific apex class', function(done) {
-    
     this.timeout(20000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'IndexMySymbolsClass')
@@ -44,10 +63,6 @@ describe('mavensmate index-apex', function(){
         });
       })
       .done();
-
-    var filesToDelete = [path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'src', 'classes', 'IndexMySymbolsClass.cls')];
-    helper.cleanUpTestData(testClient, filesToDelete);
-    helper.cleanUpTestProject('index-apex');
   });
 
 });

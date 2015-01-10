@@ -11,34 +11,48 @@ chai.use(require('chai-fs'));
 
 describe('mavensmate org-connections', function(){
 
-  var testClient = helper.createClient('atom');
-  helper.ensureTestProject(testClient, 'org-connections');
+  var project;
+  var testClient;
 
-  it('should add a new org connection', function(done) {
+  before(function(done) {
+    this.timeout(4000);
+    testClient = helper.createClient('atom');
+    helper.unlinkEditor();
+    helper.putTestProjectInTestWorkspace(testClient, 'org-connections');
+    helper.setProject(testClient, 'org-connections', function(err, proj) {
+      project = proj;
+      done();
+    });
+  });
 
-    this.timeout(10000);      
-    
-    helper.setProject(testClient, 'org-connections', function() {      
-      var payload = {
-        username: 'mm@force.com',
-        password: 'force',
-        orgType: 'developer'
-      };
-      testClient.executeCommand('new-connection', payload, function(err, response) {
-        should.equal(err, null);
-        response.should.have.property('result');
-        response.result.should.equal('Org connection successfully created');
-        assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'),  'Org Connections file not created');
-        var connections = fs.readJsonSync(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'));
-        connections.length.should.equal(1);
+  after(function(done) {
+    helper.cleanUpTestProject('org-connections')
+      .then(function() {
         done();
       });
+  });
+
+  it('should add a new org connection', function(done) {
+    this.timeout(10000);      
+    
+    var payload = {
+      username: 'mm@force.com',
+      password: 'force',
+      orgType: 'developer'
+    };
+    testClient.executeCommand('new-connection', payload, function(err, response) {
+      should.equal(err, null);
+      response.should.have.property('result');
+      response.result.should.equal('Org connection successfully created');
+      assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'),  'Org Connections file not created');
+      var connections = fs.readJsonSync(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'));
+      connections.length.should.equal(1);
+      done();
     });
     
   });
 
   it('should not add an org connection because of bad credentials', function(done) {
-
     this.timeout(10000);      
     
     var payload = {
@@ -58,7 +72,6 @@ describe('mavensmate org-connections', function(){
   });
 
   it('should delete an org connection', function(done) {
-
     this.timeout(10000);      
 
     var connections = fs.readJsonSync(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'));
@@ -73,9 +86,7 @@ describe('mavensmate org-connections', function(){
       connections = fs.readJsonSync(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'));
       connections.length.should.equal(0);
       done();
-    });
-    
-    helper.cleanUpTestProject('org-connections');    
+    });    
   });
 
 });

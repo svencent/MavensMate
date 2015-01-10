@@ -5,154 +5,132 @@ var chai            = require('chai');
 var should          = chai.should();
 var fs              = require('fs-extra');
 var path            = require('path');
-var PackageService  = require('../../lib/mavensmate/package');
+var Package         = require('../../lib/mavensmate/package');
 var Metadata        = require('../../lib/mavensmate/metadata').Metadata;
+var assert          = chai.assert;
+
+chai.use(require('chai-fs'));
 
 describe('mavensmate unit-package', function(){
 
-  var testClient = helper.createClient('atom');
-  helper.ensureTestProject(testClient, 'package-test');
+  var project;
+  var testClient;
 
-  // helper.goOffline();
+  before(function(done) {
+    this.timeout(4000);
+    testClient = helper.createClient('atom');
+    helper.putTestProjectInTestWorkspace(testClient, 'package-test');
+    helper.setProject(testClient, 'package-test', function(err, proj) {
+      project = proj;
+      done();
+    });
+  });
 
-  // it('should parse package.xml', function(done) {
-    
-  //   this.timeout(10000);
+  after(function(done) {
+    helper.cleanUpTestProject('package-test')
+      .then(function() {
+        done();
+      });
+  });
 
-  //   var members = '<types><members>*</members><name>ApexClass</name></types><types><members>*</members><name>ApexPage</name></types>';
-  //   var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
-  //   fs.writeFileSync(path.join(helper.baseTestDirectory(), 'workspace', 'package-test', 'src', 'package.xml'), packageXml);
-
-  //   helper.setProject(testClient, 'package-test', function() {
-  //     testClient.getProject()._parsePackageXml()
-  //       .then(function(pkg) {
-  //         pkg.should.have.property('ApexClass');
-  //         pkg.should.have.property('ApexPage');
-  //         pkg.ApexClass.should.equal('*');
-  //         pkg.ApexPage.should.equal('*');
-  //         done();
-  //       });
-  //   });
-
-  //   helper.cleanUpTestProject('package-test');
-
-  // });
-
-  it('should deserialize package.xml', function(done) {
-    
-    this.timeout(3000);
-
-    // write phony package
-    var members = '<types><members>*</members><name>ApexClass</name></types><types><members>*</members><name>ApexPage</name></types>';
+  it('should create instance from package.xml path', function(done) {
+    // write package
+    var members = '<types><members>myclass</members><members>myclass2</members><name>ApexClass</name></types><types><members>*</members><name>ApexPage</name></types>';
     var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
-    var packageLocation = path.join(helper.baseTestDirectory(), 'workspace', 'package-test', 'src', 'package.xml');
-    fs.writeFileSync(packageLocation, packageXml);
+    var packagePath = path.join(helper.baseTestDirectory(), 'workspace', 'package-test', 'src', 'package.xml');
+    fs.writeFileSync(packagePath, packageXml);
 
     // deserialize package
-    var packageService = new PackageService({ location: packageLocation });
-    helper.setProject(testClient, 'package-test', function() {
-      packageService.deserialize()
-        .then(function(pkg) {
-          pkg.should.have.property('ApexClass');
-          pkg.should.have.property('ApexPage');
-          pkg.ApexClass.should.equal('*');
-          pkg.ApexPage.should.equal('*');
-          done();
-        })
-        ['catch'](function(e) {
-          done(e);
-        })
-        .done();
-    });
-
+    var pkg = new Package({ path: packagePath });
+    pkg.init()
+      .then(function() {
+        pkg.subscription.should.have.property('ApexClass');
+        pkg.subscription.should.have.property('ApexPage');
+        pkg.subscription.ApexClass.length.should.equal(2);
+        pkg.subscription.ApexPage.should.equal('*');
+        done();
+      })
+      .catch(function(e) {
+        done(e);
+      })
+      .done();
   });
 
-  it('should add metadata to package.xml', function(done) {
-    
-    this.timeout(4000);
+  it('should support adding/removing members', function(done) {
+    // write package
+    var members = '<types><members>myclass</members><members>myclass2</members><name>ApexClass</name></types><types><members>*</members><name>ApexPage</name></types>';
+    var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
+    var packagePath = path.join(helper.baseTestDirectory(), 'workspace', 'package-test', 'src', 'package.xml');
+    fs.writeFileSync(packagePath, packageXml);
 
-    helper.setProject(testClient, 'package-test', function() {
+    var pkg = new Package({ path: packagePath });
+    pkg.init()
+      .then(function() {
+        pkg.subscription.should.have.property('ApexClass');
+        pkg.subscription.should.have.property('ApexPage');
+        pkg.subscription.ApexClass.length.should.equal(2);
+        pkg.subscription.ApexPage.should.equal('*');
+        
+        var pkgMetadata = new Metadata({ path: '/path/to/src/classes/foo.cls' });
+        pkg.subscribe([pkgMetadata]);
+        pkg.subscription.ApexClass.length.should.equal(3);  
 
-      // write phony package
-      var members = '<types><members>foo</members><name>ApexClass</name></types><types><members>*</members><name>ApexPage</name></types>';
-      var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
-      var packageLocation = path.join(helper.baseTestDirectory(), 'workspace', 'package-test', 'src', 'package.xml');
-      fs.writeFileSync(packageLocation, packageXml);
-
-      // write phony apex class
-      var newApexClassLocation = path.join(helper.baseTestDirectory(), 'workspace', 'package-test', 'src', 'classes', 'unit-test-class.cls');
-      fs.createFileSync(newApexClassLocation);
-      fs.writeFileSync(newApexClassLocation, '');
-
-      // add to package service, deserialize
-      var newMetadata = new Metadata({
-        project: testClient.getProject(),
-        path: newApexClassLocation
-      });
-      var packageService = new PackageService({ location: packageLocation });
-      packageService.insert(newMetadata)
-        .then(function(pkg) {
-          pkg.should.have.property('ApexClass');
-          pkg.should.have.property('ApexPage');
-          pkg.ApexClass[0].should.equal('foo');
-          pkg.ApexClass[1].should.equal('unit-test-class');
-          done();
-        })
-        ['catch'](function(e) {
-          console.log('error!');
-          done(e);
-        })
-        .done();
-    });
-
+        pkgMetadata = new Metadata({ metadataTypeXmlName: 'ApexClass', name: 'myclass' });
+        pkg.unsubscribe([pkgMetadata]);
+        pkg.subscription.ApexClass.length.should.equal(2);  
+        done();      
+      })
+      .catch(function(e) {
+        done(e);
+      })
+      .done();
   });
 
-  it('should remove metadata from package.xml', function(done) {
-    
-    this.timeout(3000);
-
-    helper.setProject(testClient, 'package-test', function() {
-
-      // write phony package
-      var members = '<types><members>foo</members><members>bar</members><name>ApexClass</name></types><types><members>*</members><name>ApexPage</name></types>';
-      var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
-      var packageLocation = path.join(helper.baseTestDirectory(), 'workspace', 'package-test', 'src', 'package.xml');
-      fs.writeFileSync(packageLocation, packageXml);
-
-      // write phony apex class
-      var newApexClassLocation = path.join(helper.baseTestDirectory(), 'workspace', 'package-test', 'src', 'classes', 'bar.cls');
-      fs.createFileSync(newApexClassLocation);
-      fs.writeFileSync(newApexClassLocation, '');
-
-      // add to package service, deserialize
-      var myMetadata = new Metadata({
-        project: testClient.getProject(),
-        path: newApexClassLocation
-      });
-
-      // remove from package, deserialize
-      var packageService = new PackageService({ location: packageLocation });
-      packageService.remove(myMetadata)
-        .then(function(pkg) {
-          pkg.should.have.property('ApexClass');
-          pkg.should.have.property('ApexPage');
-          pkg.ApexClass.length.should.equal(1);
-          pkg.ApexClass[0].should.equal('foo');
-
-          return packageService.serialize(pkg, true);
-        })
-        .then(function(serializedPackage) {
-          console.log(serializedPackage);
-          done();
-        })
-        ['catch'](function(e) {
-          done(e);
-        })
-        .done();
-    });
-
-    helper.cleanUpTestProject('package-test');
-
+  it('should create instance from metadata array', function(done) {
+    var metadata = [];
+    metadata.push(new Metadata({ path: '/path/to/src/classes/foo.cls' }));
+    metadata.push(new Metadata({ path: '/path/to/src/objects/Account.object' }));
+    metadata.push(new Metadata({ path: '/path/to/src/pages/mypage.page' }));
+    metadata.push(new Metadata({ path: '/path/to/src/pages/mypage2.page' }));
+    metadata.push(new Metadata({ path: '/path/to/src/triggers/mytrigger.trigger' }));
+    var pkg = new Package({ metadata: metadata });
+    pkg.init()
+      .then(function() {
+        pkg.subscription.should.have.property('ApexClass');
+        pkg.subscription.should.have.property('ApexPage');
+        pkg.subscription.should.have.property('CustomObject');
+        pkg.subscription.ApexClass.length.should.equal(1);
+        pkg.subscription.ApexPage.length.should.equal(2);
+        pkg.subscription.CustomObject.length.should.equal(1);
+        pkg.subscription.ApexTrigger.length.should.equal(1);
+        done();      
+      })
+      .catch(function(e) {
+        done(e);
+      })
+      .done();
   });
 
+  it('should write package instance to the specified path', function(done) {
+    var metadata = [];
+    metadata.push(new Metadata({ path: '/path/to/src/classes/foo.cls' }));
+    metadata.push(new Metadata({ path: '/path/to/src/objects/Account.object' }));
+    metadata.push(new Metadata({ path: '/path/to/src/pages/mypage.page' }));
+    metadata.push(new Metadata({ path: '/path/to/src/pages/mypage2.page' }));
+    metadata.push(new Metadata({ path: '/path/to/src/triggers/mytrigger.trigger' }));
+    var pkg = new Package({ metadata: metadata });
+    pkg.init()
+      .then(function() {
+        pkg.path = path.join(helper.baseTestDirectory(),'workspace', 'package-unit-test.xml');
+        return pkg.writeFile();
+      })
+      .then(function() {
+        assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'package-unit-test.xml'),  'Package.xml file not created');
+        done();
+      })
+      .catch(function(e) {
+        done(e);
+      })
+      .done();
+  });
 });

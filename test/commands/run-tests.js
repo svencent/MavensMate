@@ -7,83 +7,59 @@ var path        = require('path');
 
 describe('mavensmate run-tests', function(){
 
-  var testClient = helper.createClient('atom');
-  helper.ensureTestProject(testClient, 'run-tests');
+  var project;
+  var testClient;
+
+  before(function(done) {
+    this.timeout(4000);
+    helper.unlinkEditor();
+    testClient = helper.createClient('atom');
+    helper.putTestProjectInTestWorkspace(testClient, 'run-tests');
+    helper.setProject(testClient, 'run-tests', function(err, proj) {
+      project = proj;
+      done();
+    });
+  });
+
+  after(function(done) {
+    this.timeout(10000);
+    var filesToDelete = [path.join(helper.baseTestDirectory(),'workspace', 'run-tests', 'src', 'classes', 'RunTestsApexClass.cls')];
+    helper.cleanUpTestData(testClient, filesToDelete)
+      .then(function() {
+        return helper.cleanUpTestProject('run-tests');
+      })
+      .then(function() {
+        done();
+      });
+  });
 
   it('should run tests', function(done) {
     
     this.timeout(40000);
-
-    helper.setProject(testClient, 'run-tests', function() {
       
-      // create test class
-      // run tests
-      // delete test class
+    // create test class
+    // run tests
+    // delete test class
 
-      helper.getNewMetadataPayload('ApexClass', 'RunTestsApexClass', 'UnitTestApexClass.cls')
-        .then(function(payload) {
-          testClient.executeCommand('new-metadata', payload, function() {
-            var testPayload = {
-              classes: [ 'RunTestsApexClass.cls' ]
-            };
-            testClient.executeCommand('run-tests', testPayload, function(err, response) {
-              should.equal(err, null);
-              response.should.have.property('result');
-              response.result.should.have.property('testResults');
-              response.result.should.have.property('coverageResults');
-              response.result.testResults.should.have.property('RunTestsApexClass');
-              response.result.coverageResults.should.have.property('classes');
-              response.result.coverageResults.should.have.property('triggers');
-              done();
-            }); 
-          });
-        })
-        .done();
-    });
-
-    var filesToDelete = [path.join(helper.baseTestDirectory(),'workspace', 'run-tests', 'src', 'classes', 'RunTestsApexClass.cls')];
-    helper.cleanUpTestData(testClient, filesToDelete);
-    helper.cleanUpTestProject('run-tests');
+    helper.getNewMetadataPayload('ApexClass', 'RunTestsApexClass', 'UnitTestApexClass.cls')
+      .then(function(payload) {
+        testClient.executeCommand('new-metadata', payload, function() {
+          var testPayload = {
+            classes: [ 'RunTestsApexClass.cls' ]
+          };
+          testClient.executeCommand('run-tests', testPayload, function(err, response) {
+            should.equal(err, null);
+            response.should.have.property('result');
+            response.result.should.have.property('testResults');
+            response.result.should.have.property('coverageResults');
+            response.result.testResults.should.have.property('RunTestsApexClass');
+            response.result.coverageResults.should.have.property('classes');
+            response.result.coverageResults.should.have.property('triggers');
+            done();
+          }); 
+        });
+      })
+      .done();
   });
 
 });
-
-
-
-// 'use strict';
-
-// var helper      = require('../test-helper');
-// var chai        = require('chai');
-// var should      = chai.should();
-
-// describe('mavensmate run-tests', function(){
-
-//   it('should compile a list of files', function(done) {
-    
-//     this.timeout(20000);
-
-//     var testClient = helper.createClient('atom');
-
-//     helper.setProject(testClient, 'existing-project', function() {
-      
-//       var payload = {
-//         classes : [ 'MyTest.cls' ]
-//       };
-
-//       testClient.executeCommand('run-tests', payload, function(err, response) {
-//         should.equal(err, null);
-//         response.should.have.property('result');
-//         response.result.should.have.property('testResults');
-//         response.result.should.have.property('coverageResults');
-//         response.result.testResults.should.have.property('MyTestClass');
-//         response.result.coverageResults.should.have.property('classes');
-//         response.result.coverageResults.should.have.property('triggers');
-//         done();
-//       });
-//     });
-
-//   });
-
-// });
-
-

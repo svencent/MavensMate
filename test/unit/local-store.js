@@ -14,7 +14,7 @@
 // 		var testClient = helper.createClient('atom');
 
 // 		helper.setProject(testClient, 'existing-project', function() {
-// 			testClient.getProject().getOrgMetadata()
+// 			testClient.getProject().getOrgMetadataIndexWithSelections()
 // 				.then(function(m) {
 // 					var apexClass = _.find(m, {id:'ApexClass'});
 // 					apexClass.select.should.equal(true);

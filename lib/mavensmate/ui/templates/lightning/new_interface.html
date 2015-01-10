@@ -10,7 +10,7 @@
 <div class="content">
 		 
 	<ul class="nav nav-tabs nav-append-content">
-		<li class="active"><a id="project_details_tab" href="#form" data-toggle="tab">New Lightning Bundle</a></li>
+		<li class="active"><a id="project_details_tab" href="#form" data-toggle="tab">New Lightning Interface</a></li>
 	</ul>
 	
 	<div class="tab-content" id="main-tab-content">
@@ -18,7 +18,7 @@
 			<form class="form-stacked">
 				<fieldset>
 					<div class="control-group large">
-						<input class="span12" placeholder="Bundle Name" type="text" id="apiName">
+						<input class="span12" placeholder="Name" type="text" id="apiName">
 					</div>
 					<div class="control-group large">
 						<input class="span12" placeholder="Description" type="text" id="description">
@@ -33,7 +33,7 @@
 
 
 {% block buttons %}					
-	<input type="button" id="btnSubmit" class="btn btn-info btn-embossed btn-embossed" value="Create Lightning Bundle"  onclick='newLightningBundle();'>
+	<input type="button" id="btnSubmit" class="btn btn-info btn-embossed btn-embossed" value="Create Lightning Interface"  onclick='newLightningBundle();'>
 	<button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
 {% endblock %}
 
@@ -45,7 +45,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning/create",
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning/create-interface",
 				data: JSON.stringify({
 					apiName : $("#apiName").val(),
 					description : $("#description").val()
@@ -62,13 +62,7 @@
 				showMessage(response.error);
 				notifySound();
 			} else {
-				if (response.result && response.result.success) {
-					showMessage('Lightning Bundle successfully created!', 'info');
-					// closeWindow();
-				} else if (response.result && !response.result.success) {
-					showMessage('Could not create Lightning Bundle. Please check logs or try again.');
-					notifySound();
-				}
+				showMessage(response.result, 'info');
 			}
 			hideLoading();
 		}
