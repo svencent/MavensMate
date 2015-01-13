@@ -26,8 +26,11 @@ describe('mavensmate new-metadata', function(){
   });
 
   after(function(done) {
-    this.timeout(10000);
-    var filesToDelete = [path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'classes', 'NewMetadataClass.cls')];
+    this.timeout(15000);
+    var filesToDelete = [
+      path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'classes', 'NewMetadataClass.cls'),
+      path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'triggers', 'NewMetadataTrigger.trigger'),
+    ];
     helper.cleanUpTestData(testClient, filesToDelete)
       .then(function() {
         return helper.cleanUpTestProject('new-metadata');
@@ -38,8 +41,7 @@ describe('mavensmate new-metadata', function(){
   });
 
 
-  it('should create metadata from server', function(done) {
-    
+  it('should create new Apex Class on the server', function(done) {
     this.timeout(100000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'NewMetadataClass')
@@ -49,15 +51,26 @@ describe('mavensmate new-metadata', function(){
         response.result.status.should.equal('Succeeded');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'classes', 'NewMetadataClass.cls'),  'Class file not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'classes', 'NewMetadataClass.cls-meta.xml'),  'Class meta file not created');
-        
-        testClient.getProject()._parsePackageXml()
-          .then(function(pkg) {
-            pkg.should.have.property('ApexClass');
-            pkg.ApexClass.length.should.equal(1);
-            // console.log('PACKAGE!!!');
-            // console.log(pkg);
-            done();
-          });
+        testClient.getProject().packageXml.subscription.should.have.property('ApexClass');
+        testClient.getProject().packageXml.subscription.ApexClass.length.should.equal(1);
+        done();
+      })
+      .done();
+  });
+
+  it('should create new Apex Trigger on the server', function(done) {
+    this.timeout(100000);
+
+    helper.createNewMetadata(testClient, 'ApexTrigger', 'NewMetadataTrigger', 'ApexTrigger.trigger', { api_name : 'NewMetadataTrigger', object_name : 'Account' } )
+      .then(function(response) {          
+        response.should.have.property('result');
+        response.result.success.should.equal(true);
+        response.result.status.should.equal('Succeeded');
+        assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'triggers', 'NewMetadataTrigger.trigger'),  'Trigger file not created');
+        assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'triggers', 'NewMetadataTrigger.trigger-meta.xml'),  'Trigger meta file not created');
+        testClient.getProject().packageXml.subscription.should.have.property('ApexTrigger');
+        testClient.getProject().packageXml.subscription.ApexTrigger.length.should.equal(1);
+        done();
       })
       .done();
   });
