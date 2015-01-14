@@ -79,6 +79,9 @@ describe('mavensmate lightning', function(){
       assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestfoo', 'mmunittestfooController.js'),  'Lightning controller not created');
       assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestfoo', 'mmunittestfooHelper.js'),  'Lightning helper not created');
       assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestfoo', 'mmunittestfooRenderer.js'),  'Lightning renderer not created');
+      testClient.getProject().packageXml.subscription.should.have.property('AuraDefinitionBundle');
+      testClient.getProject().packageXml.subscription.AuraDefinitionBundle.length.should.equal(1);
+      testClient.getProject().packageXml.subscription.AuraDefinitionBundle[0].should.equal('mmunittestfoo');
       done();
     });    
   });
