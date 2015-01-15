@@ -24,8 +24,8 @@ describe('mavensmate compile-metadata', function(){
   after(function(done) {
     this.timeout(20000);
     var filesToDelete = [
-      path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls'),
-      path.join(helper.baseTestDirectory(), 'workspace', 'compile-metadata', 'src', 'pages', 'CompileMetadataPage.page')
+      path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls')
+      // path.join(helper.baseTestDirectory(), 'workspace', 'compile-metadata', 'src', 'pages', 'CompileMetadataPage.page')
     ];
     helper.cleanUpTestData(testClient, filesToDelete)
       .then(function() {
@@ -57,32 +57,32 @@ describe('mavensmate compile-metadata', function(){
       .done();
   });
 
-  it('should compile an apex class and a visualforce page via the tooling api', function(done) {
-    this.timeout(20000);      
+  // it('should compile an apex class and a visualforce page via the tooling api', function(done) {
+  //   this.timeout(20000);      
 
-    helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataClass')
-      .then(function() {
-        return helper.createNewMetadata(testClient, 'ApexPage', 'CompileMetadataPage', 'ApexPage.page');
-      })
-      .then(function() {
-        var paths = [
-          path.join(helper.baseTestDirectory(), 'workspace', 'compile-metadata', 'src', 'pages', 'CompileMetadataPage.page'),
-          path.join(helper.baseTestDirectory(), 'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls')
-        ];
-        var payload = {
-          paths : paths
-        };
-        testClient.executeCommand('compile-metadata', payload, function(err, response) {
-          console.log(response);
-          console.log(err);
-          should.equal(err, null);
-          response.should.have.property('result');
-          response.result[0].State.should.equal('Completed');
-          done();
-        });
-      })
-      .done();
-  });
+  //   helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataClass')
+  //     .then(function() {
+  //       return helper.createNewMetadata(testClient, 'ApexPage', 'CompileMetadataPage', 'ApexPage.page');
+  //     })
+  //     .then(function() {
+  //       var paths = [
+  //         path.join(helper.baseTestDirectory(), 'workspace', 'compile-metadata', 'src', 'pages', 'CompileMetadataPage.page'),
+  //         path.join(helper.baseTestDirectory(), 'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls')
+  //       ];
+  //       var payload = {
+  //         paths : paths
+  //       };
+  //       testClient.executeCommand('compile-metadata', payload, function(err, response) {
+  //         console.log(response);
+  //         console.log(err);
+  //         should.equal(err, null);
+  //         response.should.have.property('result');
+  //         response.result[0].State.should.equal('Completed');
+  //         done();
+  //       });
+  //     })
+  //     .done();
+  // });
 
   // it('should compile a meta.xml file via the metadata api', function(done) {
 

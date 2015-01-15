@@ -2,7 +2,7 @@
 
 var _                 = require('lodash');
 var mavensmate        = require('../lib/mavensmate');
-var MetadataService   = require('../lib/mavensmate/metadata').MetadataService;
+var MetadataHelper   = require('../lib/mavensmate/metadata').MetadataHelper;
 var fs                = require('fs-extra');
 var path              = require('path');
 var Promise           = require('bluebird');
@@ -103,8 +103,8 @@ exports.setProject = function(testClient, projectName, callback) {
 };
 
 exports.getProjectFiles = function(testClient, typeXmlName, numberOfFiles) {
-  var metadataService = new MetadataService({ sfdcClient: testClient.getProject().sfdcClient });
-  var metadataType = metadataService.getTypeByXmlName(typeXmlName);
+  var metadataHelper = new MetadataHelper({ sfdcClient: testClient.getProject().sfdcClient });
+  var metadataType = metadataHelper.getTypeByXmlName(typeXmlName);
   var projectPath = path.join(this.baseTestDirectory(),'workspace', testClient.getProject().name);
   var metadataDirectory = path.join(projectPath, 'src', metadataType.directoryName);
   if (!numberOfFiles) {

@@ -4,7 +4,7 @@ var fs                = require('fs-extra');
 var path              = require('path');
 var helper 						= require('../test-helper');
 var Metadata 					= require('../../lib/mavensmate/metadata').Metadata;
-var MetadataService   = require('../../lib/mavensmate/metadata').MetadataService;
+var MetadataHelper   = require('../../lib/mavensmate/metadata').MetadataHelper;
 
 describe('mavensmate metadata-service', function(){
 
@@ -173,8 +173,8 @@ describe('mavensmate metadata-service', function(){
     fs.outputFileSync(apexClassPath2, '');
 
     var apexClassesPath = path.join(helper.baseTestDirectory(), 'workspace', 'metadata-service-test', 'src', 'classes');
-    var metadataService = new MetadataService();
-    metadataService.getMetadataFromPaths([apexClassesPath], project)
+    var metadataHelper = new MetadataHelper();
+    metadataHelper.getMetadataFromPaths([apexClassesPath], project)
       .then(function(metadata) {
         console.log(metadata);
         metadata.length.should.equal(2);
@@ -198,8 +198,8 @@ describe('mavensmate metadata-service', function(){
     var documentPath = path.join(helper.baseTestDirectory(), 'workspace', 'metadata-service-test', 'src', 'documents');
     fs.ensureDirSync(documentPath);
 
-    var metadataService = new MetadataService();
-    metadataService.getMetadataFromPaths([documentPath], project)
+    var metadataHelper = new MetadataHelper();
+    metadataHelper.getMetadataFromPaths([documentPath], project)
       .then(function(metadata) {
         console.log(metadata);
         metadata.length.should.equal(2);
@@ -223,8 +223,8 @@ describe('mavensmate metadata-service', function(){
     var emailPath = path.join(helper.baseTestDirectory(), 'workspace', 'metadata-service-test', 'src', 'email');
     fs.ensureDirSync(emailPath);
 
-    var metadataService = new MetadataService();
-    metadataService.getMetadataFromPaths([emailPath], project)
+    var metadataHelper = new MetadataHelper();
+    metadataHelper.getMetadataFromPaths([emailPath], project)
       .then(function(metadata) {
         metadata.length.should.equal(3);
         done();
