@@ -8,7 +8,8 @@
   },
   "main": "./lib/mavensmate",
   "scripts": {
-    "test": "HTTP_MAX_SOCKETS=5000 mocha $(find test -name '*.js')",
+    "testOLD": "HTTP_MAX_SOCKETS=5000 mocha $(find test -name '*.js')",
+    "test": "HTTP_MAX_SOCKETS=5000 node ./node_modules/.bin/grunt test",
     "postinstall": "node bin/postInstall"
   },
   "author": {
@@ -34,7 +35,7 @@
   "license": "MIT",
   "bugs": "https://github.com/joeferraro/mavensmate/issues",
   "dependencies": {
-    "adm-zip":"0.4.4",
+    "adm-zip": "0.4.4",
     "archiver": "0.12.0",
     "async": "0.9.0",
     "autocmdr": "0.0.7",
@@ -42,7 +43,7 @@
     "body-parser": "1.9.2",
     "commander": "joeferraro/commander.js",
     "events": "1.0.2",
-    "express":"4.10.2",
+    "express": "4.10.2",
     "findit": "2.0.0",
     "fs-extra": "0.12.0",
     "fstream": "1.0.2",
@@ -56,7 +57,7 @@
     "moment": "2.8.3",
     "nconf": "0.6.9",
     "node-uuid": "1.4.1",
-    "open":"0.0.3",
+    "open": "0.0.3",
     "portfinder": "0.2.1",
     "randomstring": "1.0.3",
     "request": "2.47.0",
@@ -73,13 +74,18 @@
     "xml2js": "0.4.4",
     "xmldoc": "0.1.2"
   },
-  "optionalDependencies" : {
+  "optionalDependencies": {
     "keytar": "2.0.3"
   },
   "devDependencies": {
-    "sinon": "latest",
     "chai": "latest",
     "chai-as-promised": "latest",
-    "chai-fs":"latest"
+    "chai-fs": "latest",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-mocha-test": "^0.12.7",
+    "grunt-release": "^0.10.0",
+    "mocha": "^2.1.0",
+    "sinon": "latest"
   }
 }

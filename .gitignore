@@ -3,3 +3,6 @@ npm-debug.log
 *.sublime-project
 *.sublime-workspace
 test/workspace/*
+results.txt
+
+coverage.html
