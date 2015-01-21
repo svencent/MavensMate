@@ -5,7 +5,7 @@ var chai        = require('chai');
 var should      = chai.should();
 var path        = require('path');
 // var assert      = chai.assert;
-// var fs          = require('fs');
+var fs          = require('fs');
 
 chai.use(require('chai-fs'));
 
@@ -38,8 +38,14 @@ describe('mavensmate delete-metadata', function(){
 
     helper.createNewMetadata(testClient, 'ApexClass', 'DeleteMetadataClass')
       .then(function() {
+        return helper.createNewMetadata(testClient, 'ApexClass', 'DeleteMetadataClass2');
+      })
+      .then(function() {
         var payload = {
-          paths: [ path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass.cls') ]
+          paths: [ 
+            path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass.cls') ,
+            path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass2.cls') 
+          ]
         };
 
         testClient.executeCommand('delete-metadata', payload, function(err, response) {
@@ -47,14 +53,14 @@ describe('mavensmate delete-metadata', function(){
           response.should.have.property('result');
           response.result.success.should.equal(true);
           response.result.status.should.equal('Succeeded');
+          response.result.numberComponentErrors.should.equal(0);
+          response.result.numberComponentsDeployed.should.equal(2);
+          fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass.cls')).should.equal(false);
+          fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass2.cls')).should.equal(false);
+          fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes')).should.equal(false);
           done();
-          // IMPORTANT TODO: neither of these chai-fs asserts are working, but the file is certainly deleted from the local file system
-          // path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass.cls').should.not.be.a.file('Class file not deleted');
-          // assert.notIsFile(path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass.cls'));
         });
-      })
-      .done();
-    
+      });    
   });
 
 });

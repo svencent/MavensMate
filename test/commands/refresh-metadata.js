@@ -40,6 +40,9 @@ describe('mavensmate refresh-metadata', function(){
       })
       .then(function() {
         done();
+      })
+      .catch(function(err) {
+        done(err);
       });
   });
 

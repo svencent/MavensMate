@@ -157,9 +157,9 @@ exports.cleanUpWorkspace = function() {
   }
 };
 
-exports.createNewMetadata = function(testClient, typeXmlName, name, templateFileName, paramValues) {
+exports.createNewMetadata = function(testClient, typeXmlName, name, templateFileName, templateValues) {
   return new Promise(function(resolve, reject) {
-    exports.getNewMetadataPayload(typeXmlName, name, templateFileName, paramValues)
+    exports.getNewMetadataPayload(typeXmlName, name, templateFileName, templateValues)
       .then(function(payload) {
         testClient.executeCommand('new-metadata', payload, function(err, response) {
           if (err) {
@@ -176,7 +176,7 @@ exports.createNewMetadata = function(testClient, typeXmlName, name, templateFile
   });
 };
 
-exports.getNewMetadataPayload = function(typeXmlName, apiName, templateFileName, paramValues) {
+exports.getNewMetadataPayload = function(typeXmlName, apiName, templateFileName, templateValues) {
   return new Promise(function(resolve, reject) {
     apiName = apiName || 'unittestitem';
     var template;
@@ -196,7 +196,7 @@ exports.getNewMetadataPayload = function(typeXmlName, apiName, templateFileName,
       };
       var payload = {
         metadataTypeXmlName: typeXmlName, 
-        paramValues: paramValues || { 'api_name': apiName }, 
+        templateValues: templateValues || { 'api_name': apiName }, 
         template: template
       };
       resolve(payload);
@@ -207,7 +207,7 @@ exports.getNewMetadataPayload = function(typeXmlName, apiName, templateFileName,
           var template = _.find(templates, { file_name : templateFileName });
           var payload = {
             metadataTypeXmlName: typeXmlName, 
-            paramValues: paramValues || { 'api_name': apiName }, 
+            templateValues: templateValues || { 'api_name': apiName }, 
             template: template
           };
           resolve(payload);

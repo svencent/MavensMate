@@ -24,8 +24,8 @@ describe('mavensmate compile-metadata', function(){
   after(function(done) {
     this.timeout(20000);
     var filesToDelete = [
-      path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls')
-      // path.join(helper.baseTestDirectory(), 'workspace', 'compile-metadata', 'src', 'pages', 'CompileMetadataPage.page')
+      path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls'),
+      path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataToolingClass.cls')
     ];
     helper.cleanUpTestData(testClient, filesToDelete)
       .then(function() {
@@ -42,20 +42,63 @@ describe('mavensmate compile-metadata', function(){
   it('should compile an apex class via the tooling api', function(done) {
     this.timeout(20000);      
 
-    helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataClass')
+    helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataToolingClass')
       .then(function() {
         var payload = {
           paths : helper.getProjectFiles(testClient, 'ApexClass')
         };
         testClient.executeCommand('compile-metadata', payload, function(err, response) {
+          console.log('=====>');
+          console.log(err);
+          console.log(response);
           should.equal(err, null);
           response.should.have.property('result');
-          response.result[0].State.should.equal('Completed');
+          response.result.success.should.equal(true);
+          response.result.details.componentSuccesses.length.should.equal(1);
+          response.result.details.componentSuccesses[0].State.should.equal('Completed');
           done();
         });
       })
       .done();
   });
+
+  it('should compile a meta.xml file via the metadata api', function(done) {
+
+    this.timeout(20000);      
+    
+    helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataClass')
+      .then(function() {
+        var metaFileLocation = path.join(helper.baseTestDirectory(), 'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls-meta.xml');
+        var payload = {
+          paths : [metaFileLocation]
+        };
+        testClient.executeCommand('compile-metadata', payload, function(err, response) {
+          should.equal(err, null);
+          response.should.have.property('result');
+          response.result.success.should.equal(true);
+          done();
+        });
+      })
+      .done();
+  });
+
+  // it('should compile an object file via the metadata api', function(done) {
+  //   this.timeout(20000);      
+
+  //   helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataClass')
+  //     .then(function() {
+  //       var payload = {
+  //         paths : helper.getProjectFiles(testClient, 'ApexClass')
+  //       };
+  //       testClient.executeCommand('compile-metadata', payload, function(err, response) {
+  //         should.equal(err, null);
+  //         response.should.have.property('result');
+  //         response.result[0].State.should.equal('Completed');
+  //         done();
+  //       });
+  //     })
+  //     .done();
+  // });
 
   // it('should compile an apex class and a visualforce page via the tooling api', function(done) {
   //   this.timeout(20000);      
@@ -82,26 +125,5 @@ describe('mavensmate compile-metadata', function(){
   //       });
   //     })
   //     .done();
-  // });
-
-  // it('should compile a meta.xml file via the metadata api', function(done) {
-
-  //   this.timeout(20000);      
-    
-  //   helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataClass')
-  //     .then(function() {
-  //       var metaFileLocation = path.join(helper.baseTestDirectory(), 'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls-meta.xml');
-  //       var payload = {
-  //         paths : [metaFileLocation]
-  //       };
-  //       testClient.executeCommand('compile-metadata', payload, function(err, response) {
-  //         should.equal(err, null);
-  //         response.should.have.property('result');
-  //         response.result.success.should.equal(true);
-  //         done();
-  //       });
-  //     })
-  //     .done();
-    
   // });
 });

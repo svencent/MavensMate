@@ -10,7 +10,7 @@ describe('mavensmate compile-project', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'compile-project');
@@ -28,7 +28,6 @@ describe('mavensmate compile-project', function(){
   });
 
   it('should compile the project based on package.xml', function(done) {
-    
     this.timeout(40000);
     
     testClient.executeCommand('edit-project', { package: { 'ApexComponent' : '*' } }, function() {

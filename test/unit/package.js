@@ -6,7 +6,7 @@ var should          = chai.should();
 var fs              = require('fs-extra');
 var path            = require('path');
 var Package         = require('../../lib/mavensmate/package');
-var Metadata        = require('../../lib/mavensmate/metadata').Metadata;
+var mavensMateFile  = require('../../lib/mavensmate/file');
 var assert          = chai.assert;
 
 chai.use(require('chai-fs'));
@@ -71,11 +71,11 @@ describe('mavensmate unit-package', function(){
         pkg.subscription.ApexClass.length.should.equal(2);
         pkg.subscription.ApexPage.should.equal('*');
         
-        var pkgMetadata = new Metadata({ path: '/path/to/src/classes/foo.cls' });
+        var pkgMetadata = new mavensMateFile.MavensMateFile({ path: '/path/to/src/classes/foo.cls' });
         pkg.subscribe([pkgMetadata]);
         pkg.subscription.ApexClass.length.should.equal(3);  
 
-        pkgMetadata = new Metadata({ metadataTypeXmlName: 'ApexClass', name: 'myclass' });
+        pkgMetadata = new mavensMateFile.MavensMateFile({ path: '/path/to/src/classes/myclass.cls' });
         pkg.unsubscribe([pkgMetadata]);
         pkg.subscription.ApexClass.length.should.equal(2);  
         done();      
@@ -87,13 +87,13 @@ describe('mavensmate unit-package', function(){
   });
 
   it('should create instance from metadata array', function(done) {
-    var metadata = [];
-    metadata.push(new Metadata({ path: '/path/to/src/classes/foo.cls' }));
-    metadata.push(new Metadata({ path: '/path/to/src/objects/Account.object' }));
-    metadata.push(new Metadata({ path: '/path/to/src/pages/mypage.page' }));
-    metadata.push(new Metadata({ path: '/path/to/src/pages/mypage2.page' }));
-    metadata.push(new Metadata({ path: '/path/to/src/triggers/mytrigger.trigger' }));
-    var pkg = new Package({ metadata: metadata });
+    var files = [];
+    files.push(new mavensMateFile.MavensMateFile({ path: '/path/to/src/classes/foo.cls' }));
+    files.push(new mavensMateFile.MavensMateFile({ path: '/path/to/src/objects/Account.object' }));
+    files.push(new mavensMateFile.MavensMateFile({ path: '/path/to/src/pages/mypage.page' }));
+    files.push(new mavensMateFile.MavensMateFile({ path: '/path/to/src/pages/mypage2.page' }));
+    files.push(new mavensMateFile.MavensMateFile({ path: '/path/to/src/triggers/mytrigger.trigger' }));
+    var pkg = new Package({ files: files });
     pkg.init()
       .then(function() {
         pkg.subscription.should.have.property('ApexClass');
@@ -112,13 +112,13 @@ describe('mavensmate unit-package', function(){
   });
 
   it('should write package instance to the specified path', function(done) {
-    var metadata = [];
-    metadata.push(new Metadata({ path: '/path/to/src/classes/foo.cls' }));
-    metadata.push(new Metadata({ path: '/path/to/src/objects/Account.object' }));
-    metadata.push(new Metadata({ path: '/path/to/src/pages/mypage.page' }));
-    metadata.push(new Metadata({ path: '/path/to/src/pages/mypage2.page' }));
-    metadata.push(new Metadata({ path: '/path/to/src/triggers/mytrigger.trigger' }));
-    var pkg = new Package({ metadata: metadata });
+    var files = [];
+    files.push(new mavensMateFile.MavensMateFile({ path: '/path/to/src/classes/foo.cls' }));
+    files.push(new mavensMateFile.MavensMateFile({ path: '/path/to/src/objects/Account.object' }));
+    files.push(new mavensMateFile.MavensMateFile({ path: '/path/to/src/pages/mypage.page' }));
+    files.push(new mavensMateFile.MavensMateFile({ path: '/path/to/src/pages/mypage2.page' }));
+    files.push(new mavensMateFile.MavensMateFile({ path: '/path/to/src/triggers/mytrigger.trigger' }));
+    var pkg = new Package({ files: files });
     pkg.init()
       .then(function() {
         pkg.path = path.join(helper.baseTestDirectory(),'workspace', 'package-unit-test.xml');

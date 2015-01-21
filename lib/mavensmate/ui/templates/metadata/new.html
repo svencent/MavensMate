@@ -1,4 +1,4 @@
-{% extends "layouts/base.html" %}
+{% extends "ui/templates/layouts/base.html" %}
 {% block yield %}
 <div id="result_output">
 	<div class="alert alert-error">
@@ -68,7 +68,7 @@
 				url: "{{ mavensmate.ui.getBaseUrl() }}/app/metadata/create",
 				data: JSON.stringify({
 					metadataTypeXmlName : '{{ metadataType }}',
-					paramValues 		: paramPayload,
+					templateValues 		: paramPayload,
 					template			: selectedTemplate
 				}),
 				beforeSend: function() { showLoading('Creating new metadata...'); },

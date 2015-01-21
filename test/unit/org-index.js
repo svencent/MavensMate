@@ -30,19 +30,18 @@ describe('mavensmate org-index', function(){
       });
   });
 
-  it('should select metadata based on package.xml', function(done) {
-    
+  it('should select metadata based on package.xml', function(done) {    
     this.timeout(100000);
 
-    var members = '<types><members>*</members><name>ApexClass</name></types><types><members>*</members><name>ApexPage</name></types>';
-    var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
-    fs.writeFileSync(path.join(helper.baseTestDirectory(), 'workspace', 'org-index', 'src', 'package.xml'), packageXml);
-
-      
     fs.copySync(
       path.join(helper.baseTestDirectory(), 'fixtures', 'org-index.json'), 
       path.join(helper.baseTestDirectory(), 'workspace', 'org-index', 'config', '.org_metadata')
     );
+
+    project.packageXml.subscription = {
+      ApexClass : '*',
+      ApexPage : '*'
+    };
 
     testClient.getProject().getOrgMetadataIndexWithSelections()
       .then(function(m) {
@@ -50,7 +49,7 @@ describe('mavensmate org-index', function(){
         apexClass.select.should.equal(true);
         done();
       })
-      ['catch'](function(err) {
+      .catch(function(err) {
         done(err);
       })
       .done();
@@ -89,7 +88,7 @@ describe('mavensmate org-index', function(){
 
         done();
       })
-      ['catch'](function(err) {
+      .catch(function(err) {
         done(err);
       })
       .done();
