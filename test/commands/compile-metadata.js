@@ -48,9 +48,9 @@ describe('mavensmate compile-metadata', function(){
           paths : helper.getProjectFiles(testClient, 'ApexClass')
         };
         testClient.executeCommand('compile-metadata', payload, function(err, response) {
-          console.log('=====>');
-          console.log(err);
-          console.log(response);
+          // console.log('=====>');
+          // console.log(err);
+          // console.log(response);
           should.equal(err, null);
           response.should.have.property('result');
           response.result.success.should.equal(true);

@@ -32,7 +32,7 @@ describe('mavensmate lightning', function(){
   });
 
   after(function(done) {
-    this.timeout(10000);
+    this.timeout(20000);
     var lightningBundlesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestfoo')
       // path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmcompunittestfoo'),
@@ -43,6 +43,9 @@ describe('mavensmate lightning', function(){
     helper.cleanUpTestData(testClient, lightningBundlesToDelete)
       .then(function() {
         return helper.cleanUpTestProject('lightning');
+      })
+      .then(function() {
+        done();
       })
       .catch(function(err) {
         helper.cleanUpTestProject('lightning')

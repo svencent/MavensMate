@@ -1,6 +1,6 @@
 {
   "name": "mavensmate",
-  "version": "0.0.29-0",
+  "version": "0.0.29-alpha1",
   "description": "Core APIs that drive MavensMate IDEs for Salesforce1/Force.com",
   "private": false,
   "bin": {
@@ -8,8 +8,7 @@
   },
   "main": "./lib/mavensmate",
   "scripts": {
-    "testOLD": "HTTP_MAX_SOCKETS=5000 mocha $(find test -name '*.js')",
-    "test": "HTTP_MAX_SOCKETS=5000 node ./node_modules/.bin/grunt test",
+    "test": "HTTP_MAX_SOCKETS=5000 mocha --check-leaks $(find test -name '*.js')",
     "postinstall": "node bin/postInstall"
   },
   "author": {
@@ -83,6 +82,7 @@
     "chai-fs": "latest",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
+    "grunt-mocha-cli": "^1.12.0",
     "grunt-mocha-test": "^0.12.7",
     "grunt-release": "^0.10.0",
     "mocha": "^2.1.0",

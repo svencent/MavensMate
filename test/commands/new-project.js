@@ -93,7 +93,6 @@ describe('mavensmate new-project', function(){
     };
 
     testClient.executeCommand('new-project', payload, function(err, response) {
-      console.log(err);
       should.equal(err, null);
       response.should.have.property('result');
       response.result.should.equal('Project created successfully');
