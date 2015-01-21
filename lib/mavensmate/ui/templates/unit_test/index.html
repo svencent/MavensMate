@@ -217,10 +217,10 @@
 			</div>
 
 			<div class="tab-pane" id="debug_content" style="padding-top:10px;">
-				{% include 'snippets/log_levels.html' %}
+				{% include 'ui/templates/snippets/log_levels.html' %}
 			</div>
 
-			{% include 'snippets/arcade.html' %}
+			{% include 'ui/templates/snippets/arcade.html' %}
 
 			<div id="tests_results" class="tab-pane">
 				<div id="result_wrapper" style="-webkit-border-radius: 4px 4px 4px 4px;overflow-y:auto;padding:0px;position:relative;">
@@ -256,8 +256,8 @@
 
 	{% block buttons %}					
 		<input type="button" class="btn btn-info btn-embossed" value="Run Tests" onclick="runTests()" id="btnRunTests"> 
-		{% include 'snippets/cancel_button.html' %}
-		{% include 'snippets/running_indicator.html' %}
+		{% include 'ui/templates/snippets/cancel_button.html' %}
+		{% include 'ui/templates/snippets/running_indicator.html' %}
 	{% endblock %}
 
 	{% block body_js %}
