@@ -1,12 +1,12 @@
 'use strict';
 
-var helper      = require('../test-helper');
-var chai        = require('chai');
-var should      = chai.should();
-var path        = require('path');
-var fs          = require('fs-extra');
-var assert      = chai.assert;
-// var Metadata    = require('../../lib/mavensmate/metadata').Metadata;
+var helper          = require('../test-helper');
+var chai            = require('chai');
+var should          = chai.should();
+var path            = require('path');
+var fs              = require('fs-extra');
+var assert          = chai.assert;
+var mavensMateFile  = require('../../lib/mavensmate/file');
 
 chai.use(require('chai-fs'));
 
@@ -29,7 +29,7 @@ describe('mavensmate refresh-metadata', function(){
   after(function(done) {
     this.timeout(20000);
     var filesToDelete = [
-      // path.join(helper.baseTestDirectory(),'workspace', 'refresh-metadata', 'src', 'classes', 'RefreshMetadataClass.cls'),
+      path.join(helper.baseTestDirectory(),'workspace', 'refresh-metadata', 'src', 'classes', 'RefreshMetadataClass.cls'),
       path.join(helper.baseTestDirectory(),'workspace', 'refresh-metadata', 'src', 'classes', 'RefreshMetadataClass2.cls')
       // path.join(helper.baseTestDirectory(),'workspace', 'refresh-metadata', 'src', 'aura', 'mmunittestrefresh')
       // path.join(helper.baseTestDirectory(),'workspace', 'refresh-metadata', 'src', 'classes', 'RefreshMetadataClass3.cls')
@@ -46,28 +46,28 @@ describe('mavensmate refresh-metadata', function(){
       });
   });
 
-  // it('should refresh class directory from the server', function(done) {
-  //   this.timeout(20000);      
+  it('should refresh class directory from the server', function(done) {
+    this.timeout(20000);      
     
-  //   helper.createNewMetadata(testClient, 'ApexClass', 'RefreshMetadataClass')
-  //     .then(function() {
-  //       assert.isFile(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass.cls'));
-  //       fs.removeSync(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass.cls'));
+    helper.createNewMetadata(testClient, 'ApexClass', 'RefreshMetadataClass')
+      .then(function() {
+        assert.isFile(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass.cls'));
+        fs.removeSync(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass.cls'));
 
-  //       var payload = {
-  //         paths: [ path.join(testClient.getProject().path, 'src', 'classes') ]
-  //       };
+        var payload = {
+          paths: [ path.join(testClient.getProject().path, 'src', 'classes') ]
+        };
 
-  //       testClient.executeCommand('refresh-metadata', payload, function(err, response) {
-  //         should.equal(err, null);
-  //         response.should.have.property('result');
-  //         response.result.should.equal('Metadata successfully refreshed');
-  //         path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass.cls').should.be.a.file('RefreshMetadataClass is missing');
-  //         done();
-  //       });
-  //     })
-  //     .done();
-  // });
+        testClient.executeCommand('refresh-metadata', payload, function(err, response) {
+          should.equal(err, null);
+          response.should.have.property('result');
+          response.result.should.equal('Metadata successfully refreshed');
+          fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass.cls')).should.equal(true);
+          done();
+        });
+      })
+      .done();
+  });
 
   it('should refresh class file from the server', function(done) {
     this.timeout(20000);      
@@ -92,25 +92,27 @@ describe('mavensmate refresh-metadata', function(){
       .done();
   });
 
-  // it('should refresh a CustomObject from the server ', function(done) {
-  //   this.timeout(20000);      
+  it('should refresh a CustomObject from the server ', function(done) {
+    this.timeout(20000);      
     
-  //   var accountMetadata = new Metadata({ project: testClient.getProject(), metadataTypeXmlName: 'CustomObject', apiName: 'Account' });
-  //   testClient.getProject().packageXml.subscribe(accountMetadata);
-  //   testClient.getProject().packageXml.writeFileSync();
+    var accountMetadataFile = new mavensMateFile.MavensMateFile({ project: testClient.getProject() });
+    accountMetadataFile.setTypeByXmlName('CustomObject');
+    accountMetadataFile.setAbstractPath();
+    testClient.getProject().packageXml.subscribe(accountMetadataFile);
+    testClient.getProject().packageXml.writeFileSync();
 
-  //   var payload = {
-  //     paths: [ path.join(testClient.getProject().path, 'src', 'objects', 'Account.object') ]
-  //   };
+    var payload = {
+      paths: [ path.join(testClient.getProject().path, 'src', 'objects', 'Account.object') ]
+    };
 
-  //   testClient.executeCommand('refresh-metadata', payload, function(err, response) {
-  //     should.equal(err, null);
-  //     response.should.have.property('result');
-  //     response.result.should.equal('Metadata successfully refreshed');
-  //     path.join(testClient.getProject().path, 'src', 'objects', 'Account.object').should.be.a.file('Account object file is missing');
-  //     done();
-  //   });
-  // });
+    testClient.executeCommand('refresh-metadata', payload, function(err, response) {
+      should.equal(err, null);
+      response.should.have.property('result');
+      response.result.should.equal('Metadata successfully refreshed');
+      fs.existsSync(path.join(testClient.getProject().path, 'src', 'objects', 'Account.object')).should.equal(true);
+      done();
+    });
+  });
 
   // it('should refresh a Lightning bundle from the server ', function(done) {
   //   this.timeout(20000);      
