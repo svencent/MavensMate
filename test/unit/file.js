@@ -54,7 +54,7 @@ describe('mavensmate mavensmate-file', function(){
   });
 
   it('should create new File instance of type EmailTemplate', function(done) {  
-    var emailTemplatePath = path.join(helper.baseTestDirectory(), 'workspace', 'metadata-service-test', 'src', 'email', 'myFolder', 'myEmail.email');
+    var emailTemplatePath = path.join(helper.baseTestDirectory(), 'workspace', 'metadata-service-test', 'src', 'email', 'myfolder', 'myEmail.email');
     fs.outputFileSync(emailTemplatePath, '');
 
     var file = new mavensMateFile.MavensMateFile({ project: project, path: emailTemplatePath });
@@ -64,7 +64,7 @@ describe('mavensmate mavensmate-file', function(){
   });
 
   it('should create new File instance of type Document', function(done) {  
-    var documentPath = path.join(helper.baseTestDirectory(), 'workspace', 'metadata-service-test', 'src', 'documents', 'myFolder', 'foo.jpg');
+    var documentPath = path.join(helper.baseTestDirectory(), 'workspace', 'metadata-service-test', 'src', 'documents', 'myfolder', 'foo.jpg');
     fs.outputFileSync(documentPath, '');
 
     var file = new mavensMateFile.MavensMateFile({ project: project, path: documentPath });
@@ -219,7 +219,6 @@ describe('mavensmate mavensmate-file', function(){
 
     var emailPathFile = new mavensMateFile.MavensMateFile({ project: project, path: emailPath });
     emailPathFile.type.xmlName.should.equal('EmailTemplate');
-    console.log(emailPathFile.localMembers);
     emailPathFile.localMembers.length.should.equal(3);
     done();
   });
