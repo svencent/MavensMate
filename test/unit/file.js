@@ -203,7 +203,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it.only('should create new File instances from directory of type EmailTemplate', function(done) {
+  it('should create new File instances from directory of type EmailTemplate', function(done) {
     var email1 = path.join(helper.baseTestDirectory(), 'workspace', 'metadata-service-test', 'src', 'email', 'myfolder', 'foo.email');
     var email2 = path.join(helper.baseTestDirectory(), 'workspace', 'metadata-service-test', 'src', 'email', 'myfolder', 'foo2.email');
     fs.outputFileSync(email1, '');
