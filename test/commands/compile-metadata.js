@@ -82,13 +82,13 @@ describe('mavensmate compile-metadata', function(){
           should.equal(err, null);
           response.should.have.property('result');
           response.result.success.should.equal(false);
-          response.result.details.componentErrors.length.should.equal(1);
-          response.result.details.componentErrors[0].should.have.property('DeployDetails');
-          response.result.details.componentErrors[0].DeployDetails.componentFailures[0].success.should.equal(false);
-          response.result.details.componentErrors[0].DeployDetails.componentFailures[0].lineNumber.should.equal(1);
-          response.result.details.componentErrors[0].DeployDetails.componentFailures[0].columnNumber.should.equal(-1);
-          response.result.details.componentErrors[0].DeployDetails.componentFailures[0].problemType.should.equal('Error');
-          response.result.details.componentErrors[0].DeployDetails.componentFailures[0].fileName.should.equal('CompileMetadataToolingFailClass');
+          response.result.details.componentFailures.length.should.equal(1);
+          response.result.details.componentFailures[0].should.have.property('DeployDetails');
+          response.result.details.componentFailures[0].DeployDetails.componentFailures[0].success.should.equal(false);
+          response.result.details.componentFailures[0].DeployDetails.componentFailures[0].lineNumber.should.equal(1);
+          response.result.details.componentFailures[0].DeployDetails.componentFailures[0].columnNumber.should.equal(-1);
+          response.result.details.componentFailures[0].DeployDetails.componentFailures[0].problemType.should.equal('Error');
+          response.result.details.componentFailures[0].DeployDetails.componentFailures[0].fileName.should.equal('CompileMetadataToolingFailClass');
           done();
         });
       })

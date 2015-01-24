@@ -11,7 +11,7 @@ describe('mavensmate mavensmate-file', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(10000);
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'metadata-service-test');
     helper.setProject(testClient, 'metadata-service-test', function(err, proj) {
@@ -219,7 +219,7 @@ describe('mavensmate mavensmate-file', function(){
 
     var emailPathFile = new mavensMateFile.MavensMateFile({ project: project, path: emailPath });
     emailPathFile.type.xmlName.should.equal('EmailTemplate');
-    console.log(emailPathFile.localMembers);
+    // console.log(emailPathFile.localMembers);
     emailPathFile.localMembers.length.should.equal(3);
     done();
   });
