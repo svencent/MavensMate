@@ -60,8 +60,8 @@ describe('mavensmate resource-bundle', function(){
     };
 
     testClient.executeCommand('new-resource-bundle', payload, function(err, response) {
-      console.log(err);
-      console.log(response);
+      // console.log(err);
+      // console.log(response);
       should.equal(err, null);
       response.should.have.property('result');
       response.result.should.equal('Resource bundle(s) successfully created');
@@ -82,8 +82,8 @@ describe('mavensmate resource-bundle', function(){
     };
 
     testClient.executeCommand('deploy-resource-bundle', payload, function(err, response) {
-      console.log(err);
-      console.log(response);
+      // console.log(err);
+      // console.log(response);
       should.equal(err, null);
       response.should.have.property('result');
       response.result.should.equal('Resource bundle successfully deployed');
