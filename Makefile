@@ -1,5 +1,5 @@
 REPORTER = html-cov
-TESTS = $(shell find test -name 'file.js')
+TESTS = $(shell find test -name '*.js')
 COVERAGE_FILE = coverage.html
 
 test:
