@@ -83,6 +83,7 @@
     "keytar": "2.0.3"
   },
   "devDependencies": {
+    "blanket": "1.1.5",
     "chai": "latest",
     "chai-as-promised": "latest",
     "chai-fs": "latest",
