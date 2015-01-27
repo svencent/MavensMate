@@ -13,6 +13,8 @@ For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 
 [![Circle CI](https://circleci.com/gh/joeferraro/MavensMate.png?style=badge)](https://circleci.com/gh/joeferraro/MavensMate)
 
+[![Coverage Status](https://coveralls.io/repos/joeferraro/MavensMate/badge.svg?branch=master)](https://coveralls.io/r/joeferraro/MavensMate?branch=master)
+
 ## MavensMate API
 
 You can build Salesforce1 IDEs by integrating with the APIs exposed in this project. For Node.js projects, you can simply `require('mavensmate')`. For other types of projects, you may use the command line interface (documentation to come).
