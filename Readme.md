@@ -57,7 +57,7 @@ client.setProject('path/to/some/project', function(err, response) {
 
 `mavensmate compile-project`
 
-`mavensmate compile-metadata <<< '{ "files" : [ "/path/to/MyClass.cls", "/path/to/MyPage.page" ] }'`
+`mavensmate compile-metadata <<< '{ "paths" : [ "/path/to/MyClass.cls", "/path/to/MyPage.page" ] }'`
 
 For a full list of commands, see the `lib/mavensmate/commands` directory. We will continue to build out this documentation with a full list of commands, including payload parameters.
 
