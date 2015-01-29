@@ -31,14 +31,23 @@ describe('mavensmate index-metadata', function(){
     
     this.timeout(80000);
 
-    helper.setProject(testClient, 'index-metadata', function() {
-      testClient.executeCommand('index-metadata', function(err, response) {
-        should.equal(err, null);
-        response.should.have.property('result');
-        response.result.should.equal('Metadata successfully indexed');
-        // TODO assertions for contests of .org_metadata
-        done();
-      });
+    testClient.executeCommand('index-metadata', function(err, response) {
+      should.equal(err, null);
+      response.should.have.property('result');
+      response.result.should.equal('Metadata successfully indexed');
+      done();
+    });
+  });
+
+  it('should get metadata index from project', function(done) {
+    
+    this.timeout(10000);
+
+    testClient.executeCommand('get-metadata-index', function(err, response) {
+      should.equal(err, null);
+      response.should.have.property('result');
+      response.result.length.should.equal(project.getSubscription().length);
+      done();
     });
   });
 
