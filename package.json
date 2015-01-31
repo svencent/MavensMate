@@ -68,7 +68,6 @@
     "request": "2.47.0",
     "sax": "0.6.1",
     "season": "~4.0.0",
-    "shelly": "0.0.3",
     "strip-json-comments": "1.0.2",
     "swig": "joeferraro/swig",
     "temp": "0.8.1",
