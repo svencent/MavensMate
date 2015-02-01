@@ -232,8 +232,8 @@
 
 		function handleResponse(response) {
 			if (operation == "index") {
-				if (response["success"] == false) {
-					showMessage(response["result"])
+				if (response.error) {
+					showMessage(response.error)
 				} else {
 					if (tree === undefined) {
 						renderTree(PROJECT_WRAPPER_OFFSET)  
@@ -241,11 +241,11 @@
 						$("#tree").dynatree("getTree").reload();
 					}
 				}
-				notifySound()
+				notifySound();
 				hideLoading();
 			} else if (operation == "update") {
-				if (response["success"] == false) {
-					showMessage(response["result"])
+				if (response.error) {
+					showMessage(response.error)
 				} else {
 					showMessage("Project updated successfully.", "success", true)
 				}

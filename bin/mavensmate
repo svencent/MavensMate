@@ -10,6 +10,7 @@ program
   .option('-d --debugging', 'Explicitly enables logging. When in headless mode, debug statements will be placed in "debug" object in JSON response.')
   .option('-h --headless', 'Runs in headless mode, requiring piped-JSON for context. Best for use by MavensMate text editor/IDE clients.')
   .option('-e --editor [name]', 'Specifies the plugin client (SUBLIME_TEXT, ATOM)') // no default set
+  .option('-p --port [number]', 'UI server port number') // (for sublime text)
   .parse(process.argv, true); // parse top-level args, defer subcommand
 
 var cliClient = mavensmate.createClient({
@@ -18,6 +19,10 @@ var cliClient = mavensmate.createClient({
   debugging: program.debugging || false,
   program: program
 });
+
+if (program.port) {
+  process.env.MAVENSMATE_UI_SERVER_PORT = program.port;
+}
 
 var logger = require('winston');
   

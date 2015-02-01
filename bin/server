@@ -7,12 +7,16 @@ var parseArgs   = require('minimist');
 var args = parseArgs(process.argv);
 var project = args.project;
 var editor = args.editor || 'sublime';
+var port = args.port;
 
 var client = mavensmate.createClient({
   editor: editor,
   headless: true,
-  debugging: true
+  debugging: true,
+  serverPort: port
 });
+
+client.startUIServer();
 
 if (project) {
   client.setProject(project, function(err, response) {
