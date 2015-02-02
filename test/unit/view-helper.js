@@ -51,7 +51,7 @@ describe('mavensmate view-helper', function(){
   
   describe('getDefaultSubscription', function(){
     it('should return the default description', function(done) {    
-      viewHelper.getDefaultSubscription().length.should.be.greaterThan(5);
+      viewHelper.getDefaultSubscription().length.should.be.greaterThan(0);
       done();
     });
   });

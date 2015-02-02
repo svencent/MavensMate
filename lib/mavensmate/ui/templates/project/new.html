@@ -214,7 +214,7 @@
 				if ((e.target.href.indexOf('metadata') !== -1 || e.target.href.indexOf('advanced') !== -1) && ($('#sid').val() === null || $('#sid').val() === '')) {
 					//console.log('checking creds');
 					operation = 'check-creds';
-					populateMetadataTree('Attempting to authenticate to Salesforce using the provided credentials');
+					populateMetadataTree('Attempting to authenticate to Salesforce and describe environment using the provided credentials. This could take a few minutes.');
 				}
 		    });
 

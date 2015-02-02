@@ -155,7 +155,7 @@
         <div class="container">
             <div class="main-wrapper">
                 <div style="text-align:center;">
-                    {% if mavensmate.ui.getProject() %}
+                    {% if mavensmate.ui.getProject() && mavensmate.ui.getProject().sfdcClient %}
                         {{ mavensmate.ui.getProject().name }} ({{ mavensmate.ui.getProject().sfdcClient.getUsername() }})
                     {% elif operation == 'github' %}
                         {{ 'Github Connection' }}
