@@ -3,10 +3,11 @@
 
 var program     = require('commander');
 var mavensmate  = require('../lib/mavensmate');
+var pjson       = require('../package.json');
 
 // initialize top-level program with global options
 program
-  .version('0.0.1')
+  .version(pjson.version)
   .option('-d --debugging', 'Explicitly enables logging. When in headless mode, debug statements will be placed in "debug" object in JSON response.')
   .option('-h --headless', 'Runs in headless mode, requiring piped-JSON for context. Best for use by MavensMate text editor/IDE clients.')
   .option('-e --editor [name]', 'Specifies the plugin client (SUBLIME_TEXT, ATOM)') // no default set
