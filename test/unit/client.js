@@ -9,15 +9,15 @@ var sinon             = require('sinon');
 describe('mavensmate client-unit', function(){
 
   it('should create sublime text client', function(done) {
-    var stub = sinon.stub(fs, 'existsSync');
-    stub.returns(true);
+    // var stub = sinon.stub(fs, 'existsSync');
+    // stub.returns(true);
     var myClient = client.createClient({
       editor: 'sublime',
       headless: false
     });
     should.equal(myClient.isInteractive(), true);
     should.equal(myClient.getServer(), undefined);
-    stub.restore();
+    // stub.restore();
     done();
   });
 

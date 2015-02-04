@@ -55,7 +55,7 @@ describe('mavensmate new-project', function(){
     testClient.executeCommand('new-project', payload, function(err, response) {
       should.equal(response, undefined);
       err.should.have.property('error');
-      err.error.should.equal('Could not initiate new Project instance: Error: Directory already exists!');
+      err.error.should.equal('Directory already exists!');
       done();
     });
   });
