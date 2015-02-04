@@ -8,7 +8,7 @@ var sinon             = require('sinon');
 
 describe('mavensmate client-unit', function(){
 
-  it.only('should create sublime text client', function(done) {
+  it('should create sublime text client', function(done) {
     var stub = sinon.stub(fs, 'existsSync');
     stub.returns(true);
     var myClient = client.createClient({
@@ -21,7 +21,7 @@ describe('mavensmate client-unit', function(){
     done();
   });
 
-  it.only('should fail to set project', function(done) {
+  it('should fail to set project', function(done) {
     var myClient = client.createClient({
       editor: 'sublime',
       headless: false
