@@ -111,6 +111,22 @@ describe('mavensmate unit-package', function(){
       .done();
   });
 
+  it('should create instance from an array of type names', function(done) {
+    var pkg = new Package({ metadataTypeXmlNames: ['ApexClass', 'ApexPage'] });
+    pkg.init()
+      .then(function() {
+        pkg.subscription.should.have.property('ApexClass');
+        pkg.subscription.should.have.property('ApexPage');
+        pkg.subscription.ApexClass.should.equal('*');
+        pkg.subscription.ApexPage.should.equal('*');
+        done();      
+      })
+      .catch(function(e) {
+        done(e);
+      })
+      .done();
+  });
+
   it('should write package instance to the specified path', function(done) {
     var files = [];
     files.push(new mavensMateFile.MavensMateFile({ path: '/path/to/src/classes/foo.cls' }));

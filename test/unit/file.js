@@ -142,6 +142,7 @@ describe('mavensmate mavensmate-file', function(){
     var file = new mavensMateFile.MavensMateFile({ project: project, path: itemPath });
     file.type.xmlName.should.equal('AuraDefinitionBundle');
     file.lightningType.should.equal('CONTROLLER');
+    file.lightningBaseName.should.equal('foo');
     done();
   });
 
@@ -152,6 +153,7 @@ describe('mavensmate mavensmate-file', function(){
     var file = new mavensMateFile.MavensMateFile({ project: project, path: itemPath });
     file.type.xmlName.should.equal('AuraDefinitionBundle');
     file.lightningType.should.equal('HELPER');
+    file.lightningBaseName.should.equal('foo');
     done();
   });
 
@@ -162,6 +164,7 @@ describe('mavensmate mavensmate-file', function(){
     var file = new mavensMateFile.MavensMateFile({ project: project, path: itemPath });
     file.type.xmlName.should.equal('AuraDefinitionBundle');
     file.lightningType.should.equal('RENDERER');
+    file.lightningBaseName.should.equal('foo');
     done();
   });
 
