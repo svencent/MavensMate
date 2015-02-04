@@ -31,7 +31,7 @@ var logger = require('winston');
 program.on('--help', function(){
   console.log('  Examples:');
   console.log('');
-  console.log('    $ mavensmate -c sublime new-project');
+  console.log('    $ mavensmate --editor sublime new-project');
   console.log('    $ mavensmate --debugging edit-project --ui');
   console.log('');
 });
