@@ -18,7 +18,27 @@ describe('mavensmate run-tests', function(){
     helper.putTestProjectInTestWorkspace(testClient, 'run-tests');
     helper.setProject(testClient, 'run-tests', function(err, proj) {
       project = proj;
-      done();
+      var loggingConfig = {
+        'levels': {
+          'Workflow': 'INFO', 
+          'Callout': 'INFO', 
+          'System': 'DEBUG', 
+          'Database': 'INFO', 
+          'ApexCode': 'DEBUG', 
+          'Validation': 'INFO', 
+          'Visualforce': 'DEBUG'
+        }, 
+        /*jshint camelcase: false */
+        'users': [
+          project.sfdcClient.conn.userInfo.user_id
+        ], 
+        /*jshint camelcase: true */
+        'expiration': 480
+      };
+      fs.writeJsonSync(path.join(helper.baseTestDirectory(), 'workspace', 'run-tests', 'config', '.debug'), loggingConfig);
+      testClient.executeCommand('start-logging', function() {
+        done();
+      });
     });
   });
 
@@ -30,10 +50,12 @@ describe('mavensmate run-tests', function(){
     ];
     helper.cleanUpTestData(testClient, filesToDelete)
       .then(function() {
-        return helper.cleanUpTestProject('run-tests');
-      })
-      .then(function() {
-        done();
+        testClient.executeCommand('stop-logging', function() {
+          helper.cleanUpTestProject('run-tests')
+            .then(function() {
+              done();
+            });
+        });  
       });
   });
 
