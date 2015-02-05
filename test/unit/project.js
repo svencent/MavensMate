@@ -14,6 +14,7 @@ describe('mavensmate project-unit', function(){
 
   describe('initiate new', function () {
     it('should select a workspace when setting is a string', function (done) {
+      this.timeout(8000);
       config.use('memory');
       config.set('mm_workspace', path.join(helper.baseTestDirectory(), 'workspace'));
       var project = new Project({
@@ -28,6 +29,7 @@ describe('mavensmate project-unit', function(){
     });
 
     it('should select a workspace when setting is an array', function (done) {
+      this.timeout(8000);
       config.use('memory');
       config.set('mm_workspace', [ path.join(helper.baseTestDirectory(), 'workspace'), path.join(helper.baseTestDirectory(), 'workspace', 'foo') ]);
       var project = new Project({
@@ -42,6 +44,7 @@ describe('mavensmate project-unit', function(){
     });
 
     it('should create the workspace when it does not exist', function (done) {
+      this.timeout(8000);
       config.use('memory');
       config.set('mm_workspace', [ path.join(helper.baseTestDirectory(), 'workspace', 'foo'), path.join(helper.baseTestDirectory(), 'workspace') ]);
       var project = new Project({
