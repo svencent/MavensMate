@@ -26,16 +26,18 @@ exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace
   } 
 };
 
-exports.createClient = function(editor) {
+exports.createClient = function(editor, settings) {
+  /*jshint camelcase: false */
+  var clientSettings = settings || {};
+  clientSettings.mm_use_keyring = false;
   return mavensmate.createClient({
     editor: editor,
     headless: true,
     debugging: process.env.MAVENSMATE_DEBUG_TESTS || false,
     promisify: true,
-    settings: {
-      mm_use_keyring: false
-    }
+    settings: clientSettings
   });
+  /*jshint camelcase: true */
 };
 
 exports.baseTestDirectory = function() {
