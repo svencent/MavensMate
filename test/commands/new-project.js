@@ -83,8 +83,8 @@ describe('mavensmate new-project', function(){
     
     var payload = {
       name: 'new-project',
-      username: process.env.username || 'mm@force.com',
-      password: process.env.password || 'force',
+      username: process.env.SALESFORCE_USERNAME || 'mm@force.com',
+      password: process.env.SALESFORCE_PASSWORD || 'force',
       workspace: path.join(helper.baseTestDirectory(),'workspace'),
       package: {
         ApexPage: '*',
@@ -102,8 +102,8 @@ describe('mavensmate new-project', function(){
       assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src', 'package.xml'),  'Project package.xml does not exist');
       helper.setProject(testClient, 'new-project', function() {
         var project = testClient.getProject();
-        project.settings.username.should.equal(process.env.username || 'mm@force.com');
-        project.settings.password.should.equal(process.env.password || 'force');
+        project.settings.username.should.equal(process.env.SALESFORCE_USERNAME || 'mm@force.com');
+        project.settings.password.should.equal(process.env.SALESFORCE_PASSWORD || 'force');
         project.settings.environment.should.equal('developer');
         done();
       });

@@ -20,8 +20,8 @@ exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace
     var settings = fs.readJsonSync(path.join(testWorkspace, name, 'config', '.settings'));
     settings.projectName = name;
     settings.workspace = testWorkspace;
-    settings.username = process.env.username || 'mm@force.com';
-    settings.password = process.env.password || 'force';
+    settings.username = process.env.SALESFORCE_USERNAME || 'mm@force.com';
+    settings.password = process.env.SALESFORCE_PASSWORD || 'force';
     fs.writeJsonSync(path.join(testWorkspace, name, 'config', '.settings'), settings);
   } 
 };
@@ -76,8 +76,8 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
 
     var payload = {
       name: name,
-      username: process.env.username || 'mm@force.com',
-      password: process.env.password || 'force',
+      username: process.env.SALESFORCE_USERNAME || 'mm@force.com',
+      password: process.env.SALESFORCE_PASSWORD || 'force',
       workspace: testWorkspace,
       package: pkg || {}
     };

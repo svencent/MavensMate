@@ -23,8 +23,8 @@ describe('mavensmate session', function() {
     this.timeout(20000);      
 
     var payload = {
-      username: process.env.username || 'mm@force.com',
-      password: process.env.password || 'force',
+      username: process.env.SALESFORCE_USERNAME || 'mm@force.com',
+      password: process.env.SALESFORCE_PASSWORD || 'force',
       orgType: 'developer',
       subscription: ['ApexClass']
     };
