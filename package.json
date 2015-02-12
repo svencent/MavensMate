@@ -82,9 +82,9 @@
   },
   "devDependencies": {
     "blanket": "1.1.5",
-    "chai": "latest",
-    "chai-as-promised": "latest",
-    "chai-fs": "latest",
+    "chai": "1.10.0",
+    "chai-as-promised": "4.1.1",
+    "chai-fs": "0.1.0",
     "coveralls": "^2.11.2",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
@@ -93,6 +93,6 @@
     "grunt-release": "^0.10.0",
     "mocha": "^2.1.0",
     "mocha-lcov-reporter": "0.0.1",
-    "sinon": "latest"
+    "sinon": "1.12.2"
   }
 }
