@@ -34,7 +34,7 @@ To use MavensMate to build a Salesforce1 IDE for your Node.js project:
 ```
 var mavensmate = require('mavensmate');
 var client = mavensmate.createClient({
-	editor: '<editor_name>',
+	editor: '<editor_name>', // supported editor names: atom, sublime
 	headless: true,
 	debugging: true
 });
@@ -51,19 +51,56 @@ client.setProject('path/to/some/project', function(err, response) {
 
 ###### Examples
 
-`mavensmate new-project`
+```
 
-`mavensmate edit-project <<< '{"package": { "ApexClass":[ "MyClass", "MyOtherClass" ], "ApexPage":"*" } }'` 
+mavensmate new-project <<< '{ "name" : "myproject", "workspace" : "/path/to/workspace", "username" : "foo@bar.com", "password" : "foo", package: { "ApexClass" : "*" } }'
 
-`mavensmate compile-project`
+cd path/to/workspace/myproject
 
-`mavensmate compile-metadata <<< '{ "paths" : [ "/path/to/MyClass.cls", "/path/to/MyPage.page" ] }'`
+mavensmate edit-project <<< '{ "package" : { "ApexClass": [ "MyTestClass", "MyTestClass2" ], "ApexPage": "*" } }'
+
+mavensmate compile-project
+
+mavensmate compile-metadata <<< '{ "paths" : [ "/path/to/MyTestClass.cls", "/path/to/MyPage.page" ] }'
+
+mavensmate delete-metadata <<< '{ "paths" : [ "/path/to/MyPage.page" ] }'
+
+mavensmate clean-project
+
+mavensmate start-logging
+
+mavensmate run-tests <<< '{ "paths" : [ "/path/to/MyTestClass.cls", "/path/to/MyTestClass2.cls" ] }'
+
+mavensmate stop-logging 
+
+```
 
 For a full list of commands, see the `lib/mavensmate/commands` directory. We will continue to build out this documentation with a full list of commands, including payload parameters.
 
 #### Run Functional/Unit Tests
 
+You must set the following environment variables before running tests:
+
+`SALESFORCE_USERNAME`
+
+`SALESFORCE_PASSWORD`
+
+For verbose logging while running tests, set `MAVENSMATE_DEBUG_TESTS` to `true`
+
+To run all unit and functional tests:
+
 `npm test`
+
+To run a specific test you may use the mocha command line interface. Examples:
+
+`mocha --recursive --grep clean-project`
+
+`mocha --recursive --grep 'index-metadata|project-unit'`
+
+
+To generate a coverage report, which will be located at test/coverage.html:
+
+`make coverage`
 
 ## Active Plugins
 
