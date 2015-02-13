@@ -78,7 +78,7 @@
     "xmldoc": "0.1.2"
   },
   "optionalDependencies": {
-    "keytar": "2.0.3"
+    "keytar": "2.1.0"
   },
   "devDependencies": {
     "blanket": "1.1.5",
