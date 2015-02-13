@@ -13,6 +13,9 @@ describe('mavensmate compile-metadata', function(){
 
   before(function(done) {
     this.timeout(4000);
+    /*jshint camelcase: false */
+    process.env.mm_compile_check_conflicts = false;
+    /*jshint camelcase: true */
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'compile-metadata');
@@ -27,7 +30,8 @@ describe('mavensmate compile-metadata', function(){
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls'),
       path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataToolingFailClass.cls'),
-      path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataToolingClass.cls')
+      path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataToolingClass.cls'),
+      path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'ConflictCheckClass.cls')
     ];
 
     testClient.executeCommand('edit-project', { package: { ApexClass: '*' } }, function(err, response) {
@@ -38,6 +42,9 @@ describe('mavensmate compile-metadata', function(){
           return helper.cleanUpTestProject('compile-metadata');
         })
         .then(function() {
+          /*jshint camelcase: false */
+          process.env.mm_compile_check_conflicts = false;
+          /*jshint camelcase: true */
           done();
         })
         .catch(function(err) {
@@ -51,8 +58,9 @@ describe('mavensmate compile-metadata', function(){
 
     helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataToolingClass')
       .then(function() {
+        var apexClassPath = path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataToolingClass.cls');
         var payload = {
-          paths : helper.getProjectFiles(testClient, 'ApexClass')
+          paths : [ apexClassPath ]
         };
         testClient.executeCommand('compile-metadata', payload, function(err, response) {
           should.equal(err, null);
@@ -66,6 +74,45 @@ describe('mavensmate compile-metadata', function(){
       .done();
   });
 
+  it('should check for conflicts on the server', function(done) {
+    /*jshint camelcase: false */
+    this.timeout(20000);   
+    process.env.mm_compile_check_conflicts = true;
+    helper.createNewMetadata(testClient, 'ApexClass', 'ConflictCheckClass')
+      .then(function() {
+        testClient.getProject().updateLocalStore({
+            'createdById': '005o0000000TB1iAAG',
+            'createdByName': 'Joseph Ferraro',
+            'createdDate': '2014-08-18T16:09:51.000Z',
+            'fileName': 'unpackaged/classes/ConflictCheckClass.cls',
+            'fullName': 'ConflictCheckClass',
+            'id': '01po0000001iVdXAAU',
+            'lastModifiedById': '005o0000000TB1iAAG',
+            'lastModifiedByName': 'Joseph Ferraro',
+            'lastModifiedDate': 'FOO BAR',
+            'manageableState': 'unmanaged',
+            'namespacePrefix': 'mm2',
+            'type': 'ApexClass',
+            'mmState': 'clean'
+          })
+          .then(function() {
+            var payload = {
+              paths : [ path.join(testClient.getProject().path, 'src', 'classes', 'ConflictCheckClass.cls') ]
+            };
+            testClient.executeCommand('compile-metadata', payload, function(err, response) {
+              should.equal(err, null);
+              response.should.have.property('result');
+              response.result.success.should.equal(false);
+              response.result.details.componentSuccesses.length.should.equal(0);
+              response.result.details.conflicts.should.have.property('ConflictCheckClass.cls');
+              process.env.mm_compile_check_conflicts = false;
+              done();
+            });
+          });
+      });
+      /*jshint camelcase: true */
+  });
+
   it('should unsuccessfully attempt to compile an apex class via the tooling api', function(done) {
     this.timeout(20000);      
 
@@ -76,7 +123,7 @@ describe('mavensmate compile-metadata', function(){
           paths : [ apexClassPath ]
         };
 
-        fs.outputFileSync(apexClassPath, 'public class CompileMetadataToolingClass { this will not work }');
+        fs.outputFileSync(apexClassPath, 'public class CompileMetadataToolingFailClass { this will not work }');
 
         testClient.executeCommand('compile-metadata', payload, function(err, response) {  
           should.equal(err, null);
