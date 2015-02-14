@@ -37,7 +37,7 @@
     "mavensmate",
     "ide"
   ],
-  "license": "MIT",
+  "license": "GPLv3",
   "bugs": "https://github.com/joeferraro/mavensmate/issues",
   "dependencies": {
     "adm-zip": "0.4.4",
