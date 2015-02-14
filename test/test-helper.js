@@ -2,15 +2,17 @@
 
 var _                 = require('lodash');
 var mavensmate        = require('../lib/mavensmate');
-var MetadataHelper   = require('../lib/mavensmate/metadata').MetadataHelper;
+var MetadataHelper    = require('../lib/mavensmate/metadata').MetadataHelper;
 var fs                = require('fs-extra');
 var path              = require('path');
 var Promise           = require('bluebird');
 var sinon             = require('sinon');
+var sinonAsPromised   = require('sinon-as-promised');
 var EditorService     = require('../lib/mavensmate/editor');
 var temp              = require('temp');
 var TemplateService   = require('../lib/mavensmate/template');
-var SalesforceClient  = require('../lib/mavensmate/sfdc-client');
+
+sinonAsPromised(require('bluebird'));
 
 exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace) {
   var self = this;
@@ -33,7 +35,7 @@ exports.createClient = function(editor, settings) {
   return mavensmate.createClient({
     editor: editor,
     headless: true,
-    debugging: process.env.MAVENSMATE_DEBUG_TESTS || false,
+    verbose: process.env.MAVENSMATE_DEBUG_TESTS || false,
     promisify: true,
     settings: clientSettings
   });

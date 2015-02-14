@@ -1,10 +1,8 @@
 'use strict';
 
-var helper      = require('../test-helper');
+var helper      = require('../../test-helper');
 var chai        = require('chai');
-var should      = chai.should();
 var path        = require('path');
-var fs          = require('fs-extra');
 var assert      = chai.assert;
 
 chai.use(require('chai-fs'));

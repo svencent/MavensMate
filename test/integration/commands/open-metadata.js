@@ -1,10 +1,9 @@
 'use strict';
 
-var helper      = require('../test-helper');
+var helper      = require('../../test-helper');
 var chai        = require('chai');
 var should      = chai.should();
 var path        = require('path');
-var fs          = require('fs-extra');
 
 describe('mavensmate open-metadata', function(){
 
@@ -46,8 +45,6 @@ describe('mavensmate open-metadata', function(){
           preview: true
         };
         testClient.executeCommand('open-metadata', payload, function(err, response) {
-          console.log(err);
-          console.log(response);
           should.equal(err, null);
           response.should.have.property('result');
           response.result.should.have.property('OpenMetadataPage.page');

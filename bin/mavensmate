@@ -8,16 +8,16 @@ var pjson       = require('../package.json');
 // initialize top-level program with global options
 program
   .version(pjson.version)
-  .option('-d --debugging', 'Explicitly enables logging. When in headless mode, debug statements will be placed in "debug" object in JSON response.')
-  .option('-h --headless', 'Runs in headless mode, requiring piped-JSON for context. Best for use by MavensMate text editor/IDE clients.')
-  .option('-e --editor [name]', 'Specifies the plugin client (SUBLIME_TEXT, ATOM)') // no default set
+  .option('-v --verbose', 'Output logging statements')
+  .option('-h --headless', 'Runs in headless (non-interactive terminal) mode. You may wish to use this flag when calling this executable from a text editor or IDE client.')
+  .option('-e --editor [name]', 'Specifies the plugin client (sublime, atom)') // no default set
   .option('-p --port [number]', 'UI server port number') // (for sublime text)
   .parse(process.argv, true); // parse top-level args, defer subcommand
 
 var cliClient = mavensmate.createClient({
   editor: program.editor || 'atom',
   headless: program.headless || false,
-  debugging: program.debugging || false,
+  verbose: program.verbose || false,
   program: program
 });
 
@@ -31,8 +31,8 @@ var logger = require('winston');
 program.on('--help', function(){
   console.log('  Examples:');
   console.log('');
-  console.log('    $ mavensmate --editor sublime new-project');
-  console.log('    $ mavensmate --debugging edit-project --ui');
+  console.log('    $ mavensmate -e sublime new-project');
+  console.log('    $ mavensmate -v edit-project --ui');
   console.log('');
 });
 
@@ -49,8 +49,8 @@ require('autocmdr/lib/completion')(program);
 require('autocmdr/lib/package')(program);
 require('autocmdr/lib/help')(program);
 
-logger.debug('\n\n\n\n=====> RUNNING COMMAND:\n');
-logger.debug('Args: '+JSON.stringify(process.argv));
+logger.debug('\n\n=====> EXECUTING VIA CLI:\n');
+logger.debug(JSON.stringify(process.argv));
 
 var projectExemptCommands = [
   'new-project',

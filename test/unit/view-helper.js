@@ -35,7 +35,7 @@ describe('mavensmate view-helper', function(){
   it('should getClient', function(done) {    
     viewHelper.getClient().should.have.property('editor');
     viewHelper.getClient().should.have.property('headless');
-    viewHelper.getClient().should.have.property('debugging');
+    viewHelper.getClient().should.have.property('verbose');
     done();
   });
 

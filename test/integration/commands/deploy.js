@@ -1,6 +1,6 @@
 'use strict';
 
-var helper      = require('../test-helper');
+var helper      = require('../../test-helper');
 var chai        = require('chai');
 var should      = chai.should();
 var path        = require('path');
@@ -56,9 +56,6 @@ describe('mavensmate deploy-to-server', function() {
           
           testClient.executeCommand('get-connections', payload, function(err, conns) {
             
-            console.log('-->');
-            console.log(conns);
-
             var deployPayload = {
               destinations : conns.result,
               package : { 'ApexClass' : ['DeployClass']  },   

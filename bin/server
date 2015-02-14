@@ -12,7 +12,7 @@ var port = args.port;
 var client = mavensmate.createClient({
   editor: editor,
   headless: true,
-  debugging: true,
+  verbose: true,
   serverPort: port
 });
 

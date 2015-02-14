@@ -1,6 +1,6 @@
 'use strict';
 
-var helper      = require('../test-helper');
+var helper      = require('../../test-helper');
 var chai        = require('chai');
 var should      = chai.should();
 var assert      = chai.assert;
