@@ -3,12 +3,13 @@
 var assert          = require('assert');
 var sinon           = require('sinon');
 var sinonAsPromised = require('sinon-as-promised');
-var util            = require('../../../lib/mavensmate/util').instance;
-var mavensmate      = require('../../../lib/mavensmate');
+var util            = require('../../../../lib/mavensmate/util').instance;
+var mavensmate      = require('../../../../lib/mavensmate');
+var _               = require('lodash');
 
 sinonAsPromised(require('bluebird'));
 
-describe('mavensmate update-subscription-cli', function(){
+describe('mavensmate deploy-cli', function(){
 
   var program;
   var cliClient;
@@ -33,7 +34,7 @@ describe('mavensmate update-subscription-cli', function(){
       program: program
     });
 
-    require('../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);  
     done();
   });
 
@@ -47,12 +48,24 @@ describe('mavensmate update-subscription-cli', function(){
     getPayloadStub.restore();
   });
 
+  it('should accept a ui flag', function(done) {    
+    var cmd = _.find(program.commands, { _name : 'run-tests' });
+    cmd.ui = true;
+    
+    cliClient.program._events['run-tests']();
+    
+    executeCommandStub.calledOnce.should.equal(true);
+    assert(executeCommandStub.calledWith('run-tests', { args: { ui: true } }));
+    cmd.ui = false;
+    done();
+  });
+
   it('should accept stdin', function(done) {
-    cliClient.program._events['update-subscription']();
+    cliClient.program._events['run-tests']();
     
     getPayloadStub().then(function() {
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('update-subscription', { foo : 'bar' }));
+      assert(executeCommandStub.calledWith('run-tests', { foo : 'bar' }));
       done();
     });
   });

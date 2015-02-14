@@ -3,12 +3,13 @@
 var assert          = require('assert');
 var sinon           = require('sinon');
 var sinonAsPromised = require('sinon-as-promised');
-var util            = require('../../../lib/mavensmate/util').instance;
-var mavensmate      = require('../../../lib/mavensmate');
+var util            = require('../../../../lib/mavensmate/util').instance;
+var mavensmate      = require('../../../../lib/mavensmate');
+var _               = require('lodash');
 
 sinonAsPromised(require('bluebird'));
 
-describe('mavensmate index-metadata-cli', function(){
+describe('mavensmate new-lightning-app-cli', function(){
 
   var program;
   var cliClient;
@@ -33,7 +34,7 @@ describe('mavensmate index-metadata-cli', function(){
       program: program
     });
 
-    require('../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);  
     done();
   });
 
@@ -47,11 +48,25 @@ describe('mavensmate index-metadata-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should call directly', function(done) {
-    cliClient.program._events['index-metadata']();
+  it('should accept a ui flag', function(done) {    
+    var cmd = _.find(program.commands, { _name : 'new-lightning-app' });
+    cmd.ui = true;
+    
+    cliClient.program._events['new-lightning-app']();
     
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('index-metadata'));
+    assert(executeCommandStub.calledWith('new-lightning-app', { args: { ui: true } }));
+    cmd.ui = false;
     done();
+  });
+
+  it('should accept stdin', function(done) {
+    cliClient.program._events['new-lightning-app']();
+    
+    getPayloadStub().then(function() {
+      executeCommandStub.calledOnce.should.equal(true);
+      assert(executeCommandStub.calledWith('new-lightning-app', { foo : 'bar' }));
+      done();
+    });
   });
 });

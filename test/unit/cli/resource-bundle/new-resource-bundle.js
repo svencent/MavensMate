@@ -3,13 +3,12 @@
 var assert          = require('assert');
 var sinon           = require('sinon');
 var sinonAsPromised = require('sinon-as-promised');
-var util            = require('../../../lib/mavensmate/util').instance;
-var mavensmate      = require('../../../lib/mavensmate');
-var _               = require('lodash');
+var util            = require('../../../../lib/mavensmate/util').instance;
+var mavensmate      = require('../../../../lib/mavensmate');
 
 sinonAsPromised(require('bluebird'));
 
-describe('mavensmate run-tests-cli', function(){
+describe('mavensmate new-resource-bundle-cli', function(){
 
   var program;
   var cliClient;
@@ -34,7 +33,7 @@ describe('mavensmate run-tests-cli', function(){
       program: program
     });
 
-    require('../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);  
     done();
   });
 
@@ -48,34 +47,12 @@ describe('mavensmate run-tests-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a ui flag', function(done) {    
-    var cmd = _.find(program.commands, { _name : 'run-tests' });
-    cmd.ui = true;
-    
-    cliClient.program._events['run-tests']();
+  it('should accept a static resource path', function(done) {        
+    cliClient.program._events['new-resource-bundle'](['/path/to/something']);
     
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('run-tests', { args: { ui: true } }));
-    cmd.ui = false;
-    done();
-  });
-
-  it('should accept a test path', function(done) {        
-    cliClient.program._events['run-tests'](['/path/to/test']);
-    
-    executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('run-tests', { tests : [ '/path/to/test' ] }));
+    assert(executeCommandStub.calledWith('new-resource-bundle', { paths : [ '/path/to/something' ] }));
 
     done();
-  });
-
-  it('should accept stdin', function(done) {
-    cliClient.program._events['run-tests']();
-    
-    getPayloadStub().then(function() {
-      executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('run-tests'));
-      done();
-    });
   });
 });

@@ -2,14 +2,10 @@
 
 var assert          = require('assert');
 var sinon           = require('sinon');
-var sinonAsPromised = require('sinon-as-promised');
-var util            = require('../../../lib/mavensmate/util').instance;
-var mavensmate      = require('../../../lib/mavensmate');
-var _               = require('lodash');
+var util            = require('../../../../lib/mavensmate/util').instance;
+var mavensmate      = require('../../../../lib/mavensmate');
 
-sinonAsPromised(require('bluebird'));
-
-describe('mavensmate new-project-cli', function(){
+describe('mavensmate stop-logging-cli', function(){
 
   var program;
   var cliClient;
@@ -19,7 +15,7 @@ describe('mavensmate new-project-cli', function(){
   before(function(done) {
     delete require.cache[require.resolve('commander')];
     program = require('commander');
-
+    
     program
       .option('-v --verbose', 'Output logging statements')
       .option('-h --headless', 'Runs in headless (non-interactive terminal) mode. You may wish to use this flag when calling this executable from a text editor or IDE client.')
@@ -34,7 +30,12 @@ describe('mavensmate new-project-cli', function(){
       program: program
     });
 
-    require('../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);  
+    done();
+  });
+
+  after(function(done) {
+    program = null;
     done();
   });
 
@@ -48,35 +49,11 @@ describe('mavensmate new-project-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a ui flag', function(done) {    
-    var cmd = _.find(program.commands, { _name : 'new-project' });
-    cmd.ui = true;
-    
-    cliClient.program._events['new-project']();
+  it('should call directly', function(done) {
+    cliClient.program._events['stop-logging']();
     
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('new-project', { args: { ui: true } }));
-    cmd.ui = false;
+    assert(executeCommandStub.calledWith('stop-logging'));
     done();
-  });
-
-  it('should allow interactive mode', function(done) {        
-    cliClient.headless = false;
-    cliClient.program._events['new-project']();
-    
-    executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('new-project'));
-    cliClient.headless = true;
-    done();
-  });
-
-  it('should accept stdin', function(done) {
-    cliClient.program._events['new-project']();
-    
-    getPayloadStub().then(function() {
-      executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('new-project', { foo : 'bar' }));
-      done();
-    });
   });
 });

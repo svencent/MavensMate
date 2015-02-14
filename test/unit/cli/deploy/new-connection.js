@@ -3,12 +3,12 @@
 var assert          = require('assert');
 var sinon           = require('sinon');
 var sinonAsPromised = require('sinon-as-promised');
-var util            = require('../../../lib/mavensmate/util').instance;
-var mavensmate      = require('../../../lib/mavensmate');
+var util            = require('../../../../lib/mavensmate/util').instance;
+var mavensmate      = require('../../../../lib/mavensmate');
 
 sinonAsPromised(require('bluebird'));
 
-describe('mavensmate edit-project-cli', function(){
+describe('mavensmate new-connection-cli', function(){
 
   var program;
   var cliClient;
@@ -33,7 +33,7 @@ describe('mavensmate edit-project-cli', function(){
       program: program
     });
 
-    require('../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);  
     done();
   });
 
@@ -47,13 +47,12 @@ describe('mavensmate edit-project-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept stdin', function(done) {
-    cliClient.program._events['edit-project']();
+  it('should accept a connection username, password, and orgType', function(done) {        
+    cliClient.program._events['new-connection'](['foo', 'bar', 'bat']);
     
-    getPayloadStub().then(function() {
-      executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('edit-project', { foo : 'bar' }));
-      done();
-    });
+    executeCommandStub.calledOnce.should.equal(true);
+    assert(executeCommandStub.calledWith('new-connection', { username : 'foo', password: 'bar', orgType: 'bat' }));
+
+    done();
   });
 });

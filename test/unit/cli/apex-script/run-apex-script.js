@@ -2,10 +2,13 @@
 
 var assert          = require('assert');
 var sinon           = require('sinon');
-var util            = require('../../../lib/mavensmate/util').instance;
-var mavensmate      = require('../../../lib/mavensmate');
+var sinonAsPromised = require('sinon-as-promised');
+var util            = require('../../../../lib/mavensmate/util').instance;
+var mavensmate      = require('../../../../lib/mavensmate');
 
-describe('mavensmate clean-project-cli', function(){
+sinonAsPromised(require('bluebird'));
+
+describe('mavensmate run-apex-script-cli', function(){
 
   var program;
   var cliClient;
@@ -15,7 +18,7 @@ describe('mavensmate clean-project-cli', function(){
   before(function(done) {
     delete require.cache[require.resolve('commander')];
     program = require('commander');
-    
+
     program
       .option('-v --verbose', 'Output logging statements')
       .option('-h --headless', 'Runs in headless (non-interactive terminal) mode. You may wish to use this flag when calling this executable from a text editor or IDE client.')
@@ -30,12 +33,7 @@ describe('mavensmate clean-project-cli', function(){
       program: program
     });
 
-    require('../../../lib/mavensmate/loader')(cliClient);  
-    done();
-  });
-
-  after(function(done) {
-    program = null;
+    require('../../../../lib/mavensmate/loader')(cliClient);  
     done();
   });
 
@@ -49,11 +47,12 @@ describe('mavensmate clean-project-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should call directly', function(done) {
-    cliClient.program._events['clean-project']();
+  it('should accept a script name', function(done) {        
+    cliClient.program._events['run-apex-script'](['/path/to/script']);
     
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('clean-project'));
+    assert(executeCommandStub.calledWith('run-apex-script', { paths : [ '/path/to/script' ] }));
+
     done();
   });
 });

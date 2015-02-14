@@ -2,10 +2,10 @@
 
 var assert          = require('assert');
 var sinon           = require('sinon');
-var util            = require('../../../lib/mavensmate/util').instance;
-var mavensmate      = require('../../../lib/mavensmate');
+var util            = require('../../../../lib/mavensmate/util').instance;
+var mavensmate      = require('../../../../lib/mavensmate');
 
-describe('mavensmate compile-project-cli', function(){
+describe('mavensmate start-logging-cli', function(){
 
   var program;
   var cliClient;
@@ -15,7 +15,7 @@ describe('mavensmate compile-project-cli', function(){
   before(function(done) {
     delete require.cache[require.resolve('commander')];
     program = require('commander');
-
+    
     program
       .option('-v --verbose', 'Output logging statements')
       .option('-h --headless', 'Runs in headless (non-interactive terminal) mode. You may wish to use this flag when calling this executable from a text editor or IDE client.')
@@ -30,7 +30,12 @@ describe('mavensmate compile-project-cli', function(){
       program: program
     });
 
-    require('../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);  
+    done();
+  });
+
+  after(function(done) {
+    program = null;
     done();
   });
 
@@ -45,10 +50,10 @@ describe('mavensmate compile-project-cli', function(){
   });
 
   it('should call directly', function(done) {
-    cliClient.program._events['compile-project']();
+    cliClient.program._events['start-logging']();
     
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('compile-project'));
+    assert(executeCommandStub.calledWith('start-logging'));
     done();
   });
 });
