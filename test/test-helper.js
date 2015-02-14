@@ -35,7 +35,7 @@ exports.createClient = function(editor, settings) {
   return mavensmate.createClient({
     editor: editor,
     headless: true,
-    verbose: process.env.MAVENSMATE_DEBUG_TESTS || false,
+    verbose: process.env.MAVENSMATE_DEBUG_TESTS === 'true' || false,
     promisify: true,
     settings: clientSettings
   });
