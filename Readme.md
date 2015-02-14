@@ -1,6 +1,6 @@
 # [MavensMate](http://mavensmate.com) - Open Source IDEs for Salesforce1
 
-MavensMate is a powerful open source tool for building Salesforce1 IDEs. Develop Salesforce1 applications in your favorite text editors, like Sublime Text and Atom. MavensMate is created and maintained by [Joe Ferraro](http://twitter.com/joeferraro).
+MavensMate is a powerful Node.js application and command line interface for building Salesforce1 IDEs. Develop Salesforce1 applications in your favorite text editors, like Sublime Text and Atom. MavensMate is created and maintained by [Joe Ferraro](http://twitter.com/joeferraro).
 
 For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 
@@ -22,7 +22,7 @@ For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 
 ## MavensMate API
 
-You can build Salesforce1 IDEs by integrating with the APIs exposed in this project. For Node.js projects, you can simply `require('mavensmate')`. For other types of projects, you may use the command line interface (documentation to come).
+You can build Salesforce1 IDEs by integrating with the APIs exposed in this project. For Node.js projects, you can simply `require('mavensmate')`. For other types of projects, you may use the command line interface (see below, full documentation forthcoming).
 
 ### Node.js Projects
 
@@ -41,7 +41,7 @@ var mavensmate = require('mavensmate');
 var client = mavensmate.createClient({
 	editor: '<editor_name>', // supported editor names: atom, sublime
 	headless: true,
-	debugging: true
+	verbose: true
 });
 client.setProject('path/to/some/project', function(err, response) {
 	client.executeCommand('compile-project', function(err, response) {
@@ -64,19 +64,35 @@ cd path/to/workspace/myproject
 
 mavensmate edit-project <<< '{ "package" : { "ApexClass": [ "MyTestClass", "MyTestClass2" ], "ApexPage": "*" } }'
 
+mavensmate update-creds foo@bar.com myPassword123!
+
+mavensmate clean-project
+
 mavensmate compile-project
 
 mavensmate compile-metadata <<< '{ "paths" : [ "/path/to/MyTestClass.cls", "/path/to/MyPage.page" ] }'
 
-mavensmate delete-metadata <<< '{ "paths" : [ "/path/to/MyPage.page" ] }'
+mavensmate compile-metadata /path/to/metadata
 
-mavensmate clean-project
+mavensmate delete-metadata <<< '{ "paths" : [ "/path/to/MyPage.page" ] }'
 
 mavensmate start-logging
 
 mavensmate run-tests <<< '{ "paths" : [ "/path/to/MyTestClass.cls", "/path/to/MyTestClass2.cls" ] }'
 
-mavensmate stop-logging 
+mavensmate get-coverage /path/to/MyTestClass.cls
+
+mavensmate get-coverage --global
+
+mavensmate stop-logging
+
+mavensmate new-resource-bundle /path/to/my/static/resource
+
+mavensmate deploy-resource-bundle path/to/my/resource/bundle
+
+mavensmate new-connection anotherOrg@somewhere.com coolPassword!
+
+mavensmate deploy --ui
 
 ```
 
