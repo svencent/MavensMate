@@ -3,6 +3,7 @@
 var os    = require('os');
 var util  = require('../../lib/mavensmate/util').instance;
 var sinon = require('sinon');
+var path  = require('path');
 
 describe('mavensmate util', function(){
 
@@ -103,6 +104,19 @@ describe('mavensmate util', function(){
       done();
     });
     
+  });
+
+  describe('getAbsolutePaths', function() {
+    it('should return absolute paths', function(done) {    
+      var paths = [
+        'relative/path/to/something',
+        '/absolute/path/to/something'
+      ];
+      var ps = util.getAbsolutePaths(paths);
+      ps[0][0].should.equal(path.sep);
+      ps[1][0].should.equal(path.sep);
+      done();
+    }); 
   });
 
 });
