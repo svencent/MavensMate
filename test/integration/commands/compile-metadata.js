@@ -89,7 +89,7 @@ describe('mavensmate compile-metadata', function(){
             'id': '01po0000001iVdXAAU',
             'lastModifiedById': '005o0000000TB1iAAG',
             'lastModifiedByName': 'Joseph Ferraro',
-            'lastModifiedDate': 'FOO BAR',
+            'lastModifiedDate': '2012-08-18T16:09:51.000Z',
             'manageableState': 'unmanaged',
             'namespacePrefix': 'mm2',
             'type': 'ApexClass',
