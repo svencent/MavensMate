@@ -70,23 +70,23 @@ mavensmate clean-project
 
 mavensmate compile-project
 
-mavensmate compile-metadata <<< '{ "paths" : [ "/path/to/MyTestClass.cls", "/path/to/MyPage.page" ] }'
+mavensmate compile-metadata path/to/MyTestClass.cls
 
-mavensmate compile-metadata /path/to/metadata
-
-mavensmate delete-metadata <<< '{ "paths" : [ "/path/to/MyPage.page" ] }'
+mavensmate delete-metadata path/to/MyPage.page
 
 mavensmate start-logging
 
+mavensmate run-tests path/to/MyTestClass.cls
+
 mavensmate run-tests <<< '{ "paths" : [ "/path/to/MyTestClass.cls", "/path/to/MyTestClass2.cls" ] }'
 
-mavensmate get-coverage /path/to/MyTestClass.cls
+mavensmate get-coverage path/to/MyTestClass.cls
 
 mavensmate get-coverage --global
 
 mavensmate stop-logging
 
-mavensmate new-resource-bundle /path/to/my/static/resource
+mavensmate new-resource-bundle path/to/my/static/resource
 
 mavensmate deploy-resource-bundle path/to/my/resource/bundle
 
