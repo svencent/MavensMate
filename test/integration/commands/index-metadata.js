@@ -39,6 +39,42 @@ describe('mavensmate index-metadata', function(){
     });
   });
 
+  it('should fail to index due to unknown type', function(done) {
+    
+    this.timeout(80000);
+
+    testClient.executeCommand('update-subscription', { subscription: [ 'SomeBadType' ] }, function(err, response) {
+      should.equal(err, null);
+      response.should.have.property('result');
+      
+      testClient.executeCommand('index-metadata', function(err) {
+        should.equal(err.error, 'Unknown metadata type: SomeBadType');
+        should.equal(err.result, 'Could not index metadata');
+        done();
+      });
+    });
+
+  });
+
+  it('should index uncommon types', function(done) {
+    
+    this.timeout(80000);
+
+    testClient.executeCommand('update-subscription', { subscription: [ 'CustomLabels', 'Letterhead', 'Queue', 'RecordType', 'CustomObjectSharingRules' ] }, function(err, response) {
+      should.equal(err, null);
+      response.should.have.property('result');
+      
+      testClient.executeCommand('index-metadata', function(err, response) {
+        should.equal(err, null);
+        response.should.have.property('result');
+        response.result.should.equal('Metadata successfully indexed');
+        done();
+      });
+
+    });
+
+  });
+
   it('should get metadata index from project', function(done) {
     
     this.timeout(10000);

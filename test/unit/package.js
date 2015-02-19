@@ -5,7 +5,7 @@ var chai            = require('chai');
 var should          = chai.should();
 var fs              = require('fs-extra');
 var path            = require('path');
-var Package         = require('../../lib/mavensmate/package');
+var Package         = require('../../lib/mavensmate/package').Package;
 var mavensMateFile  = require('../../lib/mavensmate/file');
 var assert          = chai.assert;
 
