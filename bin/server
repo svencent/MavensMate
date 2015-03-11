@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
+process.title = 'mavensmate ui server';
+
 var mavensmate  = require('../lib/mavensmate');
 var parseArgs   = require('minimist');
 

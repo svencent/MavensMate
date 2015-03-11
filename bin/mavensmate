@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
+process.title = 'mavensmate cli';
+
 var program     = require('commander');
 var mavensmate  = require('../lib/mavensmate');
 var pjson       = require('../package.json');
