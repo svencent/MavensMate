@@ -1,3 +1,5 @@
+Const FOF_SILENT = &H4  ' don't create progress/report
+
 'The location of the zip file.
 ZipFile=WScript.Arguments.Item(0)
 'The folder the contents should be extracted to.
@@ -12,6 +14,6 @@ End If
 'Extract the contants of the zip file.
 set objShell = CreateObject("Shell.Application")
 set FilesInZip=objShell.NameSpace(ZipFile).items
-objShell.NameSpace(ExtractTo).CopyHere(FilesInZip)
+objShell.NameSpace(ExtractTo).CopyHere(FilesInZip), FOF_SILENT
 Set fso = Nothing
 Set objShell = Nothing
