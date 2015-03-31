@@ -23,7 +23,7 @@ describe('mavensmate session', function() {
     var payload = {
       username: process.env.SALESFORCE_USERNAME || 'mm@force.com',
       password: process.env.SALESFORCE_PASSWORD || 'force',
-      orgType: 'developer',
+      orgType: process.env.SALESFORCE_ORG_TYPE || 'developer',
       subscription: ['ApexClass']
     };
 

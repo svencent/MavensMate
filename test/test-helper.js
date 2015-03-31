@@ -24,6 +24,7 @@ exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace
     settings.workspace = testWorkspace;
     settings.username = process.env.SALESFORCE_USERNAME || 'mm@force.com';
     settings.password = process.env.SALESFORCE_PASSWORD || 'force';
+    settings.environment = process.env.SALESFORCE_ORG_TYPE || 'developer';
     fs.writeJsonSync(path.join(testWorkspace, name, 'config', '.settings'), settings);
   } 
 };
@@ -80,6 +81,7 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
       name: name,
       username: process.env.SALESFORCE_USERNAME || 'mm@force.com',
       password: process.env.SALESFORCE_PASSWORD || 'force',
+      orgType: process.env.SALESFORCE_ORG_TYPE || 'developer',
       workspace: testWorkspace,
       package: pkg || {}
     };

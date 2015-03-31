@@ -65,7 +65,10 @@ describe('mavensmate edit-project', function(){
   it('should update project creds', function(done) {
     this.timeout(10000);      
 
-    testClient.executeCommand('update-creds', { username: process.env.SALESFORCE_USERNAME || 'mm@force.com', password: process.env.SALESFORCE_PASSWORD || 'force' }, function(err, response) {
+    testClient.executeCommand('update-creds', { 
+      username: process.env.SALESFORCE_USERNAME || 'mm@force.com', 
+      password: process.env.SALESFORCE_PASSWORD || 'force' 
+    }, function(err, response) {
       console.log(err);
       console.log(response);
       should.equal(err, null);

@@ -86,6 +86,7 @@ describe('mavensmate new-project', function(){
       username: process.env.SALESFORCE_USERNAME || 'mm@force.com',
       password: process.env.SALESFORCE_PASSWORD || 'force',
       workspace: path.join(helper.baseTestDirectory(),'workspace'),
+      orgType: process.env.SALESFORCE_ORG_TYPE || 'developer',
       package: {
         ApexPage: '*',
         CustomObject: ['Account']
