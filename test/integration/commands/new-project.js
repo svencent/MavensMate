@@ -3,6 +3,7 @@
 var helper        = require('../../test-helper');
 var chai          = require('chai');
 var path          = require('path');
+var fs            = require('fs-extra');
 var assert        = chai.assert;
 var should        = chai.should();
 
@@ -101,6 +102,7 @@ describe('mavensmate new-project', function(){
       assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'config'),  'Project config directory does not exist');
       assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src'),  'Project src directory does not exist');
       assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src', 'package.xml'),  'Project package.xml does not exist');
+      fs.existsSync(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'tmp.zip')).should.equal(false);
       helper.setProject(testClient, 'new-project', function() {
         var project = testClient.getProject();
         project.settings.username.should.equal(process.env.SALESFORCE_USERNAME || 'mm@force.com');
