@@ -69,7 +69,7 @@ describe('mavensmate deploy-to-server', function() {
             };
 
             testClient.executeCommand('deploy', deployPayload, function(err, response) {
-              console.log(response);
+              // console.log(response);
               should.equal(err, null);
               response.should.have.property('result');
               response.result.should.have.property('mm@force.com');
