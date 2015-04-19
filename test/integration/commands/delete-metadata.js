@@ -48,6 +48,9 @@ describe('mavensmate delete-metadata', function(){
         };
 
         testClient.executeCommand('delete-metadata', payload, function(err, response) {
+          console.log('delete result:')
+          console.log(err);
+          console.log(response);
           should.equal(err, null);
           response.should.have.property('result');
           response.result.success.should.equal(true);

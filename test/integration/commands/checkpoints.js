@@ -62,8 +62,6 @@ describe('mavensmate checkpoints', function(){
           lineNumber : 1
         };
         testClient.executeCommand('new-checkpoint', payload, function(err, response) {
-          console.log(err);
-          console.log(response);
           should.equal(err, null);
           response.should.have.property('result');
           response.result.success.should.equal(true);
@@ -80,8 +78,6 @@ describe('mavensmate checkpoints', function(){
       path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls')
     };
     testClient.executeCommand('list-checkpoints', payload, function(err, response) {
-      console.log(err);
-      console.log(response);
       should.equal(err, null);
       response.should.have.property('result');
       response.result.size.should.equal(1);
@@ -97,8 +93,6 @@ describe('mavensmate checkpoints', function(){
       lineNumber : 1
     };
     testClient.executeCommand('delete-checkpoint', payload, function(err, response) {
-      console.log(err);
-      console.log(response);
       should.equal(err, null);
       response.should.have.property('result');
       response.result.success.should.equal(true);
