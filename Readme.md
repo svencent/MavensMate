@@ -14,7 +14,6 @@ For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 [![Circle CI](https://circleci.com/gh/joeferraro/MavensMate.png?style=shield)](https://circleci.com/gh/joeferraro/MavensMate)
 
 [![NPM Version](https://img.shields.io/npm/v/mavensmate.svg)](https://www.npmjs.org/package/mavensmate)
-[![NPM Downloads](https://img.shields.io/npm/dm/mavensmate.svg?style=flat)](https://www.npmjs.org/package/mavensmate)
 [![Coverage Status](https://coveralls.io/repos/joeferraro/MavensMate/badge.svg?branch=master)](https://coveralls.io/r/joeferraro/MavensMate?branch=master)
 
 
