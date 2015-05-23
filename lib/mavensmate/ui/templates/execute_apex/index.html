@@ -4,7 +4,7 @@
 <script src="{{ mavensmate.ui.getStaticResourcePath() }}/editor/mode-java.js" type="text/javascript" charset="utf-8"></script>
 <style>
 	#editor {
-        position:absolute; 
+        position:absolute;
         top:0;
         bottom:0;
         left: 0;
@@ -44,10 +44,10 @@
 		background: #2ecc71;
 	}
 
-	table.code td.not_covered { 
-		background: #e74c3c; 
+	table.code td.not_covered {
+		background: #e74c3c;
 	}
-				
+
 	table.code tr td.line_numbers {
 		text-align: right;
 		vertical-align: top;
@@ -112,7 +112,7 @@
 		margin-left: 20px;
 		margin-bottom:10px;
 	}
-	
+
 	.deploy_options input[type="checkbox"] {
 		margin: 0px;
 		width: 32px;
@@ -136,12 +136,13 @@
 </div>
 
 
-<div class="content" id="content1">	
-	
+<div class="content" id="content1">
+
 
 	<ul class="nav nav-tabs nav-append-content">
 	  <li class="active"><a href="#tests_content" data-toggle="tab">Apex Code</a></li>
-	</ul> 
+	  <li class=""><a href="#logs" data-toggle="tab">Debug Logs</a></li>
+	</ul>
 
 	<div class="tab-content"  id="main-tab-content">
 	  <div class="tab-pane active" id="tests_content">
@@ -149,14 +150,22 @@
   			<div id="editor"></div>
   		</div>
 	  </div>
-	</div> 
+	  <div class="tab-pane" id="logs">
+		<div id="log_wrapper" style="position:relative;">
+			<div class="alert alert-info">
+				<i class="icon-cogs icon-2x pull-left"></i>
+				To generate debug logs, be sure to run the "Start Logging" command before running anonymous Apex. Logs will be streamed to your project's debug/logs directory. You can run the "Flush Debug Logs" command to clear logs from your file system.
+			</div>
+		</div>
+	  </div>
+	</div>
 </div>
 
 {% endblock %}
 
 
-{% block buttons %}					
-	<input type="button" class="btn btn-info btn-embossed" value="Execute" onclick="executeApex()" id="btnExecuteApex"> 
+{% block buttons %}
+	<input type="button" class="btn btn-info btn-embossed" value="Execute" onclick="executeApex()" id="btnExecuteApex">
 	{% include 'ui/templates/snippets/cancel_button.html' %}
 	{% include 'ui/templates/snippets/running_indicator.html' %}
 {% endblock %}
@@ -171,7 +180,7 @@ var line;
 function executeApex() {
 	$.ajax({
 		type: "POST",
-		url: "{{ mavensmate.ui.getBaseUrl() }}/app/apex/execute", 
+		url: "{{ mavensmate.ui.getBaseUrl() }}/app/apex/execute",
 		dataType: "json",
 		contentType: 'application/json; charset=utf-8',
 		data: JSON.stringify({
@@ -179,15 +188,15 @@ function executeApex() {
 			 debug_categories 	: get_log_levels_json(),
 			 command 			: 'execute-apex'
 		}),
-		beforeSend: function() { 
+		beforeSend: function() {
 			toggleRunningIndicator();
-			$("#btnExecuteApex").hide(); 
-			editor.getSession().clearAnnotations(); 
-			editor.setReadOnly(true); 
+			$("#btnExecuteApex").hide();
+			editor.getSession().clearAnnotations();
+			editor.setReadOnly(true);
 		},
-		complete: function(data){	
-			responseHandler(data)		
-		} 
+		complete: function(data){
+			responseHandler(data)
+		}
 	});
 }
 
@@ -220,7 +229,7 @@ function handleResponse(response) {
 					line = 0;
 				}
 				var column = (parseInt(response["column"]) === -1) ? 0 : (parseInt(response["column"]) - 1)
-				
+
 				console.log(line);
 				console.log(column);
 				console.log(returnMessage);
@@ -241,9 +250,9 @@ function handleResponse(response) {
 		$(".results_hidden").show();
 		$("#a_result").click();
 	}
-	
+
 	toggleRunningIndicator();
-	$("#btnExecuteApex").show();	
+	$("#btnExecuteApex").show();
 	editor.setReadOnly(false);
 }
 
@@ -271,7 +280,7 @@ $(function(){
 $("#log_coverage_wrapper").height($(window).height() - 175)
 $(window).resize(function() {
 	$("#log_coverage_wrapper").height($(window).height() - 175)
-    resizeEditor()  
+    resizeEditor()
 });
 
 </script>
