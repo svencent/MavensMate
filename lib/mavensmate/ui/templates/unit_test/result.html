@@ -2,7 +2,7 @@
 	<div class="alert-message block-message-custom white" style="margin-bottom:0px;padding: 5px;-webkit-border-radius: 4px 4px 0px 0px;">
 			<p style="float:left;"><strong>{{ loop.key }}.cls</strong></p>
 			<p style="float:right;"><strong>{{ res.ExtendedStatus }}&nbsp;tests passed</strong></p>
-		<div style="clear:both;"></div>	
+		<div style="clear:both;"></div>
 	</div>
 	<table class="table table-striped test_result" style="-webkit-border-radius: 0px 0px 4px 4px;">
 		<thead>
@@ -25,7 +25,7 @@
 					</td>
 					<td>
 						{% if test.Message %}
-							{{ test.Message }} 
+							{{ test.Message }}
 						{% endif %}
 						{% if test.StackTrace -%}
 							<br/><br/>
@@ -36,7 +36,7 @@
 			{%- endfor %}
 		</tbody>
 	</table>
-{%- endfor %} 
+{%- endfor %}
 
 <div id="class_wrapper">
 	<!-- START CLASS PROCESSING -->
@@ -66,8 +66,8 @@
 
 		</div>
 
-	{%- endfor %} 
-	<!-- END CLASS PROCESSING --> 
+	{%- endfor %}
+	<!-- END CLASS PROCESSING -->
 </div>
 
 <div id="trigger_wrapper">
@@ -98,15 +98,14 @@
 
 		</div>
 
-	{%- endfor %} 
-	<!-- END TRIGGER PROCESSING --> 
+	{%- endfor %}
+	<!-- END TRIGGER PROCESSING -->
 </div>
 
 
 <div id="log_wrapper" style="position:relative;">
 	<div class="alert alert-info">
 		<i class="icon-cogs icon-2x pull-left"></i>
-		To generate debug logs, be sure to run the "Start Logging" command before running tests. Logs will be stored in project's debug/tests/&lt;Apex_Class_Name&gt; directory.
+		To generate debug logs for your Apex unit tests, be sure to run the "Start Logging" command before running tests. Logs will be streamed to your project's debug/tests/&lt;Apex_Class_Name&gt; directory. You can run the "Flush Debug Logs" command to clear logs from your file system.
 	</div>
 </div>
-

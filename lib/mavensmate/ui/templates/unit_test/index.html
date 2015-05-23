@@ -50,8 +50,8 @@
 		background: #fff;
 	}
 
-	table.code td.not_covered { 
-		background: #e74c3c; 
+	table.code td.not_covered {
+		background: #e74c3c;
 		color:#fff !important;
 	}
 
@@ -120,7 +120,7 @@
 		margin-left: 20px;
 		margin-bottom:10px;
 	}
-	
+
 	.deploy_options input[type="checkbox"] {
 		margin: 0px;
 		width: 32px;
@@ -145,9 +145,9 @@
 	div#class-list-wrapper {
 		overflow-y:auto;
 	}
-	
+
 </style>
-	
+
 	<div id="result_output">
 		<div class="alert alert-error">
 			<button type="button" class="close fui-cross"></button>
@@ -155,13 +155,13 @@
 		</div>
 	</div>
 
-	<div class="content" id="content1">	
+	<div class="content" id="content1">
 
 		<ul id="maintabs" class="nav nav-tabs nav-append-content">
 			<li class="active"><a href="#tests_content" data-toggle="tab">Apex Tests</a></li>
 			<!-- <li><a href="#debug_content" data-toggle="tab">Debug</a></li> -->
 			<li class="game"><a href="#arcade" data-toggle="tab">Arcade</a></li>
-			
+
 			<li class="results_hidden dropdown active">
           		<a class="dropdown-toggle" data-toggle="dropdown" href="#">
             		Test Results
@@ -174,7 +174,7 @@
             		<li class=""><a href="#log">Debug Logs</a></li>
           		</ul>
         	</li>
-		</ul> 
+		</ul>
 
 		<div class="tab-content" id="main-tab-content">
 			<div class="tab-pane active" id="tests_content" style="padding-top:10px;padding-bottom:10px;">
@@ -193,7 +193,7 @@
 					    		</button>
 					    	</div>
 					    </div>
-					    
+
 					</div>
 				</div>
 				<div id="class-list-wrapper">
@@ -211,7 +211,7 @@
 							<button type="button" class="close fui-cross"></button>
 							<span>No unit tests found in your MavensMate project.</span>
 							<br/><a href="/app/project/edit" class="btn btn-info btn-embossed btn-wide">Edit Project</a>
-						</div>	
+						</div>
 					{% endif %}
 				</div>
 			</div>
@@ -233,7 +233,7 @@
 					</div>
 				</div>
 				<div id="class_coverage_wrapper" style="-webkit-border-radius: 4px 4px 4px 4px;overflow-y:auto;padding:0px;position:relative;">
-				</div>   
+				</div>
 			</div>
 			<div id="trigger_coverage" class="tab-pane">
 				<div class="item-search trigger">
@@ -248,14 +248,14 @@
 				<div id="log_coverage_wrapper" style="-webkit-border-radius: 4px 4px 4px 4px;overflow-y:auto;padding:0px;position:relative;">
 				</div>
 			</div>
-		</div> 
+		</div>
 	</div>
 
 	{% endblock %}
 
 
-	{% block buttons %}					
-		<input type="button" class="btn btn-info btn-embossed" value="Run Tests" onclick="runTests()" id="btnRunTests"> 
+	{% block buttons %}
+		<input type="button" class="btn btn-info btn-embossed" value="Run Tests" onclick="runTests()" id="btnRunTests">
 		{% include 'ui/templates/snippets/cancel_button.html' %}
 		{% include 'ui/templates/snippets/running_indicator.html' %}
 	{% endblock %}
@@ -267,7 +267,9 @@
 
 	function handleResponse(response) {
 		if (response.error) {
-			// todo: message
+			toggleRunningIndicator();
+			showMessage(response.error);
+			notifySound();
 		} else {
 			$("#result_wrapper").html(response.result)
 
@@ -311,7 +313,7 @@
 			    type: "POST",
 			    dataType : "json",
 			    contentType: 'application/json; charset=utf-8',
-			    url: baseLocalServerURL+"/app/test/coverage", 
+			    url: baseLocalServerURL+"/app/test/coverage",
 			    data: JSON.stringify({
 			        apexClassOrTriggerName  : apexClassOrTriggerName,
 			        type 					: type,
@@ -326,15 +328,15 @@
 					$(el).html('Hide Coverage').removeClass('btn-info');
 					$('#'+domId).show();
 					$('#'+domId).addClass('retrieved');
-			    } 
-			});	
+			    }
+			});
 		}
 	}
 
 	function runTests() {
 		$.ajax({
 			type: "POST",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/app/test/execute", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/app/test/execute",
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
@@ -344,8 +346,8 @@
 			}),
 			beforeSend: function() { toggleRunningIndicator(); $("#btnRunTests").hide() },
 			complete: function(data){
-				responseHandler(data)				
-			} 
+				responseHandler(data)
+			}
 		});
 	}
 
@@ -359,7 +361,7 @@
 		return testsToRun;
 	}
 
-	$(function(){	
+	$(function(){
 		$('label.checkbox input, div.enable_logging_wrapper input').checkbox();
 
 		$(".item-search.class input").change(function() {
@@ -409,7 +411,7 @@
 
 		$(window).resize(function() {
 			$("#result_wrapper").height($(window).height() - 210)
-			$("#class_coverage_wrapper").height($(window).height() - 260)   
+			$("#class_coverage_wrapper").height($(window).height() - 260)
 			$("#trigger_coverage_wrapper").height($(window).height() - 260)
 			$("#log_coverage_wrapper").height($(window).height() - 210)
 			$("#class-list-wrapper").height($(window).height() - 270)
@@ -439,7 +441,7 @@
 	$("#class_coverage_wrapper").height($(window).height() - 260)
 	$("#trigger_coverage_wrapper").height($(window).height() - 260)
 	$("#log_coverage_wrapper").height($(window).height() - 210)
-	
+
 	$("#category").change(function() {
 		if (this.value == "Apex_code") {
 			$("#levelwrapper").show()
