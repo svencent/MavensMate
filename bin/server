@@ -4,28 +4,45 @@
 process.title = 'mavensmate ui server';
 
 var mavensmate  = require('../lib/mavensmate');
+var util        = require('../lib/mavensmate/util').instance;
 var parseArgs   = require('minimist');
 
 var args = parseArgs(process.argv);
-var project = args.project;
+var project = args.project || process.cwd();
 var editor = args.editor || 'sublime';
+var verbose = args.verbose || false;
+var headless = args.headless || false;
 var port = args.port;
 
 var client = mavensmate.createClient({
   editor: editor,
-  headless: true,
-  verbose: true,
+  headless: headless,
+  verbose: verbose,
   serverPort: port
 });
 
-client.startUIServer();
-
-if (project) {
-  client.setProject(project, function(err, response) {
-    if (err) {
-      console.log('could not set project: '+err.message);
-    } else {
-      console.log('set project to path: '+response.path);
+client.startUIServer()
+  .then(function(port) {
+    console.log('MavensMate server running on port: '+client.getServer().port);
+    if (!headless) {
+      var spawn = require('child_process').spawn
+      spawn('open', ['http://localhost:'+port]);
     }
+    if (project && util.isValidProjectPath(project)) {
+      client.setProject(project, function(err, response) {
+        if (err) {
+          if (err.message.indexOf('valid MavensMate project') === -1) {
+            console.error('Could not set project: ', err.message);
+            return;
+          } else {
+            console.warn(err.message);        
+          }
+        } else {
+          console.log('MavensMate project path: '+response.path);
+        }
+      });
+    }
+  })
+  .catch(function(err) {
+    console.error(err.message);
   });
-}
