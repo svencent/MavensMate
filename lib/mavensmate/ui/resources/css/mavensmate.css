@@ -517,6 +517,20 @@ form.form-stacked input.span12, form.form-stacked select {
 	border-bottom: 3px solid #ccc;
 }
 
+.burger li.divider {
+	height: 2px;
+	background-color: #98a4af;
+	border: none;
+}
+
+.burger li a {
+	color:#fff !important;
+}
+
+.burger li a:hover {
+	background-color: #98a4af !important;
+}
+
 /*
 	Adding Icons
 

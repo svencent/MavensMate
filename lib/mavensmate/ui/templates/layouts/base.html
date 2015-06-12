@@ -151,10 +151,32 @@
   	
     {% include 'ui/templates/snippets/context-menu.html' %}
 
-    <div id="footer">
+    <div id="footer" style="padding:10px 0px;">
         <div class="container">
+            <div class="btn-group" style="position:absolute;top:7px;left:5px;background:transparent;">
+                <button class="dropdown-toggle" type="button" data-toggle="dropdown" style="border-radius:0 !important;background:none;border:none;">
+                    <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/burger.png" id="" style="width:24px;height:24px;"/>
+                </button>
+                <ul class="dropdown-menu burger" role="menu" style="border-color:#34495e;background-color:#768693;margin-top: 8px;width:auto;">
+                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new">New Project</a></li>
+                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/project/edit">Edit Project</a></li>
+                    <li class="divider"></li>
+                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexClass">New Apex Class</a></li>
+                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexTrigger">New Apex Trigger</a></li>
+                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexPage">New Visualforce Page</a></li>
+                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexComponent">New Visualforce Component</a></li>
+                    <li class="divider"></li>
+                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newApp">New Lightning App</a></li>
+                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newComponent">New Lightning Component</a></li>
+                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newEvent">New Lightning Event</a></li>
+                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newInterface">New Lightning Interface</a></li>
+                    <li class="divider"></li>
+                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new">Deploy to Server</a></li>
+                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/test/new">Run Apex Unit Tests</a></li>
+                </ul>
+            </div>
             <div class="main-wrapper">
-                <div style="text-align:center;">
+                <div style="text-align:center;font-size:18px;">
                     {% if mavensmate.ui.getProject() && mavensmate.ui.getProject().sfdcClient %}
                         {{ mavensmate.ui.getProject().name }} ({{ mavensmate.ui.getProject().sfdcClient.getUsername() }})
                     {% elif operation == 'github' %}
