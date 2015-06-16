@@ -3,9 +3,10 @@
 
 process.title = 'mavensmate ui server';
 
+var parseArgs   = require('minimist');
 var mavensmate  = require('../lib/mavensmate');
 var util        = require('../lib/mavensmate/util').instance;
-var parseArgs   = require('minimist');
+var UIServer    = require('../lib/mavensmate/ui/server');
 
 var args = parseArgs(process.argv);
 var project = args.project || process.cwd();
@@ -21,8 +22,10 @@ var client = mavensmate.createClient({
   serverPort: port
 });
 
-client.startUIServer()
+var server = new UIServer(client);
+server.start()
   .then(function(port) {
+    process.env.MAVENSMATE_UI_SERVER_PORT = port;
     console.log('MavensMate server running on port: '+client.getServer().port);
     if (!headless) {
       var spawn = require('child_process').spawn
@@ -45,4 +48,5 @@ client.startUIServer()
   })
   .catch(function(err) {
     console.error(err.message);
-  });
+  })
+  .done();
