@@ -83,7 +83,7 @@
                         contentType: 'application/json; charset=utf-8',
                         url      : baseLocalServerURL+"/execute",
                         data     : JSON.stringify({
-                            path                : '{{ mavensmate.ui.getProjectPath() }}',
+                            path                : '{{ project.path }}',
                             keyword             : filter,
                             ids                 : $("#tree").dynatree("getTree").selectedIds,
                             command             : 'get-metadata-index'
@@ -104,7 +104,7 @@
                     contentType: 'application/json; charset=utf-8',
                     url      : baseLocalServerURL+"/execute",
                     data     : JSON.stringify({
-                        path                : '{{ mavensmate.ui.getProjectPath() }}',
+                        path                : '{{ project.path }}',
                         ids                 : $("#tree").dynatree("getTree").selectedIds,
                         command             : 'get-metadata-index'
                     })
@@ -121,7 +121,7 @@
             showLoading("Loading...")
             tree_store.load({
                 params: {
-                    path : '{{ mavensmate.ui.getProjectPath() }}'
+                    path : '{{ project.path }}'
                 },
                 callback:hideLoading
             })
@@ -136,7 +136,7 @@
                 url: baseLocalServerURL+"/execute", 
                 data: JSON.stringify({
                     metadata_types      : mtype,
-                    path                : '{{ mavensmate.ui.getProjectPath() }}',
+                    path                : '{{ project.path }}',
                     command             : 'refresh-metadata-index'
                 }),
                 beforeSend: function() { showLoading("Refreshing Metadata Type: "+ mtype +"..."); },
@@ -144,6 +144,17 @@
                     $("#tree").dynatree("getTree").reload()
                 } 
             });
+        }
+
+        function openProjectInEditor() {
+            $.ajax({
+                type: "GET",
+                url: baseLocalServerURL+"/execute", 
+                data: {
+                    command: 'open-project',
+                    pid: '{{project.settings.id}}'
+                }
+            }); 
         }
     </script>
 </head>
@@ -158,27 +169,32 @@
                     <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/burger.png" id="" style="width:24px;height:24px;"/>
                 </button>
                 <ul class="dropdown-menu burger" role="menu" style="border-color:#34495e;background-color:#768693;margin-top: 8px;width:auto;">
-                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new">New Project</a></li>
-                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/project/edit">Edit Project</a></li>
-                    <li class="divider"></li>
-                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexClass">New Apex Class</a></li>
-                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexTrigger">New Apex Trigger</a></li>
-                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexPage">New Visualforce Page</a></li>
-                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexComponent">New Visualforce Component</a></li>
-                    <li class="divider"></li>
-                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newApp">New Lightning App</a></li>
-                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newComponent">New Lightning Component</a></li>
-                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newEvent">New Lightning Event</a></li>
-                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newInterface">New Lightning Interface</a></li>
-                    <li class="divider"></li>
-                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new">Deploy to Server</a></li>
-                    <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/test/new">Run Apex Unit Tests</a></li>
+                    {% if project && project.sfdcClient %}
+                        <li><a href="javascript:void(0)" onclick="openProjectInEditor();">Open Project</a></li>
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new?pid={{project.settings.id}}">New Project</a></li>
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/project/edit?pid={{project.settings.id}}">Edit Project</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexClass&pid={{project.settings.id}}">New Apex Class</a></li>
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexTrigger&pid={{project.settings.id}}">New Apex Trigger</a></li>
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexPage&pid={{project.settings.id}}">New Visualforce Page</a></li>
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexComponent&pid={{project.settings.id}}">New Visualforce Component</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newApp?pid={{project.settings.id}}">New Lightning App</a></li>
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newComponent?pid={{project.settings.id}}">New Lightning Component</a></li>
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newEvent?pid={{project.settings.id}}">New Lightning Event</a></li>
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newInterface?pid={{project.settings.id}}">New Lightning Interface</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new?pid={{project.settings.id}}">Deploy to Server</a></li>
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/test/new?pid={{project.settings.id}}">Run Apex Unit Tests</a></li>
+                    {% else %}
+                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new">New Project</a></li>
+                    {% endif %}
                 </ul>
             </div>
             <div class="main-wrapper">
                 <div style="text-align:center;font-size:18px;">
-                    {% if mavensmate.ui.getProject() && mavensmate.ui.getProject().sfdcClient %}
-                        {{ mavensmate.ui.getProject().name }} ({{ mavensmate.ui.getProject().sfdcClient.getUsername() }})
+                    {% if project && project.sfdcClient %}
+                        {{ project.name }} ({{ project.sfdcClient.getUsername() }})
                     {% elif operation == 'github' %}
                         {{ 'Github Connection' }}
                     {% else %}
@@ -186,13 +202,26 @@
                     {% endif %}
                 </div>
             </div>
+            <div class="" style="position:absolute;top:5px;right:5px;background:transparent;">
+                <a href="javascript:void(0);" onclick="openProjectModal();">
+                    <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/open-project.png" id="openProject"/> 
+                </a>
+            </div>
         </div>
     </div>
 
     <div class="navbar">
         <div class="navbar-inner">
             <div class="container" style="position:relative;">
-                <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/> 
+                {% if project && project.sfdcClient %}
+                    <a href="{{ mavensmate.ui.getBaseUrl() }}/app/home/index?pid={{project.settings.id}}">
+                        <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/> 
+                    </a>
+                {% else %}
+                    <a href="{{ mavensmate.ui.getBaseUrl() }}/">
+                        <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/> 
+                    </a>
+                {% endif %}
                 <div class="actions-right">
                     {% block buttons %}{% endblock %}
                 </div>
@@ -211,103 +240,139 @@
             {% block yield %}{% endblock %}
         </div>
     </div>
-        <div class="loading">
-            <div class="twipsy"></div> 
-            <div class="loading_message_wrapper">
-                <div class="loading_message">
-                    <div id="floatingCirclesG">
-                    <div class="f_circleG" id="frotateG_01">
-                    </div>
-                    <div class="f_circleG" id="frotateG_02">
-                    </div>
-                    <div class="f_circleG" id="frotateG_03">
-                    </div>
-                    <div class="f_circleG" id="frotateG_04">
-                    </div>
-                    <div class="f_circleG" id="frotateG_05">
-                    </div>
-                    <div class="f_circleG" id="frotateG_06">
-                    </div>
-                    <div class="f_circleG" id="frotateG_07">
-                    </div>
-                    <div class="f_circleG" id="frotateG_08">
-                    </div>
-                    </div>
-
-                    <span id="loading_message"></span>
+    <div class="loading">
+        <div class="twipsy"></div> 
+        <div class="loading_message_wrapper">
+            <div class="loading_message">
+                <div id="floatingCirclesG">
+                <div class="f_circleG" id="frotateG_01">
                 </div>
-            </div>                                    
-        </div>
-        {% block body_js %}{% endblock %}
-        <script>
-            $(function() {
+                <div class="f_circleG" id="frotateG_02">
+                </div>
+                <div class="f_circleG" id="frotateG_03">
+                </div>
+                <div class="f_circleG" id="frotateG_04">
+                </div>
+                <div class="f_circleG" id="frotateG_05">
+                </div>
+                <div class="f_circleG" id="frotateG_06">
+                </div>
+                <div class="f_circleG" id="frotateG_07">
+                </div>
+                <div class="f_circleG" id="frotateG_08">
+                </div>
+                </div>
+
+                <span id="loading_message"></span>
+            </div>
+        </div>                                    
+    </div>
+    {% block body_js %}{% endblock %}
+    <script>
+        $(function() {
+            resizeFilter()
+            $(window).resize(function() {
                 resizeFilter()
-                $(window).resize(function() {
-                    resizeFilter()
-                })
-
-                //set up global ajax handling
-                try {
-                    setUpAjaxErrorHandling()
-                } catch(e) {
-                    console.log(e)
-                }
-
-                if ($("#txtFilter") !== []) {
-                    $("#txtFilter").bind('keyup', function(e) {
-                        var code = (e.keyCode ? e.keyCode : e.which);
-                        if (code == 13) {
-                            submitSearch()
-                        }
-                    })
-                   
-                    $("#search-btn").click(function() {
-                        if ($(this).hasClass('btn-success')) {
-                            submitSearch()
-                        } else {
-                            clearFilter()
-                        }
-                    })
-                }
-                
-                //$('input[type="checkbox"]').checkbox();
-                resizeElements()
             })
 
-            function checkRequestStatus(request_id) {
-                $.ajax({
-                    type: "GET",
-                    url: "{{ mavensmate.ui.getBaseUrl() }}/status", 
-                    data: {
-                         id: request_id
-                    },
-                    complete: function(data, status, xhr) {
+            //set up global ajax handling
+            try {
+                setUpAjaxErrorHandling()
+            } catch(e) {
+                console.log(e)
+            }
+
+            if ($("#txtFilter") !== []) {
+                $("#txtFilter").bind('keyup', function(e) {
+                    var code = (e.keyCode ? e.keyCode : e.which);
+                    if (code == 13) {
+                        submitSearch()
+                    }
+                })
+               
+                $("#search-btn").click(function() {
+                    if ($(this).hasClass('btn-success')) {
+                        submitSearch()
+                    } else {
+                        clearFilter()
+                    }
+                })
+            }
+
+            $(".open-project").click(function() {
+                $(".open-project").html('Opening...');
+                $(".cancel-open-project").html('Opening...');
+                $(".open-project").addClass('disabled');
+                $(".cancel-open-project").addClass('disabled');
+                window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/home/index?pid='+$("#projects").val();
+            });
+
+            $(".cancel-open-project").click(function() {
+                $('#projectModal').modal('hide');
+            });
+            
+            //$('input[type="checkbox"]').checkbox();
+            resizeElements()
+        });
+
+        function openProjectModal() {
+            $('#projectModal').modal();
+        }
+
+        function checkRequestStatus(request_id) {
+            $.ajax({
+                type: "GET",
+                url: "{{ mavensmate.ui.getBaseUrl() }}/status", 
+                data: {
+                     id: request_id
+                },
+                complete: function(data, status, xhr) {
+                    try {
+                        console.log('checking status of async request')
+                        console.log(data.responseText)
+                        var response;
                         try {
-                            console.log('checking status of async request')
-                            console.log(data.responseText)
-                            var response;
-                            try {
-                                response = JSON.parse(data.responseText)
-                                if (response["status"] == 'pending') {
-                                    setTimeout(function() { checkRequestStatus(request_id); }, CHECK_STATUS_INTERVAL); //poll for completed async request
-                                } else {
-                                    handleResponse(response);
-                                }
-                            } catch(e) {
-                                console.log('error handling response');
-                                console.log(e);
-                                response = data.responseText
-                                show_global_error(response)
+                            response = JSON.parse(data.responseText)
+                            if (response["status"] == 'pending') {
+                                setTimeout(function() { checkRequestStatus(request_id); }, CHECK_STATUS_INTERVAL); //poll for completed async request
+                            } else {
+                                handleResponse(response);
                             }
                         } catch(e) {
-                            console.log(e)
-                            console.log('caught an error, polling again...')
-                            setTimeout(function() { checkRequestStatus(request_id); }, 2000);
+                            console.log('error handling response');
+                            console.log(e);
+                            response = data.responseText
+                            show_global_error(response)
                         }
-                                    
-                    } 
-                });
-            }
-        </script>
+                    } catch(e) {
+                        console.log(e)
+                        console.log('caught an error, polling again...')
+                        setTimeout(function() { checkRequestStatus(request_id); }, 2000);
+                    }
+                                
+                } 
+            });
+        }
+    </script>
+
+    <div id="projectModal" class="modal fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h5>Select Project</h5>
+        </div>
+        <div class="modal-body" style="height:300px">
+            <select id="projects" class="select-block mbl info span12">
+               {% for p in mavensmate.ui.listProjects() %}
+                    <option value="{{ p.id }}">
+                        {{ p.path }}
+                    </option>
+               {% endfor %}  
+            </select>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn btn-embossed cancel-open-project">Close</a>
+            <a href="#" class="btn btn-embossed btn-primary open-project">Open</a>
+        </div>
+    </div>
 </body>
 </html>

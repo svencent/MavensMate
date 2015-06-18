@@ -65,7 +65,7 @@
 		function upgrade() {
 			$.ajax({
 				type: "POST",
-				url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/execute?async=1", 
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
 				data: JSON.stringify({
@@ -75,7 +75,7 @@
 			    	override_session	: true,
 			    	defer_connection 	: true,
 			    	org_url 			: $("#custom-url").val(),
-			    	path 				: '{{ mavensmate.ui.getProjectPath() }}',
+			    	path 				: '{{ project.path }}',
 			    	command 			: "upgrade-project"
 				}),
 				beforeSend: function() { showLoading('Upgrading your project'); },

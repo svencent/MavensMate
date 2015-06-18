@@ -40,6 +40,25 @@
  	right:0px;
  }
 
+ #openProject {
+ 	width:32px;
+ }
+
+ .dropdown-menu.burger:before {
+     top: -20px;
+     left: 18px;
+     border: solid transparent;
+     content: " ";
+     height: 0;
+     width: 0;
+     position: absolute;
+     pointer-events: none;
+     border-color: rgba(118, 134, 147, 0);
+     border-bottom-color: #768693;
+     border-width: 10px;
+     margin-left: -10px;
+ }
+
  a.btn-info {
  	color:#fff !important;
  }

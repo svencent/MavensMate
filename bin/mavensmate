@@ -62,7 +62,7 @@ var commandName = program.args[0];
 
 // not all command needs a project
 if (projectExemptCommands.indexOf(commandName) === -1) {
-  cliClient.setProject(process.cwd(), function(err) {
+  cliClient.addProject(process.cwd(), function(err) {
     if (err) {
       if (cliClient.headless) {
         var result = {

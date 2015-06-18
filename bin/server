@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 'use strict';
 
-process.title = 'mavensmate ui server';
-
 var parseArgs   = require('minimist');
 var mavensmate  = require('../lib/mavensmate');
 var util        = require('../lib/mavensmate/util').instance;
@@ -15,6 +13,8 @@ var verbose = args.verbose || false;
 var headless = args.headless || false;
 var port = args.port;
 
+process.title = 'mavensmate server - '+editor;
+
 var client = mavensmate.createClient({
   editor: editor,
   headless: headless,
@@ -26,24 +26,29 @@ var server = new UIServer(client);
 server.start()
   .then(function(port) {
     process.env.MAVENSMATE_UI_SERVER_PORT = port;
-    console.log('MavensMate server running on port: '+client.getServer().port);
-    if (!headless) {
-      var spawn = require('child_process').spawn
-      spawn('open', ['http://localhost:'+port]);
-    }
+    console.log('MavensMate server running on port: '+port);
     if (project && util.isValidProjectPath(project)) {
-      client.setProject(project, function(err, response) {
+      client.addProject(project, function(err, response) {
         if (err) {
           if (err.message.indexOf('valid MavensMate project') === -1) {
-            console.error('Could not set project: ', err.message);
+            console.error('Could not add project: ', err.message);
             return;
           } else {
             console.warn(err.message);        
           }
         } else {
+          if (!headless) {
+            var spawn = require('child_process').spawn
+            spawn('open', ['http://localhost:'+port+'/app/home/index?pid='+client.getProjects()[0].settings.id]);
+          }
           console.log('MavensMate project path: '+response.path);
         }
       });
+    } else {
+      if (!headless) {
+        var spawn = require('child_process').spawn
+        spawn('open', ['http://localhost:'+port]);
+      }
     }
   })
   .catch(function(err) {

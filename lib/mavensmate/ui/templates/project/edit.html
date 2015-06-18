@@ -68,8 +68,8 @@
 						<div class="row">
 							<div class="span8">
 								<select name="huge" class="select-block mbl info" style="display:none;" id="subscription" multiple="multiple" data-placeholder="Select 1 or more metadata types..." data-selected-text-format="count>3" data-size="20">
-									{% for m in mavensmate.ui.getMetadataObjects() %}
-										{% if mavensmate.ui.getProjectSubscription().indexOf(m['xmlName']) >= 0 %}
+									{% for m in mavensmate.ui.getMetadataObjects(project) %}
+										{% if project.getSubscription().indexOf(m['xmlName']) >= 0 %}
 											{% set selected = 'selected="selected"' %}
 										{% else %}
 											{% set selected = '' %}
@@ -123,13 +123,13 @@
 {% endblock %}  
 
 {% block buttons %}					
-	<input type="button" id="btnSubmit" class="btn btn-info btn-embossed" value="Update Project"  onclick="updateProject();">
+	<input type="button" id="btnSubmit" class="btn btn-info btn-embossed" value="Update Project" onclick="updateProject();">
 	<button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
 {% endblock %}  
 
 {% block body_js %}
 	<script>
-		var has_indexed_metadata = {{ mavensmate.ui.getProject().hasIndexedMetadata() }};
+		var has_indexed_metadata = {{ project.hasIndexedMetadata() }};
 		var operation;
 		var PROJECT_WRAPPER_OFFSET = 20;
 
@@ -140,13 +140,13 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-creds", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-creds?pid={{project.settings.id}}", 
 				data: JSON.stringify({
 					username 			: $("#un").val(),
 			    	password 			: $("#pw").val(),
 			    	orgType 			: $(".org_type").val(),
 			    	loginUrl 			: $("#custom-url").val(), 
-			    	path 				: '{{ mavensmate.ui.getProjectPath() }}',
+			    	path 				: '{{ project.path }}',
 			    	command 			: "update-creds"
 				}),
 				beforeSend: function() { showLoading('Updating project credentials'); },
@@ -170,9 +170,9 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-subscription", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-subscription?pid={{project.settings.id}}", 
 				data: JSON.stringify({
-			    	path 				: '{{ mavensmate.ui.getProjectPath() }}',
+			    	path 				: '{{ project.path }}',
 			    	subscription 		: $("#subscription").val(),
 			    	command 			: "update-subscription"
 				}),
@@ -198,10 +198,10 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update?pid={{project.settings.id}}", 
 				data: JSON.stringify({
 					package 			: getTree(),
-					path 				: '{{ mavensmate.ui.getProjectPath() }}',
+					path 				: '{{ project.path }}',
 					command 			: 'edit-project'
 				}),
 				beforeSend: function() { showLoading('Updating project'); },
@@ -218,9 +218,9 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/index-metadata", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/index-metadata?pid={{project.settings.id}}", 
 				data: JSON.stringify({
-					path 				: '{{ mavensmate.ui.getProjectPath() }}',
+					path 				: '{{ project.path }}',
 					command 			: 'index-metadata'
 				}),
 				beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs. To minimize indexing time, limit your project\'s subscription to only those metadata types you absolutely need.<br/><br/>Thanks for being patient! :)'); },
@@ -236,7 +236,7 @@
 					showMessage(response.error)
 				} else {
 					if (tree === undefined) {
-						renderTree(PROJECT_WRAPPER_OFFSET)  
+						renderTree(PROJECT_WRAPPER_OFFSET, null, '{{ project.settings.id}}');  
 					} else {
 						$("#tree").dynatree("getTree").reload();
 					}
@@ -263,10 +263,10 @@
 		}
 			
 		$(function() {		
-			$("#pn").val("{{ mavensmate.ui.getProject().name }}");  
-			$("#un").val("{{ mavensmate.ui.getSalesforceClient().getUsername() }}");
-			$("#pw").val("{{ mavensmate.ui.getSalesforceClient().getPassword() }}");
-			$("select.org_type").val("{{ mavensmate.ui.getSalesforceClient().getOrgType() }}");
+			$("#pn").val("{{ project.name }}");  
+			$("#un").val("{{ project.sfdcClient.getUsername() }}");
+			$("#pw").val("{{ project.sfdcClient.getPassword() }}");
+			$("select.org_type").val("{{ project.sfdcClient.getOrgType() }}");
 			$("select.org_type").change();
 			$("#custom-url").val("{{ org_url }}"); //TODO
 			if ($("#custom-url").val() != '') {
@@ -335,7 +335,7 @@
 		    centerWindow()
 
 		    if (has_indexed_metadata) {
-		    	renderTree(PROJECT_WRAPPER_OFFSET)
+		    	renderTree(PROJECT_WRAPPER_OFFSET, null, '{{ project.settings.id}}');
 		    	setTimeout(resizeProjectWrapper(PROJECT_WRAPPER_OFFSET),500)
 		    } else {
 		    	index_org()

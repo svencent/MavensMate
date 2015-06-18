@@ -30,7 +30,7 @@
 					</div> 
 					
 					<div class="control-group large">
-						<input class="span12" placeholder="Project Name" type="text" id="pn" value="{{ mavensmate.ui.getProject().name }}">
+						<input class="span12" placeholder="Project Name" type="text" id="pn" value="{{ project.name }}">
 					</div>
 					<div class="control-group large">
 						<input class="span12" placeholder="Salesforce.com Username" type="text" id="un">
@@ -81,7 +81,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/execute?async=1", 
 				data: JSON.stringify({
 					 project_name 	: $("#pn").val(), 
 					 username 		: $("#un").val(), 

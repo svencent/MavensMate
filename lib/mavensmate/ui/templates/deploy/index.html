@@ -468,7 +468,7 @@
 		$('a[data-toggle="tab"]').on('shown', function (e) {
 			if (e.target.href.indexOf("metadata") != -1) {
 				if (tree === undefined) {
-					renderTree(PROJECT_WRAPPER_OFFSET)
+					renderTree(PROJECT_WRAPPER_OFFSET, null, '{{ project.settings.id}}')
 					setTimeout(resizeProjectWrapper(PROJECT_WRAPPER_OFFSET),500)
 					resizeFilter()
 				}
@@ -508,7 +508,7 @@
 		$("#selected_deployment_name").change(function() {
 			
 			console.log(this.value);
-			renderTree(140, this.value); 
+			renderTree(140, this.value, '{{ project.settings.id}}'); 
 		});
 
 		$('label.checkbox input').checkbox();
@@ -533,11 +533,11 @@
 		operation = "index"
 		$.ajax({
 			type: "POST",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/execute?async=1", 
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
-				path 				: '{{ mavensmate.ui.getProjectPath() }}',
+				path 				: '{{ project.path }}',
 				command 			: 'index-metadata'
 			}),
 			beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs. To minimize indexing time, limit your project\'s subscription to only those metadata types you absolutely need.<br/><br/>Thanks for being patient! :)'); },
@@ -623,7 +623,7 @@
 				showMessage(response.error)
 			} else {
 				if (tree === undefined) {
-					renderTree(PROJECT_WRAPPER_OFFSET)  
+					renderTree(PROJECT_WRAPPER_OFFSET, null, '{{ project.settings.id}}');  
 				} else {
 					$("#tree").dynatree("getTree").reload();
 				}

@@ -57,7 +57,7 @@
 				<div class="bar bar-{{ mavensmate.ui.getCoverageCssClass(res.percentCovered) }}" style="width: {{ res.percentCovered }}%;"></div>
 			</div>
 
-			{% if mavensmate.ui.doesClassOrTriggerExist(apexClassName, 'ApexClass') -%}
+			{% if mavensmate.ui.doesClassOrTriggerExist(project, apexClassName, 'ApexClass') -%}
 		    	<a href="#" class="btn btn-mini btn-info" onclick="showCoverage(this, '{{ apexClassName }}', 'ApexClass', 'coverage-wrapper-class-{{loop.index}}', [{{ res.uncoveredLines }}]);">Show Coverage</a>
 			{%- endif %}
 		</div>
@@ -89,7 +89,7 @@
 				<div class="bar bar-{{ mavensmate.ui.getCoverageCssClass(res.percentCovered) }}" style="width: {{ res.percentCovered }}%;"></div>
 			</div>
 
-			{% if mavensmate.ui.doesClassOrTriggerExist(apexTriggerName, 'ApexTrigger') -%}
+			{% if mavensmate.ui.doesClassOrTriggerExist(project, apexTriggerName, 'ApexTrigger') -%}
 		    	<a href="#" class="btn btn-mini btn-info" onclick="showCoverage(this, '{{ apexTriggerName }}', 'ApexTrigger', 'coverage-wrapper-trigger-{{loop.index}}', [{{ res.uncoveredLines }}]);">Show Coverage</a>
 			{%- endif %}
 		</div>

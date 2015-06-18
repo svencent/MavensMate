@@ -105,14 +105,14 @@
 	function new_log() {
 		$.ajax({
 			type: "POST",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/execute/async", 
+			url: "{{ mavensmate.ui.getBaseUrl() }}/execute?async=1", 
 			dataType: "json",
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
 				 user_id 			: $("#un_list").val(),
 				 apex_id 			: $("#apex").val(),
 				 type 				: $("#type").val(),
-				 path 				: '{{ mavensmate.ui.getProjectPath() }}',
+				 path 				: '{{ project.path }}',
 				 debug_categories 	: get_log_levels_json_tooling(),
 				 expiration 		: $("#expiration").val(),
 				 command 			: 'new-log'

@@ -313,13 +313,11 @@
 			    type: "POST",
 			    dataType : "json",
 			    contentType: 'application/json; charset=utf-8',
-			    url: baseLocalServerURL+"/app/test/coverage",
+			    url: "{{ mavensmate.ui.getBaseUrl() }}/app/test/coverage?pid={{project.settings.id}}",
 			    data: JSON.stringify({
 			        apexClassOrTriggerName  : apexClassOrTriggerName,
 			        type 					: type,
-			        uncoveredLines 			: uncoveredLines,
-			        path                	: '{{ mavensmate.ui.getProjectPath() }}',
-			        command             	: 'get-coverage'
+			        uncoveredLines 			: uncoveredLines
 			    }),
 			    beforeSend: function() {  },
 			    complete: function(data){
@@ -336,11 +334,10 @@
 	function runTests() {
 		$.ajax({
 			type: "POST",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/app/test/execute",
+			url: "{{ mavensmate.ui.getBaseUrl() }}/app/test/execute?pid={{project.settings.id}}",
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
-				path 				: '{{ mavensmate.ui.getProjectPath() }}',
 				ui 					: true,
 				classes 			: getTestsToRun()
 			}),
