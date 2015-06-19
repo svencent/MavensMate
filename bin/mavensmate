@@ -24,7 +24,7 @@ var cliClient = mavensmate.createClient({
 });
 
 if (program.port) {
-  process.env.MAVENSMATE_UI_SERVER_PORT = program.port;
+  process.env.MAVENSMATE_SERVER_PORT = program.port;
 }
 
 var logger = require('winston');

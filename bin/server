@@ -25,7 +25,7 @@ var client = mavensmate.createClient({
 var server = new UIServer(client);
 server.start()
   .then(function(port) {
-    process.env.MAVENSMATE_UI_SERVER_PORT = port;
+    process.env.MAVENSMATE_SERVER_PORT = port;
     console.log('MavensMate server running on port: '+port);
     if (project && util.isValidProjectPath(project)) {
       client.addProject(project, function(err, response) {
