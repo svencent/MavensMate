@@ -159,7 +159,6 @@
 
 		<ul id="maintabs" class="nav nav-tabs nav-append-content">
 			<li class="active"><a href="#tests_content" data-toggle="tab">Apex Tests</a></li>
-			<!-- <li><a href="#debug_content" data-toggle="tab">Debug</a></li> -->
 			<li class="game"><a href="#arcade" data-toggle="tab">Arcade</a></li>
 
 			<li class="results_hidden dropdown active">
@@ -210,7 +209,7 @@
 						<div class="alert alert-info">
 							<button type="button" class="close fui-cross"></button>
 							<span>No unit tests found in your MavensMate project.</span>
-							<br/><a href="/app/project/edit" class="btn btn-info btn-embossed btn-wide">Edit Project</a>
+							<br/><a href="/app/project/edit?pid={{project.settings.id}}" class="btn btn-info btn-embossed btn-wide">Edit Project</a>
 						</div>
 					{% endif %}
 				</div>
