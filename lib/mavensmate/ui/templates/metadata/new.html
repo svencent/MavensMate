@@ -29,6 +29,10 @@
 					<div id="template_params">
 
 					</div>
+
+					<div id="template_body">
+
+					</div>
 				</fieldset>
 			</form>
 		</div>
@@ -44,12 +48,18 @@
 {% endblock %}
 
 {% block body_js %}
-
+	<style>
+		pre.template_body_pre.prettyprint {
+			padding: 15px;
+		  	border: none;
+		}
+	</style>
 	<script type="text/javascript">
 		var response;
 		var operation;
 		var templates = {{ JSON.stringify(templates) }};
 		var selectedTemplate = null;
+		var metadataType = '{{metadataType}}';
 		
 		function newMetadata() {
 			paramPayload = {}
@@ -103,6 +113,7 @@
 
 		    	if (value === null || value === '') {
 		    		paramsHtml = '';
+		    		$("#template_body").hide();
 		    	} else {
 		    		for (t in templates) {
 		    			if (templates[t].name === value) {
@@ -116,7 +127,25 @@
 		    			paramsHtml += '<div class="control-group large"><input class="span12 templateParam" data-param="'+selectedTemplate.params[p].name+'" type="text" placeholder="'+selectedTemplate.params[p].description+'"/></div>';
 		    		}
 		    	}
-		    	
+
+    			$.ajax({
+    				type: "GET",
+    				url: "{{ mavensmate.ui.getBaseUrl() }}/app/metadata/template",
+    				data: {
+    					type: '{{metadataType}}',
+    					fileName: selectedTemplate.file_name
+    				},
+    				complete: function(data){
+    					if (metadataType === 'ApexClass' || metadataType === 'ApexTrigger') {
+    						$("#template_body").html('<pre class="template_body_pre prettyprint lang-java"></pre>');
+    					} else if (metadataType === 'ApexPage' || metadataType === 'ApexComponent') {
+    						$("#template_body").html('<pre class="template_body_pre prettyprint lang-html"></pre>');
+    					}
+    					$(".template_body_pre").text(data.responseText);
+    					prettyPrint();
+    					$("#template_body").show();
+    				} 
+    		 	});
 		    	$("div#template_params").html(paramsHtml);
 		    	
 		    });

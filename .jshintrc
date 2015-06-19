@@ -6,7 +6,9 @@
         "beforeEach" : false,
         "after"      : false,
         "afterEach"  : false,
-        "Promise"    : true
+        "Promise"    : true,
+        "$"          : false,
+        "window"     : false
     },
     "node": true,
     "esnext": true,
