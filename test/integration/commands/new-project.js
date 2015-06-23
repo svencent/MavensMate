@@ -19,28 +19,29 @@ describe('mavensmate new-project', function(){
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'new-project-existing');
-    helper.setProject(testClient, 'new-project-existing', function(err, proj) {
-      project = proj;
-      done();
-    });
-  });
-
-  after(function(done) {
-    this.timeout(4000);
-    helper.cleanUpTestProject('new-project-existing')
-      .then(helper.cleanUpTestProject('new-project'))
-      .then(function() {
+    helper.addProject(testClient, 'new-project-existing')
+      .then(function(proj) {
+        project = proj;
         done();
+      })
+      .catch(function(err) {
+        done(err);
       });
   });
 
+  after(function(done) {
+    helper.cleanUpTestProject('new-project-existing');
+    helper.cleanUpTestProject('new-project');
+    done();
+  });
+
   it('should require username and password', function(done) {
-    testClient.executeCommand('new-project', {}, function(err, response) {
-      should.equal(response, undefined);
-      err.should.have.property('error');
-      err.error.should.equal('Please specify username, password, and project name');
-      done();
-    });
+    testClient.executeCommand('new-project', {})
+      .catch(function(err) {
+        err.should.have.property('error');
+        err.error.should.equal('Please specify username, password, and project name');
+        done();
+      });      
   });
 
   it('should prompt that project directory already exists', function(done) {
@@ -53,12 +54,12 @@ describe('mavensmate new-project', function(){
       password: 'force',
       workspace: path.join(helper.baseTestDirectory(),'workspace')
     };
-    testClient.executeCommand('new-project', payload, function(err, response) {
-      should.equal(response, undefined);
-      err.should.have.property('error');
-      err.error.should.equal('Directory already exists!');
-      done();
-    });
+    testClient.executeCommand('new-project', payload)
+      .catch(function(err) {
+        err.should.have.property('error');
+        err.error.should.equal('Directory already exists!');
+        done();
+      });
   });
 
   it('should prompt because of bad salesforce creds', function(done) {    
@@ -70,12 +71,12 @@ describe('mavensmate new-project', function(){
       password: 'thisisabadpassword',
       workspace: path.join(helper.baseTestDirectory(),'workspace')
     };
-    testClient.executeCommand('new-project', payload, function(err, response) {
-      should.equal(response, undefined);
-      err.should.have.property('error');
-      err.error.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out');
-      done();
-    });
+    testClient.executeCommand('new-project', payload)
+      .catch(function(err) {
+        err.should.have.property('error');
+        err.error.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out');
+        done();
+      });
   });
 
   it('should create project in specified workspace', function(done) {
@@ -94,23 +95,29 @@ describe('mavensmate new-project', function(){
       }
     };
 
-    testClient.executeCommand('new-project', payload, function(err, response) {
-      should.equal(err, null);
-      response.should.have.property('result');
-      response.result.should.equal('Project created successfully');
-      assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project'),  'Project directory does not exist');
-      assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'config'),  'Project config directory does not exist');
-      assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src'),  'Project src directory does not exist');
-      assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src', 'package.xml'),  'Project package.xml does not exist');
-      fs.existsSync(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'tmp.zip')).should.equal(false);
-      helper.setProject(testClient, 'new-project', function() {
+    testClient.executeCommand('new-project', payload)
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.should.equal('Project created successfully');
+        assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project'),  'Project directory does not exist');
+        assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'config'),  'Project config directory does not exist');
+        assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src'),  'Project src directory does not exist');
+        assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src', 'package.xml'),  'Project package.xml does not exist');
+        fs.existsSync(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'tmp.zip')).should.equal(false);
+        return helper.addProject(testClient, 'new-project')
+      })
+      .then(function(response) {
         var project = testClient.getProject();
         project.settings.username.should.equal(process.env.SALESFORCE_USERNAME || 'mm@force.com');
         project.settings.password.should.equal(process.env.SALESFORCE_PASSWORD || 'force');
         project.settings.environment.should.equal('developer');
         done();
+      })
+      .catch(function(err) {
+        done(err);
       });
-    });
   });
 
+
+ 
 });

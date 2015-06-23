@@ -18,17 +18,19 @@ describe('mavensmate delete-metadata', function(){
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'delete-metadata');
-    helper.setProject(testClient, 'delete-metadata', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'delete-metadata')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('delete-metadata')
-      .then(function() {
-        done();
-      });
+    helper.cleanUpTestProject('delete-metadata');
+    done();
   });
 
   it('should create then delete metadata from server', function(done) {
@@ -47,22 +49,21 @@ describe('mavensmate delete-metadata', function(){
           ]
         };
 
-        testClient.executeCommand('delete-metadata', payload, function(err, response) {
-          console.log('delete result:')
-          console.log(err);
-          console.log(response);
-          should.equal(err, null);
-          response.should.have.property('result');
-          response.result.success.should.equal(true);
-          response.result.status.should.equal('Succeeded');
-          response.result.numberComponentErrors.should.equal(0);
-          response.result.numberComponentsDeployed.should.equal(2);
-          fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass.cls')).should.equal(false);
-          fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass2.cls')).should.equal(false);
-          // fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes')).should.equal(false);
-          done();
-        });
-      });    
+        return testClient.executeCommand('delete-metadata', payload);
+      })
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.success.should.equal(true);
+        response.result.status.should.equal('Succeeded');
+        response.result.numberComponentErrors.should.equal(0);
+        response.result.numberComponentsDeployed.should.equal(2);
+        fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass.cls')).should.equal(false);
+        fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass2.cls')).should.equal(false);
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
 });

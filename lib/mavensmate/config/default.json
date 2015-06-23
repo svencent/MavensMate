@@ -98,7 +98,7 @@
   "mm_mass_index_apex_symbols": false,
   "mm_use_legacy_test_ui": true,
   "mm_download_logs_during_run_all_tests": false,
-  "mm_timeout": 30,
+  "mm_timeout": 600,
   "mm_compare_before_deployment": true,
   "mm_skip_legacy_check": false
 }

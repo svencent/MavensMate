@@ -11,6 +11,7 @@ var sinonAsPromised   = require('sinon-as-promised');
 var EditorService     = require('../lib/mavensmate/editor');
 var temp              = require('temp');
 var TemplateService   = require('../lib/mavensmate/template');
+var logger            = require('winston');
 
 sinonAsPromised(require('bluebird'));
 
@@ -57,18 +58,6 @@ exports.unlinkEditor = function() {
   }
 };
 
-// exports.goOffline = function() {
-//   try {
-//     var deferred = Q.defer();
-//     deferred.resolve({});
-//     sinon.stub(SalesforceClient.prototype, 'initialize').returns(deferred.promise);
-//   } catch(e) {
-//     if (e.message.indexOf('Attempted to wrap open which is already wrapped') === -1) {
-//       throw e;
-//     }
-//   }  
-// };
-
 exports.createProject = function(testClient, name, pkg, testWorkspace) {
   var self = this;
   self.unlinkEditor();
@@ -86,25 +75,29 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
       package: pkg || {}
     };
 
-    testClient.executeCommand('new-project', payload, function(err) {
-      if (err) {
+    testClient.executeCommand('new-project', payload)
+      .then(function(res) {
+        return testClient.addProject(path.join(testWorkspace, name));
+      })
+      .then(function() {
+        resolve(path.join(testWorkspace, name));
+      })
+      .catch(function(err) {
         reject(err);
-      } else {
-        testClient.setProject(path.join(testWorkspace, name), function(err) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(path.join(testWorkspace, name));
-          }
-        });
-      }
-    });
+      });
   });
 };
 
-exports.setProject = function(testClient, projectName, callback) {
-  testClient.setProject(path.join(this.baseTestDirectory(),'workspace', projectName), function(err, response) {
-    callback(err, response);
+exports.addProject = function(testClient, projectName) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    testClient.addProject(path.join(self.baseTestDirectory(),'workspace', projectName))
+      .then(function(response) {
+        resolve(response);
+      })
+      .catch(function(err) {
+        reject(err);
+      });
   });
 };
 
@@ -130,15 +123,11 @@ exports.getProjectFiles = function(testClient, typeXmlName, numberOfFiles) {
 };
 
 exports.cleanUpTestProject = function(name, testWorkspace) {
-  var self = this;
-  return new Promise(function(resolve, reject) { 
-    testWorkspace = testWorkspace || path.join(self.baseTestDirectory(),'workspace');
-    name = name || 'existing-project';
-    if (fs.existsSync(path.join(testWorkspace, name))) {
-      fs.removeSync(path.join(testWorkspace, name));
-    }
-    resolve();
-  }); 
+  testWorkspace = testWorkspace || path.join(this.baseTestDirectory(),'workspace');
+  name = name || 'existing-project';
+  if (fs.existsSync(path.join(testWorkspace, name))) {
+    fs.removeSync(path.join(testWorkspace, name));
+  } 
 };
 
 exports.cleanUpTestData = function(testClient, paths) {
@@ -146,13 +135,13 @@ exports.cleanUpTestData = function(testClient, paths) {
     var payload = {
       paths: paths
     };
-    testClient.executeCommand('delete-metadata', payload, function(err) {
-      if (err) {
+    testClient.executeCommand('delete-metadata', payload)
+      .then(function(res) {
+        resolve(res);
+      })
+      .catch(function(err) {
         reject(err);
-      } else {
-        resolve();
-      }
-    });
+      });
   });
 };
 
@@ -167,13 +156,13 @@ exports.createNewMetadata = function(testClient, typeXmlName, name, templateFile
   return new Promise(function(resolve, reject) {
     exports.getNewMetadataPayload(typeXmlName, name, templateFileName, templateValues)
       .then(function(payload) {
-        testClient.executeCommand('new-metadata', payload, function(err, response) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(response);
-          }
-        });
+        return testClient.executeCommand('new-metadata', payload);
+      })
+      .then(function() {
+        logger.info('created metadata');
+        logger.info(err);
+        logger.info(response);
+        resolve(response);
       })
       .catch(function(err) {
         reject(err);

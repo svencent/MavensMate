@@ -26,7 +26,7 @@ describe('mavensmate client-unit', function(){
       editor: 'sublime',
       headless: false
     });
-    myClient.setProject('/foo/bar', function(err) {
+    myClient.addProject('/foo/bar', function(err) {
       should.equal(err.message, 'This does not seem to be a valid MavensMate project directory.');
       done();
     });

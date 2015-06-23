@@ -13,7 +13,7 @@ describe('mavensmate DeployController', function(){
     this.timeout(10000);
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'DeployControllerTest');
-    helper.setProject(testClient, 'DeployControllerTest', function(err, proj) {
+    helper.addProject(testClient, 'DeployControllerTest', function(err, proj) {
       project = proj;
       done();
     });
@@ -45,7 +45,8 @@ describe('mavensmate DeployController', function(){
     it('should render deploy/new.html', function(done) {    
       var req,res,spy;
       req = res = {};
-      spy = testClient.executeCommand = sinon.spy();
+      req.project = {};
+      spy = testClient.executeCommandForProject = sinon.spy();
 
       ctrl.new(req, res);
       spy.calledOnce.should.equal(true);
@@ -72,7 +73,8 @@ describe('mavensmate DeployController', function(){
     it('should call execute', function(done) {    
       var req,res,spy;
       req = res = { send: function() {} };
-      spy = testClient.executeCommand = sinon.spy();
+      req.project = {};
+      spy = testClient.executeCommandForProject = sinon.spy();
 
       ctrl.execute(req, res);
       spy.calledOnce.should.equal(true);
@@ -99,7 +101,8 @@ describe('mavensmate DeployController', function(){
     it('should call getConnections', function(done) {    
       var req,res,spy;
       req = res = { send: function() {} };
-      spy = testClient.executeCommand = sinon.spy();
+      req.project = {};
+      spy = testClient.executeCommandForProject = sinon.spy();
 
       ctrl.getConnections(req, res);
       spy.calledOnce.should.equal(true);
@@ -126,7 +129,8 @@ describe('mavensmate DeployController', function(){
     it('should call newConnection', function(done) {    
       var req,res,spy;
       req = res = { send: function() {} };
-      spy = testClient.executeCommand = sinon.spy();
+      req.project = {};
+      spy = testClient.executeCommandForProject = sinon.spy();
 
       ctrl.newConnection(req, res);
       spy.calledOnce.should.equal(true);
@@ -153,7 +157,8 @@ describe('mavensmate DeployController', function(){
     it('should call deleteConnection', function(done) {    
       var req,res,spy;
       req = res = { send: function() {} };
-      spy = testClient.executeCommand = sinon.spy();
+      req.project = {};
+      spy = testClient.executeCommandForProject = sinon.spy();
 
       ctrl.deleteConnection(req, res);
       spy.calledOnce.should.equal(true);

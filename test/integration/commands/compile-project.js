@@ -14,31 +14,37 @@ describe('mavensmate compile-project', function(){
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'compile-project');
-    helper.setProject(testClient, 'compile-project', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'compile-project')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
     helper.cleanUpTestProject('compile-project')
-      .then(function() {
-        done();
-      });
+    done();
   });
 
   it('should compile the project based on package.xml', function(done) {
     this.timeout(40000);
     
-    testClient.executeCommand('edit-project', { package: { 'ApexComponent' : '*' } }, function() {
-      testClient.executeCommand('compile-project', function(err, response) {
-        should.equal(err, null);
+    testClient.executeCommand('edit-project', { package: { 'ApexComponent' : '*' } })
+      .then(function() {
+        return testClient.executeCommand('compile-project');
+      })
+      .then(function(response) {
         response.should.have.property('result');
         response.result.success.should.equal(true);
         response.result.status.should.equal('Succeeded');
         done();
+      })
+      .catch(function(err) {
+        done(err);
       });
-    }); 
   });
 
 });

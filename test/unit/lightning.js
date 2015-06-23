@@ -20,7 +20,7 @@ describe('mavensmate lightning-unit', function(){
     helper.unlinkEditor();
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'lightning-unit');
-    helper.setProject(testClient, 'lightning-unit', function(err, proj) {
+    helper.addProject(testClient, 'lightning-unit', function(err, proj) {
       project = proj;
       done();
     });

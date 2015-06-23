@@ -20,10 +20,14 @@ describe('mavensmate refresh-metadata', function(){
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'refresh-metadata');
-    helper.setProject(testClient, 'refresh-metadata', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'refresh-metadata')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
@@ -36,13 +40,13 @@ describe('mavensmate refresh-metadata', function(){
     ];
     helper.cleanUpTestData(testClient, filesToDelete)
       .then(function() {
-        return helper.cleanUpTestProject('refresh-metadata');
-      })
-      .then(function() {
         done();
       })
       .catch(function(err) {
         done(err);
+      })
+      .finally(function() {
+        helper.cleanUpTestProject('refresh-metadata');
       });
   });
 
@@ -58,15 +62,17 @@ describe('mavensmate refresh-metadata', function(){
           paths: [ path.join(testClient.getProject().path, 'src', 'classes') ]
         };
 
-        testClient.executeCommand('refresh-metadata', payload, function(err, response) {
-          should.equal(err, null);
-          response.should.have.property('result');
-          response.result.should.equal('Metadata successfully refreshed');
-          fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass.cls')).should.equal(true);
-          done();
-        });
+        return testClient.executeCommand('refresh-metadata', payload);
       })
-      .done();
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.should.equal('Metadata successfully refreshed');
+        fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass.cls')).should.equal(true);
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   it('should refresh class file from the server', function(done) {
@@ -76,20 +82,20 @@ describe('mavensmate refresh-metadata', function(){
       .then(function() {
         assert.isFile(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass2.cls'));
         fs.removeSync(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass2.cls'));
-        
         var payload = {
           paths: [ path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass2.cls') ]
         };
-
-        testClient.executeCommand('refresh-metadata', payload, function(err, response) {
-          should.equal(err, null);
-          response.should.have.property('result');
-          response.result.should.equal('Metadata successfully refreshed');
-          path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass2.cls').should.be.a.file('RefreshMetadataClass2 is missing');
-          done();
-        });
+        return testClient.executeCommand('refresh-metadata', payload);
       })
-      .done();
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.should.equal('Metadata successfully refreshed');
+        path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass2.cls').should.be.a.file('RefreshMetadataClass2 is missing');
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   it('should refresh a CustomObject from the server ', function(done) {
@@ -105,13 +111,16 @@ describe('mavensmate refresh-metadata', function(){
       paths: [ path.join(testClient.getProject().path, 'src', 'objects', 'Account.object') ]
     };
 
-    testClient.executeCommand('refresh-metadata', payload, function(err, response) {
-      should.equal(err, null);
-      response.should.have.property('result');
-      response.result.should.equal('Metadata successfully refreshed');
-      fs.existsSync(path.join(testClient.getProject().path, 'src', 'objects', 'Account.object')).should.equal(true);
-      done();
-    });
+    testClient.executeCommand('refresh-metadata', payload)
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.should.equal('Metadata successfully refreshed');
+        fs.existsSync(path.join(testClient.getProject().path, 'src', 'objects', 'Account.object')).should.equal(true);
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   // it('should refresh a Lightning bundle from the server ', function(done) {

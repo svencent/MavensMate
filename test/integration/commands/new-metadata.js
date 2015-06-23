@@ -17,10 +17,14 @@ describe('mavensmate new-metadata', function(){
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'new-metadata');
-    helper.setProject(testClient, 'new-metadata', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'new-metadata')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
@@ -31,10 +35,13 @@ describe('mavensmate new-metadata', function(){
     ];
     helper.cleanUpTestData(testClient, filesToDelete)
       .then(function() {
-        return helper.cleanUpTestProject('new-metadata');
-      })
-      .then(function() {
         done();
+      })
+      .catch(function(err) {
+        done(err);
+      })
+      .finally(function() {
+        helper.cleanUpTestProject('new-metadata');
       });
   });
 
@@ -53,7 +60,9 @@ describe('mavensmate new-metadata', function(){
         testClient.getProject().packageXml.subscription.ApexClass.length.should.equal(1);
         done();
       })
-      .done();
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   it('should create new Apex Trigger on the server', function(done) {
@@ -70,7 +79,9 @@ describe('mavensmate new-metadata', function(){
         testClient.getProject().packageXml.subscription.ApexTrigger.length.should.equal(1);
         done();
       })
-      .done();
+      .catch(function(err) {
+        done(err);
+      });
   });
 
 });

@@ -18,7 +18,7 @@ describe('mavensmate view-helper', function(){
     this.timeout(4000);
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'view-helper');
-    helper.setProject(testClient, 'view-helper', function(err, proj) {
+    helper.addProject(testClient, 'view-helper', function(err, proj) {
       project = proj;
       viewHelper = new ViewHelper({ client: testClient, port: 5000 });
       done();
@@ -45,7 +45,7 @@ describe('mavensmate view-helper', function(){
   });
 
   it('should getBaseUrl', function(done) {    
-    viewHelper.getBaseUrl().should.equal('http://127.0.0.1:5000');
+    viewHelper.getBaseUrl().should.equal('http://localhost:5000');
     done();
   });
   
@@ -65,7 +65,7 @@ describe('mavensmate view-helper', function(){
   
   describe('getMetadataObjects', function(){
     it('should return an array of objects', function(done) {    
-      viewHelper.getMetadataObjects().length.should.be.greaterThan(5);
+      viewHelper.getMetadataObjects(project).length.should.be.greaterThan(5);
       done();
     });
   });

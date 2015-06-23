@@ -22,6 +22,7 @@ describe('mavensmate ApexController', function(){
     it('should render apex/new.html', function(done) {    
       var req,res,spy;
       req = res = {};
+      req.project = {};
       spy = res.render = sinon.spy();
 
       ctrl.new(req, res);

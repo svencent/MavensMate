@@ -15,10 +15,14 @@ describe('mavensmate open-metadata', function(){
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'open-metadata');
-    helper.setProject(testClient, 'open-metadata', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'open-metadata')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
@@ -28,10 +32,13 @@ describe('mavensmate open-metadata', function(){
     ];
     helper.cleanUpTestData(testClient, filesToDelete)
       .then(function() {
-        return helper.cleanUpTestProject('open-metadata');
-      })
-      .then(function() {
         done();
+      })
+      .catch(function(err) {
+        done(err);
+      })
+      .finally(function() {
+        helper.cleanUpTestProject('open-metadata');
       });
   });
 
@@ -44,13 +51,16 @@ describe('mavensmate open-metadata', function(){
           paths : [ path.join(helper.baseTestDirectory(),'workspace', 'open-metadata', 'src', 'pages', 'OpenMetadataPage.page') ],
           preview: true
         };
-        testClient.executeCommand('open-metadata', payload, function(err, response) {
-          should.equal(err, null);
-          response.should.have.property('result');
-          response.result.should.have.property('OpenMetadataPage.page');
-          response.result['OpenMetadataPage.page'].indexOf('secur/frontdoor.jsp?sid=').should.be.at.least(0);
-          done();
-        });
+        return testClient.executeCommand('open-metadata', payload);
+      })
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.should.have.property('OpenMetadataPage.page');
+        response.result['OpenMetadataPage.page'].indexOf('secur/frontdoor.jsp?sid=').should.be.at.least(0);
+        done();
+      })
+      .catch(function(err) {
+        done(err);
       });
   });
 });

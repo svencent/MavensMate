@@ -16,25 +16,24 @@ describe('mavensmate checkpoints', function(){
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'checkpoints');
-    helper.setProject(testClient, 'checkpoints', function(err, proj) {
-      project = proj;
-      testClient.executeCommand('update-subscription', { subscription: ['ApexClass'] }, function(err, response) {
-        testClient.executeCommand('index-metadata', function(err) {
-          if (err) {
-            done(err);
-          } else {
-            var cs = new CheckpointService(project);
-            cs.deleteCheckpointsForCurrentUser()
-              .then(function() {
-                done();
-              })
-              .catch(function(err) {
-                done(err);
-              });
-          }
-        });
+    helper.addProject(testClient, 'checkpoints')
+      .then(function(proj) {
+        project = proj;
+        return testClient.executeCommandForProject(project, 'update-subscription', { subscription: ['ApexClass'] });
+      })
+      .then(function() {
+        return testClient.executeCommandForProject(project, 'index-metadata');
+      })
+      .then(function() {
+        var cs = new CheckpointService(project);
+        return cs.deleteCheckpointsForCurrentUser();
+      })
+      .then(function() {
+        done();
+      })
+      .catch(function(err) {
+        done(err);
       });
-    });
   });
 
   after(function(done) {
@@ -44,10 +43,13 @@ describe('mavensmate checkpoints', function(){
     ];
     helper.cleanUpTestData(testClient, filesToDelete)
       .then(function() {
-        return helper.cleanUpTestProject('checkpoints');
-      })
-      .then(function() {
         done();
+      })
+      .catch(function(err) {
+        done(err);
+      })
+      .finally(function() {
+        helper.cleanUpTestProject('checkpoints');
       });
   });
 
@@ -61,15 +63,17 @@ describe('mavensmate checkpoints', function(){
           path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls'),
           lineNumber : 1
         };
-        testClient.executeCommand('new-checkpoint', payload, function(err, response) {
-          should.equal(err, null);
-          response.should.have.property('result');
-          response.result.success.should.equal(true);
-          response.result.id.length.should.equal(18);
-          done();
-        });
+        return testClient.executeCommandForProject(project, 'new-checkpoint', payload);
       })
-      .done();
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.success.should.equal(true);
+        response.result.id.length.should.equal(18);
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   it('should list checkpoints', function(done) {
@@ -77,13 +81,16 @@ describe('mavensmate checkpoints', function(){
     var payload = {
       path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls')
     };
-    testClient.executeCommand('list-checkpoints', payload, function(err, response) {
-      should.equal(err, null);
-      response.should.have.property('result');
-      response.result.size.should.equal(1);
-      response.result.records.length.should.equal(1);
-      done();
-    });
+    testClient.executeCommandForProject(project, 'list-checkpoints', payload)
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.size.should.equal(1);
+        response.result.records.length.should.equal(1);
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   it('should delete checkpoint', function(done) {
@@ -92,14 +99,16 @@ describe('mavensmate checkpoints', function(){
       path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls'),
       lineNumber : 1
     };
-    testClient.executeCommand('delete-checkpoint', payload, function(err, response) {
-      should.equal(err, null);
-      response.should.have.property('result');
-      response.result.success.should.equal(true);
-      response.result.id.length.should.equal(18);
-      done();
-    });
+    testClient.executeCommandForProject(project, 'delete-checkpoint', payload)
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.success.should.equal(true);
+        response.result.id.length.should.equal(18);
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
 });
-

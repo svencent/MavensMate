@@ -14,41 +14,49 @@ describe('mavensmate execute-apex', function() {
     helper.unlinkEditor();
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'execute-apex');
-    helper.setProject(testClient, 'execute-apex', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'execute-apex')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
   
   after(function(done) {
-    helper.cleanUpTestProject('execute-apex')
-      .then(function() {
-        done();
-      });
+    helper.cleanUpTestProject('execute-apex');
+    done();
   });
 
   it('should execute anonymous apex', function(done) {
     this.timeout(10000);  
 
-    testClient.executeCommand('execute-apex', { body: 'String foo = \'bar\';' }, function(err, response) {
-      should.equal(err, null);
-      response.should.have.property('result');
-      response.result.compiled.should.equal(true);
-      response.result.success.should.equal(true);
-      done();
-    });
+    testClient.executeCommand('execute-apex', { body: 'String foo = \'bar\';' })
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.compiled.should.equal(true);
+        response.result.success.should.equal(true);
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   it('should attempt to execute invalid anonymous apex', function(done) {
     this.timeout(10000);  
 
-    testClient.executeCommand('execute-apex', { body: 'String foo = \'bar\'' }, function(err, response) {
-      should.equal(err, null);
-      response.should.have.property('result');
-      response.result.compiled.should.equal(false);
-      response.result.success.should.equal(false);
-      response.result.compileProblem.should.equal('expecting a semi-colon, found \'<EOF>\'');
-      done();
-    });
+    testClient.executeCommand('execute-apex', { body: 'String foo = \'bar\'' })
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.compiled.should.equal(false);
+        response.result.success.should.equal(false);
+        response.result.compileProblem.should.equal('expecting a semi-colon, found \'<EOF>\'');
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 });

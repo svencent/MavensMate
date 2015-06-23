@@ -16,7 +16,7 @@ describe('mavensmate mavensmate-file', function(){
     this.timeout(10000);
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'file-test');
-    helper.setProject(testClient, 'file-test', function(err, proj) {
+    helper.addProject(testClient, 'file-test', function(err, proj) {
       project = proj;
       done();
     });

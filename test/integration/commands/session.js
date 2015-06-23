@@ -27,15 +27,18 @@ describe('mavensmate session', function() {
       subscription: ['ApexClass']
     };
 
-    testClient.executeCommand('session', payload, function(err, response) {
-      should.equal(err, null);
-      response.should.have.property('result');
-      response.result.should.have.property('sid');
-      response.result.should.have.property('urls');
-      response.result.should.have.property('metadataTypes');
-      response.result.should.have.property('index');
-      done();
-    });
+    testClient.executeCommand('session', payload)
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.should.have.property('sid');
+        response.result.should.have.property('urls');
+        response.result.should.have.property('metadataTypes');
+        response.result.should.have.property('index');
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   it('should fail to initiate new salesforce session', function(done) {
@@ -47,14 +50,14 @@ describe('mavensmate session', function() {
       orgType: 'developer'
     };
 
-    testClient.executeCommand('session', payload, function(err, response) {
-      should.not.equal(err, null);
-      err.should.have.property('result');
-      err.should.have.property('error');
-      err.result.should.equal('Could not create new Salesforce session');
-      err.error.should.equal('Could not log in to Salesforce.com: Error: INVALID_LOGIN: Invalid username, password, security token; or user locked out.');
-      done();
-    });
+    testClient.executeCommand('session', payload)
+      .catch(function(err) {
+        err.should.have.property('result');
+        err.should.have.property('error');
+        err.result.should.equal('Could not create new Salesforce session');
+        err.error.should.equal('Could not log in to Salesforce.com: Error: INVALID_LOGIN: Invalid username, password, security token; or user locked out.');
+        done();
+      });
   });
 });
 

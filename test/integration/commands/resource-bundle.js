@@ -19,10 +19,14 @@ describe('mavensmate resource-bundle', function(){
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'resource-bundle');
-    helper.setProject(testClient, 'resource-bundle', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'resource-bundle')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
@@ -32,13 +36,13 @@ describe('mavensmate resource-bundle', function(){
     ];
     helper.cleanUpTestData(testClient, filesToDelete)
       .then(function() {
-        return helper.cleanUpTestProject('resource-bundle');
-      })
-      .then(function() {
         done();
       })
       .catch(function(err) {
         done(err);
+      })
+      .finally(function() {
+        return helper.cleanUpTestProject('resource-bundle');
       });
   });
 
@@ -59,19 +63,20 @@ describe('mavensmate resource-bundle', function(){
       paths : [path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource')]
     };
 
-    testClient.executeCommand('new-resource-bundle', payload, function(err, response) {
-      // console.log(err);
-      // console.log(response);
-      should.equal(err, null);
-      response.should.have.property('result');
-      response.result.should.equal('Resource bundle(s) successfully created');
-      assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource'),  'Resource bundle directory not created');
-      assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource', 'css'),  'Resource bundle css directory not created');
-      assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource', 'js'),  'Resource bundle js directory not created');
-      assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource', 'css', 'bar.css'),  'Resource bundle css file not created');
-      assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource', 'js', 'foo.js'),  'Resource bundle js file not created');
-      done();
-    });
+    testClient.executeCommand('new-resource-bundle', payload)
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.should.equal('Resource bundle(s) successfully created');
+        assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource'),  'Resource bundle directory not created');
+        assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource', 'css'),  'Resource bundle css directory not created');
+        assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource', 'js'),  'Resource bundle js directory not created');
+        assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource', 'css', 'bar.css'),  'Resource bundle css file not created');
+        assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource', 'js', 'foo.js'),  'Resource bundle js file not created');
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   it('should deploy a resource bundle to the server', function(done) {    
@@ -81,15 +86,16 @@ describe('mavensmate resource-bundle', function(){
       paths :[ path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource') ]
     };
 
-    testClient.executeCommand('deploy-resource-bundle', payload, function(err, response) {
-      // console.log(err);
-      // console.log(response);
-      should.equal(err, null);
-      response.should.have.property('result');
-      response.result.should.equal('Resource bundle successfully deployed');
-      assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource'),  'Resource bundle staticresource does not exist');
-      done();
-    });    
+    testClient.executeCommand('deploy-resource-bundle', payload)
+      .then(function(response) {
+        response.should.have.property('result');
+        response.result.should.equal('Resource bundle successfully deployed');
+        assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource'),  'Resource bundle staticresource does not exist');
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });    
   });
 
 });

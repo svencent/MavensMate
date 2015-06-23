@@ -17,10 +17,14 @@ describe('mavensmate deploy-to-server', function() {
     helper.unlinkEditor();
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'deploy');
-    helper.setProject(testClient, 'deploy', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'deploy')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
   
   after(function(done) {
@@ -30,14 +34,12 @@ describe('mavensmate deploy-to-server', function() {
     ];
 
     helper.cleanUpTestData(testClient, filesToDelete)
-      .then(function() {
-        return helper.cleanUpTestProject('deploy');
-      })
-      .then(function() {
-        done();
-      })
       .catch(function(err) {
         done(err);
+      })
+      .finally(function() {
+        helper.cleanUpTestProject('deploy');
+        done();
       });
   });
 
@@ -51,36 +53,33 @@ describe('mavensmate deploy-to-server', function() {
           password: 'force',
           orgType: 'developer'
         };
-
-        testClient.executeCommand('new-connection', payload, function(err, response) {
-          
-          testClient.executeCommand('get-connections', payload, function(err, conns) {
-            
-            var deployPayload = {
-              destinations : conns.result,
-              package : { 'ApexClass' : ['DeployClass']  },   
-              deployOptions     : {
-                rollbackOnError: true,
-                performRetrieve: true,
-                checkOnly: true,
-                ignoreWarnings: false,
-                runAllTests: false
-              }
-            };
-
-            testClient.executeCommand('deploy', deployPayload, function(err, response) {
-              // console.log(response);
-              should.equal(err, null);
-              response.should.have.property('result');
-              response.result.should.have.property('mm@force.com');
-              response.result['mm@force.com'].checkOnly.should.equal(true);
-              response.result['mm@force.com'].done.should.equal(true);
-              response.result['mm@force.com'].success.should.equal(true);
-              done();
-            });
-          });
-
-        });
+        return testClient.executeCommand('new-connection', payload);
+      })
+      .then(function() {
+        return testClient.executeCommand('get-connections', payload);
+      })
+      .then(function(conns) {   
+        var deployPayload = {
+          destinations : conns.result,
+          package : { 'ApexClass' : ['DeployClass']  },   
+          deployOptions     : {
+            rollbackOnError: true,
+            performRetrieve: true,
+            checkOnly: true,
+            ignoreWarnings: false,
+            runAllTests: false
+          }
+        };
+        return testClient.executeCommand('deploy', deployPayload);
+      })
+      .then(function(response) {
+        should.equal(err, null);
+        response.should.have.property('result');
+        response.result.should.have.property('mm@force.com');
+        response.result['mm@force.com'].checkOnly.should.equal(true);
+        response.result['mm@force.com'].done.should.equal(true);
+        response.result['mm@force.com'].success.should.equal(true);
+        done();
       })
       .catch(function(err) {
         done(err);
