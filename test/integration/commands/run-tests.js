@@ -110,7 +110,7 @@ describe('mavensmate run-tests', function(){
         return testClient.executeCommand('run-tests', testPayload);
       })
       .then(function(response) {
-        response.should.have.property('result');
+        
         response.result.should.have.property('testResults');
         response.result.should.have.property('coverageResults');
         response.result.testResults.should.have.property('RunTestsApexClass');
@@ -135,7 +135,7 @@ describe('mavensmate run-tests', function(){
       var coverageClasses = [path.join(helper.baseTestDirectory(),'workspace', 'run-tests', 'src', 'classes', 'CoverMe.cls')];  
       testClient.executeCommand('get-coverage', { paths: coverageClasses  })
         .then(function(response) {
-          response.should.have.property('result');
+          
           response.result.should.have.property('CoverMe.cls');
           response.result['CoverMe.cls'].coveredLines.length.should.equal(1);
           response.result['CoverMe.cls'].coveredLines[0].should.equal(1);
@@ -152,7 +152,7 @@ describe('mavensmate run-tests', function(){
       this.timeout(20000);
       testClient.executeCommand('get-coverage', { global: true  })
         .then(function(response) {
-          response.should.have.property('result');
+          
           response.result.should.be.a('number');
           done();
         })

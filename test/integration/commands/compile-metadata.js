@@ -69,8 +69,8 @@ describe('mavensmate compile-metadata', function(){
         return testClient.executeCommand('compile-metadata', payload);
       })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.success.should.equal(true);
+        
+        response.success.should.equal(true);
         response.result.details.componentSuccesses.length.should.equal(1);
         response.result.details.componentSuccesses[0].State.should.equal('Completed');
         done();
@@ -109,8 +109,8 @@ describe('mavensmate compile-metadata', function(){
         return testClient.executeCommand('compile-metadata', payload);
       })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.success.should.equal(false);
+        
+        response.success.should.equal(false);
         response.result.details.componentSuccesses.length.should.equal(0);
         response.result.details.conflicts.should.have.property('ConflictCheckClass.cls');
         process.env.mm_compile_check_conflicts = false;
@@ -135,8 +135,8 @@ describe('mavensmate compile-metadata', function(){
         return testClient.executeCommand('compile-metadata', payload);
       })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.success.should.equal(false);
+        
+        response.success.should.equal(false);
         response.result.details.componentFailures.length.should.equal(1);
         response.result.details.componentFailures[0].should.have.property('DeployDetails');
         response.result.details.componentFailures[0].DeployDetails.componentFailures[0].success.should.equal(false);
@@ -163,8 +163,8 @@ describe('mavensmate compile-metadata', function(){
         return testClient.executeCommand('compile-metadata', payload);
       })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.success.should.equal(true);
+        
+        response.success.should.equal(true);
         done();
       })
       .catch(function(err) {
@@ -187,8 +187,8 @@ describe('mavensmate compile-metadata', function(){
         return testClient.executeCommand('compile-metadata', payload);
       })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.success.should.equal(true);
+        
+        response.success.should.equal(true);
         done();
       })
       .catch(function(err) {

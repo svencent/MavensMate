@@ -93,12 +93,11 @@
 				showMessage(response.error);
 				notifySound();
 			} else {
-				if (response.result && response.result.success) {
-					showMessage('{{ metadataType }} successfully created!', 'info');
-					// closeWindow();
-				} else if (response.result && !response.result.success) {
-					showMessage('Could not create metadata. Please check logs or try again.');
+				if (response.error) {
+					showMessage('Could not create metadata. '+response.error);
 					notifySound();
+				} else {
+					showMessage('{{ metadataType }} successfully created!', 'info');
 				}
 			}
 			hideLoading();

@@ -35,8 +35,8 @@ describe('mavensmate index-metadata', function(){
 
     testClient.executeCommand('index-metadata')
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Metadata successfully indexed');
+        
+        response.should.equal('Metadata successfully indexed');
         done();
       })
       .catch(function(err) {
@@ -50,7 +50,7 @@ describe('mavensmate index-metadata', function(){
 
     testClient.executeCommand('update-subscription', { subscription: [ 'SomeBadType' ] })
       .then(function(response) {
-        response.should.have.property('result');
+        
         testClient.executeCommand('index-metadata', function(err) {
           should.equal(err.error, 'Unknown metadata type: SomeBadType');
           should.equal(err.result, 'Could not index metadata');
@@ -68,12 +68,12 @@ describe('mavensmate index-metadata', function(){
 
     testClient.executeCommand('update-subscription', { subscription: [ 'CustomLabels', 'Letterhead', 'Queue', 'RecordType', 'CustomObjectSharingRules' ] })
       .then(function(result) {
-        response.should.have.property('result');
+        
         return testClient.executeCommand('index-metadata');
       })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Metadata successfully indexed');
+        
+        response.should.equal('Metadata successfully indexed');
         done();
       })
       .catch(function(err) {
@@ -87,7 +87,7 @@ describe('mavensmate index-metadata', function(){
 
     testClient.executeCommand('get-metadata-index')
       .then(function(response) {
-        response.should.have.property('result');
+        
         response.result.length.should.equal(project.getSubscription().length);
         done();
       })

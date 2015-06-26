@@ -43,8 +43,8 @@ describe('mavensmate index-apex', function(){
 
     testClient.executeCommand('index-apex')
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Symbols successfully indexed');
+        
+        response.should.equal('Symbols successfully indexed');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'config', '.symbols'),  'Symbols directory does not exist');
         done();
       })
@@ -61,8 +61,8 @@ describe('mavensmate index-apex', function(){
         return testClient.executeCommand('index-apex-class', { 'className' : 'IndexMySymbolsClass' });
       })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Symbols successfully indexed for IndexMySymbolsClass');
+        
+        response.should.equal('Symbols successfully indexed for IndexMySymbolsClass');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'config', '.symbols'),  'Symbols directory does not exist');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'config', '.symbols', 'IndexMySymbolsClass.json'),  'Symbols file does not exist');
         done();

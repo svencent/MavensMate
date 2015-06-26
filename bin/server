@@ -10,16 +10,15 @@ var args = parseArgs(process.argv);
 var project = args.project || process.cwd();
 var editor = args.editor || 'sublime';
 var verbose = args.verbose || false;
-var headless = args.headless || false;
 var port = args.port;
 
 process.title = 'mavensmate server - '+editor;
 
 var client = mavensmate.createClient({
   editor: editor,
-  headless: headless,
   verbose: verbose,
-  serverPort: port
+  serverPort: port,
+  isServer: true
 });
 
 var server = new UIServer(client);
@@ -37,18 +36,22 @@ server.start()
             console.warn(err.message);        
           }
         } else {
-          if (!headless) {
-            var spawn = require('child_process').spawn
-            spawn('open', ['http://localhost:'+port+'/app/home/index?pid='+client.getProjects()[0].settings.id]);
-          }
+          // if (!headless) {
+          //   var spawn = require('child_process').spawn
+          //   spawn('open', ['http://localhost:'+port+'/app/home/index?pid='+client.getProjects()[0].settings.id]);
+          // }
+          var spawn = require('child_process').spawn
+          spawn('open', ['http://localhost:'+port+'/app/home/index?pid='+client.getProjects()[0].settings.id]);
           console.log('MavensMate project path: '+response.path);
         }
       });
     } else {
-      if (!headless) {
-        var spawn = require('child_process').spawn
-        spawn('open', ['http://localhost:'+port]);
-      }
+      // if (!headless) {
+      //   var spawn = require('child_process').spawn
+      //   spawn('open', ['http://localhost:'+port]);
+      // }
+      var spawn = require('child_process').spawn
+      spawn('open', ['http://localhost:'+port]);
     }
   })
   .catch(function(err) {

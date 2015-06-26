@@ -52,8 +52,8 @@ describe('mavensmate delete-metadata', function(){
         return testClient.executeCommand('delete-metadata', payload);
       })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.success.should.equal(true);
+        
+        response.success.should.equal(true);
         response.result.status.should.equal('Succeeded');
         response.result.numberComponentErrors.should.equal(0);
         response.result.numberComponentsDeployed.should.equal(2);

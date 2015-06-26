@@ -37,8 +37,8 @@ describe('mavensmate compile-project', function(){
         return testClient.executeCommand('compile-project');
       })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.success.should.equal(true);
+        
+        response.success.should.equal(true);
         response.result.status.should.equal('Succeeded');
         done();
       })

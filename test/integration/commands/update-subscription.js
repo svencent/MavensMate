@@ -34,8 +34,8 @@ describe('mavensmate update-subscription', function() {
 
     testClient.executeCommand('update-subscription', { subscription: ['ApexClass'] })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Subscription updated successfully!');
+        
+        response.should.equal('Subscription updated successfully!');
         project.getSubscription().length.should.equal(1);
         project.getSubscription()[0].should.equal('ApexClass');
         done();

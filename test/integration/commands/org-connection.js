@@ -44,8 +44,8 @@ describe('mavensmate org-connections', function(){
     };
     testClient.executeCommand('new-connection', payload)
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Org connection successfully created');
+        
+        response.should.equal('Org connection successfully created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'),  'Org Connections file not created');
         var connections = fs.readJsonSync(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'));
         connections.length.should.equal(1);
@@ -86,8 +86,8 @@ describe('mavensmate org-connections', function(){
     };
     testClient.executeCommand('delete-connection', payload)
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Successfully deleted org connection');
+        
+        response.should.equal('Successfully deleted org connection');
         connections = fs.readJsonSync(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'));
         connections.length.should.equal(0);
         done();

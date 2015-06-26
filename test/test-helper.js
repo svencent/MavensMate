@@ -36,9 +36,8 @@ exports.createClient = function(editor, settings) {
   clientSettings.mm_use_keyring = false;
   return mavensmate.createClient({
     editor: editor,
-    headless: true,
+    isNodeApp: true,
     verbose: process.env.MAVENSMATE_DEBUG_TESTS === 'true' || false,
-    promisify: true,
     settings: clientSettings
   });
   /*jshint camelcase: true */
@@ -132,8 +131,14 @@ exports.cleanUpTestProject = function(name, testWorkspace) {
 
 exports.cleanUpTestData = function(testClient, paths) {
   return new Promise(function(resolve, reject) { 
+    var pathsToDelete = [];
+    _.each(paths, function(p) {
+      if (fs.existsSync(p)) {
+        pathsToDelete.push(p);
+      }
+    });
     var payload = {
-      paths: paths
+      paths: pathsToDelete
     };
     testClient.executeCommand('delete-metadata', payload)
       .then(function(res) {
@@ -158,9 +163,8 @@ exports.createNewMetadata = function(testClient, typeXmlName, name, templateFile
       .then(function(payload) {
         return testClient.executeCommand('new-metadata', payload);
       })
-      .then(function() {
+      .then(function(response) {
         logger.info('created metadata');
-        logger.info(err);
         logger.info(response);
         resolve(response);
       })

@@ -54,7 +54,7 @@ describe('mavensmate open-metadata', function(){
         return testClient.executeCommand('open-metadata', payload);
       })
       .then(function(response) {
-        response.should.have.property('result');
+        
         response.result.should.have.property('OpenMetadataPage.page');
         response.result['OpenMetadataPage.page'].indexOf('secur/frontdoor.jsp?sid=').should.be.at.least(0);
         done();

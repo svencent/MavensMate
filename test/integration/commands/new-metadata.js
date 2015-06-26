@@ -13,7 +13,7 @@ describe('mavensmate new-metadata', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(20000);
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'new-metadata');
@@ -28,20 +28,18 @@ describe('mavensmate new-metadata', function(){
   });
 
   after(function(done) {
-    this.timeout(15000);
+    this.timeout(35000);
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'classes', 'NewMetadataClass.cls'),
       path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'triggers', 'NewMetadataTrigger.trigger'),
     ];
     helper.cleanUpTestData(testClient, filesToDelete)
-      .then(function() {
-        done();
-      })
       .catch(function(err) {
         done(err);
       })
       .finally(function() {
         helper.cleanUpTestProject('new-metadata');
+        done();
       });
   });
 
@@ -51,9 +49,7 @@ describe('mavensmate new-metadata', function(){
 
     helper.createNewMetadata(testClient, 'ApexClass', 'NewMetadataClass')
       .then(function(response) {          
-        response.should.have.property('result');
-        response.result.success.should.equal(true);
-        response.result.status.should.equal('Succeeded');
+        response.should.equal('Success');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'classes', 'NewMetadataClass.cls'),  'Class file not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'classes', 'NewMetadataClass.cls-meta.xml'),  'Class meta file not created');
         testClient.getProject().packageXml.subscription.should.have.property('ApexClass');
@@ -69,10 +65,8 @@ describe('mavensmate new-metadata', function(){
     this.timeout(100000);
 
     helper.createNewMetadata(testClient, 'ApexTrigger', 'NewMetadataTrigger', 'ApexTrigger.trigger', { api_name : 'NewMetadataTrigger', object_name : 'Account' } )
-      .then(function(response) {          
-        response.should.have.property('result');
-        response.result.success.should.equal(true);
-        response.result.status.should.equal('Succeeded');
+      .then(function(response) {                  
+        response.should.equal('Success');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'triggers', 'NewMetadataTrigger.trigger'),  'Trigger file not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'triggers', 'NewMetadataTrigger.trigger-meta.xml'),  'Trigger meta file not created');
         testClient.getProject().packageXml.subscription.should.have.property('ApexTrigger');

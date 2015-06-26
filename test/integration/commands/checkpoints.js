@@ -19,10 +19,10 @@ describe('mavensmate checkpoints', function(){
     helper.addProject(testClient, 'checkpoints')
       .then(function(proj) {
         project = proj;
-        return testClient.executeCommandForProject(project, 'update-subscription', { subscription: ['ApexClass'] });
+        return testClient.executeCommand('update-subscription', { subscription: ['ApexClass'] });
       })
       .then(function() {
-        return testClient.executeCommandForProject(project, 'index-metadata');
+        return testClient.executeCommand('index-metadata');
       })
       .then(function() {
         var cs = new CheckpointService(project);
@@ -55,7 +55,7 @@ describe('mavensmate checkpoints', function(){
 
 
   it('should add checkpoint', function(done) {
-    this.timeout(8000);
+    this.timeout(30000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'CheckpointClass')
       .then(function(response) {          
@@ -63,12 +63,11 @@ describe('mavensmate checkpoints', function(){
           path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls'),
           lineNumber : 1
         };
-        return testClient.executeCommandForProject(project, 'new-checkpoint', payload);
+        return testClient.executeCommand('new-checkpoint', payload);
       })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.success.should.equal(true);
-        response.result.id.length.should.equal(18);
+        response.success.should.equal(true);
+        response.id.length.should.equal(18);
         done();
       })
       .catch(function(err) {
@@ -81,11 +80,10 @@ describe('mavensmate checkpoints', function(){
     var payload = {
       path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls')
     };
-    testClient.executeCommandForProject(project, 'list-checkpoints', payload)
+    testClient.executeCommand('list-checkpoints', payload)
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.size.should.equal(1);
-        response.result.records.length.should.equal(1);
+        response.size.should.equal(1);
+        response.records.length.should.equal(1);
         done();
       })
       .catch(function(err) {
@@ -99,11 +97,10 @@ describe('mavensmate checkpoints', function(){
       path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls'),
       lineNumber : 1
     };
-    testClient.executeCommandForProject(project, 'delete-checkpoint', payload)
+    testClient.executeCommand('delete-checkpoint', payload)
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.success.should.equal(true);
-        response.result.id.length.should.equal(18);
+        response.success.should.equal(true);
+        response.id.length.should.equal(18);
         done();
       })
       .catch(function(err) {

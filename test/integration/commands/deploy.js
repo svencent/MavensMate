@@ -74,7 +74,7 @@ describe('mavensmate deploy-to-server', function() {
       })
       .then(function(response) {
         should.equal(err, null);
-        response.should.have.property('result');
+        
         response.result.should.have.property('mm@force.com');
         response.result['mm@force.com'].checkOnly.should.equal(true);
         response.result['mm@force.com'].done.should.equal(true);

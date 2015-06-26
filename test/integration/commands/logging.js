@@ -56,8 +56,8 @@ describe('mavensmate logging', function() {
 
     testClient.executeCommand('start-logging')
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Started logging for debug users');
+        
+        response.should.equal('Started logging for debug users');
         done();
       })
       .catch(function(err) {
@@ -70,8 +70,8 @@ describe('mavensmate logging', function() {
 
     testClient.executeCommand('stop-logging')
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Stopped logging for debug users');
+        
+        response.should.equal('Stopped logging for debug users');
         done();
       })
       .catch(function(err) {

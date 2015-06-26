@@ -65,8 +65,8 @@ describe('mavensmate lightning', function(){
     };
     testClient.executeCommand('new-lightning-app', payload)
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Lightning app created successfully');
+        
+        response.should.equal('Lightning app created successfully');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestfoo'),  'Lightning bundle not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestfoo', 'mmunittestfoo.app'),  'Lightning app not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestfoo', 'mmunittestfoo.auradoc'),  'Lightning doc not created');
@@ -98,8 +98,8 @@ describe('mavensmate lightning', function(){
     };
     testClient.executeCommand('new-lightning-component', payload)
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Lightning component created successfully');
+        
+        response.should.equal('Lightning component created successfully');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmcompunittestfoo'),  'Lightning bundle not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmcompunittestfoo', 'mmcompunittestfoo.cmp'),  'Lightning component not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmcompunittestfoo', 'mmcompunittestfoo.auradoc'),  'Lightning doc not created');
@@ -123,8 +123,8 @@ describe('mavensmate lightning', function(){
     };
     testClient.executeCommand('new-lightning-interface', payload)
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Lightning interface created successfully');
+        
+        response.should.equal('Lightning interface created successfully');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestinterface'),  'Lightning bundle not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestinterface', 'mmunittestinterface.intf'),  'Lightning interface not created');
         done();
@@ -143,8 +143,8 @@ describe('mavensmate lightning', function(){
     };
     testClient.executeCommand('new-lightning-event', payload)
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Lightning event created successfully');
+        
+        response.should.equal('Lightning event created successfully');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestevent'),  'Lightning bundle not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestevent', 'mmunittestevent.evt'),  'Lightning event not created');
         done();

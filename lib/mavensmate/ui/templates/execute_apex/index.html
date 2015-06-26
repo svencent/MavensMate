@@ -154,7 +154,7 @@
 		<div id="log_wrapper" style="position:relative;">
 			<div class="alert alert-info">
 				<i class="icon-cogs icon-2x pull-left"></i>
-				To generate debug logs, be sure to run the "Start Logging" command before running anonymous Apex. Logs will be streamed to your project's debug/logs directory. You can run the "Flush Debug Logs" command to clear logs from your file system.
+				Logs are streamed to your project's debug/logs directory. You can run the "Flush Debug Logs" command to clear logs from your file system.
 			</div>
 		</div>
 	  </div>
@@ -184,9 +184,8 @@ function executeApex() {
 		dataType: "json",
 		contentType: 'application/json; charset=utf-8',
 		data: JSON.stringify({
-			 body 				: editor.getValue(),
-			 debug_categories 	: get_log_levels_json(),
-			 command 			: 'execute-apex'
+			body: editor.getValue(),
+			command: 'execute-apex'
 		}),
 		beforeSend: function() {
 			toggleRunningIndicator();
@@ -195,7 +194,7 @@ function executeApex() {
 			editor.setReadOnly(true);
 		},
 		complete: function(data){
-			responseHandler(data)
+			responseHandler(data);
 		}
 	});
 }
@@ -209,7 +208,7 @@ function handleResponse(response) {
 		} else {
 			var response = response.result;
 			if (response.success) {
-				hideMessage();
+				showMessage('Apex successfully executed. Check your project\'s debug directory for logs.', 'success');
 			} else {
 				var returnMessage = '';
 				var errorMessage = response["compileProblem"];

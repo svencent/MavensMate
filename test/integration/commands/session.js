@@ -29,11 +29,10 @@ describe('mavensmate session', function() {
 
     testClient.executeCommand('session', payload)
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.have.property('sid');
-        response.result.should.have.property('urls');
-        response.result.should.have.property('metadataTypes');
-        response.result.should.have.property('index');
+        response.should.have.property('sid');
+        response.should.have.property('urls');
+        response.should.have.property('metadataTypes');
+        response.should.have.property('index');
         done();
       })
       .catch(function(err) {
@@ -52,10 +51,9 @@ describe('mavensmate session', function() {
 
     testClient.executeCommand('session', payload)
       .catch(function(err) {
-        err.should.have.property('result');
-        err.should.have.property('error');
-        err.result.should.equal('Could not create new Salesforce session');
-        err.error.should.equal('Could not log in to Salesforce.com: Error: INVALID_LOGIN: Invalid username, password, security token; or user locked out.');
+        err.message.should.equal('Could not log in to Salesforce.com: Error: INVALID_LOGIN: Invalid username, password, security token; or user locked out.');
+      })
+      .finally(function() {
         done();
       });
   });

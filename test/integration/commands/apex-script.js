@@ -44,8 +44,7 @@ describe('mavensmate apex-script', function() {
 
     testClient.executeCommand('new-apex-script', { name: 'foo' })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Apex script created successfully');
+        response.should.equal('Apex script created successfully');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'apex-script', 'apex-scripts'),  'Apex scripts directory does not exist');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'apex-script', 'apex-scripts', 'foo.cls'),  'Script file does not exist');
         done();
@@ -63,9 +62,8 @@ describe('mavensmate apex-script', function() {
 
     testClient.executeCommand('run-apex-script', { paths: [ apexScriptPath ] })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result[path.basename(apexScriptPath)].success.should.equal(false);
-        response.result[path.basename(apexScriptPath)].compileProblem.should.equal('expecting a right parentheses, found \'<EOF>\'');
+        response[path.basename(apexScriptPath)].success.should.equal(false);
+        response[path.basename(apexScriptPath)].compileProblem.should.equal('expecting a right parentheses, found \'<EOF>\'');
         done();
       })
       .catch(function(err) {
@@ -81,9 +79,8 @@ describe('mavensmate apex-script', function() {
 
     testClient.executeCommand('run-apex-script', { paths: [ apexScriptPath ] })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result[path.basename(apexScriptPath)].success.should.equal(true);
-        should.equal(response.result[path.basename(apexScriptPath)].compileProblem, null);
+        response[path.basename(apexScriptPath)].success.should.equal(true);
+        should.equal(response[path.basename(apexScriptPath)].compileProblem, null);
         done();
       })
       .catch(function(err) {

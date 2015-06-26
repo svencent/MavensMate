@@ -73,8 +73,8 @@ describe('mavensmate edit-project', function(){
       password: process.env.SALESFORCE_PASSWORD || 'force' 
     })
       .then(function(response) {
-        response.should.have.property('result');
-        response.result.should.equal('Credentials updated successfully!');
+        
+        response.should.equal('Credentials updated successfully!');
         done();
       })
       .catch(function(err) {
