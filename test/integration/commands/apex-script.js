@@ -44,7 +44,7 @@ describe('mavensmate apex-script', function() {
 
     testClient.executeCommand('new-apex-script', { name: 'foo' })
       .then(function(response) {
-        response.should.equal('Apex script created successfully');
+        response.message.should.equal('Apex script created successfully');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'apex-script', 'apex-scripts'),  'Apex scripts directory does not exist');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'apex-script', 'apex-scripts', 'foo.cls'),  'Script file does not exist');
         done();

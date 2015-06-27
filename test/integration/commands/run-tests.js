@@ -111,17 +111,17 @@ describe('mavensmate run-tests', function(){
       })
       .then(function(response) {
         
-        response.result.should.have.property('testResults');
-        response.result.should.have.property('coverageResults');
-        response.result.testResults.should.have.property('RunTestsApexClass');
-        response.result.testResults.RunTestsApexClass.Status.should.equal('Completed');
-        response.result.testResults.RunTestsApexClass.results[0].Outcome.should.equal('Pass');
-        response.result.testResults.RunTestsApexClass.results[0].MethodName.should.equal('myTest');
-        response.result.coverageResults.should.have.property('classes');
-        response.result.coverageResults.should.have.property('triggers');
-        response.result.coverageResults.classes.CoverMe.coveredLines.length.should.equal(1);
-        response.result.coverageResults.classes.CoverMe.coveredLines[0].should.equal(1);
-        response.result.coverageResults.classes.CoverMe.percentCovered.should.equal(100);
+        response.should.have.property('testResults');
+        response.should.have.property('coverageResults');
+        response.testResults.should.have.property('RunTestsApexClass');
+        response.testResults.RunTestsApexClass.Status.should.equal('Completed');
+        response.testResults.RunTestsApexClass.results[0].Outcome.should.equal('Pass');
+        response.testResults.RunTestsApexClass.results[0].MethodName.should.equal('myTest');
+        response.coverageResults.should.have.property('classes');
+        response.coverageResults.should.have.property('triggers');
+        response.coverageResults.classes.CoverMe.coveredLines.length.should.equal(1);
+        response.coverageResults.classes.CoverMe.coveredLines[0].should.equal(1);
+        response.coverageResults.classes.CoverMe.percentCovered.should.equal(100);
         done();
       })
       .catch(function(err) {
@@ -136,11 +136,11 @@ describe('mavensmate run-tests', function(){
       testClient.executeCommand('get-coverage', { paths: coverageClasses  })
         .then(function(response) {
           
-          response.result.should.have.property('CoverMe.cls');
-          response.result['CoverMe.cls'].coveredLines.length.should.equal(1);
-          response.result['CoverMe.cls'].coveredLines[0].should.equal(1);
-          response.result['CoverMe.cls'].totalLines.should.equal(1);
-          response.result['CoverMe.cls'].percentCovered.should.equal(100);
+          response.should.have.property('CoverMe.cls');
+          response['CoverMe.cls'].coveredLines.length.should.equal(1);
+          response['CoverMe.cls'].coveredLines[0].should.equal(1);
+          response['CoverMe.cls'].totalLines.should.equal(1);
+          response['CoverMe.cls'].percentCovered.should.equal(100);
           done();
         })
         .catch(function(err) {
@@ -153,7 +153,7 @@ describe('mavensmate run-tests', function(){
       testClient.executeCommand('get-coverage', { global: true  })
         .then(function(response) {
           
-          response.result.should.be.a('number');
+          response.should.be.a('number');
           done();
         })
         .catch(function(err) {

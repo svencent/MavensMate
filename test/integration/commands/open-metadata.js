@@ -11,7 +11,7 @@ describe('mavensmate open-metadata', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'open-metadata');

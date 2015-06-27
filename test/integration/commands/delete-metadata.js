@@ -14,7 +14,7 @@ describe('mavensmate delete-metadata', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'delete-metadata');
@@ -54,9 +54,9 @@ describe('mavensmate delete-metadata', function(){
       .then(function(response) {
         
         response.success.should.equal(true);
-        response.result.status.should.equal('Succeeded');
-        response.result.numberComponentErrors.should.equal(0);
-        response.result.numberComponentsDeployed.should.equal(2);
+        response.status.should.equal('Succeeded');
+        response.numberComponentErrors.should.equal(0);
+        response.numberComponentsDeployed.should.equal(2);
         fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass.cls')).should.equal(false);
         fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass2.cls')).should.equal(false);
         done();

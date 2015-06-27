@@ -44,7 +44,7 @@ describe('mavensmate clean-project-command', function() {
     testClient.executeCommand('clean-project')
       .then(function(response) {
         
-        response.should.equal('Project cleaned successfully');
+        response.message.should.equal('Project cleaned successfully');
 
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project'),  'Project directory does not exist');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'config'),  'Project config directory does not exist');
@@ -70,7 +70,7 @@ describe('mavensmate clean-project-command', function() {
     testClient.executeCommand('clean-project')
       .then(function(response) {
         
-        response.should.equal('Project cleaned successfully');
+        response.message.should.equal('Project cleaned successfully');
 
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project'),  'Project directory does not exist');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'config'),  'Project config directory does not exist');

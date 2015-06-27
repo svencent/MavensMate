@@ -1,7 +1,7 @@
 'use strict';
 
+var sinon           = require('sinon');
 var ApexController  = require('../../../lib/mavensmate/ui/controllers/apex');
-var sinon = require('sinon');
 
 describe('mavensmate ApexController', function(){
 

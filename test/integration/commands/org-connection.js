@@ -15,7 +15,7 @@ describe('mavensmate org-connections', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'org-connections');
@@ -45,10 +45,27 @@ describe('mavensmate org-connections', function(){
     testClient.executeCommand('new-connection', payload)
       .then(function(response) {
         
-        response.should.equal('Org connection successfully created');
+        response.message.should.equal('Org connection successfully created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'),  'Org Connections file not created');
         var connections = fs.readJsonSync(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'));
         connections.length.should.equal(1);
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
+  });
+
+  it('should get org connections', function(done) {
+    this.timeout(10000);      
+    
+    testClient.executeCommand('get-connections')
+      .then(function(response) {
+        response.length.should.equal(1);
+        response[0].username.should.equal('mm@force.com');
+        response[0].password.should.equal('force');
+        response[0].environment.should.equal('developer');
+        response[0].should.have.property('id');
         done();
       })
       .catch(function(err) {
@@ -66,8 +83,7 @@ describe('mavensmate org-connections', function(){
     };
     testClient.executeCommand('new-connection', payload)
       .catch(function(err) {
-        err.should.have.property('error');
-        err.error.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out');
+        err.message.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'),  'Org Connections file not created');
         var connections = fs.readJsonSync(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'));
         connections.length.should.equal(1);
@@ -87,7 +103,7 @@ describe('mavensmate org-connections', function(){
     testClient.executeCommand('delete-connection', payload)
       .then(function(response) {
         
-        response.should.equal('Successfully deleted org connection');
+        response.message.should.equal('Successfully deleted org connection');
         connections = fs.readJsonSync(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'));
         connections.length.should.equal(0);
         done();

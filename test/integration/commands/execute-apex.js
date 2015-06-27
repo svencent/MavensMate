@@ -35,7 +35,7 @@ describe('mavensmate execute-apex', function() {
     testClient.executeCommand('execute-apex', { body: 'String foo = \'bar\';' })
       .then(function(response) {
         
-        response.result.compiled.should.equal(true);
+        response.compiled.should.equal(true);
         response.success.should.equal(true);
         done();
       })
@@ -50,9 +50,9 @@ describe('mavensmate execute-apex', function() {
     testClient.executeCommand('execute-apex', { body: 'String foo = \'bar\'' })
       .then(function(response) {
         
-        response.result.compiled.should.equal(false);
+        response.compiled.should.equal(false);
         response.success.should.equal(false);
-        response.result.compileProblem.should.equal('expecting a semi-colon, found \'<EOF>\'');
+        response.compileProblem.should.equal('expecting a semi-colon, found \'<EOF>\'');
         done();
       })
       .catch(function(err) {

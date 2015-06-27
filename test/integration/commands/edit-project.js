@@ -74,7 +74,7 @@ describe('mavensmate edit-project', function(){
     })
       .then(function(response) {
         
-        response.should.equal('Credentials updated successfully!');
+        response.message.should.equal('Credentials updated successfully!');
         done();
       })
       .catch(function(err) {

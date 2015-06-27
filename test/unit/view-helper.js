@@ -15,7 +15,7 @@ describe('mavensmate view-helper', function(){
   var viewHelper;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'view-helper');
     helper.addProject(testClient, 'view-helper', function(err, proj) {

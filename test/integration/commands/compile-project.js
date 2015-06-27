@@ -39,7 +39,7 @@ describe('mavensmate compile-project', function(){
       .then(function(response) {
         
         response.success.should.equal(true);
-        response.result.status.should.equal('Succeeded');
+        response.status.should.equal('Succeeded');
         done();
       })
       .catch(function(err) {

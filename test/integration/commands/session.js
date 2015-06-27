@@ -11,7 +11,7 @@ describe('mavensmate session', function() {
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     done();
@@ -52,8 +52,6 @@ describe('mavensmate session', function() {
     testClient.executeCommand('session', payload)
       .catch(function(err) {
         err.message.should.equal('Could not log in to Salesforce.com: Error: INVALID_LOGIN: Invalid username, password, security token; or user locked out.');
-      })
-      .finally(function() {
         done();
       });
   });

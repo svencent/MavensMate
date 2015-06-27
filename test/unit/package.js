@@ -17,7 +17,7 @@ describe('mavensmate unit-package', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'package-test');
     helper.addProject(testClient, 'package-test', function(err, proj) {

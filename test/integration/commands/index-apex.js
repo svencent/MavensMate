@@ -14,7 +14,7 @@ describe('mavensmate index-apex', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'index-apex');
@@ -44,7 +44,7 @@ describe('mavensmate index-apex', function(){
     testClient.executeCommand('index-apex')
       .then(function(response) {
         
-        response.should.equal('Symbols successfully indexed');
+        response.message.should.equal('Symbols successfully indexed');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'config', '.symbols'),  'Symbols directory does not exist');
         done();
       })
@@ -62,7 +62,7 @@ describe('mavensmate index-apex', function(){
       })
       .then(function(response) {
         
-        response.should.equal('Symbols successfully indexed for IndexMySymbolsClass');
+        response.message.should.equal('Symbols successfully indexed for IndexMySymbolsClass');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'config', '.symbols'),  'Symbols directory does not exist');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'config', '.symbols', 'IndexMySymbolsClass.json'),  'Symbols file does not exist');
         done();

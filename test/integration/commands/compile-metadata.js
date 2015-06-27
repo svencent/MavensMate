@@ -12,7 +12,7 @@ describe('mavensmate compile-metadata', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(8000);
     /*jshint camelcase: false */
     process.env.mm_compile_check_conflicts = false;
     /*jshint camelcase: true */
@@ -71,8 +71,8 @@ describe('mavensmate compile-metadata', function(){
       .then(function(response) {
         
         response.success.should.equal(true);
-        response.result.details.componentSuccesses.length.should.equal(1);
-        response.result.details.componentSuccesses[0].State.should.equal('Completed');
+        response.details.componentSuccesses.length.should.equal(1);
+        response.details.componentSuccesses[0].State.should.equal('Completed');
         done();
       })
       .catch(function(err) {
@@ -111,8 +111,8 @@ describe('mavensmate compile-metadata', function(){
       .then(function(response) {
         
         response.success.should.equal(false);
-        response.result.details.componentSuccesses.length.should.equal(0);
-        response.result.details.conflicts.should.have.property('ConflictCheckClass.cls');
+        response.details.componentSuccesses.length.should.equal(0);
+        response.details.conflicts.should.have.property('ConflictCheckClass.cls');
         process.env.mm_compile_check_conflicts = false;
         done();
       })
@@ -137,13 +137,13 @@ describe('mavensmate compile-metadata', function(){
       .then(function(response) {
         
         response.success.should.equal(false);
-        response.result.details.componentFailures.length.should.equal(1);
-        response.result.details.componentFailures[0].should.have.property('DeployDetails');
-        response.result.details.componentFailures[0].DeployDetails.componentFailures[0].success.should.equal(false);
-        response.result.details.componentFailures[0].DeployDetails.componentFailures[0].lineNumber.should.equal(1);
-        response.result.details.componentFailures[0].DeployDetails.componentFailures[0].columnNumber.should.equal(-1);
-        response.result.details.componentFailures[0].DeployDetails.componentFailures[0].problemType.should.equal('Error');
-        response.result.details.componentFailures[0].DeployDetails.componentFailures[0].fileName.should.equal('CompileMetadataToolingFailClass');
+        response.details.componentFailures.length.should.equal(1);
+        response.details.componentFailures[0].should.have.property('DeployDetails');
+        response.details.componentFailures[0].DeployDetails.componentFailures[0].success.should.equal(false);
+        response.details.componentFailures[0].DeployDetails.componentFailures[0].lineNumber.should.equal(1);
+        response.details.componentFailures[0].DeployDetails.componentFailures[0].columnNumber.should.equal(-1);
+        response.details.componentFailures[0].DeployDetails.componentFailures[0].problemType.should.equal('Error');
+        response.details.componentFailures[0].DeployDetails.componentFailures[0].fileName.should.equal('CompileMetadataToolingFailClass');
         done();
       })
       .catch(function(err) {

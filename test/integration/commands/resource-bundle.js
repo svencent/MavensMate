@@ -15,7 +15,7 @@ describe('mavensmate resource-bundle', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'resource-bundle');
@@ -65,8 +65,7 @@ describe('mavensmate resource-bundle', function(){
 
     testClient.executeCommand('new-resource-bundle', payload)
       .then(function(response) {
-        
-        response.should.equal('Resource bundle(s) successfully created');
+        response.message.should.equal('Resource bundle(s) successfully created');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource'),  'Resource bundle directory not created');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource', 'css'),  'Resource bundle css directory not created');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource', 'js'),  'Resource bundle js directory not created');
@@ -88,8 +87,7 @@ describe('mavensmate resource-bundle', function(){
 
     testClient.executeCommand('deploy-resource-bundle', payload)
       .then(function(response) {
-        
-        response.should.equal('Resource bundle successfully deployed');
+        response.message.should.equal('Resource bundle successfully deployed');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource'),  'Resource bundle staticresource does not exist');
         done();
       })

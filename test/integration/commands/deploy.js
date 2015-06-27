@@ -43,6 +43,25 @@ describe('mavensmate deploy-to-server', function() {
       });
   });
 
+  it('should require at least one deploy target', function(done) {
+    var deployPayload = {
+      destinations: [],
+      package: { 'ApexClass': ['DeployClass']  },   
+      deployOptions: {
+        rollbackOnError: true,
+        performRetrieve: true,
+        checkOnly: true,
+        ignoreWarnings: false,
+        runAllTests: false
+      }
+    };
+    testClient.executeCommand('deploy', deployPayload)
+      .catch(function(err) {
+        err.message.should.equal('Please specify at least one destination');
+        done();
+      });
+  });
+
   it('should validate deploy to an org connection', function(done) {
     this.timeout(50000);  
 
@@ -56,13 +75,13 @@ describe('mavensmate deploy-to-server', function() {
         return testClient.executeCommand('new-connection', payload);
       })
       .then(function() {
-        return testClient.executeCommand('get-connections', payload);
+        return testClient.executeCommand('get-connections');
       })
       .then(function(conns) {   
         var deployPayload = {
-          destinations : conns.result,
-          package : { 'ApexClass' : ['DeployClass']  },   
-          deployOptions     : {
+          destinations: conns,
+          package: { 'ApexClass': ['DeployClass']  },   
+          deployOptions: {
             rollbackOnError: true,
             performRetrieve: true,
             checkOnly: true,
@@ -72,13 +91,11 @@ describe('mavensmate deploy-to-server', function() {
         };
         return testClient.executeCommand('deploy', deployPayload);
       })
-      .then(function(response) {
-        should.equal(err, null);
-        
-        response.result.should.have.property('mm@force.com');
-        response.result['mm@force.com'].checkOnly.should.equal(true);
-        response.result['mm@force.com'].done.should.equal(true);
-        response.result['mm@force.com'].success.should.equal(true);
+      .then(function(response) {        
+        response.should.have.property('mm@force.com');
+        response['mm@force.com'].checkOnly.should.equal(true);
+        response['mm@force.com'].done.should.equal(true);
+        response['mm@force.com'].success.should.equal(true);
         done();
       })
       .catch(function(err) {

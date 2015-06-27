@@ -15,7 +15,7 @@ describe('mavensmate new-project', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'new-project-existing');
@@ -38,8 +38,7 @@ describe('mavensmate new-project', function(){
   it('should require username and password', function(done) {
     testClient.executeCommand('new-project', {})
       .catch(function(err) {
-        err.should.have.property('error');
-        err.error.should.equal('Please specify username, password, and project name');
+        err.message.should.equal('Please specify username, password, and project name');
         done();
       });      
   });
@@ -56,8 +55,7 @@ describe('mavensmate new-project', function(){
     };
     testClient.executeCommand('new-project', payload)
       .catch(function(err) {
-        err.should.have.property('error');
-        err.error.should.equal('Directory already exists!');
+        err.message.should.equal('Directory already exists!');
         done();
       });
   });
@@ -73,8 +71,7 @@ describe('mavensmate new-project', function(){
     };
     testClient.executeCommand('new-project', payload)
       .catch(function(err) {
-        err.should.have.property('error');
-        err.error.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out');
+        err.message.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out');
         done();
       });
   });
@@ -98,7 +95,7 @@ describe('mavensmate new-project', function(){
     testClient.executeCommand('new-project', payload)
       .then(function(response) {
         
-        response.should.equal('Project created successfully');
+        response.message.should.equal('Project created successfully');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project'),  'Project directory does not exist');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'config'),  'Project config directory does not exist');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src'),  'Project src directory does not exist');

@@ -60,16 +60,6 @@ describe('mavensmate new-project-cli', function(){
     done();
   });
 
-  it('should allow interactive mode', function(done) {        
-    cliClient.headless = false;
-    cliClient.program._events['new-project']();
-    
-    executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('new-project'));
-    cliClient.headless = true;
-    done();
-  });
-
   it('should accept stdin', function(done) {
     cliClient.program._events['new-project']();
     

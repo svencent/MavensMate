@@ -1,7 +1,7 @@
 'use strict';
 
-var DeployController  = require('../../../lib/mavensmate/ui/controllers/deploy');
 var sinon             = require('sinon');
+var DeployController  = require('../../../lib/mavensmate/ui/controllers/deploy');
 var helper            = require('../../test-helper');
 
 describe('mavensmate DeployController', function(){

@@ -1,7 +1,7 @@
 'use strict';
 
-var ProjectController  = require('../../../lib/mavensmate/ui/controllers/project');
-var sinon = require('sinon');
+var sinon               = require('sinon');
+var ProjectController   = require('../../../lib/mavensmate/ui/controllers/project');
 
 describe('mavensmate ProjectController', function(){
 

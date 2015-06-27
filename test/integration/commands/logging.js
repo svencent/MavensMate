@@ -14,7 +14,7 @@ describe('mavensmate logging', function() {
   var testClient;
 
   before(function(done) {
-    this.timeout(4000);
+    this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'logging');
@@ -57,7 +57,7 @@ describe('mavensmate logging', function() {
     testClient.executeCommand('start-logging')
       .then(function(response) {
         
-        response.should.equal('Started logging for debug users');
+        response.message.should.equal('Started logging for debug users');
         done();
       })
       .catch(function(err) {
@@ -71,7 +71,7 @@ describe('mavensmate logging', function() {
     testClient.executeCommand('stop-logging')
       .then(function(response) {
         
-        response.should.equal('Stopped logging for debug users');
+        response.message.should.equal('Stopped logging for debug users');
         done();
       })
       .catch(function(err) {
