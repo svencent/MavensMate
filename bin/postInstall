@@ -1,10 +1,10 @@
+#!/usr/bin/env node
+'use strict';
+
 /**
  * @file Ensures the MavensMateWindowServer is executable (important for Sublime Text clients)
  * @author Joseph Ferraro <@joeferraro>
  */
-
-#!/usr/bin/env node
-'use strict';
 
 var fs    = require('fs');
 var os    = require('os');

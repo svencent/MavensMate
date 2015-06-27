@@ -1,10 +1,10 @@
+#!/usr/bin/env node
+'use strict';
+
 /**
  * @file Starts the MavensMate express server
  * @author Joseph Ferraro <@joeferraro>
  */
-
-#!/usr/bin/env node
-'use strict';
 
 var parseArgs   = require('minimist');
 var mavensmate  = require('../lib/mavensmate');
