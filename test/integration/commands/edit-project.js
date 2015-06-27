@@ -59,8 +59,7 @@ describe('mavensmate edit-project', function(){
     this.timeout(10000);      
     testClient.executeCommand('update-creds', { username: 'thiswontwork@foo.com', password: 'foo' })
       .catch(function(err) {
-        err.should.have.property('error');
-        err.error.should.contain('Could not log in to Salesforce.com: Error: INVALID_LOGIN: Invalid username, password, security token; or user locked out');
+        err.message.should.contain('Could not log in to Salesforce.com: Error: INVALID_LOGIN: Invalid username, password, security token; or user locked out');
         done(err);
       });
   });
