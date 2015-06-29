@@ -12,12 +12,16 @@ var EditorService     = require('../lib/mavensmate/editor');
 var temp              = require('temp');
 var TemplateService   = require('../lib/mavensmate/template');
 var logger            = require('winston');
+var sfdcClient        = require('./test-client');
 
 sinonAsPromised(require('bluebird'));
 
 exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace) {
   var self = this;
   testWorkspace = testWorkspace || path.join(self.baseTestDirectory(),'workspace');
+  if (fs.existsSync(path.join(testWorkspace, name))) {
+    fs.removeSync(path.join(testWorkspace, name));
+  }
   if (!fs.existsSync(path.join(testWorkspace, name))) {
     fs.copySync(path.join(self.baseTestDirectory(),'fixtures', 'test-project'), path.join(testWorkspace, name));
     var settings = fs.readJsonSync(path.join(testWorkspace, name, 'config', '.settings'));
@@ -90,7 +94,7 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
 exports.addProject = function(testClient, projectName) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    testClient.addProject(path.join(self.baseTestDirectory(),'workspace', projectName))
+    testClient.addProject(path.join(self.baseTestDirectory(),'workspace', projectName), sfdcClient)
       .then(function(response) {
         resolve(response);
       })

@@ -51,7 +51,7 @@ describe('mavensmate session', function() {
 
     testClient.executeCommand('session', payload)
       .catch(function(err) {
-        err.message.should.equal('Could not log in to Salesforce.com: Error: INVALID_LOGIN: Invalid username, password, security token; or user locked out.');
+        err.message.should.equal('INVALID_LOGIN: Invalid username, password, security token; or user locked out.');
         done();
       });
   });

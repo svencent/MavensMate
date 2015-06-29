@@ -48,15 +48,14 @@ describe('mavensmate open-metadata', function(){
     helper.createNewMetadata(testClient, 'ApexPage', 'OpenMetadataPage', 'ApexPage.page', { api_name : 'OpenMetadataPage' } )
       .then(function() {          
         var payload = {
-          paths : [ path.join(helper.baseTestDirectory(),'workspace', 'open-metadata', 'src', 'pages', 'OpenMetadataPage.page') ],
+          paths : [ path.join(helper.baseTestDirectory(), 'workspace', 'open-metadata', 'src', 'pages', 'OpenMetadataPage.page') ],
           preview: true
         };
         return testClient.executeCommand('open-metadata', payload);
       })
       .then(function(response) {
-        
-        response.result.should.have.property('OpenMetadataPage.page');
-        response.result['OpenMetadataPage.page'].indexOf('secur/frontdoor.jsp?sid=').should.be.at.least(0);
+        response.should.have.property('OpenMetadataPage.page');
+        response['OpenMetadataPage.page'].indexOf('secur/frontdoor.jsp?sid=').should.be.at.least(0);
         done();
       })
       .catch(function(err) {
