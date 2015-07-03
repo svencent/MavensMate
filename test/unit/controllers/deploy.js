@@ -3,6 +3,7 @@
 var sinon             = require('sinon');
 var DeployController  = require('../../../lib/mavensmate/ui/controllers/deploy');
 var helper            = require('../../test-helper');
+var Promise           = require('bluebird');
 
 describe('mavensmate DeployController', function(){
 
@@ -13,17 +14,19 @@ describe('mavensmate DeployController', function(){
     this.timeout(10000);
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'DeployControllerTest');
-    helper.addProject(testClient, 'DeployControllerTest', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'DeployControllerTest')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('DeployControllerTest')
-      .then(function() {
-        done();
-      });
+    helper.cleanUpTestProject('DeployControllerTest');
+    done();
   });
 
   describe('views', function() {
@@ -32,7 +35,7 @@ describe('mavensmate DeployController', function(){
 
     beforeEach(function() {
       ctrl = new DeployController({
-        app : {
+        app: {
           get: function(what) {
             if (what === 'client') {
               return testClient;
@@ -43,11 +46,12 @@ describe('mavensmate DeployController', function(){
     });
 
     it('should render deploy/new.html', function(done) {    
-      var req,res,spy;
-      req = res = {};
-      req.project = {};
-      spy = testClient.executeCommandForProject = sinon.spy();
-
+      var mockedExpress = helper.mockExpress(project);
+      var req = mockedExpress.req;
+      var res = mockedExpress.res;
+      var spy = testClient.executeCommandForProject = sinon.spy(function() {
+        return Promise.resolve();
+      });
       ctrl.new(req, res);
       spy.calledOnce.should.equal(true);
       done();
@@ -71,11 +75,12 @@ describe('mavensmate DeployController', function(){
     });
 
     it('should call execute', function(done) {    
-      var req,res,spy;
-      req = res = { send: function() {} };
-      req.project = {};
-      spy = testClient.executeCommandForProject = sinon.spy();
-
+      var mockedExpress = helper.mockExpress(project);
+      var req = mockedExpress.req;
+      var res = mockedExpress.res;
+      var spy = testClient.executeCommandForProject = sinon.spy(function() {
+        return Promise.resolve();
+      });
       ctrl.execute(req, res);
       spy.calledOnce.should.equal(true);
       done();
@@ -99,10 +104,12 @@ describe('mavensmate DeployController', function(){
     });
 
     it('should call getConnections', function(done) {    
-      var req,res,spy;
-      req = res = { send: function() {} };
-      req.project = {};
-      spy = testClient.executeCommandForProject = sinon.spy();
+      var mockedExpress = helper.mockExpress(project);
+      var req = mockedExpress.req;
+      var res = mockedExpress.res;
+      var spy = testClient.executeCommandForProject = sinon.spy(function() {
+        return Promise.resolve();
+      });
 
       ctrl.getConnections(req, res);
       spy.calledOnce.should.equal(true);
@@ -127,10 +134,12 @@ describe('mavensmate DeployController', function(){
     });
 
     it('should call newConnection', function(done) {    
-      var req,res,spy;
-      req = res = { send: function() {} };
-      req.project = {};
-      spy = testClient.executeCommandForProject = sinon.spy();
+      var mockedExpress = helper.mockExpress(project);
+      var req = mockedExpress.req;
+      var res = mockedExpress.res;
+      var spy = testClient.executeCommandForProject = sinon.spy(function() {
+        return Promise.resolve();
+      });
 
       ctrl.newConnection(req, res);
       spy.calledOnce.should.equal(true);
@@ -155,10 +164,12 @@ describe('mavensmate DeployController', function(){
     });
 
     it('should call deleteConnection', function(done) {    
-      var req,res,spy;
-      req = res = { send: function() {} };
-      req.project = {};
-      spy = testClient.executeCommandForProject = sinon.spy();
+      var mockedExpress = helper.mockExpress(project);
+      var req = mockedExpress.req;
+      var res = mockedExpress.res;
+      var spy = testClient.executeCommandForProject = sinon.spy(function() {
+        return Promise.resolve();
+      });
 
       ctrl.deleteConnection(req, res);
       spy.calledOnce.should.equal(true);

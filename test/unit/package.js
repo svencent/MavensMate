@@ -20,17 +20,19 @@ describe('mavensmate unit-package', function(){
     this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'package-test');
-    helper.addProject(testClient, 'package-test', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'package-test')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
     helper.cleanUpTestProject('package-test')
-      .then(function() {
-        done();
-      });
+    done();
   });
 
   it('should create instance from package.xml path', function(done) {

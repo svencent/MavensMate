@@ -18,18 +18,20 @@ describe('mavensmate view-helper', function(){
     this.timeout(8000);
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'view-helper');
-    helper.addProject(testClient, 'view-helper', function(err, proj) {
-      project = proj;
-      viewHelper = new ViewHelper({ client: testClient, port: 5000 });
-      done();
-    });
+    helper.addProject(testClient, 'view-helper')
+      .then(function(proj) {
+        project = proj;
+        viewHelper = new ViewHelper({ client: testClient, port: 5000 });
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
     helper.cleanUpTestProject('view-helper')
-      .then(function() {
-        done();
-      });
+    done();
   });
 
   it('should getClient', function(done) {    

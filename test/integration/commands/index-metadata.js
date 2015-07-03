@@ -61,7 +61,7 @@ describe('mavensmate index-metadata', function(){
     
     this.timeout(80000);
 
-    testClient.executeCommand('update-subscription', { subscription: [ 'CustomLabels', 'Letterhead', 'Queue', 'RecordType', 'CustomObjectSharingRules' ] })
+    testClient.executeCommand('update-subscription', { subscription: [ 'CustomLabel', 'Letterhead', 'Queue', 'RecordType', 'CustomObjectSharingRules' ] })
       .then(function(result) {
         return testClient.executeCommand('index-metadata');
       })

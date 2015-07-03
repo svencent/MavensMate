@@ -677,7 +677,7 @@
 				// todo catch error
 				var connHtml = ''
 				console.log(data)				
-				var conns = JSON.parse(data.responseText).result;
+				var conns = JSON.parse(data.responseText);
 				console.log(conns);
 				for (c in conns) {
 					connHtml += '<tr>'

@@ -16,17 +16,19 @@ describe('mavensmate mavensmate-file', function(){
     this.timeout(10000);
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'file-test');
-    helper.addProject(testClient, 'file-test', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'file-test')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
     helper.cleanUpTestProject('file-test')
-      .then(function() {
-        done();
-      });
+    done();
   });
 
   it('should create new File instance of type ApexClass', function(done) {

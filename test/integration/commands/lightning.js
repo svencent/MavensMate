@@ -18,16 +18,17 @@ describe('mavensmate lightning', function(){
     testClient = helper.createClient('atom');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'lightning');
-    helper.addProject(testClient, 'lightning', function(err, proj) {
-      project = proj;
-      project.indexLightning()
-        .then(function() {
-          done();
-        })
-        .catch(function(err) {
-          done(err);
-        });
-    });
+    helper.addProject(testClient, 'lightning')
+      .then(function(proj) {
+        project = proj;
+        return project.indexLightning()
+      })
+      .then(function() {
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
@@ -65,7 +66,6 @@ describe('mavensmate lightning', function(){
     };
     testClient.executeCommand('new-lightning-app', payload)
       .then(function(response) {
-        
         response.message.should.equal('Lightning app created successfully');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestfoo'),  'Lightning bundle not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestfoo', 'mmunittestfoo.app'),  'Lightning app not created');
@@ -98,7 +98,6 @@ describe('mavensmate lightning', function(){
     };
     testClient.executeCommand('new-lightning-component', payload)
       .then(function(response) {
-        
         response.message.should.equal('Lightning component created successfully');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmcompunittestfoo'),  'Lightning bundle not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmcompunittestfoo', 'mmcompunittestfoo.cmp'),  'Lightning component not created');
@@ -143,7 +142,6 @@ describe('mavensmate lightning', function(){
     };
     testClient.executeCommand('new-lightning-event', payload)
       .then(function(response) {
-        
         response.message.should.equal('Lightning event created successfully');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestevent'),  'Lightning bundle not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestevent', 'mmunittestevent.evt'),  'Lightning event not created');

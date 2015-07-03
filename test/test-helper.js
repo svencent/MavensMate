@@ -222,3 +222,18 @@ exports.getNewMetadataPayload = function(typeXmlName, apiName, templateFileName,
     }
   });
 };
+
+exports.mockExpress = function(project) {
+  var req = {};
+  var res = {};
+  res.status = function() { return res; };
+  res.render = function() { };
+  res.send = function() { };
+  res.locals = {};
+  res.locals.project = project;
+  req.project = project;
+  return {
+    req: req,
+    res: res
+  };
+};

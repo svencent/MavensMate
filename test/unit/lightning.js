@@ -20,17 +20,19 @@ describe('mavensmate lightning-unit', function(){
     helper.unlinkEditor();
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'lightning-unit');
-    helper.addProject(testClient, 'lightning-unit', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'lightning-unit')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err){
+        done(err);
+      });
   });
   
   after(function(done) {
     helper.cleanUpTestProject('lightning-unit')
-      .then(function() {
-        done();
-      });
+    done();
   });
 
   it('should create a bundle and bundle items, then delete the bundle item, then the bundle', function (done) {

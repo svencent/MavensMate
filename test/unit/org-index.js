@@ -17,17 +17,19 @@ describe('mavensmate org-index', function(){
     this.timeout(10000);
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'org-index');
-    helper.addProject(testClient, 'org-index', function(err, proj) {
-      project = proj;
-      done();
-    });
+    helper.addProject(testClient, 'org-index')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
     helper.cleanUpTestProject('org-index')
-      .then(function() {
-        done();
-      });
+    done();
   });
 
   it('should select metadata based on package.xml', function(done) {    
