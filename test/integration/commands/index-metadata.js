@@ -60,8 +60,7 @@ describe('mavensmate index-metadata', function(){
   it('should index uncommon types', function(done) {
     
     this.timeout(80000);
-
-    testClient.executeCommand('update-subscription', { subscription: [ 'CustomLabel', 'Letterhead', 'Queue', 'RecordType', 'CustomObjectSharingRules' ] })
+    testClient.executeCommand('update-subscription', { subscription: [ 'CustomLabel', 'Letterhead', 'Queue', 'RecordType', 'SharingRules' ] })
       .then(function(result) {
         return testClient.executeCommand('index-metadata');
       })
