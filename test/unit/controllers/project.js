@@ -6,6 +6,28 @@ var helper              = require('../../test-helper');
 
 describe('mavensmate ProjectController', function(){
 
+  var project;
+  var testClient;
+
+  before(function(done) {
+    this.timeout(10000);
+    testClient = helper.createClient('atom');
+    helper.putTestProjectInTestWorkspace(testClient, 'ProjectControllerTest');
+    helper.addProject(testClient, 'ProjectControllerTest')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
+  });
+
+  after(function(done) {
+    helper.cleanUpTestProject('ProjectControllerTest');
+    done();
+  });
+
   describe('views', function() {
     
     var ctrl;

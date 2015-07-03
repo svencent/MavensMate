@@ -49,7 +49,7 @@ describe('mavensmate ApexController', function(){
       // var mockedExpress = helper.mockExpress(project);
       // var req = mockedExpress.req;
       // var res = mockedExpress.res;
-      // var spy = sinon.spy(res.render);
+      // var spy = res.render = sinon.spy();
       // testClient.executeCommandForProject = function() {
       //   return Promise.resolve();
       // };
