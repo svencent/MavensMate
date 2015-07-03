@@ -42,7 +42,7 @@ describe('mavensmate ApexController', function(){
       });
     });
 
-    it.only('should render apex/new.html', function(done) {    
+    it('should render apex/new.html', function(done) {    
       var mockedExpress = helper.mockExpress(project);
       var req = mockedExpress.req;
       var res = mockedExpress.res;
