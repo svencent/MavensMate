@@ -5034,8 +5034,11 @@ input.search-query {
   color: #3498db;
 }
 .alert-error {
-  background-color: #f8f5f5;
-  border-color: #ebe9ea;
+  // background-color: #f8f5f5;
+  // border-color: #ebe9ea;
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
 }
 .alert-error a {
   color: #e74c3c;
