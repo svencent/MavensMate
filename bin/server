@@ -45,9 +45,9 @@ server.start()
           //   var spawn = require('child_process').spawn
           //   spawn('open', ['http://localhost:'+port+'/app/home/index?pid='+client.getProjects()[0].settings.id]);
           // }
-          var spawn = require('child_process').spawn
-          spawn('open', ['http://localhost:'+port+'/app/home/index?pid='+client.getProjects()[0].settings.id]);
-          console.log('MavensMate project path: '+response.path);
+          // var spawn = require('child_process').spawn;
+          // spawn('open', ['http://localhost:'+port+'/app/home/index?pid='+client.getProjects()[0].settings.id]);
+          // console.log('MavensMate project path: '+response.path);
         }
       });
     } else {
@@ -55,8 +55,8 @@ server.start()
       //   var spawn = require('child_process').spawn
       //   spawn('open', ['http://localhost:'+port]);
       // }
-      var spawn = require('child_process').spawn
-      spawn('open', ['http://localhost:'+port]);
+      // var spawn = require('child_process').spawn
+      // spawn('open', ['http://localhost:'+port]);
     }
   })
   .catch(function(err) {
