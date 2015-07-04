@@ -6,9 +6,23 @@
  * @author Joseph Ferraro <@joeferraro>
  */
 
-var fs    = require('fs');
+var fs    = require('fs-extra');
 var os    = require('os');
 var path  = require('path');
+
+console.log('MavensMate postInstall script...');
+console.log(process.argv);
+
+function getSublimeTextInstallPath() {
+  var platform = os.platform();
+  if (platform === 'darwin') {
+    return path.join(process.env.HOME, 'Library', 'Application Support', 'Sublime Text 3', 'Packages', 'User', 'MavensMate', 'node_modules', 'mavensmate');
+  } else if (platform === 'win32') {
+    return path.join(process.env.APPDATA, 'Sublime Text 3', 'Packages', 'User', 'MavensMate', 'node_modules', 'mavensmate');
+  } else if (platform === 'linux') {
+    return path.join(process.env.HOME, '.config', 'sublime-text-3', 'Packages', 'User', 'MavensMate', 'node_modules', 'mavensmate');
+  }
+}
 
 if (os.platform() === 'darwin') {
   fs.chmod(path.join(__dirname, 'MavensMateWindowServer.app', 'Contents', 'MacOS', 'MavensMateWindowServer'), '755', function(err) {
@@ -19,3 +33,13 @@ if (os.platform() === 'darwin') {
     }
   });
 }
+
+fs.ensureDirSync(getSublimeTextInstallPath());
+
+fs.copy(path.dirname(__dirname), getSublimeTextInstallPath(), true, function(err) {
+  if (err) {
+    console.error('Could not copy to Sublime Text packages directory: '+err.message);
+  } else {
+    console.log('MavensMate successfully copied to Sublime Text packages directory');
+  }
+});
