@@ -156,7 +156,7 @@
 					if (response.error) {
 						showMessage(response.error)
 					} else {
-						showMessage(response["result"], 'success', true)
+						showMessage(response.message, 'success', true)
 					}
 					hideLoading();
 				}
@@ -182,7 +182,7 @@
 					if (response.error) {
 						showMessage(response.error);
 					} else {
-						showMessageWithCustomAction(response.result, 'success', 'Refresh Index', 'hideMessage();index_org(true)')
+						showMessageWithCustomAction(response.message, 'success', 'Refresh Index', 'hideMessage();index_org(true)')
 					}
 					hideLoading();
 				}
