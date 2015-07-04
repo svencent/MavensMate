@@ -10,9 +10,6 @@ var fs    = require('fs-extra');
 var os    = require('os');
 var path  = require('path');
 
-console.log('MavensMate postInstall script...');
-console.log(process.argv);
-
 function getSublimeTextInstallPath() {
   var platform = os.platform();
   if (platform === 'darwin') {
@@ -34,12 +31,15 @@ if (os.platform() === 'darwin') {
   });
 }
 
-fs.ensureDirSync(getSublimeTextInstallPath());
-
-fs.copy(path.dirname(__dirname), getSublimeTextInstallPath(), true, function(err) {
-  if (err) {
-    console.error('Could not copy to Sublime Text packages directory: '+err.message);
-  } else {
-    console.log('MavensMate successfully copied to Sublime Text packages directory');
-  }
-});
+try {
+  fs.ensureDirSync(getSublimeTextInstallPath());
+  fs.copy(path.dirname(__dirname), getSublimeTextInstallPath(), true, function(err) {
+    if (err) {
+      console.error('Could not copy to Sublime Text packages directory: '+err.message);
+    } else {
+      console.log('MavensMate successfully copied to Sublime Text packages directory');
+    }
+  });
+} catch(e) {
+  console.log('Failed to copy MavensMate to Sublime Text packages path');
+}
