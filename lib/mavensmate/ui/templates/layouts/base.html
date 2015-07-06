@@ -1,6 +1,11 @@
 <html>
 <head>
-    <title>MavensMate</title>
+    {% if project && project.sfdcClient %}
+        <title>MavensMate | {{project.name}}</title>
+    {% else %}
+        <title>MavensMate | New Project</title>
+    {% endif %}
+    <link rel="icon" type="image/png" href="{{ mavensmate.ui.getStaticResourcePath() }}/images/favicon.png">
     <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/bootstrap/css/bootstrap.css"></link> 
     <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/bootstrap/css/bootstrap-responsive.css"></link> 
     <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/flat-ui.css"></link> 
