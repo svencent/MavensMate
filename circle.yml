@@ -3,5 +3,6 @@ dependencies:
     - sudo apt-get install libgnome-keyring-dev
 test:
   override:
+    - chmod +x ./ci.sh
     - ./ci.sh "$CIRCLE_NODE_INDEX" "$CIRCLE_NODE_TOTAL":
         parallel: true
