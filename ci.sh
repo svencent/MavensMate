@@ -14,5 +14,5 @@ do
   ((i++))
 done
 
-@echo $(value files[@])
-make tests2=${files[@]} test
+echo ${files[@]}
+# make tests2=${files[@]} test
