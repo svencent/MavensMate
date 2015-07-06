@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# CIRCLE_NODE_INDEX=1
-# CIRCLE_NODE_TOTAL=2
-
-# cd ~/projects/testing123
-
 i=0
 files=( )
 for file in $(find ./test/integration/commands -name "*.js")
