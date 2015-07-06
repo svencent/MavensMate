@@ -5,7 +5,7 @@ NODE_INDEX=${CIRCLE_NODE_INDEX:-0}
 
 i=0
 files=()
-for file in $(find ./test/integration/commands -name "*.js" | sort)
+for file in $(find test -name "*.js" | sort)
 do
   if [ $(($i % ${NODE_TOTAL})) -eq ${NODE_INDEX} ]
   then
@@ -14,4 +14,5 @@ do
   ((i++))
 done
 
+@echo $(value files[@])
 make tests2=${files[@]} test
