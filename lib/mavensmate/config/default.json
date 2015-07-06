@@ -15,9 +15,7 @@
   "mm_autocomplete": true,
   "mm_check_for_updates": true,
   "mm_beta_user": false,
-  "mm_auto_install_mm_updates": true,
   "mm_log_level": "INFO",
-  "mm_log_soap": false,
   "mm_log_location": "",
   "mm_send_usage_statistics": true,
   "mm_path": "default",
@@ -31,9 +29,7 @@
   "mm_plugin_client_location": "/Applications",
   "mm_osx_plugin_client_app_name": "Sublime Text 3.app",
   "mm_compile_with_tooling_api": true,
-  "mm_log_anonymous_apex": true,
   "mm_play_sounds": true,
-  "mm_server_port": 7777,
   "mm_apex_file_extensions": [
     ".page",
     ".component",
@@ -89,16 +85,9 @@
     "Profile"
   ],
   "mm_ignore_managed_metadata": true,
-  "mm_number_of_logs_limit": 10,
-  "mm_test_api": "metadata",
   "mm_archive_deployments": true,
   "mm_purge_on_delete": false,
-  "mm_verbose": false,
   "mm_use_org_metadata_for_completions": true,
-  "mm_mass_index_apex_symbols": false,
-  "mm_use_legacy_test_ui": true,
-  "mm_download_logs_during_run_all_tests": false,
   "mm_timeout": 600,
-  "mm_compare_before_deployment": true,
-  "mm_skip_legacy_check": false
+  "mm_compare_before_deployment": true
 }
