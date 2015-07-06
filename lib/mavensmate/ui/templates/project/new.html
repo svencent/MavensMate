@@ -263,13 +263,12 @@
 							showMessage(response.error);
 							notifySound();
 						} else {
-							var result = response.result;
-							renderBufferedTree(result.index);
-							$('#sid').val(result.sid);
-							$('#metadata_server_url').val(result.metadata_server_url);
-							$('#server_url').val(result.server_url);
+							renderBufferedTree(response.index);
+							$('#sid').val(response.sid);
+							$('#metadata_server_url').val(response.metadata_server_url);
+							$('#server_url').val(response.server_url);
 							if (!isSubscriptionListBuilt) {
-								buildSubcriptionList(result.metadataTypes);
+								buildSubcriptionList(response.metadataTypes);
 							}
 							hideMessage();
 						}
