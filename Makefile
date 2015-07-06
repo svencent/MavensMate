@@ -6,7 +6,7 @@ test:
 	@NODE_ENV=test HTTP_MAX_SOCKETS=5000 ./node_modules/.bin/mocha \
 	--recursive \
 	--check-leaks \
-	$(TESTS)
+	$(TESTS2)
 
 coverage:
 	@NODE_ENV=test HTTP_MAX_SOCKETS=5000 ./node_modules/.bin/mocha \
