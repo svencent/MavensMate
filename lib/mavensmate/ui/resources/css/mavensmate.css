@@ -550,6 +550,14 @@ form.form-stacked input.span12, form.form-stacked select {
 	background-color: #98a4af !important;
 }
 
+.footer.bottom-menu.bottom-menu-inverse a {
+	color:#fff;
+}
+
+.footer.bottom-menu.bottom-menu-inverse a:hover {
+	color:#2ecc71;
+}
+
 /*
 	Adding Icons
 

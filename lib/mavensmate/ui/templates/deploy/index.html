@@ -316,7 +316,7 @@
 <script type="text/javascript">
 	var hasIndexedMetadata = {{ hasIndexedMetadata }};
 	var operation;
-	var PROJECT_WRAPPER_OFFSET = 20;
+	var PROJECT_WRAPPER_OFFSET = 17;
 
 	function isValidateOnly() {
 		return $("#check_only").is(":checked");
@@ -363,7 +363,7 @@
 		}  
 
 		$(window).resize(function() {
-			resize_arcade(280)
+			resize_arcade(370)
 			resizeProjectWrapper(PROJECT_WRAPPER_OFFSET)
 		});
 
@@ -415,7 +415,7 @@
 		});
 
 		$('label.checkbox input').checkbox();
-		resize_arcade(280)
+		resize_arcade(370)
 		window.resizeTo(1000, 850)
 		centerWindow()
 		setTimeout(resizeProjectWrapper(PROJECT_WRAPPER_OFFSET),500)
