@@ -31,7 +31,8 @@ describe('mavensmate lightning-unit', function(){
   });
   
   after(function(done) {
-    helper.cleanUpTestProject('lightning-unit')
+    this.timeout(8000);
+    helper.cleanUpTestProject('lightning-unit');
     done();
   });
 
