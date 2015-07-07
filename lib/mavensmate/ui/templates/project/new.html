@@ -159,10 +159,10 @@
 		function handleResponse(response) {
 			if (operation === 'new') {
 				if (response.error) {
-					showMessage(response['error']);
+					showMessage(response.error);
 					notifySound();
 				} else {
-					showMessage(response['result'], 'info');
+					showMessage(response.result.message, 'success');
 					// closeWindow();
 				}
 				hideLoading();
