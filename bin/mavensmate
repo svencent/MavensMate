@@ -1,10 +1,10 @@
+#!/usr/bin/env node
+'use strict';
+
 /**
  * @file mavensmate command line interface
  * @author Joseph Ferraro <@joeferraro>
  */
-
-#!/usr/bin/env node
-'use strict';
 
 process.title = 'mavensmate cli';
 
@@ -67,22 +67,14 @@ var commandName = program.args[0];
 
 // not all command needs a project
 if (projectExemptCommands.indexOf(commandName) === -1) {
-  cliClient.addProject(process.cwd(), function(err) {
-    if (err) {
-      if (cliClient.headless) {
-        var result = {
-          success: false,
-          result: err.message,
-          stack: err.stack
-        };
-        console.error(JSON.stringify(result));
-      } else {
-        console.error('Could not set project: '+err.message+ ', '+err.stack);
-      }
+  cliClient.addProject(process.cwd())
+    .then(function() {
+      program.parse(process.argv); // run subcommand if necessary
+    })
+    .catch(function(err) {
+      console.error('Could not set project: '+err.message+ ', '+err.stack);
       process.exit(1);
-    }
-    program.parse(process.argv); // run subcommand if necessary
-  });
+    });    
 } else {
   program.parse(process.argv); // run subcommand if necessary
 }
