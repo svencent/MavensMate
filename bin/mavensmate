@@ -23,8 +23,7 @@ program
 
 var cliClient = mavensmate.createClient({
   editor: program.editor || 'atom',
-  headless: program.headless || false,
-  verbose: program.verbose || false,
+  isServer: false,
   program: program
 });
 
