@@ -63,7 +63,6 @@
     "node-uuid": "1.4.1",
     "open": "0.0.3",
     "portfinder": "0.2.1",
-    "randomstring": "1.0.3",
     "request": "2.47.0",
     "sax": "0.6.1",
     "season": "~4.0.0",
