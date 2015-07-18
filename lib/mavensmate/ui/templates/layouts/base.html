@@ -83,15 +83,14 @@
             if (filter && filter.length > 2) {
                 $("#tree").dynatree("option", "initAjax",
                     {
-                        type     : "POST",
-                        dataType : "json",
+                        type: "POST",
+                        dataType: "json",
                         contentType: 'application/json; charset=utf-8',
-                        url      : baseLocalServerURL+"/execute",
-                        data     : JSON.stringify({
-                            path                : '{{ project.path }}',
-                            keyword             : filter,
-                            ids                 : $("#tree").dynatree("getTree").selectedIds,
-                            command             : 'get-metadata-index'
+                        url: baseLocalServerURL+"/execute",
+                        data: JSON.stringify({
+                            keyword: filter,
+                            ids: $("#tree").dynatree("getTree").selectedIds,
+                            command: 'search-metadata-index'
                         })
                     }
                 );
@@ -101,7 +100,6 @@
         }
 
         function clearFilter() {
-            //ids: tree.selectedIds
             $("#tree").dynatree("option", "initAjax",
                 {
                     type     : "POST",
@@ -111,7 +109,7 @@
                     data     : JSON.stringify({
                         path                : '{{ project.path }}',
                         ids                 : $("#tree").dynatree("getTree").selectedIds,
-                        command             : 'get-metadata-index'
+                        command             : 'search-metadata-index'
                     })
                 }
             );

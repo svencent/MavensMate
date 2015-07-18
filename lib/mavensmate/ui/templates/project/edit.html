@@ -16,7 +16,7 @@
 		<li class="active">
 			<a href="#metadata" data-toggle="tab">
 				Project Metadata &nbsp;&nbsp;
-				<span onclick="index_org(true)" class="label" style="line-height:15px;cursor:pointer;">
+				<span onclick="indexOrg(true)" class="label" style="line-height:15px;cursor:pointer;">
 					Refresh <i class="icon-refresh"></i>
 				</span> 	
 			</a>
@@ -106,11 +106,11 @@
 		</div>
 
 		<div id="metadata" class="tab-pane active">
-			<!-- <div class="alert alert-info" id="filter">
+			<div class="alert alert-info" id="filter">
 				<input type="text" placeholder="Search for metadata" id="txtFilter" style="width:300px;height:35px;" />
-				<a href="#" class="btn btn-success btn-embossed" id="search-btn" style="right:45px"><i class="icon-search"></i></a>
+				<a href="#" class="btn btn-success btn-embossed" id="search-btn" style="right:42px"><i class="icon-search"></i></a>
 				<a href="#" class="btn btn-select btn-embossed" id="select-btn" ><i class="icon-check-empty"></i></a>
-			</div> -->
+			</div>
 			<div id="project_wrapper">
 				<div id="treewrapper" style="height:100%;">
 					<div id="tree"></div>
@@ -129,9 +129,9 @@
 
 {% block body_js %}
 	<script>
-		var has_indexed_metadata = {{ project.hasIndexedMetadata() }};
+		var hasIndexedMetadata = {{ project.hasIndexedMetadata() }};
 		var operation;
-		var PROJECT_WRAPPER_OFFSET = 17;
+		var PROJECT_WRAPPER_OFFSET = $("#filter").height() + 60;
 
 		function updateProjectCreds() {
 			console.log('updating project creds')
@@ -182,14 +182,12 @@
 					if (response.error) {
 						showMessage(response.error);
 					} else {
-						showMessageWithCustomAction(response.message, 'success', 'Refresh Index', 'hideMessage();index_org(true)')
+						showMessageWithCustomAction(response.message, 'success', 'Refresh Index', 'hideMessage();indexOrg(true)')
 					}
 					hideLoading();
 				}
 			});
 		}
-
-
 
 		function updateProject() {
 			console.log('updating project')
@@ -211,7 +209,7 @@
 			});
 		}
 
-		function index_org(refresh) {
+		function indexOrg(refresh) {
 			console.log('indexing org')
 			operation = "index"
 			$.ajax({
@@ -334,11 +332,11 @@
 		    positionInputIcons()
 		    centerWindow()
 
-		    if (has_indexed_metadata) {
+		    if (hasIndexedMetadata) {
 		    	renderTree(PROJECT_WRAPPER_OFFSET, null, '{{ project.settings.id}}');
 		    	setTimeout(resizeProjectWrapper(PROJECT_WRAPPER_OFFSET),500)
 		    } else {
-		    	index_org()
+		    	indexOrg();
 		    }
 
 		});
