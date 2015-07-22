@@ -140,13 +140,13 @@
 							</div>
 						</div>	
 					</div>	
-					<!-- <div class="control-group large">
+					<div class="control-group large">
 						<div class="row">
 							<div class="span8">
 								<input style="width:100%" placeholder="Deployment Name, e.g. QA Deployment (optional)" type="text" id="new_deployment_name">
 							</div>
 						</div>
-					</div>	 -->		
+					</div>			
 				</fieldset>
 			</form>
 
@@ -268,21 +268,21 @@
 					{% endfor %}
 				</select>
 			</div> -->
-			<!-- <div class="alert alert-info" id="filter">
+			<div class="alert alert-info" id="filter">
 				<input type="text" placeholder="Search for metadata" id="txtFilter" style="width:300px;height:35px;" />
 				<a href="#" class="btn btn-success btn-embossed" id="search-btn" style="right:45px"><i class="icon-search"></i></a>
 				<a href="#" class="btn btn-select btn-embossed" id="select-btn" ><i class="icon-check-empty"></i></a>
 				<select id="selected_deployment_name"class="select-block mbl info" style="display:none;" data-placeholder="Select a deployment...">>
-					{% for d in deployments %}
+					{% for d in namedDeployments %}
 						{% if loop.index0 == 0 %}
 							{% set selected = 'selected="selected"' %}
 						{% else %}
 							{% set selected = '' %}
 						{% endif %}
-						<option value="{{d.location}}">{{d.label}}</option>
+						<option value="{{d}}">{{d}}</option>
 					{% endfor %}
 				</select>
-			</div> -->
+			</div>
 
 			<div id="project_wrapper">
 								
@@ -316,7 +316,7 @@
 <script type="text/javascript">
 	var hasIndexedMetadata = {{ hasIndexedMetadata }};
 	var operation;
-	var PROJECT_WRAPPER_OFFSET = 17;
+	var PROJECT_WRAPPER_OFFSET = $("#filter").height() + 140;
 
 	function isValidateOnly() {
 		return $("#check_only").is(":checked");
@@ -547,7 +547,7 @@
 			data: JSON.stringify({
 				destinations 		: getTargetJson(),
 			    package 			: getTree(),
-			    new_deployment_name : $("#new_deployment_name").val(),
+			    deploymentName 		: $("#new_deployment_name").val(),
 			    debug_categories 	: get_log_levels_json(),
 			    ui 					: true,
 			    deployOptions 		: {
@@ -596,7 +596,6 @@
 	}
 
 	function deleteConnection(id) {
-		
 		$.ajax({
 			type: "POST",
 			dataType: 'json',
@@ -624,7 +623,6 @@
 	}
 	
 	function newConnection() {
-		
 		$.ajax({
 			type: "POST",
 			dataType: 'json',
@@ -657,8 +655,6 @@
 			}
 	 	});
 	}
-
-
 </script>
 
 {% endblock %}
