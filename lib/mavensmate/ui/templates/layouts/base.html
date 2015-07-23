@@ -173,24 +173,24 @@
                 </button>
                 <ul class="dropdown-menu burger" role="menu" style="border-color:#34495e;background-color:#768693;margin-top: 8px;width:auto;">
                     {% if project && project.sfdcClient %}
-                        <li><a href="javascript:void(0)" onclick="openProjectInEditor();">Open in {{ mavensmate.ui.getClient().editor|capitalize }}</a></li>
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new?pid={{project.settings.id}}">New Project</a></li>
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/project/edit?pid={{project.settings.id}}">Edit Project</a></li>
+                        <li><a target="_blank" href="javascript:void(0)" onclick="openProjectInEditor();">Open in {{ mavensmate.ui.getClient().editor|capitalize }}</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new?pid={{project.settings.id}}">New Project</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/edit?pid={{project.settings.id}}">Edit Project</a></li>
                         <li class="divider"></li>
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexClass&pid={{project.settings.id}}">New Apex Class</a></li>
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexTrigger&pid={{project.settings.id}}">New Apex Trigger</a></li>
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexPage&pid={{project.settings.id}}">New Visualforce Page</a></li>
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexComponent&pid={{project.settings.id}}">New Visualforce Component</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexClass&pid={{project.settings.id}}">New Apex Class</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexTrigger&pid={{project.settings.id}}">New Apex Trigger</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexPage&pid={{project.settings.id}}">New Visualforce Page</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/new?type=ApexComponent&pid={{project.settings.id}}">New Visualforce Component</a></li>
                         <li class="divider"></li>
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newApp?pid={{project.settings.id}}">New Lightning App</a></li>
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newComponent?pid={{project.settings.id}}">New Lightning Component</a></li>
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newEvent?pid={{project.settings.id}}">New Lightning Event</a></li>
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newInterface?pid={{project.settings.id}}">New Lightning Interface</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newApp?pid={{project.settings.id}}">New Lightning App</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newComponent?pid={{project.settings.id}}">New Lightning Component</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newEvent?pid={{project.settings.id}}">New Lightning Event</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/newInterface?pid={{project.settings.id}}">New Lightning Interface</a></li>
                         <li class="divider"></li>
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new?pid={{project.settings.id}}">Deploy to Server</a></li>
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/test/new?pid={{project.settings.id}}">Run Apex Unit Tests</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new?pid={{project.settings.id}}">Deploy to Server</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/test/new?pid={{project.settings.id}}">Run Apex Unit Tests</a></li>
                     {% else %}
-                        <li><a href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new">New Project</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new">New Project</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -314,7 +314,12 @@
                 $(".cancel-open-project").html('Opening...');
                 $(".open-project").addClass('disabled');
                 $(".cancel-open-project").addClass('disabled');
-                window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/home/index?pid='+$("#projects").val();
+                window.open('{{ mavensmate.ui.getBaseUrl() }}/app/home/index?pid='+$("#projects").val());
+                $('#projectModal').modal('hide');
+                $(".open-project").html('Open Project');
+                $(".cancel-open-project").html('Cancel');
+                $(".open-project").removeClass('disabled');
+                $(".cancel-open-project").removeClass('disabled');
             });
 
             $(".cancel-open-project").click(function() {
