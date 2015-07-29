@@ -2,6 +2,8 @@
 <head>
     {% if project && project.sfdcClient %}
         <title>MavensMate | {{project.name}}</title>
+    {% elif window.location.href.indexOf('settings/index') >= 0 %}
+        <title>MavensMate | Settings</title>
     {% else %}
         <title>MavensMate | New Project</title>
     {% endif %}
@@ -173,6 +175,7 @@
                 </button>
                 <ul class="dropdown-menu burger" role="menu" style="border-color:#34495e;background-color:#768693;margin-top: 8px;width:auto;">
                     {% if project && project.sfdcClient %}
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/settings/index">Settings</a></li>
                         <li><a target="_blank" href="javascript:void(0)" onclick="openProjectInEditor();">Open in {{ mavensmate.ui.getClient().editor|capitalize }}</a></li>
                         <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new?pid={{project.settings.id}}">New Project</a></li>
                         <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/edit?pid={{project.settings.id}}">Edit Project</a></li>
@@ -190,6 +193,7 @@
                         <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new?pid={{project.settings.id}}">Deploy to Server</a></li>
                         <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/test/new?pid={{project.settings.id}}">Run Apex Unit Tests</a></li>
                     {% else %}
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/settings/index">Settings</a></li>
                         <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new">New Project</a></li>
                     {% endif %}
                 </ul>

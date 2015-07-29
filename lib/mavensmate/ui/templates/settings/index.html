@@ -1,0 +1,176 @@
+{% extends "ui/templates/layouts/base.html" %}
+{% block yield %}
+<style>
+	input.setting {
+		font-family: 'Consolas', 'Monaco', 'Lucida Console', monospace;
+	}
+	label.label-checkbox {
+		display: inline-block;
+	}
+	label.label-checkbox {
+	  margin-bottom: 0px;
+	}
+	label.settingsLabel {
+		font-weight: 600;
+	}
+	.ace-tm .ace_string {
+	  color: #16a085;
+	}
+	.ace-tm .ace_constant.ace_language {
+	  color: #d54d53;
+	}
+	.ace_editor.ace-tm {
+		background-color: #f9f9f9;
+	}
+</style>
+<script src="{{ mavensmate.ui.getStaticResourcePath() }}/editor/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="{{ mavensmate.ui.getStaticResourcePath() }}/editor/mode-java.js" type="text/javascript" charset="utf-8"></script>
+
+<div id="result_output">
+	<div class="alert alert-error">
+		<button type="button" class="close fui-cross"></button>
+		<span id="error_message"></span>
+	</div>
+</div>
+
+<div class="content">
+	<ul class="nav nav-tabs nav-append-content">
+		<li class="active"><a id="settings_tab" href="#form" data-toggle="tab">MavensMate Settings</a></li>
+	</ul>
+	<div class="tab-content" id="main-tab-content">
+		<div id="form" class="tab-pane active">
+			<form class="form-stacked">
+				<fieldset style="padding-top:10px;">
+					{% for settingKey, settingValue in userSettings %}
+						{% if defaultSettings[settingKey] %}
+							<div class="control-group large" id="{{ settingKey }}-group" style="margin-bottom:20px;">
+								{% if defaultSettings[settingKey].type === 'string' || defaultSettings[settingKey].type === 'integer' %}
+									<label class="settingsLabel" for="{{ settingKey }}">
+										{{ defaultSettings[settingKey].title }} ({{ settingKey }})
+										<i class="icon icon-info-sign" data-toggle="tooltip" data-placement="right" title="{{ defaultSettings[settingKey].description }}"></i>
+									</label>
+									<input class="span12 setting" class="form-control" id="{{ settingKey }}" type="text" value="{{ settingValue }}"/>
+								{% endif %}
+								{% if defaultSettings[settingKey].type === 'array' %}
+									<label class="settingsLabel" for="{{ settingKey }}">
+										{{ defaultSettings[settingKey].title }} ({{ settingKey }})
+										<i class="icon icon-info-sign" data-toggle="tooltip" data-placement="right" title="{{ defaultSettings[settingKey].description }}"></i>
+									</label>
+									<input class="span12 setting array" class="form-control" id="{{ settingKey }}" type="text" value="{{ settingValue }}"/>
+								{% endif %}
+								{% if defaultSettings[settingKey].type === 'object' %}
+									<label class="settingsLabel" for="{{ settingKey }}">
+										{{ defaultSettings[settingKey].title }} ({{ settingKey }})
+										<i class="icon icon-info-sign" data-toggle="tooltip" data-placement="right" title="{{ defaultSettings[settingKey].description }}"></i>
+									</label>
+									<div style="height:110px;width:700px;">
+										<textarea data-editor="java" rows="15" class="form-control setting" id="{{ settingKey }}">{{ JSON.stringify(settingValue, null, 2) }}</textarea>
+									</div>
+								{% endif %}
+								{% if defaultSettings[settingKey].type === 'boolean' %}
+								    <label class="checkbox label-checkbox" for="{{ settingKey }}">
+								      <input type="checkbox" class="setting-chk" {% if settingValue === true %}checked="checked"{% endif %} id="{{ settingKey }}" data-toggle="checkbox">
+								      {{ defaultSettings[settingKey].title }} ({{ settingKey }})
+								      <i class="icon icon-info-sign" data-toggle="tooltip" data-placement="right" title="{{ defaultSettings[settingKey].description }}"></i>
+								    </label>
+								{% endif %}
+							</div>
+						{% endif %}
+					{% endfor %}
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div> 
+
+{% endblock %}
+
+
+{% block body_js %}
+	<script>
+		'use strict';
+
+		$(function(){
+			$('label.checkbox input').checkbox();
+			$('[data-toggle="tooltip"]').tooltip();
+
+			$('textarea[data-editor]').each(function () {
+	            var textarea = $(this);
+	            var wrappingDiv = textarea.parent();
+	            var mode = textarea.data('editor');
+	            var editDiv = $('<div>', {
+	                position: 'absolute',
+	                width: wrappingDiv.width(),
+	                height: wrappingDiv.height(),
+	                'class': textarea.attr('class')
+	            }).insertBefore(textarea);
+	            textarea.css('display', 'none');
+	            var editor = ace.edit(editDiv[0]);
+	            editor.renderer.setShowGutter(false);
+	            // editor.setTheme("ace/theme/dawn");
+	            editor.getSession().setValue(textarea.val());
+	            editor.getSession().setMode("ace/mode/javascript");
+	            editor.getSession().setUseWrapMode(true);
+	            editor.setFontSize(14);
+	            editor.getSession().setTabSize(2);
+	            editor.resize();
+	            editor.focus();
+	            editor.on("blur", function() {
+	            	textarea.val(editor.getSession().getValue());
+	            	var settingValue = textarea.val();
+	            	var settingKey = textarea.attr('id');
+	            	updateSettings(settingValue, settingKey);
+	            }); 
+	        });
+
+			$( "input.setting, textarea.setting" ).blur(function() {
+			  var settingValue = $(this).val();
+			  var settingKey = $(this).attr('id');
+			  updateSettings(settingValue, settingKey);
+			});
+
+			// $( "input.setting, textarea.setting" ).blur(function() {
+			//   var settingValue = $(this).val();
+			//   var settingKey = $(this).attr('id');
+			//   updateSettings(settingValue, settingKey);
+			// });
+
+			// $('.setting-chk').on('click', function () {
+			//   console.log('CHECKED!!')
+			// })
+
+			$(':checkbox').on('change.radiocheck', function() {
+				console.log('CHECKED!!')
+				var settingValue = $(this).is(':checked');
+				var settingKey = $(this).attr('id');
+				console.log(settingValue);
+				console.log(settingKey);
+				updateSettings(settingValue, settingKey);
+			});
+		});
+
+		function updateSettings(settingValue, settingKey) {
+			$.ajax({
+				type: 'POST',
+				dataType: 'json',
+				contentType: 'application/json; charset=utf-8',
+				url: '{{ mavensmate.ui.getBaseUrl() }}/app/settings/update', 
+				data: JSON.stringify({
+					settingValue: settingValue, 
+					settingKey: settingKey
+				}),
+				beforeSend: function() { /*showLoading('Updating');*/ },
+				complete: function(data){
+					console.log('done!');
+					console.log(data);
+					var res = JSON.parse(data.responseText);
+					if (res.error) {
+						showMessage(res.error);
+					} else {
+						hideMessage();
+					}
+				} 
+		 	});
+		}
+	</script>
+{% endblock %}
