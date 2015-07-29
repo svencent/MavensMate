@@ -36,7 +36,7 @@
 				<fieldset>
 					<div class="control-group large">
 						<select id="workspace" class="select-block mbl info span12" 
-							data-placeholder="Select a workspace" data-size="5">
+							data-placeholder="Select a workspace" data-none-selected-text="No workspace selected (To configure workspaces, set your mm_workspace setting in your MavensMate text editor plugin settings)" data-size="5">
 							{% for m in mavensmate.ui.getWorkspaces() %}
 								<option value="{{ m }}">{{ m }}</option>
 							{% endfor %}
