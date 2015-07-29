@@ -1,11 +1,11 @@
 <html>
 <head>
-    {% if project && project.sfdcClient %}
-        <title>MavensMate | {{project.name}}</title>
-    {% elif window.location.href.indexOf('settings/index') >= 0 %}
-        <title>MavensMate | Settings</title>
+    {% if project && project.sfdcClient && title %}
+        <title>MavensMate | {{project.name}} | {{title}}</title>
+    {% elif title %}
+        <title>MavensMate | {{title}}</title>
     {% else %}
-        <title>MavensMate | New Project</title>
+        <title>MavensMate</title>
     {% endif %}
     <link rel="icon" type="image/png" href="{{ mavensmate.ui.getStaticResourcePath() }}/images/favicon.png">
     <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/bootstrap/css/bootstrap.css"></link> 
@@ -200,12 +200,10 @@
             </div>
             <div class="main-wrapper">
                 <div style="text-align:center;font-size:18px;">
-                    {% if project && project.sfdcClient %}
-                        {{ project.name }} ({{ project.sfdcClient.getUsername() }})
-                    {% elif operation == 'github' %}
-                        {{ 'Github Connection' }}
+                    {% if project && project.sfdcClient && title %}
+                        {{ project.name }} ({{ project.sfdcClient.getUsername() }}) - {{ title }}
                     {% else %}
-                        {{ 'New Project' }}
+                        {{ title }}
                     {% endif %}
                 </div>
             </div>
