@@ -1,0 +1,154 @@
+{% extends "ui/templates/layouts/base.html" %}
+{% block yield %}
+<div id="result_output">
+	<div class="alert alert-error">
+		<button type="button" class="close fui-cross"></button>
+		<span id="error_message"></span>
+	</div>
+</div>
+
+<div class="content">	
+	<ul class="nav nav-tabs nav-append-content">
+		<li class="active">
+			<a id="project_details_tab" href="#form" data-toggle="tab">Project Credentials</a>
+		</li>
+	</ul>
+	
+	<div class="tab-content" id="main-tab-content">  
+		<div id="form" class="tab-pane active">
+			<form class="form-stacked">
+				<fieldset>
+					<div class="control-group large disabled">
+						<input class="span12" placeholder="Project Name" type="text" id="pn" disabled="disabled">
+						<i class="input-icon fui-lock"></i>
+					</div>
+					<div class="control-group large">
+						<input class="span12" placeholder="Salesforce.com Username" type="text" id="un">
+					</div>
+					<div class="control-group large">
+						<input class="span12" placeholder="Salesforce.com Password" type="password" id="pw">
+					</div>
+
+					<div class="clearfix">
+						<select class="org_type select-block mbl info span12">
+							<option value="production">Production</option>
+							<option value="developer">Developer</option>
+							<option value="sandbox">Sandbox</option>
+							<option value="prerelease">Prerelease</option>
+							<option value="custom">Custom URL</option>
+						</select>
+					</div>
+					<div class="control-group large">
+						<input class="span12" placeholder="Example: https://na1-blitz01.salesforce.com" type="text" id="custom-url" style="display:none;">
+					</div>
+					<div class="clearfix" style="margin-top:20px;">
+						<a class="btn btn-success btn-embossed" onclick="updateProjectCreds();">
+							Update Credentials
+						</a>
+					</div> 												
+				</fieldset>
+				<div id="treeold"></div>
+			</form>
+		</div>
+
+		
+	</div>
+</div>  
+{% endblock %}  
+
+{% block buttons %}					
+	<input type="button" id="btnSubmit" class="btn btn-info btn-embossed" value="Update Project" onclick="updateProject();">
+	<button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
+{% endblock %}  
+
+{% block body_js %}
+	<script>
+		var PROJECT_WRAPPER_OFFSET = $("#filter").height() + 60;
+
+		function updateProjectCreds() {
+			console.log('updating project creds')
+			$.ajax({
+				type: "POST",
+				dataType: 'json',
+				contentType: 'application/json; charset=utf-8',
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-creds?pid={{project.settings.id}}", 
+				data: JSON.stringify({
+					username 			: $("#un").val(),
+			    	password 			: $("#pw").val(),
+			    	orgType 			: $(".org_type").val(),
+			    	loginUrl 			: $("#custom-url").val(), 
+			    	path 				: '{{ project.path }}',
+			    	command 			: "update-creds"
+				}),
+				beforeSend: function() { showLoading('Updating project credentials'); },
+				complete: function(data){
+					console.log(data)				
+					var response = JSON.parse(data.responseText)
+					if (response.error) {
+						showMessage(response.error)
+					} else {
+						showMessage(response.message, 'success', true)
+					}
+					hideLoading();
+				}
+			});
+		}
+
+		function positionInputIcons() {
+			var siblingInputWidth = $(".input-icon.fui-lock").prev().width();
+			$(".input-icon.fui-lock").css('right', '0px');
+			$(".input-icon.fui-lock").css('width', '20px');
+			$(".input-icon.fui-lock").css('left', siblingInputWidth-30+'px');
+		}
+			
+		$(function() {		
+			$("#pn").val("{{ project.name }}");  
+			$("#un").val("{{ project.sfdcClient.getUsername() }}");
+			$("#pw").val("{{ project.sfdcClient.getPassword() }}");
+			$("select.org_type").val("{{ project.sfdcClient.getOrgType() }}");
+			$("select.org_type").change();
+			$("#custom-url").val("{{ org_url }}"); //TODO
+			if ($("#custom-url").val() != '') {
+				$("#custom-url").show()
+			}
+
+			$("#pn").prop('disabled', true);  
+
+			$(window).resize(function() {
+				resizeProjectWrapper(PROJECT_WRAPPER_OFFSET);
+				positionInputIcons();
+			});
+
+			$("ul.nav-tabs li a span").hover(
+				function() {
+					$(this).addClass("label-success")
+				},
+				function() {
+					$(this).removeClass("label-success")
+				}
+			)
+
+			$("select.org_type").change(function() {
+				if ($(this).val() == 'custom') {
+					$("#custom-url").show()
+				} else {
+					$("#custom-url").hide()
+					$("#custom-url").val('')
+				}
+			})
+
+			
+			$('a[data-toggle="tab"]').on('shown', function (e) {
+				if (e.target.href.indexOf("form") != -1) {
+					positionInputIcons()	
+				}
+		    });
+
+		    window.resizeTo(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
+		    positionInputIcons()
+		    centerWindow()
+
+		});
+	</script>
+
+{% endblock %}
