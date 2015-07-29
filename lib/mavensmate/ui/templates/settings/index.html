@@ -56,7 +56,9 @@
 										{{ defaultSettings[settingKey].title }} ({{ settingKey }})
 										<i class="icon icon-info-sign" data-toggle="tooltip" data-placement="right" title="{{ defaultSettings[settingKey].description }}"></i>
 									</label>
-									<input class="span12 setting array" class="form-control" id="{{ settingKey }}" type="text" value="{{ settingValue }}"/>
+									<div style="height:110px;width:700px;">
+										<textarea data-editor="java" rows="15" class="form-control setting" id="{{ settingKey }}">{{ JSON.stringify(settingValue, null, 2) }}</textarea>
+									</div>
 								{% endif %}
 								{% if defaultSettings[settingKey].type === 'object' %}
 									<label class="settingsLabel" for="{{ settingKey }}">
@@ -71,8 +73,8 @@
 								    <label class="checkbox label-checkbox" for="{{ settingKey }}">
 								      <input type="checkbox" class="setting-chk" {% if settingValue === true %}checked="checked"{% endif %} id="{{ settingKey }}" data-toggle="checkbox">
 								      {{ defaultSettings[settingKey].title }} ({{ settingKey }})
-								      <i class="icon icon-info-sign" data-toggle="tooltip" data-placement="right" title="{{ defaultSettings[settingKey].description }}"></i>
 								    </label>
+								    <i class="icon icon-info-sign" data-toggle="tooltip" data-placement="right" title="{{ defaultSettings[settingKey].description }}"></i>
 								{% endif %}
 							</div>
 						{% endif %}
@@ -107,7 +109,6 @@
 	            textarea.css('display', 'none');
 	            var editor = ace.edit(editDiv[0]);
 	            editor.renderer.setShowGutter(false);
-	            // editor.setTheme("ace/theme/dawn");
 	            editor.getSession().setValue(textarea.val());
 	            editor.getSession().setMode("ace/mode/javascript");
 	            editor.getSession().setUseWrapMode(true);
@@ -129,16 +130,6 @@
 			  updateSettings(settingValue, settingKey);
 			});
 
-			// $( "input.setting, textarea.setting" ).blur(function() {
-			//   var settingValue = $(this).val();
-			//   var settingKey = $(this).attr('id');
-			//   updateSettings(settingValue, settingKey);
-			// });
-
-			// $('.setting-chk').on('click', function () {
-			//   console.log('CHECKED!!')
-			// })
-
 			$(':checkbox').on('change.radiocheck', function() {
 				console.log('CHECKED!!')
 				var settingValue = $(this).is(':checked');
@@ -159,9 +150,9 @@
 					settingValue: settingValue, 
 					settingKey: settingKey
 				}),
-				beforeSend: function() { /*showLoading('Updating');*/ },
+				beforeSend: function() { },
 				complete: function(data){
-					console.log('done!');
+					console.log('config update done ...');
 					console.log(data);
 					var res = JSON.parse(data.responseText);
 					if (res.error) {
