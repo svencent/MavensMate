@@ -22,6 +22,17 @@
 	.ace_editor.ace-tm {
 		background-color: #f9f9f9;
 	}
+	div.infobox {
+		display: block;
+	}
+	.dialog.infobox {
+		text-align: left;
+		width:600px;
+		padding:10px;
+		font-size:14px;
+		margin-bottom:10px;
+		margin-top:5px;
+	}
 </style>
 <script src="{{ mavensmate.ui.getStaticResourcePath() }}/editor/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="{{ mavensmate.ui.getStaticResourcePath() }}/editor/mode-java.js" type="text/javascript" charset="utf-8"></script>
@@ -47,25 +58,24 @@
 								{% if defaultSettings[settingKey].type === 'string' || defaultSettings[settingKey].type === 'integer' %}
 									<label class="settingsLabel" for="{{ settingKey }}">
 										{{ defaultSettings[settingKey].title }} ({{ settingKey }})
-										<i class="icon icon-info-sign" data-toggle="tooltip" data-placement="right" title="{{ defaultSettings[settingKey].description }}"></i>
 									</label>
+									{% if defaultSettings[settingKey].description %}
+										<div class="dialog dialog-info infobox {{ settingKey }}-info">
+											<span><i class="icon icon-info-sign" onclick="toggleInfo(this)"></i>&nbsp;{{ defaultSettings[settingKey].description }}</span>
+										</div>
+									{% endif %}
 									<input class="span12 setting" class="form-control" id="{{ settingKey }}" type="text" value="{{ settingValue }}"/>
 								{% endif %}
-								{% if defaultSettings[settingKey].type === 'array' %}
+								{% if defaultSettings[settingKey].type === 'array' || defaultSettings[settingKey].type === 'object' %}
 									<label class="settingsLabel" for="{{ settingKey }}">
 										{{ defaultSettings[settingKey].title }} ({{ settingKey }})
-										<i class="icon icon-info-sign" data-toggle="tooltip" data-placement="right" title="{{ defaultSettings[settingKey].description }}"></i>
 									</label>
-									<div style="height:110px;width:700px;">
-										<textarea data-editor="java" rows="15" class="form-control setting" id="{{ settingKey }}">{{ JSON.stringify(settingValue, null, 2) }}</textarea>
-									</div>
-								{% endif %}
-								{% if defaultSettings[settingKey].type === 'object' %}
-									<label class="settingsLabel" for="{{ settingKey }}">
-										{{ defaultSettings[settingKey].title }} ({{ settingKey }})
-										<i class="icon icon-info-sign" data-toggle="tooltip" data-placement="right" title="{{ defaultSettings[settingKey].description }}"></i>
-									</label>
-									<div style="height:110px;width:700px;">
+									{% if defaultSettings[settingKey].description %}
+										<div class="dialog dialog-info infobox {{ settingKey }}-info">
+											<span><i class="icon icon-info-sign" onclick="toggleInfo(this)"></i>&nbsp;{{ defaultSettings[settingKey].description }}</span>
+										</div>
+									{% endif %}
+									<div style="height:110px;width:620px;">
 										<textarea data-editor="java" rows="15" class="form-control setting" id="{{ settingKey }}">{{ JSON.stringify(settingValue, null, 2) }}</textarea>
 									</div>
 								{% endif %}
@@ -74,7 +84,11 @@
 								      <input type="checkbox" class="setting-chk" {% if settingValue === true %}checked="checked"{% endif %} id="{{ settingKey }}" data-toggle="checkbox">
 								      {{ defaultSettings[settingKey].title }} ({{ settingKey }})
 								    </label>
-								    <i class="icon icon-info-sign" data-toggle="tooltip" data-placement="right" title="{{ defaultSettings[settingKey].description }}"></i>
+								    {% if defaultSettings[settingKey].description %}
+								    	<div class="dialog dialog-info infobox {{ settingKey }}-info">
+								    		<span><i class="icon icon-info-sign" onclick="toggleInfo(this)"></i>&nbsp;{{ defaultSettings[settingKey].description }}</span>
+								    	</div>
+								    {% endif %}
 								{% endif %}
 							</div>
 						{% endif %}
@@ -91,6 +105,11 @@
 {% block body_js %}
 	<script>
 		'use strict';
+
+		function toggleInfo(el) {
+			var infoBox = $(el).next();
+			infoBox.toggle();
+		}
 
 		$(function(){
 			$('label.checkbox input').checkbox();
