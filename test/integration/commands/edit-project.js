@@ -14,7 +14,7 @@ describe('mavensmate edit-project', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(58000);
     helper.unlinkEditor();
     testClient = helper.createClient('atom');
     helper.putTestProjectInTestWorkspace(testClient, 'edit-project');
@@ -55,8 +55,8 @@ describe('mavensmate edit-project', function(){
       });
   });
 
-  it('should fail to update project creds because of invalid login', function(done) {
-    this.timeout(10000);      
+  it.only('should fail to update project creds because of invalid login', function(done) {
+    this.timeout(60000);      
     testClient.executeCommand('update-creds', { username: 'thiswontwork@foo.com', password: 'foo' })
       .catch(function(err) {
         err.message.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out.');

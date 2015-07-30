@@ -85,6 +85,7 @@
     "coveralls": "^2.11.2",
     "mocha": "^2.1.0",
     "mocha-lcov-reporter": "0.0.1",
+    "sinon-as-promised": "latest",
     "sinon": "1.12.2"
   }
 }
