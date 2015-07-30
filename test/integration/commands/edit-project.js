@@ -55,9 +55,9 @@ describe('mavensmate edit-project', function(){
       });
   });
 
-  it.only('should fail to update project creds because of invalid login', function(done) {
+  it('should fail to update project creds because of invalid login', function(done) {
     this.timeout(60000);      
-    testClient.executeCommand('update-creds', { username: 'thiswontwork@foo.com', password: 'foo' })
+    testClient.executeCommand('update-creds', { username: 'thiswontwork@foo.com', password: 'foobarbatbam', loginUrl: 'https://test.salesforce.com' })
       .catch(function(err) {
         err.message.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out.');
         done();

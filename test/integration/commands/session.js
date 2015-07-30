@@ -46,7 +46,7 @@ describe('mavensmate session', function() {
     var payload = {
       username: 'thiswontwork@foo.com',
       password: 'barbar',
-      orgType: 'developer'
+      orgType: 'sandbox'
     };
 
     testClient.executeCommand('session', payload)

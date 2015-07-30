@@ -67,6 +67,7 @@ describe('mavensmate new-project', function(){
       name: 'new-project-bad-creds',
       username: 'thiswontwork@force.com',
       password: 'thisisabadpassword',
+      loginUrl: 'https://test.salesforce.com',
       workspace: path.join(helper.baseTestDirectory(),'workspace')
     };
     testClient.executeCommand('new-project', payload)
