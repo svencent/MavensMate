@@ -59,13 +59,13 @@ describe('mavensmate compile-metadata', function(){
 
   it('should compile an apex class successfully via the tooling api', function(done) {
     this.timeout(20000);
-
     helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataToolingClass')
       .then(function() {
         var apexClassPath = path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataToolingClass.cls');
         var payload = {
           paths : [ apexClassPath ]
         };
+        process.env.mm_compile_with_tooling_api = true;
         return testClient.executeCommand('compile-metadata', payload);
       })
       .then(function(response) {
