@@ -61,7 +61,6 @@
     "moment": "2.8.3",
     "nconf": "0.6.9",
     "node-uuid": "1.4.1",
-    "keychain": "joeferraro/node-keychain",
     "open": "0.0.3",
     "portfinder": "0.2.1",
     "request": "2.47.0",
