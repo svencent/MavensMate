@@ -40,7 +40,7 @@ describe('mavensmate org-connections', function(){
     var payload = {
       username: 'mm@force.com',
       password: 'force',
-      orgType: 'sandbox'
+      orgType: 'developer'
     };
     testClient.executeCommand('new-connection', payload)
       .then(function(response) {
@@ -79,7 +79,7 @@ describe('mavensmate org-connections', function(){
     var payload = {
       username: 'thiswontwork@force.com',
       password: 'cool!',
-      orgType: 'developer'
+      orgType: 'sandbox'
     };
     testClient.executeCommand('new-connection', payload)
       .catch(function(err) {
