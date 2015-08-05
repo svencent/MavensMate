@@ -118,7 +118,6 @@
 			$('textarea[data-editor]').each(function () {
 	            var textarea = $(this);
 	            var wrappingDiv = textarea.parent();
-	            var mode = textarea.data('editor');
 	            var editDiv = $('<div>', {
 	                position: 'absolute',
 	                width: wrappingDiv.width(),
@@ -128,13 +127,12 @@
 	            textarea.css('display', 'none');
 	            var editor = ace.edit(editDiv[0]);
 	            editor.renderer.setShowGutter(false);
-	            editor.getSession().setValue(textarea.val());
-	            editor.getSession().setMode("ace/mode/javascript");
+	            editor.getSession().setValue(textarea.val(), -1);
+	            editor.getSession().setMode('ace/mode/javascript');
 	            editor.getSession().setUseWrapMode(true);
 	            editor.setFontSize(14);
 	            editor.getSession().setTabSize(2);
 	            editor.resize();
-	            editor.focus();
 	            editor.on("blur", function() {
 	            	textarea.val(editor.getSession().getValue());
 	            	var settingValue = textarea.val();
@@ -150,13 +148,13 @@
 			});
 
 			$(':checkbox').on('change.radiocheck', function() {
-				console.log('CHECKED!!')
 				var settingValue = $(this).is(':checked');
 				var settingKey = $(this).attr('id');
 				console.log(settingValue);
 				console.log(settingKey);
 				updateSettings(settingValue, settingKey);
 			});
+
 		});
 
 		function updateSettings(settingValue, settingKey) {
