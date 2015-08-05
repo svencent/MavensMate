@@ -261,25 +261,18 @@
 		</div>
 
 		<div id="metadata" class="tab-pane">
-			<!-- <div class="" id="package-selector">
-				<select id="package" class="select-block mbl info" data-size="12">
-					{% for p in packages %}
-						<option value="{{p}}">{{p}}</option>
-					{% endfor %}
-				</select>
-			</div> -->
 			<div class="alert alert-info" id="filter">
 				<input type="text" placeholder="Search for metadata" id="txtFilter" style="width:300px;height:35px;" />
 				<a href="#" class="btn btn-success btn-embossed" id="search-btn" style="right:45px"><i class="icon-search"></i></a>
 				<a href="#" class="btn btn-select btn-embossed" id="select-btn" ><i class="icon-check-empty"></i></a>
-				<select id="selected_deployment_name"class="select-block mbl info" style="display:none;" data-placeholder="Select a deployment...">>
+				<select id="selected_deployment_name" class="select-block mbl info" style="display:none;" data-placeholder="Select a deployment...">>
 					{% for d in namedDeployments %}
 						{% if loop.index0 == 0 %}
 							{% set selected = 'selected="selected"' %}
 						{% else %}
 							{% set selected = '' %}
 						{% endif %}
-						<option value="{{d}}">{{d}}</option>
+						<option value="{{d.path}}">{{d.name}}</option>
 					{% endfor %}
 				</select>
 			</div>
@@ -409,7 +402,7 @@
 		});
 
 		$("#selected_deployment_name").change(function() {
-			
+			console.log('selected a deployment!');
 			console.log(this.value);
 			renderTree(140, this.value, '{{ project.settings.id}}'); 
 		});

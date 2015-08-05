@@ -233,7 +233,7 @@
 				if (response.error) {
 					showMessage(response.error)
 				} else {
-					if (tree === undefined) {
+					if (!tree) {
 						renderTree(PROJECT_WRAPPER_OFFSET, null, '{{ project.settings.id}}');  
 					} else {
 						$("#tree").dynatree("getTree").reload();
