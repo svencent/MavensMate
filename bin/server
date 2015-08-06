@@ -13,14 +13,12 @@ var UIServer    = require('../lib/mavensmate/ui/server');
 
 var args = parseArgs(process.argv);
 var project = args.project || process.cwd();
-var editor = args.editor || 'sublime';
 var verbose = args.verbose || false;
 var port = args.port;
 
-process.title = 'mavensmate server - '+editor;
+process.title = 'mavensmate server';
 
 var client = mavensmate.createClient({
-  editor: editor,
   verbose: verbose,
   serverPort: port,
   isServer: true
