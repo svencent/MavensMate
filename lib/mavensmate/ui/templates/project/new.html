@@ -12,6 +12,15 @@
 	</div>
 </div>
 
+<div class="alert alert-success" id="success-open-alert" style="display:none;">
+	<button type="button" class="close fui-cross"></button>
+	<span id="success-open-alert-message"></span>
+	<br/>
+	{% for editorName, editorPath in mavensmate.ui.getClient().supportedEditors %}
+		<a class="btn btn-info btn-embossed btn-wide" href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}');">Open in {{ editorName|capitalize }}</a>
+	{% endfor %}
+</div>
+
 <div class="content">
 		 
 	<ul class="nav nav-tabs nav-append-content">
@@ -162,8 +171,9 @@
 					showMessage(response.error);
 					notifySound();
 				} else {
-					showMessage(response.result.message, 'success');
-					// closeWindow();
+					hideMessage();
+					$("#success-open-alert-message").html(response.result.message);
+					$("#success-open-alert").show();
 				}
 				hideLoading();
 			} else if (operation === 'check_creds') {

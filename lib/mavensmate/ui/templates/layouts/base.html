@@ -151,12 +151,13 @@
             });
         }
 
-        function openProjectInEditor() {
+        function openProjectInEditor(editor) {
             $.ajax({
                 type: "GET",
                 url: baseLocalServerURL+"/execute", 
                 data: {
                     command: 'open-project',
+                    editor: editor,
                     pid: '{{project.settings.id}}'
                 }
             }); 
@@ -176,7 +177,11 @@
                 <ul class="dropdown-menu burger" role="menu" style="border-color:#34495e;background-color:#768693;margin-top: 8px;width:auto;">
                     {% if project && project.sfdcClient %}
                         <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/settings/index">Settings</a></li>
-                        <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="javascript:void(0)" onclick="openProjectInEditor();">Open in {{ editor|capitalize }}</a></li>
+                        
+                        {% for editorName, editorPath in mavensmate.ui.getClient().supportedEditors %}
+                        <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}');">Open in {{ editorName|capitalize }}</a></li>
+                        {% endfor %}
+
                         <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new?pid={{project.settings.id}}">New Project</a></li>
                         <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/project/edit?pid={{project.settings.id}}">Edit Project</a></li>
                         <li class="divider"></li>
