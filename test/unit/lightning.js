@@ -18,7 +18,7 @@ describe('mavensmate lightning-unit', function(){
   before(function(done) {
     this.timeout(8000);
     helper.unlinkEditor();
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'lightning-unit');
     helper.addProject(testClient, 'lightning-unit')
       .then(function(proj) {

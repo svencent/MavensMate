@@ -19,7 +19,7 @@ describe('mavensmate apex-script', function() {
     this.timeout(18000);
     helper.unlinkEditor();
     logger.info('editor unlinked');
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     logger.info('test client ready');
     helper.putTestProjectInTestWorkspace(testClient, 'apex-script');
     logger.info('project in workspace');

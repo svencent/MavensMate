@@ -12,7 +12,7 @@ describe('mavensmate update-subscription', function() {
   before(function(done) {
     this.timeout(8000);
     helper.unlinkEditor();
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'update-subscription');
     helper.addProject(testClient, 'update-subscription')
       .then(function(proj) {

@@ -15,7 +15,7 @@ describe('mavensmate index-apex', function(){
 
   before(function(done) {
     this.timeout(8000);
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'index-apex');
     helper.addProject(testClient, 'index-apex')

@@ -15,7 +15,7 @@ describe('mavensmate deploy-to-server', function() {
   before(function(done) {
     this.timeout(8000);
     helper.unlinkEditor();
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'deploy');
     helper.addProject(testClient, 'deploy')
       .then(function(proj) {

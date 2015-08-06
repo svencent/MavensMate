@@ -17,7 +17,7 @@ describe('mavensmate refresh-metadata', function(){
 
   before(function(done) {
     this.timeout(18000);
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'refresh-metadata');
     helper.addProject(testClient, 'refresh-metadata')

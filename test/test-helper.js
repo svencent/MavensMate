@@ -34,12 +34,12 @@ exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace
   } 
 };
 
-exports.createClient = function(editor, settings) {
+exports.createClient = function(name, settings) {
   /*jshint camelcase: false */
   var clientSettings = settings || {};
   clientSettings.mm_use_keyring = false;
   return mavensmate.createClient({
-    editor: editor,
+    name: name,
     isNodeApp: true,
     verbose: process.env.MAVENSMATE_DEBUG_TESTS === 'true' || false,
     settings: clientSettings

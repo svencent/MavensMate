@@ -14,7 +14,7 @@ describe('mavensmate new-metadata', function(){
 
   before(function(done) {
     this.timeout(20000);
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'new-metadata');
     helper.addProject(testClient, 'new-metadata')

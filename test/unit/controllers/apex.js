@@ -12,7 +12,7 @@ describe('mavensmate ApexController', function(){
 
   before(function(done) {
     this.timeout(10000);
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'ApexControllerTest');
     helper.addProject(testClient, 'ApexControllerTest')
       .then(function(proj) {

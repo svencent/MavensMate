@@ -17,7 +17,7 @@ describe('mavensmate project-unit', function(){
       /*jshint camelcase: false */
       process.env.mm_workspace = path.join(helper.baseTestDirectory(), 'workspace');
       /*jshint camelcase: true */
-      helper.createClient('sublime');
+      helper.createClient('unittest');
       var project = new Project({
         name: 'foo'
       });
@@ -34,7 +34,7 @@ describe('mavensmate project-unit', function(){
     it('should select a workspace when setting is an array', function (done) {
       this.timeout(8000);
       /*jshint camelcase: false */
-      helper.createClient('sublime', {
+      helper.createClient('unittest', {
         mm_workspace : [
           path.join(helper.baseTestDirectory(), 'workspace'), 
           path.join(helper.baseTestDirectory(), 'workspace', 'foo') 
@@ -53,9 +53,9 @@ describe('mavensmate project-unit', function(){
 
     it('should create the workspace when it does not exist', function (done) {
       this.timeout(8000);
-      helper.createClient('sublime');
+      helper.createClient('unittest');
       /*jshint camelcase: false */
-      helper.createClient('sublime', {
+      helper.createClient('unittest', {
         mm_workspace : [
           path.join(helper.baseTestDirectory(), 'workspace', 'foo'), 
           path.join(helper.baseTestDirectory(), 'workspace') 

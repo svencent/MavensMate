@@ -17,7 +17,7 @@ describe('mavensmate clean-project-command', function() {
   before(function(done) {
     this.timeout(28000);
     helper.unlinkEditor();
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'clean-project');
     helper.addProject(testClient, 'clean-project')
       .then(function(proj) {

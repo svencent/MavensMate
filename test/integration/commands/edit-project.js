@@ -16,7 +16,7 @@ describe('mavensmate edit-project', function(){
   before(function(done) {
     this.timeout(58000);
     helper.unlinkEditor();
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'edit-project');
     helper.addProject(testClient, 'edit-project')
       .then(function(proj) {

@@ -15,7 +15,7 @@ describe('mavensmate org-index', function(){
 
   before(function(done) {
     this.timeout(10000);
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'org-index');
     helper.addProject(testClient, 'org-index')
       .then(function(proj) {

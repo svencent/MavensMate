@@ -16,7 +16,7 @@ describe('mavensmate compile-metadata', function(){
     /*jshint camelcase: false */
     process.env.mm_compile_check_conflicts = false;
     /*jshint camelcase: true */
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'compile-metadata');
     helper.addProject(testClient, 'compile-metadata')

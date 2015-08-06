@@ -11,7 +11,7 @@ describe('mavensmate ProjectController', function(){
 
   before(function(done) {
     this.timeout(10000);
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'ProjectControllerTest');
     helper.addProject(testClient, 'ProjectControllerTest')
       .then(function(proj) {

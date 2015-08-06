@@ -11,7 +11,7 @@ describe('mavensmate compile-project', function(){
 
   before(function(done) {
     this.timeout(8000);
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'compile-project');
     helper.addProject(testClient, 'compile-project')

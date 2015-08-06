@@ -13,7 +13,7 @@ describe('mavensmate checkpoints', function(){
 
   before(function(done) {
     this.timeout(15000);
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'checkpoints');
     helper.addProject(testClient, 'checkpoints')

@@ -11,7 +11,7 @@
 // 	it.only('should add new metadata to the store when created on the server', function(done) {
 // 		this.timeout(10000);
 
-// 		var testClient = helper.createClient('atom');
+// 		var testClient = helper.createClient('unittest');
 
 // 		helper.addProject(testClient, 'existing-project', function() {
 // 			testClient.getProject().getOrgMetadataIndexWithSelections()

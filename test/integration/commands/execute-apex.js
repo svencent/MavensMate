@@ -12,7 +12,7 @@ describe('mavensmate execute-apex', function() {
   before(function(done) {
     this.timeout(8000);
     helper.unlinkEditor();
-    testClient = helper.createClient('atom');
+    testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'execute-apex');
     helper.addProject(testClient, 'execute-apex')
       .then(function(proj) {
