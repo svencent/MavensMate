@@ -35,7 +35,7 @@ describe('mavensmate view-helper', function(){
   });
 
   it('should getClient', function(done) {    
-    viewHelper.getClient().should.have.property('editor');
+    viewHelper.getClient().should.have.property('name');
     viewHelper.getClient().should.have.property('isNodeApp');
     viewHelper.getClient().should.have.property('isServer');
     viewHelper.getClient().should.have.property('verbose');
