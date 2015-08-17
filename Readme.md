@@ -143,6 +143,14 @@ If you have an issue with the Sublime Text or Atom plugin specifically, please o
 
 **Always include your MavensMate version number, platform, and specific steps to reproduce.**
 
+## Contributors
+
+- [Joseph Ferraro] (http://github.com/joeferraro)
+- [Ralph Callaway] (http://github.com/ralphcallaway)
+- [Kyle Thornton] (http://github.com/kylethornton)
+- [David Helmer] (http://github.com/kidtsunami)
+- [Justin Silver] (http://github.com/doublesharp)
+
 ## Documentation
 
 MavensMate's documentation is built with [Daux.io](http://daux.io) and publicly available on [http://mavensmate.com][docs].
