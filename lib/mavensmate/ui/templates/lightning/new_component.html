@@ -83,7 +83,12 @@
 				url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning/create-component",
 				data: JSON.stringify({
 					apiName : $("#apiName").val(),
-					description : $("#description").val()
+					description : $("#description").val(),
+					createController: $("#controller").is(":checked"),
+					createHelper: $("#helper").is(":checked"),
+					createStyle: $("#style").is(":checked"),
+					createDocumentation: $("#documentation").is(":checked"),
+					createRenderer: $("#renderer").is(":checked")
 				}),
 				beforeSend: function() { showLoading('Creating new metadata...'); },
 				complete: function(data){
