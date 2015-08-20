@@ -263,38 +263,33 @@
 
 
 <script>
+	'use strict';
 
 	function handleResponse(response) {
 		if (response.error) {
 			toggleRunningIndicator();
+			$('#btnRunTests').show();
 			showMessage(response.error);
 			notifySound();
 		} else {
-			$("#result_wrapper").html(response.result)
+			$('#result_wrapper').html(response.result);
 
-			$("#class_coverage_wrapper").html(
-				$("#class_wrapper").html()
-				)
-			$("#trigger_coverage_wrapper").html(
-				$("#trigger_wrapper").html()
-				)
-			$("#log_coverage_wrapper").html(
-				$("#log_wrapper").html()
-				)
-			$("#class_wrapper").remove()
-			$("#trigger_wrapper").remove()
-			$("#log_wrapper").remove()
+			$('#class_coverage_wrapper').html( $('#class_wrapper').html() );
+			$('#trigger_coverage_wrapper').html( $('#trigger_wrapper').html() );
+			$('#log_coverage_wrapper').html( $('#log_wrapper').html() );
+			$('#class_wrapper').remove();
+			$('#trigger_wrapper').remove();
+			$('#log_wrapper').remove();
 
-			$(".results_hidden").show();
-			if ($("#arcade").css("display") == "none") {
-				//$(".results_hidden ul li:first-child").click();
-				$("li.active").removeClass('active')
-				$("div.active").removeClass('active')
+			$('.results_hidden').show();
+			if ($('#arcade').css('display') === 'none') {
+				$('li.active').removeClass('active');
+				$('div.active').removeClass('active');
 				$('a.test_result_link').tab('show');
 			}
 
 			toggleRunningIndicator();
-			$("#btnRunTests").show();
+			$('#btnRunTests').show();
 			notifySound();
 		}
 	}
@@ -309,8 +304,8 @@
 			$('#'+domId).toggle();
 		} else {
 			$.ajax({
-			    type: "POST",
-			    dataType : "json",
+			    type: 'POST',
+			    dataType : 'json',
 			    contentType: 'application/json; charset=utf-8',
 			    url: "{{ mavensmate.ui.getBaseUrl() }}/app/test/coverage?pid={{project.settings.id}}",
 			    data: JSON.stringify({
@@ -337,7 +332,7 @@
 
 	function runTests() {
 		$.ajax({
-			type: "POST",
+			type: 'POST',
 			url: "{{ mavensmate.ui.getBaseUrl() }}/app/test/execute?pid={{project.settings.id}}",
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
@@ -354,9 +349,9 @@
 
 	function getTestsToRun() {
 		var testsToRun = [];
-		$("#class-list-wrapper").find("div.alert label input[type='checkbox']").each(function() {
+		$('#class-list-wrapper').find("div.alert label input[type='checkbox']").each(function() {
 			if ($(this).attr('checked') === 'checked') {
-				testsToRun.push($(this).data("classname"))
+				testsToRun.push($(this).data('classname'));
 			}
 		});
 		return testsToRun;
@@ -365,91 +360,91 @@
 	$(function(){
 		$('label.checkbox input, div.enable_logging_wrapper input').checkbox();
 
-		$(".item-search.class input").change(function() {
-			var thevalue = $(this).val().toLowerCase()
-			$("#class_coverage_wrapper").find("div.alert h3").each(function() {
-				var metaname = $(this).html().toLowerCase()
-				if (metaname.indexOf(thevalue) == -1) {
-					$(this).parent().hide()
+		$('.item-search.class input').change(function() {
+			var thevalue = $(this).val().toLowerCase();
+			$("#class_coverage_wrapper").find('div.alert h3').each(function() {
+				var metaname = $(this).html().toLowerCase();
+				if (metaname.indexOf(thevalue) === -1) {
+					$(this).parent().hide();
 				} else {
-					$(this).parent().show()
+					$(this).parent().show();
 				}
-			})
+			});
 		})
 		.keyup(function() {
 	        $(this).change();
 	    });
 
-		$(".item-search.trigger input").change(function() {
-			var thevalue = $(this).val().toLowerCase()
-			$("#trigger_coverage_wrapper").find("div.alert h3").each(function() {
-				var metaname = $(this).html().toLowerCase()
-				if (metaname.indexOf(thevalue) == -1) {
-					$(this).parent().hide()
+		$('.item-search.trigger input').change(function() {
+			var thevalue = $(this).val().toLowerCase();
+			$('#trigger_coverage_wrapper').find('div.alert h3').each(function() {
+				var metaname = $(this).html().toLowerCase();
+				if (metaname.indexOf(thevalue) === -1) {
+					$(this).parent().hide();
 				} else {
-					$(this).parent().show()
+					$(this).parent().show();
 				}
-			})
+			});
 		})
 		.keyup(function() {
 	        $(this).change();
 	    });
 
-	    $(".item-search.class-list input").change(function() {
-			var thevalue = $(this).val().toLowerCase()
-			$("#class-list-wrapper").find("div.alert label").each(function() {
-				var metaname = $(this).html().toLowerCase()
-				if (metaname.indexOf(thevalue) == -1) {
-					$(this).parent().hide()
+	    $('.item-search.class-list input').change(function() {
+			var thevalue = $(this).val().toLowerCase();
+			$('#class-list-wrapper').find('div.alert label').each(function() {
+				var metaname = $(this).html().toLowerCase();
+				if (metaname.indexOf(thevalue) === -1) {
+					$(this).parent().hide();
 				} else {
-					$(this).parent().show()
+					$(this).parent().show();
 				}
-			})
+			});
 		})
 		.keyup(function() {
 	        $(this).change();
 	    });
 
 		$(window).resize(function() {
-			$("#result_wrapper").height($(window).height() - 210)
-			$("#class_coverage_wrapper").height($(window).height() - 260)
-			$("#trigger_coverage_wrapper").height($(window).height() - 260)
-			$("#log_coverage_wrapper").height($(window).height() - 210)
-			$("#class-list-wrapper").height($(window).height() - 270)
-			resize_arcade()
+			$('#result_wrapper').height($(window).height() - 210);
+			$('#class_coverage_wrapper').height($(window).height() - 260);
+			$('#trigger_coverage_wrapper').height($(window).height() - 260);
+			$('#log_coverage_wrapper').height($(window).height() - 210);
+			$('#class-list-wrapper').height($(window).height() - 270);
+			resize_arcade();
 		});
 		window.resizeTo(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
 		$("#class-list-wrapper").height($(window).height() - 270)
-		resize_arcade()
-		centerWindow()
+		resize_arcade();
+		centerWindow();
 	});
 
 	function selectAllTests() {
-		$("#class-list-wrapper").find("div.alert label input[type='checkbox']").each(function() {
+		$('#class-list-wrapper').find("div.alert label input[type='checkbox']").each(function() {
 			$(this).attr('checked', true);
-			$(this).parent().addClass('checked')
+			$(this).parent().addClass('checked');
 		});
 	}
 
 	function selectNoTests() {
-		$("#class-list-wrapper").find("div.alert label input[type='checkbox']").each(function() {
+		$('#class-list-wrapper').find("div.alert label input[type='checkbox']").each(function() {
 			$(this).attr('checked', false);
-			$(this).parent().removeClass('checked')
+			$(this).parent().removeClass('checked');
 		});
 	}
 
-	$("#result_wrapper").height($(window).height() - 210)
-	$("#class_coverage_wrapper").height($(window).height() - 260)
-	$("#trigger_coverage_wrapper").height($(window).height() - 260)
-	$("#log_coverage_wrapper").height($(window).height() - 210)
+	$('#result_wrapper').height($(window).height() - 210);
+	$('#class_coverage_wrapper').height($(window).height() - 260);
+	$('#trigger_coverage_wrapper').height($(window).height() - 260);
+	$('#log_coverage_wrapper').height($(window).height() - 210);
 
-	$("#category").change(function() {
-		if (this.value == "Apex_code") {
-			$("#levelwrapper").show()
+	$('#category').change(function() {
+		if (this.value === 'Apex_code') {
+			$('#levelwrapper').show();
 		} else {
-			$("#levelwrapper").hide()
+			$('#levelwrapper').hide();
 		}
-	})
+	});
 </script>
 
 {% endblock %}

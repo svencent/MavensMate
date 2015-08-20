@@ -8,7 +8,10 @@
         "afterEach"  : false,
         "Promise"    : true,
         "$"          : false,
-        "window"     : false
+        "window"     : false,
+        "toggleRunningIndicator" : false,
+        "showMessage" : false,
+        "notifySound": false
     },
     "node": true,
     "esnext": true,
