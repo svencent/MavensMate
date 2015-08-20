@@ -1,6 +1,7 @@
 ## Change Log
 
-### upcoming (2015/08/20 12:53 +00:00)
+### upcoming (2015/08/20 16:05 +00:00)
+- [06835ef](https://github.com/joeferraro/MavensMate/commit/06835ef1b18471847ca7698f2c774ad317a47a2d) update changeling with issues [ci skip] (@joeferraro)
 - [4d21ae2](https://github.com/joeferraro/MavensMate/commit/4d21ae2ab1b50da5a2b255b0b7c064e161af9daa) add changelog [ci skip] (@joeferraro)
 
 ### v0.0.38-beta21 (2015/08/20 12:40 +00:00)
