@@ -33,13 +33,6 @@ server.start()
       client.addProject(project)
         .then(function(response) {
           console.log(response);
-          // if (!headless) {
-          //   var spawn = require('child_process').spawn
-          //   spawn('open', ['http://localhost:'+port+'/app/home/index?pid='+client.getProjects()[0].settings.id]);
-          // }
-          // var spawn = require('child_process').spawn;
-          // spawn('open', ['http://localhost:'+port+'/app/home/index?pid='+client.getProjects()[0].settings.id]);
-          // console.log('MavensMate project path: '+response.path);
         })
         .catch(function(err) {
           if (err.message.indexOf('valid MavensMate project') === -1) {
@@ -49,13 +42,6 @@ server.start()
             console.warn(err.message);        
           }
         }); 
-    } else {
-      // if (!headless) {
-      //   var spawn = require('child_process').spawn
-      //   spawn('open', ['http://localhost:'+port]);
-      // }
-      // var spawn = require('child_process').spawn
-      // spawn('open', ['http://localhost:'+port]);
     }
   })
   .catch(function(err) {
