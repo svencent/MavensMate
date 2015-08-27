@@ -1,5 +1,9 @@
 {% extends "ui/templates/layouts/base.html" %}
 {% block yield %}
+<div class="alert alert-error">
+	<span>Your project's credentials are either invalid or expired. Please update them below.</span>
+</div>
+
 <div id="result_output">
 	<div class="alert alert-error">
 		<button type="button" class="close fui-cross"></button>
