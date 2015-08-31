@@ -151,14 +151,15 @@
             });
         }
 
-        function openProjectInEditor(editor) {
+        function openProjectInEditor(editor, id) {
+            var projectId = id || '{{project.settings.id}}';
             $.ajax({
                 type: "GET",
                 url: baseLocalServerURL+"/execute", 
                 data: {
                     command: 'open-project',
                     editor: editor,
-                    pid: '{{project.settings.id}}'
+                    pid: projectId
                 }
             }); 
         }

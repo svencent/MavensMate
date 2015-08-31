@@ -18,7 +18,7 @@
 	<br/>
 	{% if !editor %}
 		{% for editorName, editorPath in mavensmate.ui.getClient().supportedEditors %}
-			<a class="btn btn-info btn-embossed btn-wide" href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}');">Open in {{ editorName|capitalize }}</a>
+			<a class="btn btn-info btn-embossed btn-wide" href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}', newProjectId);">Open in {{ editorName|capitalize }}</a>
 		{% endfor %}
 	{% endif %}
 </div>
@@ -136,6 +136,7 @@
 		var response;
 		var operation;
 		var isSubscriptionListBuilt = false;
+		var newProjectId;
 		/* jshint ignore:start */
 		var defaultSubscription = [
 			"{{ mavensmate.ui.getDefaultSubscription()|join('", "') }}"
@@ -174,6 +175,7 @@
 					notifySound();
 				} else {
 					hideMessage();
+					newProjectId = response.result.id;
 					$("#success-open-alert-message").html(response.result.message);
 					$("#success-open-alert").show();
 				}
