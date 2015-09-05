@@ -856,6 +856,13 @@ background-color:#7979b9}
     position: relative;
 }
 
+body #projectModal {
+    /* new custom width */
+    width: 850px;
+    /* must be half of the width, minus scrollbar on the left (30px) */
+    margin-left: -425px;
+}
+
 .dropdown-submenu>.dropdown-menu {
     top: 0;
     left: 100%;

@@ -354,8 +354,7 @@
                 $('#projectModal').modal('hide');
             });
             
-            //$('input[type="checkbox"]').checkbox();
-            resizeElements()
+            resizeElements();
         });
 
         function openProjectModal() {
@@ -403,8 +402,8 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h5>Select Project</h5>
         </div>
-        <div class="modal-body" style="height:300px">
-            <select id="projects" class="select-block mbl info span12">
+        <div class="modal-body" style="height:330px">
+            <select id="projects" class="select-block mbl info span12" data-size="16">
                {% for p in mavensmate.ui.listProjects() %}
                     <option value="{{ p.id }}">
                         {{ p.path }}
