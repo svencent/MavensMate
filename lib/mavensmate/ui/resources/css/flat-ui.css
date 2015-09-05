@@ -4562,7 +4562,7 @@ input.search-query {
 .dropdown-menu {
   background-color: #f3f4f5;
   border: none;
-  display: block;
+  // display: block; mavensmate: removed to enable multilevel dropdowns
   margin-top: 8px;
   opacity: 0;
   padding: 0;
