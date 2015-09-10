@@ -70,7 +70,7 @@ describe('mavensmate deploy-to-server', function() {
         var payload = {
           username: 'mm@force.com',
           password: 'force',
-          orgType: 'developer'
+          orgType: 'production'
         };
         return testClient.executeCommand('new-connection', payload);
       })
@@ -78,6 +78,7 @@ describe('mavensmate deploy-to-server', function() {
         return testClient.executeCommand('get-connections');
       })
       .then(function(conns) {   
+        conns[0].environment.should.equal('production');
         var deployPayload = {
           destinations: conns,
           package: { 'ApexClass': ['DeployClass']  },   

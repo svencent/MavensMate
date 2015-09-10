@@ -453,7 +453,7 @@
 			var id = targets[t].split(';')[2];
 			var t = {};
 			t.username = username;
-			t.org_type = type;
+			t.orgType = type;
 			t.id = id;
 			ts.push(t);
 		}
@@ -624,7 +624,7 @@
 			data: JSON.stringify({
 				username 		 : $("#connection_un").val(), 
 				password 		 : $("#connection_pw").val(), 
-				org_type 		 : $("#org_type").val(),
+				orgType 		 : $("#org_type").val(),
 				command 		 : 'new-connection'
 			}),
 			beforeSend: function() { showLoading('Adding connection'); },
