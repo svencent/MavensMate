@@ -36,7 +36,7 @@ server.start()
         })
         .catch(function(err) {
           if (err.message.indexOf('valid MavensMate project') === -1) {
-            console.error('Could not add project: ', err.message);
+            console.error('Error initializing project: ', err.message);
             return;
           } else {
             console.warn(err.message);        
