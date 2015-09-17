@@ -54,7 +54,7 @@
     "inherits": "2.0.1",
     "inquirer": "0.8.0",
     "jsforce": "joeferraro/jsforce",
-    "lodash": "2.4.1",
+    "lodash": "3.10.1",
     "loophole": "1.0.0",
     "merge": "1.2.0",
     "minimist": "1.1.0",
