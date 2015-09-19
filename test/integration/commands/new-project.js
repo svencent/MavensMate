@@ -95,8 +95,8 @@ describe('mavensmate new-project', function(){
 
     testClient.executeCommand('new-project', payload)
       .then(function(response) {
-        
         response.message.should.equal('Project created successfully');
+        response.should.have.property('id');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project'),  'Project directory does not exist');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'config'),  'Project config directory does not exist');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src'),  'Project src directory does not exist');
