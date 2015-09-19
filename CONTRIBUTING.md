@@ -1,6 +1,6 @@
 ### Contributing
 
-This project contains the Node.js source code that powers Salesforce1 IDEs for text editors like Atom and Sublime Text. 
+This project contains the Node.js source code that powers Salesforce IDEs for text editors like Atom and Sublime Text. 
 
 #### Submitting Issues
 
