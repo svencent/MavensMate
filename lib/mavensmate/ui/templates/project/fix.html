@@ -67,31 +67,29 @@
 
 {% block body_js %}
 	<script>
-		var PROJECT_WRAPPER_OFFSET = $("#filter").height() + 60;
+		var PROJECT_WRAPPER_OFFSET = $('#filter').height() + 60;
 
 		function updateProjectCreds() {
-			console.log('updating project creds')
+			console.log('updating project creds');
 			$.ajax({
-				type: "POST",
+				type: 'POST',
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
 				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-creds?pid={{project.settings.id}}", 
 				data: JSON.stringify({
-					username 			: $("#un").val(),
-			    	password 			: $("#pw").val(),
-			    	orgType 			: $(".org_type").val(),
-			    	loginUrl 			: $("#custom-url").val(), 
-			    	path 				: '{{ project.path }}',
-			    	command 			: "update-creds"
+					username: $('#un').val(),
+			    password: $('#pw').val(),
+			    orgType: $('.org_type').val(),
+			    loginUrl: $('#custom-url').val()
 				}),
 				beforeSend: function() { showLoading('Updating project credentials'); },
 				complete: function(data){
-					console.log(data)				
-					var response = JSON.parse(data.responseText)
+					console.log(data);
+					var response = JSON.parse(data.responseText);
 					if (response.error) {
-						showMessage(response.error)
+						showMessage(response.error);
 					} else {
-						showMessage(response.message, 'success', true)
+						showMessage(response.message, 'success', true);
 					}
 					hideLoading();
 				}
@@ -99,10 +97,10 @@
 		}
 
 		function positionInputIcons() {
-			var siblingInputWidth = $(".input-icon.fui-lock").prev().width();
-			$(".input-icon.fui-lock").css('right', '0px');
-			$(".input-icon.fui-lock").css('width', '20px');
-			$(".input-icon.fui-lock").css('left', siblingInputWidth-30+'px');
+			var siblingInputWidth = $('.input-icon.fui-lock').prev().width();
+			$('.input-icon.fui-lock').css('right', '0px');
+			$('.input-icon.fui-lock').css('width', '20px');
+			$('.input-icon.fui-lock').css('left', siblingInputWidth-30+'px');
 		}
 			
 		$(function() {		
@@ -139,19 +137,18 @@
 					$("#custom-url").hide()
 					$("#custom-url").val('')
 				}
-			})
+			});
 
 			
 			$('a[data-toggle="tab"]').on('shown', function (e) {
-				if (e.target.href.indexOf("form") != -1) {
-					positionInputIcons()	
+				if (e.target.href.indexOf("form") !== -1) {
+					positionInputIcons();
 				}
-		    });
+		   });
 
-		    window.resizeTo(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
-		    positionInputIcons()
-		    centerWindow()
-
+		   window.resizeTo(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+		   positionInputIcons();
+		   centerWindow();
 		});
 	</script>
 
