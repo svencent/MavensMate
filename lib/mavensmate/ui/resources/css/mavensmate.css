@@ -7,7 +7,9 @@
  	display: none;
  }
 
- body.atom #arcade_tab {
+ /* until we can support html5 games */
+ body #arcade_tab,
+ li.game {
  	display: none;
  }
 
