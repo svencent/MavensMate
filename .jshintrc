@@ -11,7 +11,12 @@
         "window"     : false,
         "toggleRunningIndicator" : false,
         "showMessage" : false,
-        "notifySound": false
+        "notifySound": false,
+        "baseLocalServerURL": false,
+        "io": false,
+        "showLoading": false,
+        "hideLoading": false,
+        "responseHandler": false
     },
     "node": true,
     "esnext": true,

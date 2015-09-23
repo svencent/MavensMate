@@ -1,0 +1,81 @@
+{% extends "ui/templates/layouts/base.html" %}
+
+{% block yield %}
+  <div>
+    <ul id="logs">
+
+    </ul>
+  </div>
+  <div>
+    <input type="hidden" id="location"/>
+    <input type="text" id="keyword"/>
+    <a class="btn btn-default" href="#" onclick="filterLog()">FILTER LOG</a>
+    <pre id="log">
+
+    </pre>
+  </div>
+{% endblock %}
+
+{% block body_js %}
+<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+<script>
+  'use strict';
+  
+  var socket = io.connect(baseLocalServerURL);
+  socket.on('new-log', function (data) {
+    $('#logs').append('<li><a data-location="'+data.location+'" href="#" onclick="openLog(this)">Open Log</a></li>');
+  });
+
+  function openLog(el) {
+    var $anchor = $(el);
+    var location = $anchor.data('location');
+    $.ajax({
+      type: 'GET',
+      url: '{{ mavensmate.ui.getBaseUrl() }}/app/logs/get-log',
+      data: {
+        location: location
+      },
+      beforeSend: function() {  },
+      complete: function(data) {
+        console.log(data);
+        console.log(data.responseText);
+        var lines = JSON.parse(data.responseText);
+        console.log(lines);
+        var container = $('<div/>');
+        $.each(lines, function(i,val) {
+          container.append('<div>'+val+'</div>');
+        });
+        console.log(container);
+        console.log(container.html());
+        $('#location').val(location);
+        $('#log').html(container.html());
+      } 
+    });
+  }
+
+  function filterLog() {
+    $.ajax({
+      type: 'GET',
+      url: '{{ mavensmate.ui.getBaseUrl() }}/app/logs/filter-log',
+      data: {
+        location: $('#location').val(),
+        keyword: $('#keyword').val()
+      },
+      beforeSend: function() {  },
+      complete: function(data) {
+        console.log(data);
+        console.log(data.responseText);
+        var lines = JSON.parse(data.responseText);
+        console.log(lines);
+        var container = $('<div/>');
+        $.each(lines, function(i,val) {
+          container.append('<div>'+val+'</div>');
+        });
+        console.log(container);
+        console.log(container.html());
+        $('#log').html(container.html());
+      } 
+    });
+  }
+</script>
+{% endblock %}
