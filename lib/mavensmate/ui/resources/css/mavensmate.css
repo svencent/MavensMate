@@ -3,6 +3,14 @@
  	padding-right:0px;
  }
 
+ body .no-margin {
+ 	margin:0px !important;
+ }
+
+ body .no-padding {
+ 	padding:0px !important;
+ }
+
  body.atom #btnCancel {
  	display: none;
  }
@@ -132,20 +140,25 @@
 	width:100%;
 }
 
+#class_coverage_wrapper div.alert {
+
+}
+
 #class_coverage .alert h3,
 #trigger_coverage .alert h3 {
-	font-size:18px;
+	font-size:14px;
 }
 
 #class_coverage .progress,
 #trigger_coverage .progress {
-	height: 22px;
+	height: 14px;
 	margin: 10px 0px 0px 0px;
 }
 
 #class_coverage .alert a,
 #trigger_coverage .alert a {
 	margin:0px 0px 5px !important;
+	padding:7px 10px !important;
 }
 
 .ace_print_margin {
@@ -443,7 +456,8 @@ a.dynatree-title {
 
 #trigger_coverage .alert,
 #class_coverage .alert {
-	padding:10px 20px 5px 20px !important;
+	padding:10px 15px 5px 15px !important;
+	margin-bottom:10px;
 }
 
 .running_indicator {
