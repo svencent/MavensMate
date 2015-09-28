@@ -1,34 +1,244 @@
 {% extends "ui/templates/layouts/base.html" %}
 
 {% block yield %}
-  <div>
-    <ul id="logs">
 
-    </ul>
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="alert alert-info" id="filter" style="">
+        <input type="hidden" id="location"/>
+        <div class="row-fluid">
+          <div class="span5">
+            <input type="text" placeholder="Filter log" id="keyword" style="width:300px;height:35px;" />
+            <a href="#" class="btn btn-success btn-embossed no-margin" onclick="filterLog()" style="right:45px"><i class="icon-search"></i></a>
+          </div>
+          <div class="span7" style="text-align:right">
+            <select id="keywords" class="select mbl info" style="display:none;margin-right:5px" data-placeholder="Filter by keyword...">>
+              <option value="">--CATEGORIES--</option>
+              <option value="USER_DEBUG">USER_DEBUG</option>
+              <option value="CALLOUT_">CALLOUT</option>
+              <option value="SOQL_">SOQL</option>
+              <option value="DML_">DML</option>
+              <option value="LIMIT_USAGE_">LIMITS</option>
+              <option value="VALIDATION_">VALIDATION</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div>
-    <input type="hidden" id="location"/>
-    <input type="text" id="keyword"/>
-    <a class="btn btn-default" href="#" onclick="filterLog()">FILTER LOG</a>
-    <pre id="log">
+  <div class="row-fluid">
+    <div class="span3">
+      <div id="logsWrapper">
+        <ul id="logs">
+          {% for l in logs %}
+            <li>
+              <a onclick="openLog(this)" data-location="{{mavensmate.ui.getPathBaseName(l)}}" href="#">{{mavensmate.ui.getPathBaseName(l)}}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="span9">
+      <div id="log"></div>
+    </div>
+  </div>
 
-    </pre>
-  </div>
+{% endblock %}
+
+{% block buttons %}         
+  <button style="margin:0px 5px 0px 5px" onclick="startLogging(this)" class="btn btn-info btn-embossed">Start Logging</button>
+  <button style="margin:0px 5px 0px 0px" onclick="stopLogging(this)" class="btn btn-default btn-embossed">Stop Logging</button>
+  <button style="margin:0px 5px 0px 0px" onclick="flushLogs(this)" class="btn btn-danger btn-embossed">Flush Logs</button>
 {% endblock %}
 
 {% block body_js %}
+<style>
+  div#log {
+    padding:10px;
+    overflow-y:scroll; 
+    display: block;
+    padding: 9.5px;
+    font-size: 13px;
+    line-height: 20px;
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre;
+    white-space: pre-wrap;
+    background-color: #f7f9fa;
+    border-color: #e9ecef;    
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    border:2px solid #ebece8;
+    font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+    color: #333333;
+  }
+
+  div#logsWrapper {
+    padding:0px;
+    overflow-y:scroll; 
+    display: block;
+  }
+
+  ul#logs {
+    list-style: none;
+    margin:0px;
+  }
+
+  ul#logs li {
+      padding: 0px;
+  }
+
+  ul#logs > li:first-child > a {
+    border-radius:4px 4px 0px 0px;
+  }
+
+  ul#logs > li:last-child > a {
+    border-radius:0px 0px 4px 4px;
+  }
+
+  ul#logs > li > a {
+      display: block;
+      width: 230px \9;
+      margin: 0 0 -1px;
+      padding: 8px 14px;
+      border: 1px solid #e5e5e5;
+  }
+
+  ul#logs > li > a.selected {
+    background-color: #2c97de;
+    color:#fff;
+  }
+
+  #keywords {
+    margin:0px;
+  }
+
+  .btn-group.select {
+    margin:0px;
+  }
+  .flash{
+    -webkit-animation: flash 1s ease-out;
+    -webkit-animation-iteration-count: 1;
+  }
+
+  @-webkit-keyframes flash {
+      0% { background-color:none;}
+      50% { background-color:#fbf8b2;}        
+      100% {background-color:none;}
+  }
+</style>
 <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
 <script>
   'use strict';
-  
+  var editor;
   var socket = io.connect(baseLocalServerURL);
+
   socket.on('new-log', function (data) {
-    $('#logs').append('<li><a data-location="'+data.location+'" href="#" onclick="openLog(this)">Open Log</a></li>');
+    $('#logs').prepend('<li><a data-location="'+data.locationBasename+'" href="#" onclick="openLog(this)">'+data.locationBasename+'</a></li>');
+  });
+ 
+  function resizeComponents() {
+    $('#log').height($( window ).height() - 300);
+    $('#logsWrapper').height($( window ).height() - 280);
+  }
+
+  $(function() {
+    $('#keyword').bind('keyup', function(e) {
+      var code = (e.keyCode ? e.keyCode : e.which);
+      if (code === 13) { //enter pressed
+        filterLog();
+      }
+    }); 
+
+    $(window).resize(function() {
+      resizeComponents();
+    });
+
+    $('#keywords').change(function() {
+      $('#keyword').val(this.value);
+      filterLog();
+    });
+
+    resizeComponents();
   });
 
+  function startLogging(el) {
+    var $button = $(el);
+    $.ajax({
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8',
+      url: '{{ mavensmate.ui.getBaseUrl() }}/execute',
+      data: JSON.stringify({
+        command: 'start-logging'
+      }),
+      beforeSend: function() {
+        $button.html('Starting...');
+      },
+      complete: function(data) {
+        console.log(data);
+        $button.html('Start Logging');
+        if (data.status !== 200) {
+          showMessage(JSON.parse(data.responseText).message);
+        }
+      } 
+    });
+  }
+
+  function stopLogging(el) {
+    var $button = $(el);
+    $.ajax({
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8',
+      url: '{{ mavensmate.ui.getBaseUrl() }}/execute',
+      data: JSON.stringify({
+        command: 'stop-logging'
+      }),
+      beforeSend: function() {
+        $button.html('Stopping...');
+      },
+      complete: function(data) {
+        console.log(data);
+        $button.html('Stop Logging');
+        if (data.status !== 200) {
+          showMessage(JSON.parse(data.responseText).message);
+        }
+      } 
+    });
+  }
+
+  function flushLogs(el) {
+    var $button = $(el);
+    $.ajax({
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8',
+      url: '{{ mavensmate.ui.getBaseUrl() }}/execute',
+      data: JSON.stringify({
+        command: 'flush-logs'
+      }),
+      beforeSend: function() {
+        $button.html('Flushing Logs...');
+      },
+      complete: function(data) {
+        console.log(data);
+        if (data.status !== 200) {
+          showMessage(JSON.parse(data.responseText).message);
+        } else if (data.status === 200) {
+          $('ul#logs').html('');
+        }
+        $button.html('Flush Logs');
+      } 
+    });
+  }
+
   function openLog(el) {
+    $('ul#logs li a').removeClass('selected');
     var $anchor = $(el);
     var location = $anchor.data('location');
+    $('#keywords').val('').trigger('change');
     $.ajax({
       type: 'GET',
       url: '{{ mavensmate.ui.getBaseUrl() }}/app/logs/get-log',
@@ -39,16 +249,9 @@
       complete: function(data) {
         console.log(data);
         console.log(data.responseText);
-        var lines = JSON.parse(data.responseText);
-        console.log(lines);
-        var container = $('<div/>');
-        $.each(lines, function(i,val) {
-          container.append('<div>'+val+'</div>');
-        });
-        console.log(container);
-        console.log(container.html());
         $('#location').val(location);
-        $('#log').html(container.html());
+        $('#log').html(data.responseText);
+        $anchor.addClass('selected');
       } 
     });
   }
@@ -65,15 +268,7 @@
       complete: function(data) {
         console.log(data);
         console.log(data.responseText);
-        var lines = JSON.parse(data.responseText);
-        console.log(lines);
-        var container = $('<div/>');
-        $.each(lines, function(i,val) {
-          container.append('<div>'+val+'</div>');
-        });
-        console.log(container);
-        console.log(container.html());
-        $('#log').html(container.html());
+        $('#log').html(data.responseText);
       } 
     });
   }
