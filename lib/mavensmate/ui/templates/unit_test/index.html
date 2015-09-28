@@ -145,13 +145,6 @@
 	div#class-list-wrapper {
 		overflow-y:auto;
 	}
-
-	#coverageModal {
-		width: 100%;
-		margin: 0px;
-		left: 0;
-	}
-
 </style>
 
 	<div id="result_output">
@@ -256,19 +249,6 @@
 		</div>
 	</div>
 
-	<div id="coverageModal" class="modal hide fade">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h5>Coverage</h5>
-    </div>
-    <div class="modal-body" style="height:500px;max-height: 500px;">
-        <div id="coverage-table"></div>
-    </div>
-    <div class="modal-footer">
-        <a href="#" class="btn btn-embossed close-coverage-modal">Close</a>
-    </div>
-	</div>
-
 	{% endblock %}
 
 
@@ -337,8 +317,6 @@
 					try {
 						var response = JSON.parse(data.responseText);
 						$('#'+domId).html(response.result);
-						$('#coverage-table').html(response.result);
-						$('#coverageModal').modal();
 						$(el).html('Hide Coverage').removeClass('btn-info');
 						$('#'+domId).show();
 						$('#'+domId).addClass('retrieved');
