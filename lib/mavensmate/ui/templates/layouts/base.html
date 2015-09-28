@@ -30,8 +30,13 @@
     <script>
         var tree;
 
+        var headers = { 'MavensMate-Editor-Agent': '{{ editor }}' };
+        {% if project && project.settings && project.settings.id %}
+            headers['MavensMate-pid'] = '{{ project.settings.id }}';
+        {% endif %}
+
         $.ajaxSetup({
-            headers: { "MavensMate-Editor-Agent": "{{ editor }}" }
+            headers: headers
         });
 
         $(function() {
