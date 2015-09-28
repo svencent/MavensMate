@@ -55,26 +55,26 @@ describe('mavensmate SettingsController', function(){
       configLoadStub.restore();
     });
 
-    it('should render settings/index.html with empty object if settings are invalid JSON', function(done) {    
-      var mockedExpress = helper.mockExpress(project);
-      var req = mockedExpress.req;
-      var res = mockedExpress.res;
-      var spy = res.render = sinon.spy();
+    // it('should render settings/index.html with empty object if settings are invalid JSON', function(done) {    
+    //   var mockedExpress = helper.mockExpress(project);
+    //   var req = mockedExpress.req;
+    //   var res = mockedExpress.res;
+    //   var spy = res.render = sinon.spy();
 
-      configLoadStub = sinon.stub(config, 'load', function() {
-        return 'THIS IS NOT VALID JSON';
-      });
+    //   configLoadStub = sinon.stub(config, 'load', function() {
+    //     return 'THIS IS NOT VALID JSON';
+    //   });
 
-      ctrl.index(req, res);
-      spy.calledOnce.should.equal(true);
-      var locals = {
-        userSettings: {},
-        defaultSettings: defaultSettings,
-        title: 'Settings'
-      };
-      assert(spy.calledWith('settings/index.html', locals));
-      done();
-    });
+    //   ctrl.index(req, res);
+    //   spy.calledOnce.should.equal(true);
+    //   var locals = {
+    //     userSettings: {},
+    //     defaultSettings: defaultSettings,
+    //     title: 'Settings'
+    //   };
+    //   assert(spy.calledWith('settings/index.html', locals));
+    //   done();
+    // });
 
     it('should render settings/index.html with user settings', function(done) {    
       var mockedExpress = helper.mockExpress(project);
