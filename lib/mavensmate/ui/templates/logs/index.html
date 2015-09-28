@@ -4,15 +4,14 @@
 
   <div class="row-fluid">
     <div class="span12">
-      <div class="alert alert-info" id="filter" style="">
+      <div class="" id="filter" style="">
         <input type="hidden" id="location"/>
         <div class="row-fluid">
-          <div class="span5">
+          <div class="span12" style="text-align:right">
             <input type="text" placeholder="Filter log" id="keyword" style="width:300px;height:35px;" />
             <a href="#" class="btn btn-success btn-embossed no-margin" onclick="filterLog()" style="right:45px"><i class="icon-search"></i></a>
-          </div>
-          <div class="span7" style="text-align:right">
-            <select id="keywords" class="select mbl info" style="display:none;margin-right:5px" data-placeholder="Filter by keyword...">>
+
+            <select id="keywords" class="select mbl info" style="display:none;" data-placeholder="Filter by keyword...">>
               <option value="">--CATEGORIES--</option>
               <option value="USER_DEBUG">USER_DEBUG</option>
               <option value="CALLOUT_">CALLOUT</option>
@@ -114,6 +113,11 @@
     margin:0px;
   }
 
+  button#keywords {
+    margin-right:5px;
+    padding:6px;
+  }
+
   .btn-group.select {
     margin:0px;
   }
@@ -127,6 +131,10 @@
       50% { background-color:#fbf8b2;}        
       100% {background-color:none;}
   }
+
+  .select .btn span.filter-option {
+    top:6px;
+  }
 </style>
 <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
 <script>
@@ -139,8 +147,8 @@
   });
  
   function resizeComponents() {
-    $('#log').height($( window ).height() - 300);
-    $('#logsWrapper').height($( window ).height() - 280);
+    $('#log').height($( window ).height() - 280);
+    $('#logsWrapper').height($( window ).height() - 260);
   }
 
   $(function() {
@@ -248,7 +256,7 @@
       beforeSend: function() {  },
       complete: function(data) {
         console.log(data);
-        console.log(data.responseText);
+        // console.log(data.responseText);
         $('#location').val(location);
         $('#log').html(data.responseText);
         $anchor.addClass('selected');
@@ -267,7 +275,7 @@
       beforeSend: function() {  },
       complete: function(data) {
         console.log(data);
-        console.log(data.responseText);
+        // console.log(data.responseText);
         $('#log').html(data.responseText);
       } 
     });
