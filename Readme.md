@@ -1,6 +1,6 @@
 # [MavensMate](http://mavensmate.com) - Open Source IDEs for Salesforce1
 
-MavensMate is a powerful tool for building Salesforce IDEs. Develop Salesforce applications in your favorite text editors, like Sublime Text and Atom. MavensMate is created and maintained by [Joe Ferraro](http://twitter.com/joeferraro) with help from these [contributors](#contributors)
+MavensMate is a powerful tool for building Salesforce IDEs. Develop Salesforce applications in your favorite text editors, like Sublime Text and Atom. MavensMate is created and maintained by [Joe Ferraro](http://twitter.com/joeferraro) with help from these [contributors](#contributors).
 
 For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 
@@ -145,7 +145,7 @@ If you have an issue with the Sublime Text or Atom plugin specifically, please o
 
 **Always include your MavensMate version number, platform, and specific steps to reproduce.**
 
-## [Contributors][contributors]
+## Contributors
 
 - [Joseph Ferraro] (http://github.com/joeferraro)
 - [Ralph Callaway] (http://github.com/ralphcallaway)
