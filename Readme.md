@@ -1,11 +1,10 @@
 # [MavensMate](http://mavensmate.com) - Open Source IDEs for Salesforce1
 
-MavensMate is a powerful Node.js application and command line interface for building Salesforce1 IDEs. Develop Salesforce1 applications in your favorite text editors, like Sublime Text and Atom. MavensMate is created and maintained by [Joe Ferraro](http://twitter.com/joeferraro).
+MavensMate is a powerful tool for building Salesforce IDEs. Develop Salesforce applications in your favorite text editors, like Sublime Text and Atom. MavensMate is created and maintained by [Joe Ferraro](http://twitter.com/joeferraro) with help from these [contributors](#contributors)
 
 For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 
-**IMPORTANT: the core MavensMate API has undergone a major rewrite for stability and performance. This README is changing rapidly!**
-
+- [MavensMate-app](#mavensmate-app)
 - [MavensMate API](#mavensmate-api)
 - [MavensMate Plugins](#active-plugins)
 - [Bugs and Feature Requests](#bugs-and-feature-requests)
@@ -16,44 +15,44 @@ For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 [![NPM Version](https://img.shields.io/npm/v/mavensmate.svg)](https://www.npmjs.org/package/mavensmate)
 [![Coverage Status](https://coveralls.io/repos/joeferraro/MavensMate/badge.svg?branch=master)](https://coveralls.io/r/joeferraro/MavensMate?branch=master)
 
-
 [![License](https://img.shields.io/npm/l/mavensmate.svg)](https://www.npmjs.org/package/mavensmate)
+
+## MavensMate-app
+
+MavensMate-app is an application that bundles the local MavensMate server and UIs into a desktop app that powers the MavensMate Sublime Text and Atom plugins. For more information and to download MavensMate-app, [visit the GitHub project](https://github.com/joeferraro/MavensMate-app).
 
 ## MavensMate API
 
-You can build Salesforce1 IDEs by integrating with the APIs exposed in this project. For Node.js projects, you can simply `require('mavensmate')`. For other types of projects, you may use the command line interface (see below, full documentation forthcoming).
+You can build your own Salesforce IDEs by integrating with the APIs exposed in this project. For Node.js projects, you can simply `require('mavensmate')`. For other types of projects, you may use the command line interface (see below, full documentation forthcoming).
 
-### Node.js Projects
-
-To use MavensMate to build a Salesforce1 IDE for your Node.js project:
-
-#### Install
+### Install
 
 `npm install mavensmate -g`
 
-#### Usage
+### Usage
 
-##### Node Application
+#### Node Application
 
 ```
 var mavensmate = require('mavensmate');
 var client = mavensmate.createClient({
-	editor: '<editor_name>', // supported editor names: atom, sublime
-	headless: true,
-	verbose: true
+	name: 'my-mavensmate-client'
 });
-client.setProject('path/to/some/project', function(err, response) {
-	client.executeCommand('compile-project', function(err, response) {
-		// full list of commands can be found in lib/mavensmate/commands
-	});
+client.addProject('path/to/some/project')
+  .then(function(res) {
+    return client.executeCommand('compile-project');
+  })
+  .then(function(res) {
+    console.log('command result', res);
+  });
 });
 ```
 
-##### Command Line
+#### Command Line
 
 `mavensmate <command>`
 
-###### Examples
+##### Examples
 
 ```
 
@@ -134,6 +133,9 @@ MavensMate for Sublime Text is a Sublime Text plugin that uses the `mm` command 
 
 MavensMate for Atom is still in active development. If you're interested in beta-testing the plugin, you are encouraged to install it.
 
+### [MavensMate for Visual Studio Code (coming soon)][vscode]
+
+MavensMate is working with Microsoft to create an official plugin for Visual Studio Code.
 
 ## Bugs and feature requests
 
@@ -143,7 +145,7 @@ If you have an issue with the Sublime Text or Atom plugin specifically, please o
 
 **Always include your MavensMate version number, platform, and specific steps to reproduce.**
 
-## Contributors
+## [Contributors][contributors]
 
 - [Joseph Ferraro] (http://github.com/joeferraro)
 - [Ralph Callaway] (http://github.com/ralphcallaway)
@@ -161,4 +163,4 @@ MavensMate's documentation is built with [Daux.io](http://daux.io) and publicly 
 [docs]: http://mavensmate.com/Getting_Started/Developers
 [stp]: https://github.com/joeferraro/MavensMate-SublimeText
 [atom]: https://github.com/joeferraro/MavensMate-Atom
-[mmgithub]: https://github.com/joeferraro/mm
+[vscode]: https://github.com/joeferraro/MavensMate-VisualStudioCode
