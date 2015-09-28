@@ -30,8 +30,13 @@
     <script>
         var tree;
 
+        var headers = { 'MavensMate-Editor-Agent': '{{ editor }}' };
+        {% if project && project.settings && project.settings.id %}
+            headers['MavensMate-pid'] = '{{ project.settings.id }}';
+        {% endif %}
+
         $.ajaxSetup({
-            headers: { "MavensMate-Editor-Agent": "{{ editor }}" }
+            headers: headers
         });
 
         $(function() {
@@ -75,47 +80,47 @@
 
         function notifySound() {
             if ({{ mavensmate.ui.config.get('mm_play_sounds') }}) {
-                var snd = new Audio("{{ mavensmate.ui.getStaticResourcePath() }}/sounds/ding.mp3"); // buffers automatically when created
+                var snd = new Audio('{{ mavensmate.ui.getStaticResourcePath() }}/sounds/ding.mp3'); // buffers automatically when created
                 snd.play(); 
             }
         }
 
         function submitSearch() {
-            var filter = $("#txtFilter").val();
+            var filter = $('#txtFilter').val();
             if (filter && filter.length > 2) {
-                $("#tree").dynatree("option", "initAjax",
+                $('#tree').dynatree('option', 'initAjax',
                     {
-                        type: "POST",
-                        dataType: "json",
+                        type: 'POST',
+                        dataType: 'json',
                         contentType: 'application/json; charset=utf-8',
-                        url: baseLocalServerURL+"/execute",
+                        url: baseLocalServerURL+'/execute',
                         data: JSON.stringify({
                             keyword: filter,
-                            ids: $("#tree").dynatree("getTree").selectedIds,
+                            ids: $('#tree').dynatree('getTree').selectedIds,
                             command: 'search-metadata-index'
                         })
                     }
                 );
-                $("#tree").dynatree("getTree").reload();
-                $("#search-btn").removeClass('btn-success').addClass('btn-danger').html('<i class="icon-remove"></i>')
+                $('#tree').dynatree('getTree').reload();
+                $('#search-btn').removeClass('btn-success').addClass('btn-danger').html('<i class="icon-remove"></i>')
             }
         }
 
         function clearFilter() {
-            $("#tree").dynatree("option", "initAjax",
+            $('#tree').dynatree('option', 'initAjax',
                 {
-                    type     : "POST",
-                    dataType : "json",
+                    type     : 'POST',
+                    dataType : 'json',
                     contentType: 'application/json; charset=utf-8',
-                    url      : baseLocalServerURL+"/execute",
+                    url      : baseLocalServerURL+'/execute',
                     data     : JSON.stringify({
                         path                : '{{ project.path }}',
-                        ids                 : $("#tree").dynatree("getTree").selectedIds,
+                        ids                 : $('#tree').dynatree('getTree').selectedIds,
                         command             : 'search-metadata-index'
                     })
                 }
             );
-            $("#tree").dynatree("getTree").reload();
+            $('#tree').dynatree('getTree').reload();
             $('#txtFilter').val('');
             $('#txtFilter').focus();
             $("#search-btn").removeClass('btn-danger').addClass('btn-success').html('<i class="icon-search"></i>');
@@ -135,8 +140,8 @@
         //right now this only supports existing projects (not new project UI)
         function refreshNode(mtype) {
             $.ajax({
-                type: "POST",
-                dataType : "json",
+                type: 'POST',
+                dataType : 'json',
                 contentType: 'application/json; charset=utf-8',
                 url: baseLocalServerURL+"/execute", 
                 data: JSON.stringify({
@@ -144,9 +149,9 @@
                     path                : '{{ project.path }}',
                     command             : 'refresh-metadata-index'
                 }),
-                beforeSend: function() { showLoading("Refreshing Metadata Type: "+ mtype +"..."); },
+                beforeSend: function() { showLoading('Refreshing Metadata Type: '+ mtype +'...'); },
                 complete: function(data){
-                    $("#tree").dynatree("getTree").reload()
+                    $('#tree').dynatree('getTree').reload()
                 } 
             });
         }
@@ -154,8 +159,8 @@
         function openProjectInEditor(editor, id) {
             var projectId = id || '{{project.settings.id}}';
             $.ajax({
-                type: "GET",
-                url: baseLocalServerURL+"/execute", 
+                type: 'GET',
+                url: baseLocalServerURL+'/execute', 
                 data: {
                     command: 'open-project',
                     editor: editor,
@@ -217,6 +222,8 @@
                        
                         <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new?pid={{project.settings.id}}">Deploy to Server</a></li>
                         <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/test/new?pid={{project.settings.id}}">Run Apex Unit Tests</a></li>
+                        <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/apex/new?pid={{project.settings.id}}">Execute Apex</a></li>
+                        <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/logs/index?pid={{project.settings.id}}">Debug Logs</a></li>
                     {% else %}
                         <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/home/index">Home</a></li>
                         <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/settings/index">Settings</a></li>
