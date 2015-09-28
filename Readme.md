@@ -21,6 +21,8 @@ For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 
 MavensMate-app is an application that bundles the local MavensMate server and UIs into a desktop app that powers the MavensMate Sublime Text and Atom plugins. For more information and to download MavensMate-app, [visit the GitHub project](https://github.com/joeferraro/MavensMate-app).
 
+<img width="1100" alt="9_27_15__11_46_pm" src="https://cloud.githubusercontent.com/assets/54157/10146854/e8e3695c-65f8-11e5-8a41-d1b3f77b7a14.png">
+
 ## MavensMate API
 
 You can build your own Salesforce IDEs by integrating with the APIs exposed in this project. For Node.js projects, you can simply `require('mavensmate')`. For other types of projects, you may use the command line interface (see below, full documentation forthcoming).
