@@ -356,7 +356,7 @@
 		}  
 
 		$(window).resize(function() {
-			resize_arcade(370)
+			resizeArcade(370)
 			resizeProjectWrapper(PROJECT_WRAPPER_OFFSET)
 		});
 
@@ -408,7 +408,7 @@
 		});
 
 		$('label.checkbox input').checkbox();
-		resize_arcade(370)
+		resizeArcade(370)
 		window.resizeTo(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 		centerWindow()
 		setTimeout(resizeProjectWrapper(PROJECT_WRAPPER_OFFSET),500)
@@ -433,8 +433,7 @@
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
-				path 				: '{{ project.path }}',
-				command 			: 'index-metadata'
+				command: 'index-metadata'
 			}),
 			beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs. To minimize indexing time, limit your project\'s subscription to only those metadata types you absolutely need.<br/><br/>Thanks for being patient! :)'); },
 			complete: function(data, status, xhr){
@@ -541,7 +540,7 @@
 				destinations 		: getTargetJson(),
 			    package 			: getTree(),
 			    deploymentName 		: $("#new_deployment_name").val(),
-			    debug_categories 	: get_log_levels_json(),
+			    debug_categories 	: getLogLevelsJson(),
 			    ui 					: true,
 			    deployOptions 		: {
 			    	rollbackOnError: isRollbackOnError(),
