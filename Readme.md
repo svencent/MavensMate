@@ -129,8 +129,6 @@ To generate a coverage report, which will be located at test/coverage.html:
 
 Build Salesforce applications from [Sublime Text 3](http://www.sublimetext.com/3)
 
-**IMPORTANT:** MavensMate for Sublime Text will eventually be ported to use the APIs in this project.
-
 ### [MavensMate for Atom (beta)][atom]
 
 Build Salesforce applications from [GitHub's Atom text editor](http://atom.io).
