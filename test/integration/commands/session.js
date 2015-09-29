@@ -32,7 +32,7 @@ describe('mavensmate session', function() {
         response.should.have.property('sid');
         response.should.have.property('urls');
         response.should.have.property('metadataTypes');
-        response.should.have.property('index');
+        response.should.have.property('instanceUrl');
         done();
       })
       .catch(function(err) {
