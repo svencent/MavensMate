@@ -127,17 +127,17 @@ To generate a coverage report, which will be located at test/coverage.html:
 
 ### [MavensMate for Sublime Text][stp]
 
-MavensMate for Sublime Text is a Sublime Text plugin that uses the `mm` command line tool to provide a rich IDE experience in the editor. The bulk of the MM for ST codebase is used focused on integration with the Sublime Text APIs. The interaction with the Force.com APIs are still handled by `mm`.
+Build Salesforce applications from [Sublime Text 3](http://www.sublimetext.com/3)
 
 **IMPORTANT:** MavensMate for Sublime Text will eventually be ported to use the APIs in this project.
 
 ### [MavensMate for Atom (beta)][atom]
 
-MavensMate for Atom is still in active development. If you're interested in beta-testing the plugin, you are encouraged to install it.
+Build Salesforce applications from [GitHub's Atom text editor](http://atom.io).
 
 ### [MavensMate for Visual Studio Code (coming soon)][vscode]
 
-MavensMate is working with Microsoft to create an official plugin for Visual Studio Code.
+MavensMate is working with Microsoft to create an official plugin for Visual Studio Code!
 
 ## Bugs and feature requests
 
