@@ -178,11 +178,11 @@
 			<div class="tab-pane active" id="tests_content" style="padding-top:10px;padding-bottom:10px;">
 				<div class="item-search class-list">
 					<div class="control-group large">
-					    <div class="row">
-					    	<div class="span7">
+					    <div class="row-fluid">
+					    	<div class="span5">
 					    		<input style="height:34px;width:100%" class="" type="text" placeholder="Search">
 					    	</div>
-					    	<div class="span5">
+					    	<div class="span7">
 					    		<button class="btn btn-embossed btn-mini btn-primary" onclick="selectAllTests()">
 					    			All
 					    		</button>
@@ -420,15 +420,19 @@
 
 	function selectAllTests() {
 		$('#class-list-wrapper').find("div.alert label input[type='checkbox']").each(function() {
-			$(this).attr('checked', true);
-			$(this).parent().addClass('checked');
+			if ($(this).parent().parent().css('display') !== 'none') {
+				$(this).attr('checked', true);
+				$(this).parent().addClass('checked');
+			}
 		});
 	}
 
 	function selectNoTests() {
 		$('#class-list-wrapper').find("div.alert label input[type='checkbox']").each(function() {
-			$(this).attr('checked', false);
-			$(this).parent().removeClass('checked');
+			if ($(this).parent().parent().css('display') !== 'none') {
+				$(this).attr('checked', false);
+				$(this).parent().removeClass('checked');
+			}
 		});
 	}
 
