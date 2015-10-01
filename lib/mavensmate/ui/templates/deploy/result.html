@@ -1,10 +1,10 @@
 <div id="destination_options">
 	<ul>
-		{% for target in targets %}
+		{% for username in usernames %}
 			{% if loop.first  %}
-			<li class="active"><a href="#result-{{ loop.index0 }}">{{ target.username }}</a></li>
+			<li class="active"><a href="#result-{{ loop.index0 }}">{{ username }}</a></li>
 			{% else %}
-			<li class=""><a href="#result-{{ loop.index0 }}">{{ target.username }}</a></li>
+			<li class=""><a href="#result-{{ loop.index0 }}">{{ username }}</a></li>
 			{% endif %}
 		{% endfor %}
 	</ul>
