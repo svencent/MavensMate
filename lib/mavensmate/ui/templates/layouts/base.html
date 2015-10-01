@@ -345,20 +345,42 @@
                 })
             }
 
+            // project list
+            $('.project-checkbox').on('change.radiocheck', function() {
+                $('#selectedProject').val($(this).data('pid'));
+                $('.project-checkbox').not($(this)).attr('checked', false);
+                $('.project-checkbox').not($(this)).parent().removeClass('checked');
+            });
+
+            $('.item-search.project-list input').change(function() {
+                var thevalue = $(this).val().toLowerCase();
+                $('#project-list-wrapper').find('div.alert label').each(function() {
+                    var metaname = $(this).html().toLowerCase();
+                    if (metaname.indexOf(thevalue) === -1) {
+                        $(this).parent().hide();
+                    } else {
+                        $(this).parent().show();
+                    }
+                });
+            })
+            .keyup(function() {
+                $(this).change();
+            });
+
             $(".open-project").click(function() {
                 $(".open-project").html('Opening...');
                 $(".cancel-open-project").html('Opening...');
                 $(".open-project").addClass('disabled');
                 $(".cancel-open-project").addClass('disabled');
                 {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}
-                    window.open('{{ mavensmate.ui.getBaseUrl() }}/app/home/index?pid='+$("#projects").val());
+                    window.open('{{ mavensmate.ui.getBaseUrl() }}/app/home/index?pid='+$("#selectedProject").val());
                     $('#projectModal').modal('hide');
                     $(".open-project").html('Open Project');
                     $(".cancel-open-project").html('Cancel');
                     $(".open-project").removeClass('disabled');
                     $(".cancel-open-project").removeClass('disabled');
                 {% else %}
-                    window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/home/index?pid='+$("#projects").val();
+                    window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/home/index?pid='+$("#selectedProject").val();
                 {% endif %}
             });
 
@@ -370,7 +392,9 @@
         });
 
         function openProjectModal() {
-            $('#projectModal').modal();
+            $('#projectModal').modal().on('shown', function () {
+                $('input:text:visible:first', this).focus();
+            });            
         }
 
         function checkRequestStatus(request_id) {
@@ -408,20 +432,34 @@
             });
         }
     </script>
-
     <div id="projectModal" class="modal hide fade">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h5>Select Project</h5>
         </div>
         <div class="modal-body" style="height:330px">
-            <select id="projects" class="select-block mbl info span12" data-size="16">
-               {% for p in mavensmate.ui.listProjects() %}
-                    <option value="{{ p.id }}">
-                        {{ p.path }}
-                    </option>
-               {% endfor %}  
-            </select>
+            <div class="row-fluid">
+                <div class="item-search project-list">
+                    <div class="control-group large">
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <input style="height:34px;width:100%" class="" type="text" placeholder="Search" id="projectSearch">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               <div id="project-list-wrapper" style="height:275px;padding:5px 0px;overflow: scroll;">
+                    <input type="hidden" id="selectedProject"/>
+                    {% for p in mavensmate.ui.listProjects() %}
+                         <div class="alert alert-info" style="padding:10px;margin-bottom:5px;">
+                             <label class="checkbox" for="chk-{{p.id}}" style="margin:0px;">
+                                 <input type="checkbox" class="project-checkbox" value="" id="chk-{{p.id}}" data-pid="{{p.id}}" data-toggle="checkbox">
+                                 {{ p.path }}
+                             </label>
+                         </div>
+                    {% endfor %}
+               </div>  
+            </div>
         </div>
         <div class="modal-footer">
             <a href="#" class="btn btn-embossed cancel-open-project">Cancel</a>

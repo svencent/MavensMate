@@ -177,7 +177,7 @@
 			  updateSettings(settingValue, settingKey);
 			});
 
-			$(':checkbox').on('change.radiocheck', function() {
+			$('.setting-chk').on('change.radiocheck', function() {
 				var settingValue = $(this).is(':checked');
 				var settingKey = $(this).attr('id');
 				console.log(settingValue);
