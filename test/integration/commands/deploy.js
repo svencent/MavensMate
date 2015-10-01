@@ -80,7 +80,7 @@ describe('mavensmate deploy-to-server', function() {
       .then(function(conns) {   
         conns[0].environment.should.equal('production');
         var deployPayload = {
-          destinations: conns,
+          destinations: [conns[0].id],
           package: { 'ApexClass': ['DeployClass']  },   
           deployOptions: {
             rollbackOnError: true,
