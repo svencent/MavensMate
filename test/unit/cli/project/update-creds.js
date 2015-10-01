@@ -48,10 +48,10 @@ describe('mavensmate update-creds-cli', function(){
   });
 
   it('should accept username, password, and orgtype args', function(done) {        
-    cliClient.program._events['update-creds'](['foo', 'bar', 'bat']);
+    cliClient.program._events['update-creds'](['foo', 'bar', 'bat', 'bang']);
     
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('update-creds', { username : 'foo', password: 'bar', orgType: 'bat' }));
+    assert(executeCommandStub.calledWith('update-creds', { username : 'foo', password: 'bar', orgType: 'bat', loginUrl: 'bang' }));
 
     done();
   });
