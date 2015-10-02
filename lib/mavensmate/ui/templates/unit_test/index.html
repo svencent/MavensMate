@@ -197,9 +197,14 @@
 				<div id="class-list-wrapper">
 					{% if testClasses.length > 0 %}
 					{% for cls in testClasses %}
+						{% if className === cls %}
+							{% set checked = 'checked="checked"' %}
+						{% else %}
+							{% set checked = '' %}
+						{% endif %}
 						<div class="alert alert-info" style="padding:10px;margin-bottom:5px;">
 							<label class="checkbox" for="chk-{{cls}}" style="margin:0px;">
-							  <input type="checkbox" value="" id="chk-{{cls}}" data-classname="{{cls}}" data-toggle="checkbox">
+							  <input type="checkbox" value="" id="chk-{{cls}}" data-classname="{{cls}}" data-toggle="checkbox" {{ checked }} >
 							  {{ cls }}
 							</label>
 						</div>
@@ -416,6 +421,10 @@
 		$("#class-list-wrapper").height($(window).height() - 340)
 		resizeArcade();
 		centerWindow();
+
+		{% if className %}
+			runTests();
+		{% endif %}
 	});
 
 	function selectAllTests() {
