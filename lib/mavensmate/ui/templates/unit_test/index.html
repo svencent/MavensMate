@@ -414,12 +414,10 @@
 			$('#class_coverage_wrapper').height($(window).height() - 260);
 			$('#trigger_coverage_wrapper').height($(window).height() - 260);
 			$('#log_coverage_wrapper').height($(window).height() - 210);
-			$('#class-list-wrapper').height($(window).height() - 340);
-			resizeArcade();
+			$('#class-list-wrapper').height($(window).height() - 350);
 		});
-		window.resizeTo(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
-		$("#class-list-wrapper").height($(window).height() - 340)
-		resizeArcade();
+		window.resizeTo(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+		$("#class-list-wrapper").height($(window).height() - 350);
 		centerWindow();
 
 		{% if className %}
