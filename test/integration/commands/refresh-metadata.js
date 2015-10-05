@@ -123,6 +123,37 @@ describe('mavensmate refresh-metadata', function(){
       });
   });
 
+  it('should refresh project ', function(done) {
+    this.timeout(20000);      
+    
+    testClient.getProject().packageXml.subscription = {
+      ApexClass: '*',
+      CustomObject: '*'
+    };
+    testClient.getProject().packageXml.init()
+      .then(function() {
+        testClient.getProject().packageXml.writeFileSync();
+        return testClient.executeCommand('index-metadata');
+      })
+      .then(function(response) {
+        var payload = {
+          paths: [ path.join(testClient.getProject().path, 'src') ]
+        };
+        return testClient.executeCommand('refresh-metadata', payload);
+      })
+      .then(function(response) {          
+        response.message.should.equal('Metadata successfully refreshed');
+        fs.existsSync(path.join(testClient.getProject().path, 'src', 'objects', 'Account.object')).should.equal(true);
+        fs.existsSync(path.join(testClient.getProject().path, 'src', 'objects', 'CoolObject__c.object')).should.equal(true);
+        fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes')).should.equal(true);
+        fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'MyProfilePageController.cls')).should.equal(true);
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
+  });
+
   // it('should refresh a Lightning bundle from the server ', function(done) {
   //   this.timeout(20000);      
     
