@@ -1,5 +1,6 @@
 'use strict';
 
+var os              = require('os');
 var assert          = require('assert');
 var sinon           = require('sinon');
 var sinonAsPromised = require('sinon-as-promised');
@@ -48,11 +49,20 @@ describe('mavensmate new-resource-bundle-cli', function(){
   });
 
   it('should accept a static resource path', function(done) {        
-    cliClient.program._events['new-resource-bundle'](['/path/to/something']);
-    
-    executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('new-resource-bundle', { paths : [ '/path/to/something' ] }));
+    if (os.platform() === 'win32') {
+      cliClient.program._events['new-resource-bundle'](['C:\\path\\to\\something']);
+      
+      executeCommandStub.calledOnce.should.equal(true);
+      assert(executeCommandStub.calledWith('new-resource-bundle', { paths : [ 'C:\\path\\to\\something' ] }));
 
-    done();
+      done();
+    } else {
+      cliClient.program._events['new-resource-bundle'](['/path/to/something']);
+      
+      executeCommandStub.calledOnce.should.equal(true);
+      assert(executeCommandStub.calledWith('new-resource-bundle', { paths : [ '/path/to/something' ] }));
+
+      done();
+    }
   });
 });
