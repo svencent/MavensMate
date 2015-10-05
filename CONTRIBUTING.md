@@ -1,11 +1,7 @@
 # Contributing to MavensMate
 
-:+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
-
 The following is a set of guidelines for contributing to MavensMate and its related projects,
-which are hosted on the [GitHub](https://github.com/joeferraro).
-These are just guidelines, not rules, use your best judgment and feel free to
-propose changes to this document in a pull request.
+which are hosted on the [GitHub](https://github.com/search?q=user%3Ajoeferraro+mavensmate).
 
 This project adheres to the [Contributor Covenant 1.2](http://contributor-covenant.org/version/1/2/0).
 By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@mavensmate.com](mailto:info@mavensmate.com).
