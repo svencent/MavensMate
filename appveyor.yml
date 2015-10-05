@@ -42,7 +42,7 @@ test_script:
   - set NODE_ENV=test
   - set HTTP_MAX_SOCKETS=5000
   - cd C:\projects\mavensmate
-  - mocha
+  - mocha test
 
 # Don't actually build.
 build: off
