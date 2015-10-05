@@ -108,14 +108,25 @@ describe('mavensmate util', function(){
 
   describe('getAbsolutePaths', function() {
     it('should return absolute paths', function(done) {    
-      var paths = [
-        'relative/path/to/something',
-        '/absolute/path/to/something'
-      ];
-      var ps = util.getAbsolutePaths(paths);
-      ps[0][0].should.equal(path.sep);
-      ps[1][0].should.equal(path.sep);
-      done();
+      if (os.platform() === 'win32') {
+        var paths = [
+          'relative/path/to/something',
+          'C:\\absolute\\path\\to\\something'
+        ];
+        var ps = util.getAbsolutePaths(paths);
+        ps[0][0].should.equal('C');
+        ps[1][0].should.equal('C');
+        done();
+      } else {
+        var paths = [
+          'relative/path/to/something',
+          '/absolute/path/to/something'
+        ];
+        var ps = util.getAbsolutePaths(paths);
+        ps[0][0].should.equal(path.sep);
+        ps[1][0].should.equal(path.sep);
+        done();
+      }
     }); 
   });
 

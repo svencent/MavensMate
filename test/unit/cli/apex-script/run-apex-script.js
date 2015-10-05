@@ -1,5 +1,6 @@
 'use strict';
 
+var os              = require('os');
 var assert          = require('assert');
 var sinon           = require('sinon');
 var sinonAsPromised = require('sinon-as-promised');
@@ -48,11 +49,20 @@ describe('mavensmate run-apex-script-cli', function(){
   });
 
   it('should accept a script name', function(done) {        
-    cliClient.program._events['run-apex-script'](['/path/to/script']);
-    
-    executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('run-apex-script', { paths : [ '/path/to/script' ] }));
+    if (os.platform() === 'win32') {
+      cliClient.program._events['run-apex-script'](['C:\\path\\to\\script']);
+      
+      executeCommandStub.calledOnce.should.equal(true);
+      assert(executeCommandStub.calledWith('run-apex-script', { paths : [ 'C:\\path\\to\\script' ] }));
 
-    done();
+      done();
+    } else {
+      cliClient.program._events['run-apex-script'](['/path/to/script']);
+      
+      executeCommandStub.calledOnce.should.equal(true);
+      assert(executeCommandStub.calledWith('run-apex-script', { paths : [ '/path/to/script' ] }));
+
+      done();
+    }
   });
 });

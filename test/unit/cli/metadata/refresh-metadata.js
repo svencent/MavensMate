@@ -1,5 +1,6 @@
 'use strict';
 
+var os              = require('os');
 var assert          = require('assert');
 var sinon           = require('sinon');
 var sinonAsPromised = require('sinon-as-promised');
@@ -49,12 +50,21 @@ describe('mavensmate refresh-metadata-cli', function(){
   });
 
   it('should accept a metadata path', function(done) {        
-    cliClient.program._events['refresh-metadata'](['/path/to/something']);
-    
-    executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('refresh-metadata', { paths : [ '/path/to/something' ] }));
+    if (os.platform() === 'win32') {
+      cliClient.program._events['refresh-metadata'](['C:\\path\\to\\something']);
+      
+      executeCommandStub.calledOnce.should.equal(true);
+      assert(executeCommandStub.calledWith('refresh-metadata', { paths : [ 'C:\\path\\to\\something' ] }));
 
-    done();
+      done();
+    } else {
+      cliClient.program._events['refresh-metadata'](['/path/to/something']);
+      
+      executeCommandStub.calledOnce.should.equal(true);
+      assert(executeCommandStub.calledWith('refresh-metadata', { paths : [ '/path/to/something' ] }));
+
+      done();
+    }
   });
 
   it('should accept stdin', function(done) {
