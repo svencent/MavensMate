@@ -15,6 +15,7 @@ install:
   - ps: Install-Product node $env:nodejs_version
   # Typical npm stuff.
   - npm install
+  - npm install mocha -g
   # get mingw-w64 (C:\mingw64)
   # copy of http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/4.9.1/threads-posix/seh/x86_64-4.9.1-release-posix-seh-rt_v3-rev1.7z
   - ps: if($env:tbs_tools -eq 'mingw' -and $env:tbs_arch -eq 'x64')
@@ -38,8 +39,10 @@ test_script:
   - npm --version
   # We test multiple Windows shells because of prior stdout buffering issues
   # filed against Grunt. https://github.com/joyent/node/issues/3584
-  - ps: "npm test # PowerShell" # Pass comment to PS for easier debugging
-  - cmd: npm test
+  - set NODE_ENV=test
+  - set HTTP_MAX_SOCKETS=5000
+  - cd C:\projects\mavensmate
+  - mocha
 
 # Don't actually build.
 build: off
