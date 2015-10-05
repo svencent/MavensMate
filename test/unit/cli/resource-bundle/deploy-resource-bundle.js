@@ -1,6 +1,6 @@
 'use strict';
 
-var os              = reuqire('os');
+var os              = require('os');
 var assert          = require('assert');
 var sinon           = require('sinon');
 var sinonAsPromised = require('sinon-as-promised');
