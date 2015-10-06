@@ -419,10 +419,6 @@
 		window.resizeTo(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 		$("#class-list-wrapper").height($(window).height() - 350);
 		centerWindow();
-
-		{% if className %}
-			runTests();
-		{% endif %}
 	});
 
 	function selectAllTests() {
