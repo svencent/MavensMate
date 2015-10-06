@@ -68,7 +68,7 @@ describe('mavensmate deploy-to-server', function() {
     helper.createNewMetadata(testClient, 'ApexClass', 'DeployClass')
       .then(function() {
         var payload = {
-          username: 'mm@force.com',
+          username: 'mm4@force.com',
           password: 'force',
           orgType: 'production'
         };
@@ -93,10 +93,10 @@ describe('mavensmate deploy-to-server', function() {
         return testClient.executeCommand('deploy', deployPayload);
       })
       .then(function(response) {        
-        response.should.have.property('mm@force.com');
-        response['mm@force.com'].checkOnly.should.equal(true);
-        response['mm@force.com'].done.should.equal(true);
-        response['mm@force.com'].success.should.equal(true);
+        response.should.have.property('mm4@force.com');
+        response['mm4@force.com'].checkOnly.should.equal(true);
+        response['mm4@force.com'].done.should.equal(true);
+        response['mm4@force.com'].success.should.equal(true);
         done();
       })
       .catch(function(err) {

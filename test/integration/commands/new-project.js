@@ -49,7 +49,7 @@ describe('mavensmate new-project', function(){
 
     var payload = {
       name: 'new-project-existing',
-      username: 'mm@force.com',
+      username: 'mm4@force.com',
       password: 'force',
       workspace: path.join(helper.baseTestDirectory(),'workspace')
     };
@@ -83,7 +83,7 @@ describe('mavensmate new-project', function(){
     
     var payload = {
       name: 'new-project',
-      username: process.env.SALESFORCE_USERNAME || 'mm@force.com',
+      username: process.env.SALESFORCE_USERNAME || 'mm4@force.com',
       password: process.env.SALESFORCE_PASSWORD || 'force',
       workspace: path.join(helper.baseTestDirectory(),'workspace'),
       orgType: process.env.SALESFORCE_ORG_TYPE || 'developer',
@@ -106,7 +106,7 @@ describe('mavensmate new-project', function(){
       })
       .then(function(response) {
         var project = testClient.getProject();
-        project.settings.username.should.equal(process.env.SALESFORCE_USERNAME || 'mm@force.com');
+        project.settings.username.should.equal(process.env.SALESFORCE_USERNAME || 'mm4@force.com');
         project.settings.password.should.equal(process.env.SALESFORCE_PASSWORD || 'force');
         project.settings.environment.should.equal('developer');
         done();

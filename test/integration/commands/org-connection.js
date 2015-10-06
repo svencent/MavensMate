@@ -38,7 +38,7 @@ describe('mavensmate org-connections', function(){
     this.timeout(10000);      
     
     var payload = {
-      username: 'mm@force.com',
+      username: 'mm4@force.com',
       password: 'force',
       orgType: 'developer'
     };
@@ -62,7 +62,7 @@ describe('mavensmate org-connections', function(){
     testClient.executeCommand('get-connections')
       .then(function(response) {
         response.length.should.equal(1);
-        response[0].username.should.equal('mm@force.com');
+        response[0].username.should.equal('mm4@force.com');
         response[0].password.should.equal('force');
         response[0].environment.should.equal('developer');
         response[0].should.have.property('id');

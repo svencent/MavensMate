@@ -68,7 +68,7 @@ describe('mavensmate edit-project', function(){
     this.timeout(10000);      
 
     testClient.executeCommand('update-creds', { 
-      username: process.env.SALESFORCE_USERNAME || 'mm@force.com', 
+      username: process.env.SALESFORCE_USERNAME || 'mm4@force.com', 
       password: process.env.SALESFORCE_PASSWORD || 'force' 
     })
       .then(function(response) {
