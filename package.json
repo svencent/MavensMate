@@ -1,6 +1,6 @@
 {
   "name": "mavensmate",
-  "version": "0.0.44-beta2",
+  "version": "0.0.44-beta3",
   "description": "Core APIs that drive MavensMate IDEs for Salesforce1/Force.com",
   "private": false,
   "bin": {
