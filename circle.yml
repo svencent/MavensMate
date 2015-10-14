@@ -2,6 +2,8 @@ dependencies:
   pre:
     - sudo apt-get update
     - sudo apt-get install libgnome-keyring-dev
+    - npm install github-changes -g
+    - github-changes -o joeferraro -r MavensMate --token ${GITHUB_TOKEN}
 test:
   override:
     - chmod +x ./ci.sh; ./ci.sh:
