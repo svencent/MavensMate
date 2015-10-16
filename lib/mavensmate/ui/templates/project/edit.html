@@ -263,7 +263,6 @@
 		$(function() {		
 			$("#pn").val("{{ project.name }}");  
 			$("#un").val("{{ project.sfdcClient.getUsername() }}");
-			$("#pw").val("{{ project.sfdcClient.getPassword() }}");
 			$("select.org_type").val("{{ project.sfdcClient.getOrgType() }}");
 			$("select.org_type").change();
 			$("#custom-url").val("{{ org_url }}"); //TODO
