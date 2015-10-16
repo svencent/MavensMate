@@ -1,6 +1,10 @@
 ## Change Log
 
-### upcoming (2015/10/14 19:05 +00:00)
+### upcoming (2015/10/16 14:06 +00:00)
+- [3615b91](https://github.com/joeferraro/MavensMate/commit/3615b91a680ba148ae5ffc28628625c5cf0a3a99) skip non tag builds on appveyor (@joeferraro)
+- [b7cd3a1](https://github.com/joeferraro/MavensMate/commit/b7cd3a1b8cb3bdb8d6a9291ce5274fe90e53e3f6) run github changes after install (@joeferraro)
+- [f563883](https://github.com/joeferraro/MavensMate/commit/f563883c548aba4cb9dfbcb6c43386504c6caa4f) add changelog generation to circle build (@joeferraro)
+- [148a0c1](https://github.com/joeferraro/MavensMate/commit/148a0c1ed112b62b5c01aa51f9be2c6abe9e02d9) update changelog (@joeferraro)
 - [5d1937f](https://github.com/joeferraro/MavensMate/commit/5d1937f159d2e23c3004b4c3156dead6efe9e458) adds missing logger require (@joeferraro)
 - [fb8427f](https://github.com/joeferraro/MavensMate/commit/fb8427fa0cb5b59fc1f057eb5f96546715310f5f) Update CONTRIBUTING.md (@joeferraro)
 
@@ -147,9 +151,9 @@
 ### v0.0.40 (2015/09/29 15:02 +00:00)
 - [4b8af3d](https://github.com/joeferraro/MavensMate/commit/4b8af3df56a4c67cd256b39843696db0aed1dd43) Release v0.0.40. (@joeferraro)
 - [38968f4](https://github.com/joeferraro/MavensMate/commit/38968f442daab19d250053deb1e378757047b549) fix session test (@joeferraro)
-- [a353a21](https://github.com/joeferraro/MavensMate/commit/a353a21125e748a6b4fcb05e4d8197f4044a175b) clean-up ugly javascript formatting (@joeferraro)
 - [d3177fa](https://github.com/joeferraro/MavensMate/commit/d3177fae2e3f512a70a7cff3a283bba481e9adb0) improves project creation ux fixes #474 (@joeferraro)
 - [4822328](https://github.com/joeferraro/MavensMate/commit/482232824d594bdf19956027b8724470becd3afe) update default api to 34 (@joeferraro)
+- [a353a21](https://github.com/joeferraro/MavensMate/commit/a353a21125e748a6b4fcb05e4d8197f4044a175b) clean-up ugly javascript formatting (@joeferraro)
 - [4407bfa](https://github.com/joeferraro/MavensMate/commit/4407bfa7e34a8a72abdcf8f4ff6a07ecbd6f7851) resolves issue where select all/none tests buttons were dropping below input text. changes functionality of select all/none buttons to only operate on visible tests (@joeferraro)
 - [bb72e54](https://github.com/joeferraro/MavensMate/commit/bb72e54b1e8331b768f4bc48c6f883be6d92ef1b) update readme [ci skip] (@joeferraro)
 - [7effa09](https://github.com/joeferraro/MavensMate/commit/7effa091f5ca62ad222371cb833d79ea509eb563) update readme [ci skip] (@joeferraro)
@@ -670,8 +674,8 @@
 - [6dcbbe6](https://github.com/joeferraro/MavensMate/commit/6dcbbe6c0803839042adf0a0cd75d557cced0564) remove self dependency [ci skip] (@joeferraro)
 - [b0e96dd](https://github.com/joeferraro/MavensMate/commit/b0e96ddd06172a4d80ae69c5260053d8b38c721f) fixes issue where project was not setting password in settings file when key tar was not installed (@joeferraro)
 - [382eceb](https://github.com/joeferraro/MavensMate/commit/382eceb77dbc05ec1b596d47d8307b52234d3f15) push npm version [ci skip] (@joeferraro)
-- [052c98b](https://github.com/joeferraro/MavensMate/commit/052c98bea7a1ecd8330cc989f3c1622d4ad02326) add documentation (@joeferraro)
 - [4c6dd5e](https://github.com/joeferraro/MavensMate/commit/4c6dd5e192644d23f898c0c7192b3d1bcc86438d) removes firm keytar dependency refs joeferraro/MavensMate-Atom#115 (@joeferraro)
+- [052c98b](https://github.com/joeferraro/MavensMate/commit/052c98bea7a1ecd8330cc989f3c1622d4ad02326) add documentation (@joeferraro)
 - [5d4b35f](https://github.com/joeferraro/MavensMate/commit/5d4b35f6dc1cd6f46cf3830ce3b45fd5f91f5c5f) use unzip2 module for stream extraction refs #108 (@joeferraro)
 - [a26083e](https://github.com/joeferraro/MavensMate/commit/a26083ebfcc9d87fb8857ddaac32e1542b196208) Update Readme.md (@joeferraro)
 - [e47b58c](https://github.com/joeferraro/MavensMate/commit/e47b58cf51b32b8c412d639e2e34f0bc70c4dd49) Update Readme.md (@joeferraro)
