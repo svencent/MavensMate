@@ -78,6 +78,20 @@ describe('mavensmate resource-bundle', function(){
       });
   });
 
+  it('should throw exception when trying to create resource bundle that already exists', function(done) {
+    this.timeout(10000);
+  
+    var payload = {
+      paths : [path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource')]
+    };
+
+    testClient.executeCommand('new-resource-bundle', payload)
+      .catch(function(err) {
+        err.message.should.equal('Resource bundle path already exists.');
+        done();
+      });
+  });
+
   it('should deploy a resource bundle to the server', function(done) {    
     this.timeout(30000);
 
