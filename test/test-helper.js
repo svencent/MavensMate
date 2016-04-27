@@ -31,7 +31,7 @@ exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace
     settings.password = process.env.SALESFORCE_PASSWORD || 'force';
     settings.environment = process.env.SALESFORCE_ORG_TYPE || 'developer';
     fs.writeJsonSync(path.join(testWorkspace, name, 'config', '.settings'), settings);
-  } 
+  }
 };
 
 exports.createClient = function(name, settings) {
@@ -67,7 +67,7 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
   return new Promise(function(resolve, reject) {
     if (!testWorkspace) {
       testWorkspace = temp.mkdirSync({ prefix: 'mm_testworkspace_' });
-    } 
+    }
 
     var payload = {
       name: name,
@@ -80,7 +80,7 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
 
     testClient.executeCommand('new-project', payload)
       .then(function(res) {
-        return testClient.addProject(path.join(testWorkspace, name));
+        return testclient.addProjectByPath(path.join(testWorkspace, name));
       })
       .then(function() {
         resolve(path.join(testWorkspace, name));
@@ -94,7 +94,7 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
 exports.addProject = function(testClient, projectName) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    testClient.addProject(path.join(self.baseTestDirectory(),'workspace', projectName), sfdcClient)
+    testclient.addProjectByPath(path.join(self.baseTestDirectory(),'workspace', projectName), sfdcClient)
       .then(function(response) {
         resolve(response);
       })
@@ -130,11 +130,11 @@ exports.cleanUpTestProject = function(name, testWorkspace) {
   name = name || 'existing-project';
   if (fs.existsSync(path.join(testWorkspace, name))) {
     fs.removeSync(path.join(testWorkspace, name));
-  } 
+  }
 };
 
 exports.cleanUpTestData = function(testClient, paths) {
-  return new Promise(function(resolve, reject) { 
+  return new Promise(function(resolve, reject) {
     var pathsToDelete = [];
     _.each(paths, function(p) {
       if (fs.existsSync(p)) {
@@ -185,21 +185,21 @@ exports.getNewMetadataPayload = function(typeXmlName, apiName, templateFileName,
     var template;
     if (!templateFileName) {
       template = {
-        author: 'MavensMate', 
-        name: 'Default', 
-        description: 'The default template for an Apex Class', 
-        file_name: 'ApexClass.cls', 
+        author: 'MavensMate',
+        name: 'Default',
+        description: 'The default template for an Apex Class',
+        file_name: 'ApexClass.cls',
         params: [
           {
-              default: 'MyApexClass', 
-              name: 'api_name', 
+              default: 'MyApexClass',
+              name: 'api_name',
               description: 'Apex Class API Name'
           }
         ]
       };
       var payload = {
-        metadataTypeXmlName: typeXmlName, 
-        templateValues: templateValues || { 'api_name': apiName }, 
+        metadataTypeXmlName: typeXmlName,
+        templateValues: templateValues || { 'api_name': apiName },
         template: template
       };
       resolve(payload);
@@ -209,8 +209,8 @@ exports.getNewMetadataPayload = function(typeXmlName, apiName, templateFileName,
         .then(function(templates) {
           var template = _.find(templates, { file_name : templateFileName });
           var payload = {
-            metadataTypeXmlName: typeXmlName, 
-            templateValues: templateValues || { 'api_name': apiName }, 
+            metadataTypeXmlName: typeXmlName,
+            templateValues: templateValues || { 'api_name': apiName },
             template: template
           };
           resolve(payload);
