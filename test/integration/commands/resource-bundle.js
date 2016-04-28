@@ -48,14 +48,14 @@ describe('mavensmate resource-bundle', function(){
 
   it('should create a resource bundle from a local static resource file', function(done) {
     this.timeout(10000);
-  
+
     fs.copySync(
-      path.join(helper.baseTestDirectory(), 'fixtures', 'test_resource_bundle.zip'), 
+      path.join(helper.baseTestDirectory(), 'fixtures', 'test_resource_bundle.zip'),
       path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource')
     );
 
     fs.copySync(
-      path.join(helper.baseTestDirectory(), 'fixtures', 'test_resource_bundle.resource-meta.xml'), 
+      path.join(helper.baseTestDirectory(), 'fixtures', 'test_resource_bundle.resource-meta.xml'),
       path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource-meta.xml')
     );
 
@@ -63,7 +63,10 @@ describe('mavensmate resource-bundle', function(){
       paths : [path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource')]
     };
 
-    testClient.executeCommand('new-resource-bundle', payload)
+    testClient.executeCommand({
+        name: 'new-resource-bundle',
+        body: payload
+      })
       .then(function(response) {
         response.message.should.equal('Resource bundle(s) successfully created');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource'),  'Resource bundle directory not created');
@@ -80,26 +83,32 @@ describe('mavensmate resource-bundle', function(){
 
   it('should throw exception when trying to create resource bundle that already exists', function(done) {
     this.timeout(10000);
-  
+
     var payload = {
       paths : [path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource')]
     };
 
-    testClient.executeCommand('new-resource-bundle', payload)
+    testClient.executeCommand({
+        name: 'new-resource-bundle',
+        body: payload
+      })
       .catch(function(err) {
         err.message.should.equal('Resource bundle path already exists.');
         done();
       });
   });
 
-  it('should deploy a resource bundle to the server', function(done) {    
+  it('should deploy a resource bundle to the server', function(done) {
     this.timeout(30000);
 
     var payload = {
       paths :[ path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource') ]
     };
 
-    testClient.executeCommand('deploy-resource-bundle', payload)
+    testClient.executeCommand({
+        name: 'deploy-resource-bundle',
+        body: payload
+      })
       .then(function(response) {
         response.message.should.equal('Resource bundle successfully deployed');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource'),  'Resource bundle staticresource does not exist');
@@ -107,7 +116,7 @@ describe('mavensmate resource-bundle', function(){
       })
       .catch(function(err) {
         done(err);
-      });    
+      });
   });
 
 });

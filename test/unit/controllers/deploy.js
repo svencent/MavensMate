@@ -30,7 +30,7 @@ describe('mavensmate DeployController', function(){
   });
 
   describe('views', function() {
-    
+
     var ctrl;
 
     beforeEach(function() {
@@ -45,11 +45,11 @@ describe('mavensmate DeployController', function(){
       });
     });
 
-    it('should render deploy/new.html', function(done) {    
+    it('should render deploy/new.html', function(done) {
       var mockedExpress = helper.mockExpress(project);
       var req = mockedExpress.req;
       var res = mockedExpress.res;
-      var spy = testClient.executeCommandForProject = sinon.spy(function() {
+      var spy = testClient.executeCommand = sinon.spy(function() {
         return Promise.resolve();
       });
       ctrl.new(req, res);
@@ -59,7 +59,7 @@ describe('mavensmate DeployController', function(){
   });
 
   describe('execute', function() {
-    
+
     var ctrl;
 
     beforeEach(function() {
@@ -74,11 +74,11 @@ describe('mavensmate DeployController', function(){
       });
     });
 
-    it('should call execute', function(done) {    
+    it('should call execute', function(done) {
       var mockedExpress = helper.mockExpress(project);
       var req = mockedExpress.req;
       var res = mockedExpress.res;
-      var spy = testClient.executeCommandForProject = sinon.spy(function() {
+      var spy = testClient.executeCommand = sinon.spy(function() {
         return Promise.resolve();
       });
       ctrl.execute(req, res);
@@ -88,7 +88,7 @@ describe('mavensmate DeployController', function(){
   });
 
   describe('getConnections', function() {
-    
+
     var ctrl;
 
     beforeEach(function() {
@@ -103,11 +103,11 @@ describe('mavensmate DeployController', function(){
       });
     });
 
-    it('should call getConnections', function(done) {    
+    it('should call getConnections', function(done) {
       var mockedExpress = helper.mockExpress(project);
       var req = mockedExpress.req;
       var res = mockedExpress.res;
-      var spy = testClient.executeCommandForProject = sinon.spy(function() {
+      var spy = testClient.executeCommand = sinon.spy(function() {
         return Promise.resolve();
       });
 
@@ -118,7 +118,7 @@ describe('mavensmate DeployController', function(){
   });
 
   describe('newConnection', function() {
-    
+
     var ctrl;
 
     beforeEach(function() {
@@ -133,11 +133,11 @@ describe('mavensmate DeployController', function(){
       });
     });
 
-    it('should call newConnection', function(done) {    
+    it('should call newConnection', function(done) {
       var mockedExpress = helper.mockExpress(project);
       var req = mockedExpress.req;
       var res = mockedExpress.res;
-      var spy = testClient.executeCommandForProject = sinon.spy(function() {
+      var spy = testClient.executeCommand = sinon.spy(function() {
         return Promise.resolve();
       });
 
@@ -148,7 +148,7 @@ describe('mavensmate DeployController', function(){
   });
 
   describe('deleteConnection', function() {
-    
+
     var ctrl;
 
     beforeEach(function() {
@@ -163,11 +163,11 @@ describe('mavensmate DeployController', function(){
       });
     });
 
-    it('should call deleteConnection', function(done) {    
+    it('should call deleteConnection', function(done) {
       var mockedExpress = helper.mockExpress(project);
       var req = mockedExpress.req;
       var res = mockedExpress.res;
-      var spy = testClient.executeCommandForProject = sinon.spy(function() {
+      var spy = testClient.executeCommand = sinon.spy(function() {
         return Promise.resolve();
       });
 

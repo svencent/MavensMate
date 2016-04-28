@@ -34,9 +34,12 @@ describe('mavensmate edit-project', function(){
   });
 
   it('should edit project contents', function(done) {
-    this.timeout(20000);      
+    this.timeout(20000);
 
-    testClient.executeCommand('edit-project', { package: { CustomObject: 'Account' } })
+    testClient.executeCommand({
+        name: 'edit-project',
+        body: { package: { CustomObject: 'Account' } }
+      })
       .then(function(response) {
         should.not.equal(response, null);
 
@@ -56,8 +59,11 @@ describe('mavensmate edit-project', function(){
   });
 
   it('should fail to update project creds because of invalid login', function(done) {
-    this.timeout(60000);      
-    testClient.executeCommand('update-creds', { username: 'thiswontwork@foo.com', password: 'foobarbatbam', loginUrl: 'https://test.salesforce.com' })
+    this.timeout(60000);
+    testClient.executeCommand({
+        name: 'update-creds',
+        body: { username: 'thiswontwork@foo.com', password: 'foobarbatbam', loginUrl: 'https://test.salesforce.com' }
+      })
       .catch(function(err) {
         err.message.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out.');
         done();
@@ -65,12 +71,15 @@ describe('mavensmate edit-project', function(){
   });
 
   it('should update project creds', function(done) {
-    this.timeout(10000);      
+    this.timeout(10000);
 
-    testClient.executeCommand('update-creds', { 
-      username: process.env.SALESFORCE_USERNAME || 'mm4@force.com', 
-      password: process.env.SALESFORCE_PASSWORD || 'force' 
-    })
+    testClient.executeCommand({
+        name: 'update-creds',
+        body: {
+          username: process.env.SALESFORCE_USERNAME || 'mm4@force.com',
+          password: process.env.SALESFORCE_PASSWORD || 'force'
+        }
+      })
       .then(function(response) {
         response.message.should.equal('Credentials updated successfully!');
         done();

@@ -33,7 +33,7 @@ describe('mavensmate delete-connection-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -47,11 +47,14 @@ describe('mavensmate delete-connection-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a connection id', function(done) {        
+  it('should accept a connection id', function(done) {
     cliClient.program._events['delete-connection'](['id']);
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('delete-connection', { id : 'id' }));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'delete-connection',
+      body: { id : 'id' }
+    }));
 
     done();
   });

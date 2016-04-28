@@ -34,7 +34,7 @@ describe('mavensmate new-lightning-interface-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -48,24 +48,30 @@ describe('mavensmate new-lightning-interface-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a ui flag', function(done) {    
+  it('should accept a ui flag', function(done) {
     var cmd = _.find(program.commands, { _name : 'new-lightning-interface' });
     cmd.ui = true;
-    
+
     cliClient.program._events['new-lightning-interface']();
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('new-lightning-interface', { args: { ui: true } }));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'new-lightning-interface',
+      body: { args: { ui: true } }
+    }));
     cmd.ui = false;
     done();
   });
 
   it('should accept stdin', function(done) {
     cliClient.program._events['new-lightning-interface']();
-    
+
     getPayloadStub().then(function() {
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('new-lightning-interface', { foo : 'bar' }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'new-lightning-interface',
+        body: { foo : 'bar' }
+      }));
       done();
     });
   });

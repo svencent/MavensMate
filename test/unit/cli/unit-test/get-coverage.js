@@ -34,7 +34,7 @@ describe('mavensmate get-coverage-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -48,23 +48,29 @@ describe('mavensmate get-coverage-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept an apex class path', function(done) {        
+  it('should accept an apex class path', function(done) {
     cliClient.program._events['get-coverage'](['/path/to/something']);
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('get-coverage', { paths : [ '/path/to/something' ] }));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'get-coverage',
+      body: { paths : [ '/path/to/something' ] }
+    }));
 
     done();
   });
 
-  it('should accept a global flag', function(done) {        
+  it('should accept a global flag', function(done) {
     var cmd = _.find(program.commands, { _name : 'get-coverage' });
     cmd.global = true;
-        
+
     cliClient.program._events['get-coverage']();
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('get-coverage', { global : true }));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'get-coverage',
+      body: { global : true }
+    }));
     cmd.global = false;
     done();
   });

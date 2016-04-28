@@ -35,7 +35,7 @@ describe('mavensmate delete-metadata-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -49,19 +49,25 @@ describe('mavensmate delete-metadata-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a metadata path', function(done) {        
+  it('should accept a metadata path', function(done) {
     if (os.platform() === 'win32') {
       cliClient.program._events['delete-metadata'](['C:\\path\\to\\something']);
-      
+
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('delete-metadata', { paths : [ 'C:\\path\\to\\something' ] }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'delete-metadata',
+        body: { paths : [ 'C:\\path\\to\\something' ] }
+      }));
 
       done();
     } else {
       cliClient.program._events['delete-metadata'](['/path/to/something']);
-      
+
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('delete-metadata', { paths : [ '/path/to/something' ] }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'delete-metadata',
+        body: { paths : [ '/path/to/something' ] }
+      }));
 
       done();
     }
@@ -69,10 +75,13 @@ describe('mavensmate delete-metadata-cli', function(){
 
   it('should accept stdin', function(done) {
     cliClient.program._events['delete-metadata']();
-    
+
     getPayloadStub().then(function() {
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('delete-metadata', { foo : 'bar' }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'delete-metadata',
+        body: { foo : 'bar' }
+      }));
       done();
     });
   });

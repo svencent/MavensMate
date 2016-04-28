@@ -33,7 +33,7 @@ describe('mavensmate session-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -47,13 +47,16 @@ describe('mavensmate session-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept username, password, orgType', function(done) {        
+  it('should accept username, password, orgType', function(done) {
     /* jshint ignore:start */
     cliClient.program._events['session'](['foo', 'bar', 'bat']);
     /* jshint ignore:end */
 
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('session', { username : 'foo', password: 'bar', orgType: 'bat' }));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'session',
+      body: { username : 'foo', password: 'bar', orgType: 'bat' }
+    }));
 
     done();
   });
@@ -65,7 +68,10 @@ describe('mavensmate session-cli', function(){
 
     getPayloadStub().then(function() {
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('session', { foo : 'bar' }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'session',
+        body: { foo : 'bar' }
+      }));
       done();
     });
   });

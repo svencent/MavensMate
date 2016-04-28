@@ -34,7 +34,7 @@ describe('mavensmate new-metadata-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -48,15 +48,18 @@ describe('mavensmate new-metadata-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a ui flag', function(done) {    
+  it('should accept a ui flag', function(done) {
     var cmd = _.find(program.commands, { _name : 'new-metadata' });
     cmd.ui = true;
     cmd.type = 'ApexClass';
-    
+
     cliClient.program._events['new-metadata']();
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('new-metadata', { args: { ui: true, type: 'ApexClass' } }));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'new-metadata',
+      body: { args: { ui: true, type: 'ApexClass' } }
+    }));
     cmd.ui = false;
     cmd.type = undefined;
     done();
@@ -65,10 +68,13 @@ describe('mavensmate new-metadata-cli', function(){
 
   it('should accept stdin', function(done) {
     cliClient.program._events['new-metadata']();
-    
+
     getPayloadStub().then(function() {
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('new-metadata', { foo : 'bar' }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'new-metadata',
+        body: { foo : 'bar' }
+      }));
       done();
     });
   });

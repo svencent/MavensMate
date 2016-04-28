@@ -78,9 +78,12 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
       package: pkg || {}
     };
 
-    testClient.executeCommand('new-project', payload)
+    testClient.executeCommand({
+        name: 'new-project',
+        body: payload
+      })
       .then(function(res) {
-        return testclient.addProjectByPath(path.join(testWorkspace, name));
+        return testClient.addProjectByPath(path.join(testWorkspace, name));
       })
       .then(function() {
         resolve(path.join(testWorkspace, name));
@@ -94,7 +97,7 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
 exports.addProject = function(testClient, projectName) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    testclient.addProjectByPath(path.join(self.baseTestDirectory(),'workspace', projectName), sfdcClient)
+    testClient.addProjectByPath(path.join(self.baseTestDirectory(),'workspace', projectName), sfdcClient)
       .then(function(response) {
         resolve(response);
       })
@@ -144,7 +147,10 @@ exports.cleanUpTestData = function(testClient, paths) {
     var payload = {
       paths: pathsToDelete
     };
-    testClient.executeCommand('delete-metadata', payload)
+    testClient.executeCommand({
+        name: 'delete-metadata',
+        body: payload
+      })
       .then(function(res) {
         resolve(res);
       })
@@ -165,7 +171,10 @@ exports.createNewMetadata = function(testClient, typeXmlName, name, templateFile
   return new Promise(function(resolve, reject) {
     exports.getNewMetadataPayload(typeXmlName, name, templateFileName, templateValues)
       .then(function(payload) {
-        return testClient.executeCommand('new-metadata', payload);
+        return testClient.executeCommand({
+          name: 'new-metadata',
+          body: payload
+        });
       })
       .then(function(response) {
         logger.info('created metadata');

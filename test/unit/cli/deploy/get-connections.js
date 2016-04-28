@@ -33,7 +33,7 @@ describe('mavensmate get-connections-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -49,9 +49,11 @@ describe('mavensmate get-connections-cli', function(){
 
   it('should call directly', function(done) {
     cliClient.program._events['get-connections']();
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('get-connections'));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'get-connections'
+    }));
     done();
   });
 });

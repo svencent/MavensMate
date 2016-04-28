@@ -31,9 +31,12 @@ describe('mavensmate execute-soql', function(){
   });
 
   it('should successfully execute soql query', function(done) {
-    this.timeout(3000);      
+    this.timeout(3000);
 
-    testClient.executeCommand('execute-soql', { soql: 'SELECT ID From Account LIMIT 1' })
+    testClient.executeCommand({
+        name: 'execute-soql',
+        body: { soql: 'SELECT ID From Account LIMIT 1' }
+      })
       .then(function(res) {
         res.should.have.property('records');
         res.should.have.property('done');
@@ -46,9 +49,12 @@ describe('mavensmate execute-soql', function(){
   });
 
   it('should fail to execute soql query', function(done) {
-    this.timeout(3000);      
+    this.timeout(3000);
 
-    testClient.executeCommand('execute-soql', { soql: 'SELECT From Account LIMIT 1' })
+    testClient.executeCommand({
+        name: 'execute-soql',
+        body: { soql: 'SELECT From Account LIMIT 1' }
+      })
       .catch(function(err) {
         err.errorCode.should.contain('MALFORMED_QUERY');
         done();

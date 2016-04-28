@@ -33,7 +33,7 @@ describe('mavensmate download-log-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -47,11 +47,14 @@ describe('mavensmate download-log-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a test path', function(done) {        
+  it('should accept a test path', function(done) {
     cliClient.program._events['download-log'](['foo']);
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('download-log', { logId : 'foo' }));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'download-log',
+      body: { logId : 'foo' }
+    }));
 
     done();
   });

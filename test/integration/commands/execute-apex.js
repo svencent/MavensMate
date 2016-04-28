@@ -8,7 +8,7 @@ describe('mavensmate execute-apex', function() {
 
   var project;
   var testClient;
- 
+
   before(function(done) {
     this.timeout(8000);
     helper.unlinkEditor();
@@ -23,18 +23,21 @@ describe('mavensmate execute-apex', function() {
         done(err);
       });
   });
-  
+
   after(function(done) {
     helper.cleanUpTestProject('execute-apex');
     done();
   });
 
   it('should execute anonymous apex', function(done) {
-    this.timeout(10000);  
+    this.timeout(10000);
 
-    testClient.executeCommand('execute-apex', { body: 'String foo = \'bar\';' })
+    testClient.executeCommand({
+        name: 'execute-apex',
+        body: { body: 'String foo = \'bar\';' }
+      })
       .then(function(response) {
-        
+
         response.compiled.should.equal(true);
         response.success.should.equal(true);
         done();
@@ -45,18 +48,20 @@ describe('mavensmate execute-apex', function() {
   });
 
   it('should attempt to execute invalid anonymous apex', function(done) {
-    this.timeout(10000);  
+    this.timeout(10000);
 
-    testClient.executeCommand('execute-apex', { body: 'String foo = \'bar\'' })
-      .then(function(response) {
-        
-        response.compiled.should.equal(false);
-        response.success.should.equal(false);
-        response.compileProblem.should.equal('expecting a semi-colon, found \'<EOF>\'');
-        done();
-      })
-      .catch(function(err) {
-        done(err);
-      });
+    testClient.executeCommand({
+      name: 'execute-apex',
+      body: { body: 'String foo = \'bar\'' }
+    })
+    .then(function(response) {
+      response.compiled.should.equal(false);
+      response.success.should.equal(false);
+      response.compileProblem.should.equal('expecting a semi-colon, found \'<EOF>\'');
+      done();
+    })
+    .catch(function(err) {
+      done(err);
+    });
   });
 });

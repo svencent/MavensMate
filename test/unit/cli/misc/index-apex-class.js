@@ -33,7 +33,7 @@ describe('mavensmate index-apex-class-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -47,11 +47,14 @@ describe('mavensmate index-apex-class-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a metadata path', function(done) {        
+  it('should accept a metadata path', function(done) {
     cliClient.program._events['index-apex-class'](['myclass']);
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('index-apex-class', { className : 'myclass' }));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'index-apex-class',
+      body: { className : 'myclass' }
+    }));
 
     done();
   });

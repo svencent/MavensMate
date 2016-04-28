@@ -30,7 +30,7 @@ describe('mavensmate compile-project-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -46,9 +46,9 @@ describe('mavensmate compile-project-cli', function(){
 
   it('should call directly', function(done) {
     cliClient.program._events['compile-project']();
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('compile-project'));
+    assert(executeCommandStub.calledWithMatch({ name: 'compile-project' }));
     done();
   });
 });

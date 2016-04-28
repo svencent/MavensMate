@@ -13,7 +13,7 @@ describe('mavensmate clean-project-command', function() {
 
   var project;
   var testClient;
- 
+
   before(function(done) {
     this.timeout(28000);
     helper.unlinkEditor();
@@ -28,22 +28,24 @@ describe('mavensmate clean-project-command', function() {
         done(err);
       });
   });
-  
+
   after(function(done) {
     helper.cleanUpTestProject('clean-project');
     done();
   });
 
   it('should revert the project to server state based on package.xml', function(done) {
-    this.timeout(20000);  
+    this.timeout(20000);
 
     var members = '<types><members>*</members><name>ApexClass</name></types>';
     var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
     fs.writeFileSync(path.join(helper.baseTestDirectory(), 'workspace', 'clean-project', 'src', 'package.xml'), packageXml);
-    
-    testClient.executeCommand('clean-project')
+
+    testClient.executeCommand({
+        name:'clean-project'
+      })
       .then(function(response) {
-        
+
         response.message.should.equal('Project cleaned successfully');
 
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project'),  'Project directory does not exist');
@@ -61,15 +63,17 @@ describe('mavensmate clean-project-command', function() {
   });
 
   it('should respect the user updating the package.xml file directly', function(done) {
-    this.timeout(30000);  
+    this.timeout(30000);
 
     var members = '<types><members>*</members><name>ApexPage</name></types>';
     var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
     fs.writeFileSync(path.join(helper.baseTestDirectory(), 'workspace', 'clean-project', 'src', 'package.xml'), packageXml);
-    
-    testClient.executeCommand('clean-project')
+
+    testClient.executeCommand({
+        name: 'clean-project'
+      })
       .then(function(response) {
-        
+
         response.message.should.equal('Project cleaned successfully');
 
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project'),  'Project directory does not exist');

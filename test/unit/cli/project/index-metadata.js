@@ -33,7 +33,7 @@ describe('mavensmate index-metadata-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -49,9 +49,9 @@ describe('mavensmate index-metadata-cli', function(){
 
   it('should call directly', function(done) {
     cliClient.program._events['index-metadata']();
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('index-metadata'));
+    assert(executeCommandStub.calledWithMatch({ name: 'index-metadata' }));
     done();
   });
 });
