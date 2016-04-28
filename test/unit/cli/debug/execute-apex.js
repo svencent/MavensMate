@@ -34,7 +34,7 @@ describe('mavensmate execute-apex-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -48,24 +48,30 @@ describe('mavensmate execute-apex-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a ui flag', function(done) {    
+  it('should accept a ui flag', function(done) {
     var cmd = _.find(program.commands, { _name : 'execute-apex' });
     cmd.ui = true;
-    
+
     cliClient.program._events['execute-apex']();
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('execute-apex', { args: { ui: true } }));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'execute-apex',
+      body: { args: { ui: true } }
+    }));
     cmd.ui = false;
     done();
   });
 
   it('should accept stdin', function(done) {
     cliClient.program._events['execute-apex']();
-    
+
     getPayloadStub().then(function() {
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('execute-apex', { foo : 'bar' }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'execute-apex',
+        body: { foo : 'bar' }
+      }));
       done();
     });
   });

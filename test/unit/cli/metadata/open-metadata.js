@@ -35,7 +35,7 @@ describe('mavensmate open-metadata-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -49,19 +49,25 @@ describe('mavensmate open-metadata-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a metadata path', function(done) {        
+  it('should accept a metadata path', function(done) {
     if (os.platform() === 'win32') {
       cliClient.program._events['open-metadata'](['C:\\path\\to\\something']);
-      
+
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('open-metadata', { paths : [ 'C:\\path\\to\\something' ] }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'open-metadata',
+        body: { paths : [ 'C:\\path\\to\\something' ] }
+      }));
 
       done();
     } else {
       cliClient.program._events['open-metadata'](['/path/to/something']);
-      
+
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('open-metadata', { paths : [ '/path/to/something' ] }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'open-metadata',
+        body: { paths : [ '/path/to/something' ] }
+      }));
 
       done();
     }
@@ -69,10 +75,12 @@ describe('mavensmate open-metadata-cli', function(){
 
   it('should accept stdin', function(done) {
     cliClient.program._events['open-metadata']();
-    
+
     getPayloadStub().then(function() {
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('open-metadata', { foo : 'bar' }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'open-metadata'
+      }));
       done();
     });
   });

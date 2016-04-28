@@ -18,7 +18,7 @@ describe('mavensmate session', function() {
   });
 
   it('should initiate new salesforce session', function(done) {
-    this.timeout(20000);      
+    this.timeout(20000);
 
     var payload = {
       username: process.env.SALESFORCE_USERNAME || 'mm4@force.com',
@@ -27,7 +27,10 @@ describe('mavensmate session', function() {
       subscription: ['ApexClass']
     };
 
-    testClient.executeCommand('session', payload)
+    testClient.executeCommand({
+        name: 'session',
+        body: payload
+      })
       .then(function(response) {
         response.should.have.property('sid');
         response.should.have.property('urls');
@@ -41,7 +44,7 @@ describe('mavensmate session', function() {
   });
 
   it('should fail to initiate new salesforce session', function(done) {
-    this.timeout(20000);      
+    this.timeout(20000);
 
     var payload = {
       username: 'thiswontwork@foo.com',
@@ -49,7 +52,10 @@ describe('mavensmate session', function() {
       orgType: 'sandbox'
     };
 
-    testClient.executeCommand('session', payload)
+    testClient.executeCommand({
+        name: 'session',
+        body: payload
+      })
       .catch(function(err) {
         err.message.should.equal('INVALID_LOGIN: Invalid username, password, security token; or user locked out.');
         done();

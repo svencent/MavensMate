@@ -34,7 +34,7 @@ describe('mavensmate new-project-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -48,24 +48,30 @@ describe('mavensmate new-project-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a ui flag', function(done) {    
+  it('should accept a ui flag', function(done) {
     var cmd = _.find(program.commands, { _name : 'new-project' });
     cmd.ui = true;
-    
+
     cliClient.program._events['new-project']();
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('new-project', { args: { ui: true } }));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'new-project',
+      body: { args: { ui: true } }
+    }));
     cmd.ui = false;
     done();
   });
 
   it('should accept stdin', function(done) {
     cliClient.program._events['new-project']();
-    
+
     getPayloadStub().then(function() {
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('new-project', { foo : 'bar' }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'new-project',
+        body: { foo : 'bar' }
+      }));
       done();
     });
   });

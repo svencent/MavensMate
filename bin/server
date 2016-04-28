@@ -12,7 +12,7 @@ var util        = require('../lib/mavensmate/util').instance;
 var UIServer    = require('../lib/mavensmate/ui/server');
 
 var args = parseArgs(process.argv);
-var project = args.project || process.cwd();
+var projectPath = args.project || process.cwd();
 var verbose = args.verbose || false;
 var port = args.port;
 
@@ -29,8 +29,8 @@ server.start()
   .then(function(port) {
     process.env.MAVENSMATE_SERVER_PORT = port;
     console.log('MavensMate server running on port: '+port);
-    if (project && util.isValidProjectPath(project)) {
-      client.addProject(project)
+    if (projectPath && util.isValidProjectPath(projectPath)) {
+      client.addProjectByPath(projectPath)
         .then(function(response) {
           console.log(response);
         })
@@ -39,9 +39,9 @@ server.start()
             console.error('Error initializing project: ', err.message);
             return;
           } else {
-            console.warn(err.message);        
+            console.warn(err.message);
           }
-        }); 
+        });
     }
   })
   .catch(function(err) {

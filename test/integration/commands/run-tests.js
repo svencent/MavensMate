@@ -22,23 +22,25 @@ describe('mavensmate run-tests', function(){
         project = res;
         var loggingConfig = {
           'levels': {
-            'Workflow': 'INFO', 
-            'Callout': 'INFO', 
-            'System': 'DEBUG', 
-            'Database': 'INFO', 
-            'ApexCode': 'DEBUG', 
-            'Validation': 'INFO', 
+            'Workflow': 'INFO',
+            'Callout': 'INFO',
+            'System': 'DEBUG',
+            'Database': 'INFO',
+            'ApexCode': 'DEBUG',
+            'Validation': 'INFO',
             'Visualforce': 'DEBUG'
-          }, 
+          },
           /*jshint camelcase: false */
           'users': [
             project.sfdcClient.conn.userInfo.user_id
-          ], 
+          ],
           /*jshint camelcase: true */
           'expiration': 480
         };
         fs.writeJsonSync(path.join(helper.baseTestDirectory(), 'workspace', 'run-tests', 'config', '.debug'), loggingConfig);
-        return testClient.executeCommand('start-logging');
+        return testClient.executeCommand({
+          name: 'start-logging'
+        });
       })
       .then(function() {
         logger.info('started logging');
@@ -58,7 +60,9 @@ describe('mavensmate run-tests', function(){
     ];
     helper.cleanUpTestData(testClient, filesToDelete)
       .then(function() {
-        return testClient.executeCommand('stop-logging');
+        return testClient.executeCommand({
+          name: 'stop-logging'
+        });
       })
       .then(function() {
         done();
@@ -72,9 +76,9 @@ describe('mavensmate run-tests', function(){
   });
 
   it('should run tests', function(done) {
-    
+
     this.timeout(40000);
-      
+
     // create test class
     // run tests
     // delete test class
@@ -82,13 +86,19 @@ describe('mavensmate run-tests', function(){
 
     helper.getNewMetadataPayload('ApexClass', 'RunTestsApexClass', 'UnitTestApexClass.cls')
       .then(function(payload) {
-        return testClient.executeCommand('new-metadata', payload)
+        return testClient.executeCommand({
+          name: 'new-metadata',
+          body: payload
+        })
       })
       .then(function() {
         return helper.getNewMetadataPayload('ApexClass', 'CoverMe', 'ApexClass.cls');
       })
       .then(function(payload) {
-        return testClient.executeCommand('new-metadata', payload);
+        return testClient.executeCommand({
+          name: 'new-metadata',
+          body: payload
+        });
       })
       .then(function() {
         var coverMePath = path.join(helper.baseTestDirectory(),'workspace', 'run-tests', 'src', 'classes', 'CoverMe.cls');
@@ -101,16 +111,22 @@ describe('mavensmate run-tests', function(){
           paths: [ coverMePath, testClassPath ]
         };
 
-        return testClient.executeCommand('compile-metadata', compilePayload);
+        return testClient.executeCommand({
+          name: 'compile-metadata',
+          body: compilePayload
+        });
       })
       .then(function() {
         var testPayload = {
           classes: [ 'RunTestsApexClass.cls' ]
         };
-        return testClient.executeCommand('run-tests', testPayload);
+        return testClient.executeCommand({
+          name: 'run-tests',
+          body: testPayload
+        });
       })
       .then(function(response) {
-        
+
         response.should.have.property('testResults');
         response.should.have.property('coverageResults');
         response.testResults.should.have.property('RunTestsApexClass');
@@ -132,10 +148,12 @@ describe('mavensmate run-tests', function(){
   describe('coverage', function(){
     it('should get coverage for a specific class', function(done) {
       this.timeout(20000);
-      var coverageClasses = [path.join(helper.baseTestDirectory(),'workspace', 'run-tests', 'src', 'classes', 'CoverMe.cls')];  
-      testClient.executeCommand('get-coverage', { paths: coverageClasses  })
+      var coverageClasses = [path.join(helper.baseTestDirectory(),'workspace', 'run-tests', 'src', 'classes', 'CoverMe.cls')];
+      testClient.executeCommand({
+          name: 'get-coverage',
+          body: { paths: coverageClasses  }
+        })
         .then(function(response) {
-          
           response.should.have.property('CoverMe.cls');
           response['CoverMe.cls'].coveredLines.length.should.equal(1);
           response['CoverMe.cls'].coveredLines[0].should.equal(1);
@@ -150,9 +168,11 @@ describe('mavensmate run-tests', function(){
 
     it('should get org-wide test coverage', function(done) {
       this.timeout(20000);
-      testClient.executeCommand('get-coverage', { global: true  })
+      testClient.executeCommand({
+          name: 'get-coverage',
+          body: { global: true  }
+        })
         .then(function(response) {
-          
           response.should.be.a('number');
           done();
         })

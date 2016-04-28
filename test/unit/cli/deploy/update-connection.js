@@ -33,7 +33,7 @@ describe('mavensmate update-connection-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -47,11 +47,14 @@ describe('mavensmate update-connection-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a connection id, username, password, and orgType', function(done) {        
+  it('should accept a connection id, username, password, and orgType', function(done) {
     cliClient.program._events['update-connection'](['id', 'foo', 'bar', 'bat']);
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('update-connection', { id: 'id', username : 'foo', password: 'bar', orgType: 'bat' }));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'update-connection',
+      body: { id: 'id', username : 'foo', password: 'bar', orgType: 'bat' }
+    }));
 
     done();
   });

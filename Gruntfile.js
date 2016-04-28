@@ -3,11 +3,40 @@
 module.exports = function(grunt) {
   'use strict';
 
+  grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-release');
   grunt.loadNpmTasks('grunt-mocha-cli');
 
   grunt.initConfig({
+    nodemon: {
+      dev: {
+        script: 'bin/server',
+        options: {
+          args: ['--verbose'],
+          nodeArgs: ['--debug'],
+          callback: function (nodemon) {
+            nodemon.on('log', function (event) {
+              console.log(event.colour);
+            });
+          },
+          env: {
+            PORT: '8000'
+          },
+          cwd: __dirname,
+          ignore: ['node_modules/**'],
+          ext: 'js,coffee',
+          watch: ['lib'],
+          delay: 1000,
+          legacyWatch: true
+        }
+      },
+      exec: {
+        options: {
+          exec: 'less'
+        }
+      }
+    },
     mochacli: {
       options: {
           // require: ['should'],

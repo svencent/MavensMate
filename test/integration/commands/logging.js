@@ -23,18 +23,18 @@ describe('mavensmate logging', function() {
         project = proj;
         var loggingConfig = {
           'levels': {
-            'Workflow': 'INFO', 
-            'Callout': 'INFO', 
-            'System': 'DEBUG', 
-            'Database': 'INFO', 
-            'ApexCode': 'DEBUG', 
-            'Validation': 'INFO', 
+            'Workflow': 'INFO',
+            'Callout': 'INFO',
+            'System': 'DEBUG',
+            'Database': 'INFO',
+            'ApexCode': 'DEBUG',
+            'Validation': 'INFO',
             'Visualforce': 'DEBUG'
-          }, 
+          },
           /*jshint camelcase: false */
           'users': [
             project.sfdcClient.conn.userInfo.user_id
-          ], 
+          ],
           /*jshint camelcase: true */
           'expiration': 480
         };
@@ -52,11 +52,11 @@ describe('mavensmate logging', function() {
   });
 
   it('should start logging for all user ids listed in config/.debug', function(done) {
-    this.timeout(20000);      
+    this.timeout(20000);
 
-    testClient.executeCommand('start-logging')
+    testClient.executeCommand({ name: 'start-logging' })
       .then(function(response) {
-        
+
         response.message.should.equal('Started logging for debug users');
         done();
       })
@@ -66,11 +66,11 @@ describe('mavensmate logging', function() {
   });
 
   it('should stop logging for all user ids listed in config/.debug', function(done) {
-    this.timeout(20000);      
+    this.timeout(20000);
 
-    testClient.executeCommand('stop-logging')
+    testClient.executeCommand({ name: 'stop-logging' })
       .then(function(response) {
-        
+
         response.message.should.equal('Stopped logging for debug users');
         done();
       })

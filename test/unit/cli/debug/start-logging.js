@@ -15,7 +15,7 @@ describe('mavensmate start-logging-cli', function(){
   before(function(done) {
     delete require.cache[require.resolve('commander')];
     program = require('commander');
-    
+
     program
       .option('-v --verbose', 'Output logging statements')
       .option('-h --headless', 'Runs in headless (non-interactive terminal) mode. You may wish to use this flag when calling this executable from a text editor or IDE client.')
@@ -30,7 +30,7 @@ describe('mavensmate start-logging-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -51,9 +51,11 @@ describe('mavensmate start-logging-cli', function(){
 
   it('should call directly', function(done) {
     cliClient.program._events['start-logging']();
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('start-logging'));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'start-logging'
+    }));
     done();
   });
 });

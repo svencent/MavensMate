@@ -34,7 +34,7 @@ describe('mavensmate run-apex-script-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -48,19 +48,25 @@ describe('mavensmate run-apex-script-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a script name', function(done) {        
+  it('should accept a script name', function(done) {
     if (os.platform() === 'win32') {
       cliClient.program._events['run-apex-script'](['C:\\path\\to\\script']);
-      
+
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('run-apex-script', { paths : [ 'C:\\path\\to\\script' ] }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'run-apex-script',
+        body: { paths : [ 'C:\\path\\to\\script' ] }
+      }));
 
       done();
     } else {
       cliClient.program._events['run-apex-script'](['/path/to/script']);
-      
+
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('run-apex-script', { paths : [ '/path/to/script' ] }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'run-apex-script',
+        body: { paths : [ '/path/to/script' ] }
+      }));
 
       done();
     }

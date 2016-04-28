@@ -30,10 +30,10 @@ describe('mavensmate index-metadata', function(){
   });
 
   it('should index metadata based on the project subscription', function(done) {
-    
+
     this.timeout(80000);
 
-    testClient.executeCommand('index-metadata')
+    testClient.executeCommand({ name: 'index-metadata' })
       .then(function(response) {
         response.message.should.equal('Metadata successfully indexed');
         done();
@@ -44,12 +44,15 @@ describe('mavensmate index-metadata', function(){
   });
 
   it('should fail to index due to unknown type', function(done) {
-    
+
     this.timeout(80000);
 
-    testClient.executeCommand('update-subscription', { subscription: [ 'SomeBadType' ] })
+    testClient.executeCommand({
+        name: 'update-subscription',
+        body: { subscription: [ 'SomeBadType' ] }
+      })
       .then(function(response) {
-        return testClient.executeCommand('index-metadata')
+        return testClient.executeCommand({ name: 'index-metadata' })
       })
       .catch(function(err) {
         should.equal(err.message, 'Unknown metadata type: SomeBadType');
@@ -58,11 +61,14 @@ describe('mavensmate index-metadata', function(){
   });
 
   it('should index uncommon types', function(done) {
-    
+
     this.timeout(80000);
-    testClient.executeCommand('update-subscription', { subscription: [ 'CustomLabel', 'Letterhead', 'Queue', 'RecordType', 'SharingRules' ] })
+    testClient.executeCommand({
+        name: 'update-subscription',
+        body: { subscription: [ 'CustomLabel', 'Letterhead', 'Queue', 'RecordType', 'SharingRules' ] }
+      })
       .then(function(result) {
-        return testClient.executeCommand('index-metadata');
+        return testClient.executeCommand({ name: 'index-metadata' });
       })
       .then(function(response) {
         response.message.should.equal('Metadata successfully indexed');
@@ -74,10 +80,10 @@ describe('mavensmate index-metadata', function(){
   });
 
   it('should get metadata index from project', function(done) {
-    
+
     this.timeout(10000);
 
-    testClient.executeCommand('get-metadata-index')
+    testClient.executeCommand({ name: 'get-metadata-index' })
       .then(function(response) {
         response.length.should.equal(project.getSubscription().length);
         done();

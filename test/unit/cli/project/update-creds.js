@@ -33,7 +33,7 @@ describe('mavensmate update-creds-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -47,11 +47,14 @@ describe('mavensmate update-creds-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept username, password, and orgtype args', function(done) {        
+  it('should accept username, password, and orgtype args', function(done) {
     cliClient.program._events['update-creds'](['foo', 'bar', 'bat', 'bang']);
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('update-creds', { username : 'foo', password: 'bar', orgType: 'bat', loginUrl: 'bang' }));
+    assert(executeCommandStub.calledWithMatch({
+       name: 'update-creds',
+       body: { username : 'foo', password: 'bar', orgType: 'bat', loginUrl: 'bang' }
+     }));
 
     done();
   });

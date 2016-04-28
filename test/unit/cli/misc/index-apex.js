@@ -30,7 +30,7 @@ describe('mavensmate index-apex-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -46,9 +46,11 @@ describe('mavensmate index-apex-cli', function(){
 
   it('should call directly', function(done) {
     cliClient.program._events['index-apex']();
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('index-apex'));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'index-apex'
+    }));
     done();
   });
 });
