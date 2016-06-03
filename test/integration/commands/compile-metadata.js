@@ -38,7 +38,10 @@ describe('mavensmate compile-metadata', function(){
       path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'ConflictCheckClass.cls')
     ];
 
-    testClient.executeCommand('edit-project', { package: { ApexClass: '*' } })
+    testClient.executeCommand({
+        name: 'edit-project',
+        body: { package: { ApexClass: '*' } }
+      })
       .then(function(err, response) {
         should.not.equal(response, null);
         return helper.cleanUpTestData(testClient, filesToDelete);
@@ -66,10 +69,13 @@ describe('mavensmate compile-metadata', function(){
           paths : [ apexClassPath ]
         };
         process.env.mm_compile_with_tooling_api = true;
-        return testClient.executeCommand('compile-metadata', payload);
+        return testClient.executeCommand({
+          name: 'compile-metadata',
+          body: payload
+        });
       })
       .then(function(response) {
-        
+
         response.success.should.equal(true);
         response.details.componentSuccesses.length.should.equal(1);
         response.details.componentSuccesses[0].State.should.equal('Completed');
@@ -106,10 +112,13 @@ describe('mavensmate compile-metadata', function(){
         var payload = {
           paths : [ path.join(testClient.getProject().path, 'src', 'classes', 'ConflictCheckClass.cls') ]
         };
-        return testClient.executeCommand('compile-metadata', payload);
+        return testClient.executeCommand({
+          name: 'compile-metadata',
+          body: payload
+        });
       })
       .then(function(response) {
-        
+
         response.success.should.equal(false);
         response.details.componentSuccesses.length.should.equal(0);
         response.details.conflicts.should.have.property('ConflictCheckClass.cls');
@@ -132,10 +141,13 @@ describe('mavensmate compile-metadata', function(){
           paths : [ apexClassPath ]
         };
         fs.outputFileSync(apexClassPath, 'public class CompileMetadataToolingFailClass { this will not work }');
-        return testClient.executeCommand('compile-metadata', payload);
+        return testClient.executeCommand({
+          name: 'compile-metadata',
+          body: payload
+        });
       })
       .then(function(response) {
-        
+
         response.success.should.equal(false);
         response.details.componentFailures.length.should.equal(1);
         response.details.componentFailures[0].should.have.property('DeployDetails');
@@ -160,10 +172,13 @@ describe('mavensmate compile-metadata', function(){
         var payload = {
           paths : [metaFileLocation]
         };
-        return testClient.executeCommand('compile-metadata', payload);
+        return testClient.executeCommand({
+          name: 'compile-metadata',
+          body: payload
+        });
       })
       .then(function(response) {
-        
+
         response.success.should.equal(true);
         done();
       })
@@ -175,7 +190,10 @@ describe('mavensmate compile-metadata', function(){
   it('should compile an object file via the metadata api', function(done) {
     this.timeout(20000);
 
-    testClient.executeCommand('edit-project', { package: { CustomObject: 'Account' } })
+    testClient.executeCommand({
+        name: 'edit-project',
+        body: { package: { CustomObject: 'Account' } }
+      })
       .then(function(response) {
         should.not.equal(response, null);
 
@@ -184,10 +202,13 @@ describe('mavensmate compile-metadata', function(){
         var payload = {
           paths : [accountPath]
         };
-        return testClient.executeCommand('compile-metadata', payload);
+        return testClient.executeCommand({
+          name: 'compile-metadata',
+          body: payload
+        });
       })
       .then(function(response) {
-        
+
         response.success.should.equal(true);
         done();
       })

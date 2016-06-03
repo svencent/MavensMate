@@ -40,7 +40,7 @@ var mavensmate = require('mavensmate');
 var client = mavensmate.createClient({
 	name: 'my-mavensmate-client'
 });
-client.addProject('path/to/some/project')
+client.addProjectByPath('path/to/some/project')
   .then(function(res) {
     return client.executeCommand('compile-project');
   })

@@ -1,6 +1,6 @@
 {
   "name": "mavensmate",
-  "version": "0.0.44-beta5",
+  "version": "0.0.44-beta9",
   "description": "Core APIs that drive MavensMate IDEs for Salesforce1/Force.com",
   "private": false,
   "bin": {
@@ -77,7 +77,7 @@
     "xmldoc": "0.1.2"
   },
   "optionalDependencies": {
-    "keytar": "3.0.0"
+    "keytar": "3.0.2"
   },
   "devDependencies": {
     "blanket": "1.1.5",
@@ -87,6 +87,7 @@
     "mocha": "^2.1.0",
     "mocha-lcov-reporter": "0.0.1",
     "sinon-as-promised": "latest",
-    "sinon": "1.12.2"
+    "sinon": "1.12.2",
+    "grunt-nodemon": "latest"
   }
 }

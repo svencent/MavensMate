@@ -33,7 +33,7 @@ describe('mavensmate update-subscription-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -49,10 +49,13 @@ describe('mavensmate update-subscription-cli', function(){
 
   it('should accept stdin', function(done) {
     cliClient.program._events['update-subscription']();
-    
+
     getPayloadStub().then(function() {
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('update-subscription', { foo : 'bar' }));
+      assert(executeCommandStub.calledWithMatch({
+         name: 'update-subscription',
+         body: { foo : 'bar' }
+       }));
       done();
     });
   });

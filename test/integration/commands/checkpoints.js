@@ -19,10 +19,15 @@ describe('mavensmate checkpoints', function(){
     helper.addProject(testClient, 'checkpoints')
       .then(function(proj) {
         project = proj;
-        return testClient.executeCommand('update-subscription', { subscription: ['ApexClass'] });
+        return testClient.executeCommand({
+          name: 'update-subscription',
+          body: { subscription: ['ApexClass'] }
+        });
       })
       .then(function() {
-        return testClient.executeCommand('index-metadata');
+        return testClient.executeCommand({
+          name: 'index-metadata'
+        });
       })
       .then(function() {
         var cs = new CheckpointService(project);
@@ -58,12 +63,15 @@ describe('mavensmate checkpoints', function(){
     this.timeout(30000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'CheckpointClass')
-      .then(function(response) {          
+      .then(function(response) {
         var payload = {
           path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls'),
           lineNumber : 1
         };
-        return testClient.executeCommand('new-checkpoint', payload);
+        return testClient.executeCommand({
+          name: 'new-checkpoint',
+          body: payload
+        });
       })
       .then(function(response) {
         response.success.should.equal(true);
@@ -80,7 +88,10 @@ describe('mavensmate checkpoints', function(){
     var payload = {
       path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls')
     };
-    testClient.executeCommand('list-checkpoints', payload)
+    testClient.executeCommand({
+        name: 'list-checkpoints',
+        body: payload
+      })
       .then(function(response) {
         response.size.should.equal(1);
         response.records.length.should.equal(1);
@@ -97,7 +108,10 @@ describe('mavensmate checkpoints', function(){
       path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls'),
       lineNumber : 1
     };
-    testClient.executeCommand('delete-checkpoint', payload)
+    testClient.executeCommand({
+        name: 'delete-checkpoint',
+        body: payload
+      })
       .then(function(response) {
         response.success.should.equal(true);
         response.id.length.should.equal(18);

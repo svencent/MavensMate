@@ -34,7 +34,7 @@ describe('mavensmate delete-metadata', function(){
   });
 
   it('should create then delete metadata from server', function(done) {
-    
+
     this.timeout(100000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'DeleteMetadataClass')
@@ -43,16 +43,19 @@ describe('mavensmate delete-metadata', function(){
       })
       .then(function() {
         var payload = {
-          paths: [ 
+          paths: [
             path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass.cls') ,
-            path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass2.cls') 
+            path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass2.cls')
           ]
         };
 
-        return testClient.executeCommand('delete-metadata', payload);
+        return testClient.executeCommand({
+          name: 'delete-metadata',
+          body: payload
+        });
       })
       .then(function(response) {
-        
+
         response.success.should.equal(true);
         response.status.should.equal('Succeeded');
         response.numberComponentErrors.should.equal(0);

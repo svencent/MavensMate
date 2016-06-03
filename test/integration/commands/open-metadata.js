@@ -43,15 +43,18 @@ describe('mavensmate open-metadata', function(){
   });
 
   it('should return the Visualforce page preview url', function(done) {
-    this.timeout(20000);      
+    this.timeout(20000);
 
     helper.createNewMetadata(testClient, 'ApexPage', 'OpenMetadataPage', 'ApexPage.page', { api_name : 'OpenMetadataPage' } )
-      .then(function() {          
+      .then(function() {
         var payload = {
           paths : [ path.join(helper.baseTestDirectory(), 'workspace', 'open-metadata', 'src', 'pages', 'OpenMetadataPage.page') ],
           preview: true
         };
-        return testClient.executeCommand('open-metadata', payload);
+        return testClient.executeCommand({
+          name: 'open-metadata',
+          body: payload
+        });
       })
       .then(function(response) {
         response.should.have.property('OpenMetadataPage.page');

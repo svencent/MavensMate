@@ -33,7 +33,7 @@ describe('mavensmate edit-project-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -49,10 +49,13 @@ describe('mavensmate edit-project-cli', function(){
 
   it('should accept stdin', function(done) {
     cliClient.program._events['edit-project']();
-    
+
     getPayloadStub().then(function() {
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('edit-project', { foo : 'bar' }));
+      assert(executeCommandStub.calledWithMatch({
+        name: 'edit-project',
+        body: { foo : 'bar' }
+      }));
       done();
     });
   });

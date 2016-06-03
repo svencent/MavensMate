@@ -38,12 +38,14 @@ describe('mavensmate index-apex', function(){
       });
   });
 
-  it('should index project apex symbols', function(done) {    
+  it('should index project apex symbols', function(done) {
     this.timeout(40000);
 
-    testClient.executeCommand('index-apex')
+    testClient.executeCommand({
+        name: 'index-apex'
+      })
       .then(function(response) {
-        
+
         response.message.should.equal('Symbols successfully indexed');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'config', '.symbols'),  'Symbols directory does not exist');
         done();
@@ -58,10 +60,13 @@ describe('mavensmate index-apex', function(){
 
     helper.createNewMetadata(testClient, 'ApexClass', 'IndexMySymbolsClass')
       .then(function() {
-        return testClient.executeCommand('index-apex-class', { 'className' : 'IndexMySymbolsClass' });
+        return testClient.executeCommand({
+          name: 'index-apex-class',
+          body: { 'className' : 'IndexMySymbolsClass' }
+        });
       })
       .then(function(response) {
-        
+
         response.message.should.equal('Symbols successfully indexed for IndexMySymbolsClass');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'config', '.symbols'),  'Symbols directory does not exist');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'config', '.symbols', 'IndexMySymbolsClass.json'),  'Symbols file does not exist');

@@ -26,7 +26,7 @@ describe('mavensmate deploy-to-server', function() {
         done(err);
       });
   });
-  
+
   after(function(done) {
     this.timeout(30000);
     var filesToDelete = [
@@ -46,7 +46,7 @@ describe('mavensmate deploy-to-server', function() {
   it('should require at least one deploy target', function(done) {
     var deployPayload = {
       destinations: [],
-      package: { 'ApexClass': ['DeployClass']  },   
+      package: { 'ApexClass': ['DeployClass']  },
       deployOptions: {
         rollbackOnError: true,
         performRetrieve: true,
@@ -55,7 +55,10 @@ describe('mavensmate deploy-to-server', function() {
         runAllTests: false
       }
     };
-    testClient.executeCommand('deploy', deployPayload)
+    testClient.executeCommand({
+        name: 'deploy',
+        body: deployPayload
+      })
       .catch(function(err) {
         err.message.should.equal('Please specify at least one destination');
         done();
@@ -63,7 +66,7 @@ describe('mavensmate deploy-to-server', function() {
   });
 
   it('should validate deploy to an org connection', function(done) {
-    this.timeout(50000);  
+    this.timeout(50000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'DeployClass')
       .then(function() {
@@ -72,16 +75,21 @@ describe('mavensmate deploy-to-server', function() {
           password: 'force',
           orgType: 'production'
         };
-        return testClient.executeCommand('new-connection', payload);
+        return testClient.executeCommand({
+          name: 'new-connection',
+          body: payload
+        });
       })
       .then(function() {
-        return testClient.executeCommand('get-connections');
+        return testClient.executeCommand({
+          name: 'get-connections'
+        });
       })
-      .then(function(conns) {   
+      .then(function(conns) {
         conns[0].environment.should.equal('production');
         var deployPayload = {
           destinations: [conns[0].id],
-          package: { 'ApexClass': ['DeployClass']  },   
+          package: { 'ApexClass': ['DeployClass']  },
           deployOptions: {
             rollbackOnError: true,
             performRetrieve: true,
@@ -90,9 +98,12 @@ describe('mavensmate deploy-to-server', function() {
             runAllTests: false
           }
         };
-        return testClient.executeCommand('deploy', deployPayload);
+        return testClient.executeCommand({
+          name: 'deploy',
+          body: deployPayload
+        });
       })
-      .then(function(response) {        
+      .then(function(response) {
         response.should.have.property('mm4@force.com');
         response['mm4@force.com'].checkOnly.should.equal(true);
         response['mm4@force.com'].done.should.equal(true);

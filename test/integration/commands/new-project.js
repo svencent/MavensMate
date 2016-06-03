@@ -36,15 +36,18 @@ describe('mavensmate new-project', function(){
   });
 
   it('should require username and password', function(done) {
-    testClient.executeCommand('new-project', {})
+    testClient.executeCommand({
+        name: 'new-project',
+        body: {}
+      })
       .catch(function(err) {
         err.message.should.equal('Please specify username, password, and project name');
         done();
-      });      
+      });
   });
 
   it('should prompt that project directory already exists', function(done) {
-    
+
     this.timeout(5000);
 
     var payload = {
@@ -53,14 +56,17 @@ describe('mavensmate new-project', function(){
       password: 'force',
       workspace: path.join(helper.baseTestDirectory(),'workspace')
     };
-    testClient.executeCommand('new-project', payload)
+    testClient.executeCommand({
+        name: 'new-project',
+        body: payload
+      })
       .catch(function(err) {
         err.message.should.equal('Directory already exists!');
         done();
       });
   });
 
-  it('should prompt because of bad salesforce creds', function(done) {    
+  it('should prompt because of bad salesforce creds', function(done) {
     this.timeout(20000);
 
     var payload = {
@@ -70,7 +76,10 @@ describe('mavensmate new-project', function(){
       loginUrl: 'https://test.salesforce.com',
       workspace: path.join(helper.baseTestDirectory(),'workspace')
     };
-    testClient.executeCommand('new-project', payload)
+    testClient.executeCommand({
+        name: 'new-project',
+        body: payload
+      })
       .catch(function(err) {
         err.message.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out');
         done();
@@ -78,9 +87,9 @@ describe('mavensmate new-project', function(){
   });
 
   it('should create project in specified workspace', function(done) {
-    
+
     this.timeout(30000);
-    
+
     var payload = {
       name: 'new-project',
       username: process.env.SALESFORCE_USERNAME || 'mm4@force.com',
@@ -93,7 +102,10 @@ describe('mavensmate new-project', function(){
       }
     };
 
-    testClient.executeCommand('new-project', payload)
+    testClient.executeCommand({
+        name: 'new-project',
+        body: payload
+      })
       .then(function(response) {
         response.message.should.equal('Project created successfully');
         response.should.have.property('id');
@@ -117,5 +129,5 @@ describe('mavensmate new-project', function(){
   });
 
 
- 
+
 });

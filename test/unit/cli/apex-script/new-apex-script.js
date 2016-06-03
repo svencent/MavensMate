@@ -33,7 +33,7 @@ describe('mavensmate new-apex-script-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -47,11 +47,14 @@ describe('mavensmate new-apex-script-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a script name', function(done) {        
+  it('should accept a script name', function(done) {
     cliClient.program._events['new-apex-script'](['myScriptName']);
-    
+
     executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWith('new-apex-script', { name : 'myScriptName' }));
+    assert(executeCommandStub.calledWithMatch({
+      name: 'new-apex-script',
+      body: { name : 'myScriptName' }
+    }));
 
     done();
   });

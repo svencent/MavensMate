@@ -34,7 +34,7 @@ describe('mavensmate deploy-resource-bundle-cli', function(){
       program: program
     });
 
-    require('../../../../lib/mavensmate/loader')(cliClient);  
+    require('../../../../lib/mavensmate/loader')(cliClient);
     done();
   });
 
@@ -48,19 +48,25 @@ describe('mavensmate deploy-resource-bundle-cli', function(){
     getPayloadStub.restore();
   });
 
-  it('should accept a resource bundle path', function(done) {        
+  it('should accept a resource bundle path', function(done) {
     if (os.platform() === 'win32') {
       cliClient.program._events['deploy-resource-bundle'](['C:\\path\\to\\something']);
-      
+
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('deploy-resource-bundle', { paths : [ 'C:\\path\\to\\something' ] }));
+      assert(executeCommandStub.calledWithMatch({
+         name: 'deploy-resource-bundle',
+         body: { paths : [ 'C:\\path\\to\\something' ] }
+       }));
 
       done();
     } else {
       cliClient.program._events['deploy-resource-bundle'](['/path/to/something']);
-      
+
       executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWith('deploy-resource-bundle', { paths : [ '/path/to/something' ] }));
+      assert(executeCommandStub.calledWithMatch({
+         name: 'deploy-resource-bundle',
+         body: { paths : [ '/path/to/something' ] }
+       }));
 
       done();
     }

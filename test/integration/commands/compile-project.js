@@ -31,13 +31,18 @@ describe('mavensmate compile-project', function(){
 
   it('should compile the project based on package.xml', function(done) {
     this.timeout(40000);
-    
-    testClient.executeCommand('edit-project', { package: { 'ApexComponent' : '*' } })
+
+    testClient.executeCommand({
+        name: 'edit-project',
+        body: { package: { 'ApexComponent' : '*' } }
+      })
       .then(function() {
-        return testClient.executeCommand('compile-project');
+        return testClient.executeCommand({
+          name: 'compile-project'
+        });
       })
       .then(function(response) {
-        
+
         response.success.should.equal(true);
         response.status.should.equal('Succeeded');
         done();

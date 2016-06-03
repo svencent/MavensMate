@@ -14,7 +14,7 @@ describe('mavensmate apex-script', function() {
 
   var project;
   var testClient;
- 
+
   before(function(done) {
     this.timeout(18000);
     helper.unlinkEditor();
@@ -33,16 +33,19 @@ describe('mavensmate apex-script', function() {
         done(err);
       });
   });
-  
+
   after(function(done) {
     helper.cleanUpTestProject('apex-script');
     done();
   });
 
   it('should create a new apex script', function(done) {
-    this.timeout(10000);  
+    this.timeout(10000);
 
-    testClient.executeCommand('new-apex-script', { name: 'foo' })
+    testClient.executeCommand({
+        name: 'new-apex-script',
+        body: { name: 'foo' }
+      })
       .then(function(response) {
         response.message.should.equal('Apex script created successfully');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'apex-script', 'apex-scripts'),  'Apex scripts directory does not exist');
@@ -55,12 +58,15 @@ describe('mavensmate apex-script', function() {
   });
 
   it('should execute an apex script that fails to compile', function(done) {
-    this.timeout(10000);  
+    this.timeout(10000);
 
     var apexScriptPath = path.join(helper.baseTestDirectory(),'workspace', 'apex-script', 'apex-scripts', 'foo.cls');
     fs.outputFileSync(apexScriptPath, 'system.debug(\'hello!\'');
 
-    testClient.executeCommand('run-apex-script', { paths: [ apexScriptPath ] })
+    testClient.executeCommand({
+        name: 'run-apex-script',
+        body: { paths: [ apexScriptPath ] }
+      })
       .then(function(response) {
         response[path.basename(apexScriptPath)].success.should.equal(false);
         response[path.basename(apexScriptPath)].compileProblem.should.equal('expecting a right parentheses, found \'<EOF>\'');
@@ -72,12 +78,15 @@ describe('mavensmate apex-script', function() {
   });
 
   it('should execute an apex script that compiles successfully', function(done) {
-    this.timeout(10000);  
+    this.timeout(10000);
 
     var apexScriptPath = path.join(helper.baseTestDirectory(),'workspace', 'apex-script', 'apex-scripts', 'foo.cls');
     fs.outputFileSync(apexScriptPath, 'system.debug(\'hello!\');');
 
-    testClient.executeCommand('run-apex-script', { paths: [ apexScriptPath ] })
+    testClient.executeCommand({
+        name: 'run-apex-script',
+        body: { paths: [ apexScriptPath ] }
+      })
       .then(function(response) {
         response[path.basename(apexScriptPath)].success.should.equal(true);
         should.equal(response[path.basename(apexScriptPath)].compileProblem, null);
