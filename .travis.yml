@@ -1,7 +1,7 @@
 language: node_js
 node_js:
   - '4'
-script: "chmod +x ./ci.sh; ./ci.sh"
+script: "chmod +x ./ci-travis.sh; ./ci-travis.sh"
 env:
   global:
     - CI_NODE_TOTAL=4
