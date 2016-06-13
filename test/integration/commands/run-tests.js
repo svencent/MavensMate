@@ -22,14 +22,18 @@ describe('mavensmate run-tests', function(){
         project = res;
         var loggingConfig = {
           'levels': {
-            'Workflow': 'INFO',
-            'Callout': 'INFO',
-            'System': 'DEBUG',
-            'Database': 'INFO',
-            'ApexCode': 'DEBUG',
-            'Validation': 'INFO',
-            'Visualforce': 'DEBUG'
+            "Workflow": "INFO",
+            "Callout": "INFO",
+            "System": "DEBUG",
+            "Database": "INFO",
+            "ApexCode": "DEBUG",
+            "ApexProfiling": "INFO",
+            "Validation": "INFO",
+            "Visualforce": "DEBUG"
           },
+          "expiration": 480,
+          "logType": "USER_DEBUG",
+          "debugLevelName": "MAVENSMATE",
           /*jshint camelcase: false */
           'users': [
             project.sfdcClient.conn.userInfo.user_id
