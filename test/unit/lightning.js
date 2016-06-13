@@ -14,9 +14,9 @@ describe('mavensmate lightning-unit', function(){
 
   var project;
   var testClient;
-  
+
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     helper.unlinkEditor();
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'lightning-unit');
@@ -29,15 +29,15 @@ describe('mavensmate lightning-unit', function(){
         done(err);
       });
   });
-  
+
   after(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     helper.cleanUpTestProject('lightning-unit');
     done();
   });
 
   it('should create a bundle and bundle items, then delete the bundle item, then the bundle', function (done) {
-    this.timeout(20000);
+    this.timeout(120000);
     var ls = new LightningService(project);
     var bundleId;
     var appId;

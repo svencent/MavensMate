@@ -16,7 +16,7 @@ describe('mavensmate refresh-metadata', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(18000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'refresh-metadata');
@@ -31,13 +31,13 @@ describe('mavensmate refresh-metadata', function(){
   });
 
   after(function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
     helper.cleanUpTestProject('refresh-metadata');
     done();
   });
 
   it('should refresh class directory from the server', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'RefreshMetadataClass')
       .then(function() {
@@ -65,7 +65,7 @@ describe('mavensmate refresh-metadata', function(){
   });
 
   it('should refresh class file from the server', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'RefreshMetadataClass2')
       .then(function() {
@@ -91,7 +91,7 @@ describe('mavensmate refresh-metadata', function(){
   });
 
   it('should refresh a CustomObject from the server ', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     var accountMetadataFile = new mavensMateFile.MavensMateFile({ project: testClient.getProject() });
     accountMetadataFile.setTypeByXmlName('CustomObject');
@@ -119,7 +119,7 @@ describe('mavensmate refresh-metadata', function(){
   });
 
   it('should refresh project ', function(done) {
-    this.timeout(60000);
+    this.timeout(120000);
 
     testClient.getProject().packageXml.subscription = {
       ApexClass: '*',

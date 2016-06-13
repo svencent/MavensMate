@@ -13,7 +13,7 @@ describe('mavensmate mavensmate-file', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'file-test');
     helper.addProject(testClient, 'file-test')
@@ -48,7 +48,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it('should create new File instance of type CustomObject', function(done) {  
+  it('should create new File instance of type CustomObject', function(done) {
     var customObjectPath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'objects', 'Account.object');
     fs.outputFileSync(customObjectPath, '');
 
@@ -57,7 +57,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it('should create new File instance of type EmailTemplate', function(done) {  
+  it('should create new File instance of type EmailTemplate', function(done) {
     var emailTemplatePath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'email', 'myfolder', 'myEmail.email');
     fs.outputFileSync(emailTemplatePath, '');
 
@@ -67,7 +67,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it('should create new File instance of type Document', function(done) {  
+  it('should create new File instance of type Document', function(done) {
     var documentPath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'documents', 'myfolder', 'foo.jpg');
     fs.outputFileSync(documentPath, '');
 
@@ -77,7 +77,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it('should create new File instance of type AuraDefinitionBundle > STYLE', function(done) {  
+  it('should create new File instance of type AuraDefinitionBundle > STYLE', function(done) {
     var itemPath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'aura', 'foo', 'foo.css');
     fs.ensureFileSync(itemPath, '');
 
@@ -87,7 +87,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it('should create new File instance of type AuraDefinitionBundle > APPLICATION', function(done) {  
+  it('should create new File instance of type AuraDefinitionBundle > APPLICATION', function(done) {
     var itemPath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'aura', 'foo', 'foo.app');
     fs.ensureFileSync(itemPath, '');
 
@@ -97,7 +97,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it('should create new File instance of type AuraDefinitionBundle > DOCUMENTATION', function(done) {  
+  it('should create new File instance of type AuraDefinitionBundle > DOCUMENTATION', function(done) {
     var itemPath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'aura', 'foo', 'foo.auradoc');
     fs.ensureFileSync(itemPath, '');
 
@@ -107,7 +107,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it('should create new File instance of type AuraDefinitionBundle > COMPONENT', function(done) {  
+  it('should create new File instance of type AuraDefinitionBundle > COMPONENT', function(done) {
     var itemPath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'aura', 'foo', 'foo.cmp');
     fs.ensureFileSync(itemPath, '');
 
@@ -117,7 +117,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it('should create new File instance of type AuraDefinitionBundle > EVENT', function(done) {  
+  it('should create new File instance of type AuraDefinitionBundle > EVENT', function(done) {
     var itemPath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'aura', 'foo', 'foo.evt');
     fs.ensureFileSync(itemPath, '');
 
@@ -127,7 +127,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it('should create new File instance of type AuraDefinitionBundle > INTERFACE', function(done) {  
+  it('should create new File instance of type AuraDefinitionBundle > INTERFACE', function(done) {
     var itemPath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'aura', 'foo', 'foo.intf');
     fs.ensureFileSync(itemPath, '');
 
@@ -137,7 +137,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it('should create new File instance of type AuraDefinitionBundle > CONTROLLER', function(done) {  
+  it('should create new File instance of type AuraDefinitionBundle > CONTROLLER', function(done) {
     var itemPath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'aura', 'foo', 'fooController.js');
     fs.ensureFileSync(itemPath, '');
 
@@ -148,7 +148,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it('should create new File instance of type AuraDefinitionBundle > HELPER', function(done) {  
+  it('should create new File instance of type AuraDefinitionBundle > HELPER', function(done) {
     var itemPath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'aura', 'foo', 'fooHelper.js');
     fs.ensureFileSync(itemPath, '');
 
@@ -159,7 +159,7 @@ describe('mavensmate mavensmate-file', function(){
     done();
   });
 
-  it('should create new File instance of type AuraDefinitionBundle > RENDERER', function(done) {  
+  it('should create new File instance of type AuraDefinitionBundle > RENDERER', function(done) {
     var itemPath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'aura', 'foo', 'fooRenderer.js');
     fs.ensureFileSync(itemPath, '');
 
@@ -182,7 +182,7 @@ describe('mavensmate mavensmate-file', function(){
     ]);
 
     var apexClassesPath = path.join(helper.baseTestDirectory(), 'workspace', 'file-test', 'src', 'classes');
-    
+
     var apexClassPathFile = new mavensMateFile.MavensMateFile({ project: project, path: apexClassesPath });
     apexClassPathFile.type.xmlName.should.equal('ApexClass');
     apexClassPathFile.localMembers.length.should.equal(2);

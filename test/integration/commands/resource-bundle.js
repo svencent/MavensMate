@@ -15,7 +15,7 @@ describe('mavensmate resource-bundle', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'resource-bundle');
@@ -30,7 +30,7 @@ describe('mavensmate resource-bundle', function(){
   });
 
   after(function(done) {
-    this.timeout(15000);
+    this.timeout(120000);
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource')
     ];
@@ -47,7 +47,7 @@ describe('mavensmate resource-bundle', function(){
   });
 
   it('should create a resource bundle from a local static resource file', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     fs.copySync(
       path.join(helper.baseTestDirectory(), 'fixtures', 'test_resource_bundle.zip'),
@@ -82,7 +82,7 @@ describe('mavensmate resource-bundle', function(){
   });
 
   it('should throw exception when trying to create resource bundle that already exists', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     var payload = {
       paths : [path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource')]
@@ -99,7 +99,7 @@ describe('mavensmate resource-bundle', function(){
   });
 
   it('should deploy a resource bundle to the server', function(done) {
-    this.timeout(30000);
+    this.timeout(120000);
 
     var payload = {
       paths :[ path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource') ]

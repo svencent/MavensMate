@@ -31,7 +31,7 @@ describe('mavensmate empty-directory', function(){
   });
 
   it('should empty a directory recursively, preserving .svn and .git', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
     var pagesPath = path.join(testPath, 'pages');
     var classesPath = path.join(testPath, 'classes');
     util.emptyDirectoryRecursiveSync(testPath);
@@ -60,7 +60,7 @@ describe('mavensmate remove-empty-directories', function(){
   });
 
   it('should empty a directory recursively, preserving .svn and .git', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
     var pagesPath = path.join(testPath, 'pages');
     var classesPath = path.join(testPath, 'classes');
     util.emptyDirectoryRecursiveSync(testPath);

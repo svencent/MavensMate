@@ -11,7 +11,7 @@ describe('mavensmate DeployController', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'DeployControllerTest');
     helper.addProject(testClient, 'DeployControllerTest')

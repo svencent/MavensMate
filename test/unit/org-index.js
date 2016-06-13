@@ -14,7 +14,7 @@ describe('mavensmate org-index', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'org-index');
     helper.addProject(testClient, 'org-index')
@@ -32,11 +32,11 @@ describe('mavensmate org-index', function(){
     done();
   });
 
-  it('should select metadata based on package.xml', function(done) {    
-    this.timeout(100000);
+  it('should select metadata based on package.xml', function(done) {
+    this.timeout(120000);
 
     fs.copySync(
-      path.join(helper.baseTestDirectory(), 'fixtures', 'org-index.json'), 
+      path.join(helper.baseTestDirectory(), 'fixtures', 'org-index.json'),
       path.join(helper.baseTestDirectory(), 'workspace', 'org-index', 'config', '.org_metadata')
     );
 
@@ -60,7 +60,7 @@ describe('mavensmate org-index', function(){
 
   it('should index different types of metadata', function(done) {
 
-    this.timeout(100000);
+    this.timeout(120000);
 
     var indexService = new IndexService({project:testClient.getProject()});
     indexService.indexServerProperties(['ApexClass', 'CustomObject', 'Report'])

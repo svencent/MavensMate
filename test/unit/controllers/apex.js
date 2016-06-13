@@ -11,7 +11,7 @@ describe('mavensmate ApexController', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'ApexControllerTest');
     helper.addProject(testClient, 'ApexControllerTest')
@@ -30,7 +30,7 @@ describe('mavensmate ApexController', function(){
   });
 
   describe('views', function() {
-    
+
     var ctrl;
 
     beforeEach(function() {
@@ -45,7 +45,7 @@ describe('mavensmate ApexController', function(){
       });
     });
 
-    it('should render apex/new.html', function(done) {    
+    it('should render apex/new.html', function(done) {
       // var mockedExpress = helper.mockExpress(project);
       // var req = mockedExpress.req;
       // var res = mockedExpress.res;

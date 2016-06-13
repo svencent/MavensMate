@@ -14,7 +14,7 @@ describe('mavensmate index-apex', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'index-apex');
@@ -29,7 +29,7 @@ describe('mavensmate index-apex', function(){
   });
 
   after(function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
     var filesToDelete = [path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'src', 'classes', 'IndexMySymbolsClass.cls')];
     helper.cleanUpTestData(testClient, filesToDelete)
       .finally(function() {
@@ -39,7 +39,7 @@ describe('mavensmate index-apex', function(){
   });
 
   it('should index project apex symbols', function(done) {
-    this.timeout(40000);
+    this.timeout(120000);
 
     testClient.executeCommand({
         name: 'index-apex'
@@ -56,7 +56,7 @@ describe('mavensmate index-apex', function(){
   });
 
   it('should index apex symbols for a specific apex class', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'IndexMySymbolsClass')
       .then(function() {

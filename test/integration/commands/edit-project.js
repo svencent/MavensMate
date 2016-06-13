@@ -14,7 +14,7 @@ describe('mavensmate edit-project', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(58000);
+    this.timeout(120000);
     helper.unlinkEditor();
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'edit-project');
@@ -34,7 +34,7 @@ describe('mavensmate edit-project', function(){
   });
 
   it('should edit project contents', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     testClient.executeCommand({
         name: 'edit-project',
@@ -59,7 +59,7 @@ describe('mavensmate edit-project', function(){
   });
 
   it('should fail to update project creds because of invalid login', function(done) {
-    this.timeout(60000);
+    this.timeout(120000);
     testClient.executeCommand({
         name: 'update-creds',
         body: { username: 'thiswontwork@foo.com', password: 'foobarbatbam', loginUrl: 'https://test.salesforce.com' }
@@ -71,7 +71,7 @@ describe('mavensmate edit-project', function(){
   });
 
   it('should update project creds', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
     var creds = helper.getTestCreds();
     testClient.executeCommand({
         name: 'update-creds',

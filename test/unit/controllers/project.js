@@ -10,7 +10,7 @@ describe('mavensmate ProjectController', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'ProjectControllerTest');
     helper.addProject(testClient, 'ProjectControllerTest')
@@ -29,7 +29,7 @@ describe('mavensmate ProjectController', function(){
   });
 
   describe('views', function() {
-    
+
     var ctrl;
 
     beforeEach(function() {
@@ -42,7 +42,7 @@ describe('mavensmate ProjectController', function(){
       });
     });
 
-    it('should render project/new.html', function(done) {    
+    it('should render project/new.html', function(done) {
       var mockedExpress = helper.mockExpress(project);
       var req = mockedExpress.req;
       var res = mockedExpress.res;
@@ -53,7 +53,7 @@ describe('mavensmate ProjectController', function(){
       done();
     });
 
-    it('should render project/edit.html', function(done) {    
+    it('should render project/edit.html', function(done) {
       var req,res,spy;
       req = res = {};
       spy = res.render = sinon.spy();
@@ -61,7 +61,7 @@ describe('mavensmate ProjectController', function(){
       ctrl.new(req, res);
       spy.calledOnce.should.equal(true);
       done();
-    });  
+    });
   });
 
 });

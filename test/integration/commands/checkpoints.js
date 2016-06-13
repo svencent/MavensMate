@@ -12,7 +12,7 @@ describe('mavensmate checkpoints', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(15000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'checkpoints');
@@ -42,7 +42,7 @@ describe('mavensmate checkpoints', function(){
   });
 
   after(function(done) {
-    this.timeout(15000);
+    this.timeout(120000);
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls')
     ];
@@ -60,7 +60,7 @@ describe('mavensmate checkpoints', function(){
 
 
   it('should add checkpoint', function(done) {
-    this.timeout(30000);
+    this.timeout(120000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'CheckpointClass')
       .then(function(response) {
@@ -84,7 +84,7 @@ describe('mavensmate checkpoints', function(){
   });
 
   it('should list checkpoints', function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     var payload = {
       path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls')
     };
@@ -103,7 +103,7 @@ describe('mavensmate checkpoints', function(){
   });
 
   it('should delete checkpoint', function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     var payload = {
       path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls'),
       lineNumber : 1

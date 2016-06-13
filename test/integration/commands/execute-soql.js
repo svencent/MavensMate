@@ -11,7 +11,7 @@ describe('mavensmate execute-soql', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'execute-soql');
@@ -31,7 +31,7 @@ describe('mavensmate execute-soql', function(){
   });
 
   it('should successfully execute soql query', function(done) {
-    this.timeout(3000);
+    this.timeout(120000);
 
     testClient.executeCommand({
         name: 'execute-soql',
@@ -49,7 +49,7 @@ describe('mavensmate execute-soql', function(){
   });
 
   it('should fail to execute soql query', function(done) {
-    this.timeout(3000);
+    this.timeout(120000);
 
     testClient.executeCommand({
         name: 'execute-soql',

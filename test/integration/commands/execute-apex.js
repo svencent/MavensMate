@@ -10,7 +10,7 @@ describe('mavensmate execute-apex', function() {
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     helper.unlinkEditor();
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'execute-apex');
@@ -30,7 +30,7 @@ describe('mavensmate execute-apex', function() {
   });
 
   it('should execute anonymous apex', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     testClient.executeCommand({
         name: 'execute-apex',
@@ -48,7 +48,7 @@ describe('mavensmate execute-apex', function() {
   });
 
   it('should attempt to execute invalid anonymous apex', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     testClient.executeCommand({
       name: 'execute-apex',

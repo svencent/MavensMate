@@ -11,7 +11,7 @@ describe('mavensmate open-metadata', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'open-metadata');
@@ -26,7 +26,7 @@ describe('mavensmate open-metadata', function(){
   });
 
   after(function(done) {
-    this.timeout(15000);
+    this.timeout(120000);
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'open-metadata', 'src', 'pages', 'OpenMetadataPage.page')
     ];
@@ -43,7 +43,7 @@ describe('mavensmate open-metadata', function(){
   });
 
   it('should return the Visualforce page preview url', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     helper.createNewMetadata(testClient, 'ApexPage', 'OpenMetadataPage', 'ApexPage.page', { api_name : 'OpenMetadataPage' } )
       .then(function() {

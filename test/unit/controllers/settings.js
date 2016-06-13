@@ -15,7 +15,7 @@ describe('mavensmate SettingsController', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'SettingsControllerTest');
     helper.addProject(testClient, 'SettingsControllerTest')
@@ -34,14 +34,14 @@ describe('mavensmate SettingsController', function(){
   });
 
   describe('rendering', function() {
-    
+
     var config;
     var ctrl;
     var configLoadStub;
 
     beforeEach(function() {
       config = require('../../../lib/mavensmate/config');
-      
+
       ctrl = new SettingsController({
         app : {
           get: function() {
@@ -55,7 +55,7 @@ describe('mavensmate SettingsController', function(){
       configLoadStub.restore();
     });
 
-    // it('should render settings/index.html with empty object if settings are invalid JSON', function(done) {    
+    // it('should render settings/index.html with empty object if settings are invalid JSON', function(done) {
     //   var mockedExpress = helper.mockExpress(project);
     //   var req = mockedExpress.req;
     //   var res = mockedExpress.res;
@@ -76,12 +76,12 @@ describe('mavensmate SettingsController', function(){
     //   done();
     // });
 
-    it('should render settings/index.html with user settings', function(done) {    
+    it('should render settings/index.html with user settings', function(done) {
       var mockedExpress = helper.mockExpress(project);
       var req = mockedExpress.req;
       var res = mockedExpress.res;
       var spy = res.render = sinon.spy();
-      
+
       configLoadStub = sinon.stub(config, 'load', function() {
         return '{ "foo": "bar" }';
       });

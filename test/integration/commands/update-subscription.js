@@ -10,7 +10,7 @@ describe('mavensmate update-subscription', function() {
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     helper.unlinkEditor();
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'update-subscription');
@@ -30,7 +30,7 @@ describe('mavensmate update-subscription', function() {
   });
 
   it('should update the project subscription', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     testClient.executeCommand({
         name: 'update-subscription',

@@ -16,7 +16,7 @@ describe('mavensmate apex-script', function() {
   var testClient;
 
   before(function(done) {
-    this.timeout(18000);
+    this.timeout(120000);
     helper.unlinkEditor();
     logger.info('editor unlinked');
     testClient = helper.createClient('unittest');
@@ -40,7 +40,7 @@ describe('mavensmate apex-script', function() {
   });
 
   it('should create a new apex script', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     testClient.executeCommand({
         name: 'new-apex-script',
@@ -58,7 +58,7 @@ describe('mavensmate apex-script', function() {
   });
 
   it('should execute an apex script that fails to compile', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     var apexScriptPath = path.join(helper.baseTestDirectory(),'workspace', 'apex-script', 'apex-scripts', 'foo.cls');
     fs.outputFileSync(apexScriptPath, 'system.debug(\'hello!\'');
@@ -78,7 +78,7 @@ describe('mavensmate apex-script', function() {
   });
 
   it('should execute an apex script that compiles successfully', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     var apexScriptPath = path.join(helper.baseTestDirectory(),'workspace', 'apex-script', 'apex-scripts', 'foo.cls');
     fs.outputFileSync(apexScriptPath, 'system.debug(\'hello!\');');

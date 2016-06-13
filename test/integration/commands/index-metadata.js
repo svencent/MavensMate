@@ -10,7 +10,7 @@ describe('mavensmate index-metadata', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'index-metadata');
@@ -31,7 +31,7 @@ describe('mavensmate index-metadata', function(){
 
   it('should index metadata based on the project subscription', function(done) {
 
-    this.timeout(80000);
+    this.timeout(120000);
 
     testClient.executeCommand({ name: 'index-metadata' })
       .then(function(response) {
@@ -45,7 +45,7 @@ describe('mavensmate index-metadata', function(){
 
   it('should fail to index due to unknown type', function(done) {
 
-    this.timeout(80000);
+    this.timeout(120000);
 
     testClient.executeCommand({
         name: 'update-subscription',
@@ -62,7 +62,7 @@ describe('mavensmate index-metadata', function(){
 
   it('should index uncommon types', function(done) {
 
-    this.timeout(80000);
+    this.timeout(120000);
     testClient.executeCommand({
         name: 'update-subscription',
         body: { subscription: [ 'CustomLabel', 'Letterhead', 'Queue', 'RecordType', 'SharingRules' ] }
@@ -81,7 +81,7 @@ describe('mavensmate index-metadata', function(){
 
   it('should get metadata index from project', function(done) {
 
-    this.timeout(10000);
+    this.timeout(120000);
 
     testClient.executeCommand({ name: 'get-metadata-index' })
       .then(function(response) {

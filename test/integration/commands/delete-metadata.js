@@ -14,7 +14,7 @@ describe('mavensmate delete-metadata', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'delete-metadata');
@@ -35,7 +35,7 @@ describe('mavensmate delete-metadata', function(){
 
   it('should create then delete metadata from server', function(done) {
 
-    this.timeout(100000);
+    this.timeout(120000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'DeleteMetadataClass')
       .then(function() {

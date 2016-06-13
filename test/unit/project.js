@@ -13,7 +13,7 @@ describe('mavensmate project-unit', function(){
 
   describe('initiate new', function () {
     it('should select a workspace when setting is a string', function (done) {
-      this.timeout(8000);
+      this.timeout(120000);
       /*jshint camelcase: false */
       process.env.mm_workspace = path.join(helper.baseTestDirectory(), 'workspace');
       /*jshint camelcase: true */
@@ -32,12 +32,12 @@ describe('mavensmate project-unit', function(){
     });
 
     it('should select a workspace when setting is an array', function (done) {
-      this.timeout(8000);
+      this.timeout(120000);
       /*jshint camelcase: false */
       helper.createClient('unittest', {
         mm_workspace : [
-          path.join(helper.baseTestDirectory(), 'workspace'), 
-          path.join(helper.baseTestDirectory(), 'workspace', 'foo') 
+          path.join(helper.baseTestDirectory(), 'workspace'),
+          path.join(helper.baseTestDirectory(), 'workspace', 'foo')
         ]
       });
       /*jshint camelcase: true */
@@ -52,13 +52,13 @@ describe('mavensmate project-unit', function(){
     });
 
     it('should create the workspace when it does not exist', function (done) {
-      this.timeout(8000);
+      this.timeout(120000);
       helper.createClient('unittest');
       /*jshint camelcase: false */
       helper.createClient('unittest', {
         mm_workspace : [
-          path.join(helper.baseTestDirectory(), 'workspace', 'foo'), 
-          path.join(helper.baseTestDirectory(), 'workspace') 
+          path.join(helper.baseTestDirectory(), 'workspace', 'foo'),
+          path.join(helper.baseTestDirectory(), 'workspace')
         ]
       });
       /*jshint camelcase: true */

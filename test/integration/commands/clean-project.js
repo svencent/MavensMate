@@ -15,7 +15,7 @@ describe('mavensmate clean-project-command', function() {
   var testClient;
 
   before(function(done) {
-    this.timeout(28000);
+    this.timeout(120000);
     helper.unlinkEditor();
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'clean-project');
@@ -35,7 +35,7 @@ describe('mavensmate clean-project-command', function() {
   });
 
   it('should revert the project to server state based on package.xml', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     var members = '<types><members>*</members><name>ApexClass</name></types>';
     var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
@@ -63,7 +63,7 @@ describe('mavensmate clean-project-command', function() {
   });
 
   it('should respect the user updating the package.xml file directly', function(done) {
-    this.timeout(30000);
+    this.timeout(120000);
 
     var members = '<types><members>*</members><name>ApexPage</name></types>';
     var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';

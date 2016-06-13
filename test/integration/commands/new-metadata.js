@@ -13,7 +13,7 @@ describe('mavensmate new-metadata', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'new-metadata');
@@ -28,7 +28,7 @@ describe('mavensmate new-metadata', function(){
   });
 
   after(function(done) {
-    this.timeout(35000);
+    this.timeout(120000);
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'classes', 'NewMetadataClass.cls'),
       path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'triggers', 'NewMetadataTrigger.trigger'),
@@ -45,10 +45,10 @@ describe('mavensmate new-metadata', function(){
 
 
   it('should create new Apex Class on the server', function(done) {
-    this.timeout(100000);
+    this.timeout(120000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'NewMetadataClass')
-      .then(function(response) {          
+      .then(function(response) {
         response.message.should.equal('Success');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'classes', 'NewMetadataClass.cls'),  'Class file not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'classes', 'NewMetadataClass.cls-meta.xml'),  'Class meta file not created');
@@ -62,10 +62,10 @@ describe('mavensmate new-metadata', function(){
   });
 
   it('should create new Apex Trigger on the server', function(done) {
-    this.timeout(100000);
+    this.timeout(120000);
 
     helper.createNewMetadata(testClient, 'ApexTrigger', 'NewMetadataTrigger', 'ApexTrigger.trigger', { api_name : 'NewMetadataTrigger', object_name : 'Account' } )
-      .then(function(response) {                  
+      .then(function(response) {
         response.message.should.equal('Success');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'triggers', 'NewMetadataTrigger.trigger'),  'Trigger file not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'triggers', 'NewMetadataTrigger.trigger-meta.xml'),  'Trigger meta file not created');

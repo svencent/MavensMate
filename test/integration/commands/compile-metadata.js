@@ -12,7 +12,7 @@ describe('mavensmate compile-metadata', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     /*jshint camelcase: false */
     process.env.mm_compile_check_conflicts = false;
     /*jshint camelcase: true */
@@ -30,7 +30,7 @@ describe('mavensmate compile-metadata', function(){
   });
 
   after(function(done) {
-    this.timeout(30000);
+    this.timeout(120000);
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls'),
       path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataToolingFailClass.cls'),
@@ -61,7 +61,7 @@ describe('mavensmate compile-metadata', function(){
   });
 
   it('should compile an apex class successfully via the tooling api', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
     helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataToolingClass')
       .then(function() {
         var apexClassPath = path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataToolingClass.cls');
@@ -88,7 +88,7 @@ describe('mavensmate compile-metadata', function(){
 
   it('should check for conflicts on the server', function(done) {
     /*jshint camelcase: false */
-    this.timeout(20000);
+    this.timeout(120000);
     process.env.mm_compile_check_conflicts = true;
     helper.createNewMetadata(testClient, 'ApexClass', 'ConflictCheckClass')
       .then(function() {
@@ -132,7 +132,7 @@ describe('mavensmate compile-metadata', function(){
   });
 
   it('should unsuccessfully attempt to compile an apex class via the tooling api', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataToolingFailClass')
       .then(function() {
@@ -164,7 +164,7 @@ describe('mavensmate compile-metadata', function(){
   });
 
   it('should compile a meta.xml file via the metadata api', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataClass')
       .then(function() {
@@ -188,7 +188,7 @@ describe('mavensmate compile-metadata', function(){
   });
 
   it('should compile an object file via the metadata api', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     testClient.executeCommand({
         name: 'edit-project',

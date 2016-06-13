@@ -9,7 +9,7 @@
 // describe('mavensmate local-store', function(){
 
 // 	it.only('should add new metadata to the store when created on the server', function(done) {
-// 		this.timeout(10000);
+// 		this.timeout(120000);
 
 // 		var testClient = helper.createClient('unittest');
 
@@ -21,15 +21,15 @@
 // 					done();
 // 				});
 // 		});
-	
+
 // 	});
 
 // 	it('should remove metadata from the store when metadata is deleted from the server', function(done) {
-		
+
 // 	});
 
 // 	it('should update the store when metadata is refreshed from the server', function(done) {
-		
+
 // 	});
 
 // });

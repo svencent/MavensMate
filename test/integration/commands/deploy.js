@@ -13,7 +13,7 @@ describe('mavensmate deploy-to-server', function() {
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     helper.unlinkEditor();
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'deploy');
@@ -28,7 +28,7 @@ describe('mavensmate deploy-to-server', function() {
   });
 
   after(function(done) {
-    this.timeout(30000);
+    this.timeout(120000);
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'deploy', 'src', 'classes', 'DeployClass.cls')
     ];
@@ -66,7 +66,7 @@ describe('mavensmate deploy-to-server', function() {
   });
 
   it('should validate deploy to an org connection', function(done) {
-    this.timeout(50000);
+    this.timeout(120000);
     var creds = helper.getTestCreds();
     helper.createNewMetadata(testClient, 'ApexClass', 'DeployClass')
       .then(function() {

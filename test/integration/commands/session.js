@@ -11,14 +11,14 @@ describe('mavensmate session', function() {
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     done();
   });
 
   it('should initiate new salesforce session', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
     var creds = helper.getTestCreds();
     var payload = {
       username: creds.username,
@@ -44,7 +44,7 @@ describe('mavensmate session', function() {
   });
 
   it('should fail to initiate new salesforce session', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     var payload = {
       username: 'thiswontwork@foo.com',

@@ -17,7 +17,7 @@ describe('mavensmate unit-package', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'package-test');
     helper.addProject(testClient, 'package-test')
@@ -72,15 +72,15 @@ describe('mavensmate unit-package', function(){
         pkg.subscription.should.have.property('ApexPage');
         pkg.subscription.ApexClass.length.should.equal(2);
         pkg.subscription.ApexPage.should.equal('*');
-        
+
         var pkgMetadata = new mavensMateFile.MavensMateFile({ path: '/path/to/src/classes/foo.cls' });
         pkg.subscribe([pkgMetadata]);
-        pkg.subscription.ApexClass.length.should.equal(3);  
+        pkg.subscription.ApexClass.length.should.equal(3);
 
         pkgMetadata = new mavensMateFile.MavensMateFile({ path: '/path/to/src/classes/myclass.cls' });
         pkg.unsubscribe([pkgMetadata]);
-        pkg.subscription.ApexClass.length.should.equal(2);  
-        done();      
+        pkg.subscription.ApexClass.length.should.equal(2);
+        done();
       })
       .catch(function(e) {
         done(e);
@@ -105,7 +105,7 @@ describe('mavensmate unit-package', function(){
         pkg.subscription.ApexPage.length.should.equal(2);
         pkg.subscription.CustomObject.length.should.equal(1);
         pkg.subscription.ApexTrigger.length.should.equal(1);
-        done();      
+        done();
       })
       .catch(function(e) {
         done(e);
@@ -121,7 +121,7 @@ describe('mavensmate unit-package', function(){
         pkg.subscription.should.have.property('ApexPage');
         pkg.subscription.ApexClass.should.equal('*');
         pkg.subscription.ApexPage.should.equal('*');
-        done();      
+        done();
       })
       .catch(function(e) {
         done(e);

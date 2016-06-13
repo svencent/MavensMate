@@ -13,7 +13,7 @@ describe('mavensmate run-tests', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(30000);
+    this.timeout(120000);
     helper.unlinkEditor();
     testClient = helper.createClient('unittest');
     helper.putTestProjectInTestWorkspace(testClient, 'run-tests');
@@ -53,7 +53,7 @@ describe('mavensmate run-tests', function(){
   });
 
   after(function(done) {
-    this.timeout(30000);
+    this.timeout(120000);
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'run-tests', 'src', 'classes', 'RunTestsApexClass.cls'),
       path.join(helper.baseTestDirectory(),'workspace', 'run-tests', 'src', 'classes', 'CoverMe.cls')
@@ -77,7 +77,7 @@ describe('mavensmate run-tests', function(){
 
   it('should run tests', function(done) {
 
-    this.timeout(40000);
+    this.timeout(120000);
 
     // create test class
     // run tests
@@ -147,7 +147,7 @@ describe('mavensmate run-tests', function(){
 
   describe('coverage', function(){
     it('should get coverage for a specific class', function(done) {
-      this.timeout(20000);
+      this.timeout(120000);
       var coverageClasses = [path.join(helper.baseTestDirectory(),'workspace', 'run-tests', 'src', 'classes', 'CoverMe.cls')];
       testClient.executeCommand({
           name: 'get-coverage',
@@ -167,7 +167,7 @@ describe('mavensmate run-tests', function(){
     });
 
     it('should get org-wide test coverage', function(done) {
-      this.timeout(20000);
+      this.timeout(120000);
       testClient.executeCommand({
           name: 'get-coverage',
           body: { global: true  }

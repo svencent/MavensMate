@@ -15,7 +15,7 @@ describe('mavensmate new-project', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'new-project-existing');
@@ -48,7 +48,7 @@ describe('mavensmate new-project', function(){
 
   it('should prompt that project directory already exists', function(done) {
 
-    this.timeout(5000);
+    this.timeout(120000);
     var creds = helper.getTestCreds();
     var payload = {
       name: 'new-project-existing',
@@ -67,7 +67,7 @@ describe('mavensmate new-project', function(){
   });
 
   it('should prompt because of bad salesforce creds', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     var payload = {
       name: 'new-project-bad-creds',
@@ -88,7 +88,7 @@ describe('mavensmate new-project', function(){
 
   it('should create project in specified workspace', function(done) {
 
-    this.timeout(30000);
+    this.timeout(120000);
     var creds = helper.getTestCreds();
     var payload = {
       name: 'new-project',

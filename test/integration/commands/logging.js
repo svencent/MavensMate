@@ -14,7 +14,7 @@ describe('mavensmate logging', function() {
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'logging');
@@ -52,7 +52,7 @@ describe('mavensmate logging', function() {
   });
 
   it('should start logging for all user ids listed in config/.debug', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     testClient.executeCommand({ name: 'start-logging' })
       .then(function(response) {
@@ -66,7 +66,7 @@ describe('mavensmate logging', function() {
   });
 
   it('should stop logging for all user ids listed in config/.debug', function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
 
     testClient.executeCommand({ name: 'stop-logging' })
       .then(function(response) {

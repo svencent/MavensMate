@@ -15,7 +15,7 @@ describe('mavensmate org-connections', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'org-connections');
@@ -35,7 +35,7 @@ describe('mavensmate org-connections', function(){
   });
 
   it('should add a new org connection', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
     var creds = helper.getTestCreds();
     var payload = {
       username: creds.username,
@@ -60,7 +60,7 @@ describe('mavensmate org-connections', function(){
   });
 
   it('should get org connections', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
     var creds = helper.getTestCreds();
     testClient.executeCommand({
         name: 'get-connections'
@@ -79,7 +79,7 @@ describe('mavensmate org-connections', function(){
   });
 
   it('should not add an org connection because of bad credentials', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     var payload = {
       username: 'thiswontwork@force.com',
@@ -101,7 +101,7 @@ describe('mavensmate org-connections', function(){
   });
 
   it('should delete an org connection', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     var connections = fs.readJsonSync(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'));
 

@@ -10,7 +10,7 @@ describe('mavensmate compile-project', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'compile-project');
@@ -30,7 +30,7 @@ describe('mavensmate compile-project', function(){
   });
 
   it('should compile the project based on package.xml', function(done) {
-    this.timeout(40000);
+    this.timeout(120000);
 
     testClient.executeCommand({
         name: 'edit-project',

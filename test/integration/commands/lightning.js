@@ -14,7 +14,7 @@ describe('mavensmate lightning', function(){
   var testClient;
 
   before(function(done) {
-    this.timeout(8000);
+    this.timeout(120000);
     testClient = helper.createClient('unittest');
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace(testClient, 'lightning');
@@ -32,7 +32,7 @@ describe('mavensmate lightning', function(){
   });
 
   after(function(done) {
-    this.timeout(20000);
+    this.timeout(120000);
     var lightningBundlesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittester'),
       path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmcompunittestfoo'),
@@ -53,7 +53,7 @@ describe('mavensmate lightning', function(){
   });
 
   it('should create a new lightning app', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     var payload = {
       apiName : 'mmunittester',
@@ -88,7 +88,7 @@ describe('mavensmate lightning', function(){
   });
 
   it('should create a new lightning component', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     var payload = {
       apiName : 'mmcompunittestfoo',
@@ -120,7 +120,7 @@ describe('mavensmate lightning', function(){
   });
 
   it('should create a new lightning interface', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     var payload = {
       apiName : 'mmunittestinterface',
@@ -143,7 +143,7 @@ describe('mavensmate lightning', function(){
   });
 
   it('should create a lightning event', function(done) {
-    this.timeout(10000);
+    this.timeout(120000);
 
     var payload = {
       apiName : 'mmunittestevent',
