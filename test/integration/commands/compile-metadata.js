@@ -5,6 +5,7 @@ var chai        = require('chai');
 var should      = chai.should();
 var path        = require('path');
 var fs          = require('fs-extra');
+var logger      = require('winston');
 
 describe('mavensmate compile-metadata', function(){
 
@@ -178,7 +179,7 @@ describe('mavensmate compile-metadata', function(){
         });
       })
       .then(function(response) {
-
+        logger.debug('response from compile', response);
         response.success.should.equal(true);
         done();
       })
