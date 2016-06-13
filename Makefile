@@ -2,6 +2,8 @@ REPORTER = html-cov
 TESTS ?= $(shell find test -name '*.js')
 COVERAGE_FILE = coverage.html
 
+print-%: ; @echo $*=$($*)
+
 test:
 	@NODE_ENV=test HTTP_MAX_SOCKETS=5000 INDEX=$(INDEX) ./node_modules/.bin/mocha \
 	--recursive \
@@ -21,5 +23,6 @@ coveralls:
 	--require blanket \
 	--reporter mocha-lcov-reporter \
 	$(TESTS) | ./node_modules/coveralls/bin/coveralls.js
+
 
 .PHONY: test
