@@ -38,7 +38,7 @@ describe('mavensmate clean-project-command', function() {
     this.timeout(120000);
 
     var members = '<types><members>*</members><name>ApexClass</name></types>';
-    var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
+    var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>36.0</version></Package>';
     fs.writeFileSync(path.join(helper.baseTestDirectory(), 'workspace', 'clean-project', 'src', 'package.xml'), packageXml);
 
     testClient.executeCommand({
@@ -66,7 +66,7 @@ describe('mavensmate clean-project-command', function() {
     this.timeout(120000);
 
     var members = '<types><members>Account</members><name>CustomObject</name></types>';
-    var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
+    var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>36.0</version></Package>';
     fs.writeFileSync(path.join(helper.baseTestDirectory(), 'workspace', 'clean-project', 'src', 'package.xml'), packageXml);
 
     testClient.executeCommand({

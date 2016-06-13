@@ -38,7 +38,7 @@ describe('mavensmate unit-package', function(){
   it('should create instance from package.xml path', function(done) {
     // write package
     var members = '<types><members>myclass</members><members>myclass2</members><name>ApexClass</name></types><types><members>*</members><name>ApexPage</name></types>';
-    var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
+    var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>36.0</version></Package>';
     var packagePath = path.join(helper.baseTestDirectory(), 'workspace', 'package-test', 'src', 'package.xml');
     fs.writeFileSync(packagePath, packageXml);
 
@@ -61,7 +61,7 @@ describe('mavensmate unit-package', function(){
   it('should support adding/removing members', function(done) {
     // write package
     var members = '<types><members>myclass</members><members>myclass2</members><name>ApexClass</name></types><types><members>*</members><name>ApexPage</name></types>';
-    var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
+    var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>36.0</version></Package>';
     var packagePath = path.join(helper.baseTestDirectory(), 'workspace', 'package-test', 'src', 'package.xml');
     fs.writeFileSync(packagePath, packageXml);
 
