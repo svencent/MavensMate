@@ -65,7 +65,7 @@ describe('mavensmate clean-project-command', function() {
   it('should respect the user updating the package.xml file directly', function(done) {
     this.timeout(120000);
 
-    var members = '<types><members>*</members><name>ApexPage</name></types>';
+    var members = '<types><members>Account</members><name>CustomObject</name></types>';
     var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>30.0</version></Package>';
     fs.writeFileSync(path.join(helper.baseTestDirectory(), 'workspace', 'clean-project', 'src', 'package.xml'), packageXml);
 
@@ -79,7 +79,7 @@ describe('mavensmate clean-project-command', function() {
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project'),  'Project directory does not exist');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'config'),  'Project config directory does not exist');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'src'),  'Project src directory does not exist');
-        assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'src', 'pages'),  'Project src pages directory does not exist');
+        assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'src', 'objects'),  'Project src objects directory does not exist');
         fs.existsSync(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'src', 'classes')).should.equal(false);
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'src', 'package.xml'),  'Project package.xml does not exist');
 
