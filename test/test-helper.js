@@ -12,7 +12,7 @@ var EditorService     = require('../lib/mavensmate/editor');
 var temp              = require('temp');
 var TemplateService   = require('../lib/mavensmate/template');
 var logger            = require('winston');
-var sfdcClient        = require('./test-client');
+var SalesforceClient  = require('../lib/mavensmate/sfdc-client');
 
 sinonAsPromised(require('bluebird'));
 
@@ -123,6 +123,12 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
 exports.addProject = function(testClient, projectName) {
   var self = this;
   return new Promise(function(resolve, reject) {
+    var creds = self.getTestCreds();
+    var sfdcClient = new SalesforceClient({
+      username: creds.username,
+      password: creds.password,
+      orgType: creds.environment
+    });
     testClient.addProjectByPath(path.join(self.baseTestDirectory(),'workspace', projectName), sfdcClient)
       .then(function(response) {
         resolve(response);
