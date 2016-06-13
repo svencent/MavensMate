@@ -32,22 +32,8 @@ describe('mavensmate refresh-metadata', function(){
 
   after(function(done) {
     this.timeout(20000);
-    var filesToDelete = [
-      path.join(helper.baseTestDirectory(),'workspace', 'refresh-metadata', 'src', 'classes', 'RefreshMetadataClass.cls'),
-      path.join(helper.baseTestDirectory(),'workspace', 'refresh-metadata', 'src', 'classes', 'RefreshMetadataClass2.cls')
-      // path.join(helper.baseTestDirectory(),'workspace', 'refresh-metadata', 'src', 'aura', 'mmunittestrefresh')
-      // path.join(helper.baseTestDirectory(),'workspace', 'refresh-metadata', 'src', 'classes', 'RefreshMetadataClass3.cls')
-    ];
-    helper.cleanUpTestData(testClient, filesToDelete)
-      .then(function() {
-        done();
-      })
-      .catch(function(err) {
-        done(err);
-      })
-      .finally(function() {
-        helper.cleanUpTestProject('refresh-metadata');
-      });
+    helper.cleanUpTestProject('refresh-metadata');
+    done();
   });
 
   it('should refresh class directory from the server', function(done) {
@@ -139,7 +125,15 @@ describe('mavensmate refresh-metadata', function(){
       ApexClass: '*',
       CustomObject: '*'
     };
-    testClient.getProject().packageXml.init()
+    helper.createNewMetadata(testClient, 'ApexClass', 'RefreshProject')
+      .then(function() {
+        assert.isFile(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshProject.cls'));
+        fs.removeSync(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshProject.cls'));
+        return;
+      })
+      .then(function() {
+        return testClient.getProject().packageXml.init();
+      })
       .then(function() {
         testClient.getProject().packageXml.writeFileSync();
         return testClient.executeCommand({
@@ -158,9 +152,8 @@ describe('mavensmate refresh-metadata', function(){
       .then(function(response) {
         response.message.should.equal('Metadata successfully refreshed');
         fs.existsSync(path.join(testClient.getProject().path, 'src', 'objects', 'Account.object')).should.equal(true);
-        fs.existsSync(path.join(testClient.getProject().path, 'src', 'objects', 'CoolObject__c.object')).should.equal(true);
         fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes')).should.equal(true);
-        fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'MyProfilePageController.cls')).should.equal(true);
+        path.join(testClient.getProject().path, 'src', 'classes', 'RefreshProject.cls').should.be.a.file('RefreshProject is missing');
         done();
       })
       .catch(function(err) {
