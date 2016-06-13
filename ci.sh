@@ -15,4 +15,4 @@ do
 done
 
 echo ${files[@]}
-make TESTS="${files[@]}" test
+make TESTS="${files[@]}" INDEX="${NODE_INDEX}" test
