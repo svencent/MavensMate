@@ -72,12 +72,12 @@ describe('mavensmate edit-project', function(){
 
   it('should update project creds', function(done) {
     this.timeout(10000);
-
+    var creds = helper.getTestCreds();
     testClient.executeCommand({
         name: 'update-creds',
         body: {
-          username: process.env.SALESFORCE_USERNAME || 'mm4@force.com',
-          password: process.env.SALESFORCE_PASSWORD || 'force'
+          username: creds.username,
+          password: creds.password
         }
       })
       .then(function(response) {

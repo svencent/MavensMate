@@ -1,10 +1,13 @@
 var SalesforceClient  = require('../lib/mavensmate/sfdc-client');
 var client            = require('../lib/mavensmate/client');
+var helper            = require('./test-helper');
+
+var creds = helper.getTestCreds();
 
 var sfdcClient = new SalesforceClient({
-  username: process.env.SALESFORCE_USERNAME || 'mm4@force.com',
-  password: process.env.SALESFORCE_PASSWORD || 'force',
-  orgType: process.env.SALESFORCE_ORG_TYPE || 'developer'
+  username: creds.username,
+  password: creds.password,
+  orgType: creds.environment
 });
 
 module.exports = sfdcClient;

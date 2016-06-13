@@ -49,11 +49,11 @@ describe('mavensmate new-project', function(){
   it('should prompt that project directory already exists', function(done) {
 
     this.timeout(5000);
-
+    var creds = helper.getTestCreds();
     var payload = {
       name: 'new-project-existing',
-      username: 'mm4@force.com',
-      password: 'force',
+      username: creds.username,
+      password: creds.password,
       workspace: path.join(helper.baseTestDirectory(),'workspace')
     };
     testClient.executeCommand({
@@ -89,13 +89,13 @@ describe('mavensmate new-project', function(){
   it('should create project in specified workspace', function(done) {
 
     this.timeout(30000);
-
+    var creds = helper.getTestCreds();
     var payload = {
       name: 'new-project',
-      username: process.env.SALESFORCE_USERNAME || 'mm4@force.com',
-      password: process.env.SALESFORCE_PASSWORD || 'force',
+      username: creds.username,
+      password: creds.password,
       workspace: path.join(helper.baseTestDirectory(),'workspace'),
-      orgType: process.env.SALESFORCE_ORG_TYPE || 'developer',
+      orgType: creds.environment,
       package: {
         ApexPage: '*',
         CustomObject: ['Account']
@@ -118,8 +118,8 @@ describe('mavensmate new-project', function(){
       })
       .then(function(response) {
         var project = testClient.getProject();
-        project.settings.username.should.equal(process.env.SALESFORCE_USERNAME || 'mm4@force.com');
-        project.settings.password.should.equal(process.env.SALESFORCE_PASSWORD || 'force');
+        project.settings.username.should.equal(creds.username);
+        project.settings.password.should.equal(creds.password);
         project.settings.environment.should.equal('developer');
         done();
       })

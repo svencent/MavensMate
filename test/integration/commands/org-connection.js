@@ -36,11 +36,11 @@ describe('mavensmate org-connections', function(){
 
   it('should add a new org connection', function(done) {
     this.timeout(10000);
-
+    var creds = helper.getTestCreds();
     var payload = {
-      username: 'mm4@force.com',
-      password: 'force',
-      orgType: 'developer'
+      username: creds.username,
+      password: creds.password,
+      orgType: creds.environment
     };
     testClient.executeCommand({
         name: 'new-connection',
@@ -61,15 +61,15 @@ describe('mavensmate org-connections', function(){
 
   it('should get org connections', function(done) {
     this.timeout(10000);
-
+    var creds = helper.getTestCreds();
     testClient.executeCommand({
         name: 'get-connections'
       })
       .then(function(response) {
         response.length.should.equal(1);
-        response[0].username.should.equal('mm4@force.com');
-        response[0].password.should.equal('force');
-        response[0].environment.should.equal('developer');
+        response[0].username.should.equal(creds.username);
+        response[0].password.should.equal(creds.password);
+        response[0].environment.should.equal(creds.environment);
         response[0].should.have.property('id');
         done();
       })

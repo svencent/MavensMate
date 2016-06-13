@@ -16,8 +16,30 @@ var sfdcClient        = require('./test-client');
 
 sinonAsPromised(require('bluebird'));
 
+exports.getTestCreds = function() {
+  if (process.env.CIRCLECI === 'true' || process.env.CIRCLECI) {
+    var parallelismIndex = '0';
+    try {
+      parallelismIndex = process.env.PARALLELISM_INDEX || '0';
+    } catch(e)
+
+    return {
+      username: 'mm'+parallelismIndex+'@force.com',
+      password: 'force',
+      environment: process.env.SALESFORCE_ORG_TYPE || 'developer'
+    };
+  } else {
+    return {
+      username: process.env.SALESFORCE_USERNAME || 'mm4@force.com',
+      password: process.env.SALESFORCE_PASSWORD || 'force',
+      environment: process.env.SALESFORCE_ORG_TYPE || 'developer'
+    };
+  }
+};
+
 exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace) {
   var self = this;
+  var creds = self.getTestCreds();
   testWorkspace = testWorkspace || path.join(self.baseTestDirectory(),'workspace');
   if (fs.existsSync(path.join(testWorkspace, name))) {
     fs.removeSync(path.join(testWorkspace, name));
@@ -27,14 +49,17 @@ exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace
     var settings = fs.readJsonSync(path.join(testWorkspace, name, 'config', '.settings'));
     settings.projectName = name;
     settings.workspace = testWorkspace;
-    settings.username = process.env.SALESFORCE_USERNAME || 'mm4@force.com';
-    settings.password = process.env.SALESFORCE_PASSWORD || 'force';
-    settings.environment = process.env.SALESFORCE_ORG_TYPE || 'developer';
+    settings.username = creds.username;
+    settings.password = creds.password;
+    settings.environment = creds.environment;
     fs.writeJsonSync(path.join(testWorkspace, name, 'config', '.settings'), settings);
   }
 };
 
 exports.createClient = function(name, settings) {
+  logger.info('Creating test client');
+  logger.info('Circle parallelism index is: '+process.env.PARALLELISM_INDEX);
+
   /*jshint camelcase: false */
   var clientSettings = settings || {};
   clientSettings.mm_use_keyring = false;
@@ -63,6 +88,7 @@ exports.unlinkEditor = function() {
 
 exports.createProject = function(testClient, name, pkg, testWorkspace) {
   var self = this;
+  var creds = self.getTestCreds();
   self.unlinkEditor();
   return new Promise(function(resolve, reject) {
     if (!testWorkspace) {
@@ -71,9 +97,9 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
 
     var payload = {
       name: name,
-      username: process.env.SALESFORCE_USERNAME || 'mm4@force.com',
-      password: process.env.SALESFORCE_PASSWORD || 'force',
-      orgType: process.env.SALESFORCE_ORG_TYPE || 'developer',
+      username: creds.username,
+      password: creds.password,
+      orgType: creds.environment,
       workspace: testWorkspace,
       package: pkg || {}
     };

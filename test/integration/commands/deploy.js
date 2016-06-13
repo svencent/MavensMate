@@ -67,13 +67,13 @@ describe('mavensmate deploy-to-server', function() {
 
   it('should validate deploy to an org connection', function(done) {
     this.timeout(50000);
-
+    var creds = helper.getTestCreds();
     helper.createNewMetadata(testClient, 'ApexClass', 'DeployClass')
       .then(function() {
         var payload = {
-          username: 'mm4@force.com',
-          password: 'force',
-          orgType: 'production'
+          username: creds.username,
+          password: creds.password,
+          orgType: creds.environment
         };
         return testClient.executeCommand({
           name: 'new-connection',
@@ -104,10 +104,10 @@ describe('mavensmate deploy-to-server', function() {
         });
       })
       .then(function(response) {
-        response.should.have.property('mm4@force.com');
-        response['mm4@force.com'].checkOnly.should.equal(true);
-        response['mm4@force.com'].done.should.equal(true);
-        response['mm4@force.com'].success.should.equal(true);
+        response.should.have.property(creds.username);
+        response[creds.username].checkOnly.should.equal(true);
+        response[creds.username].done.should.equal(true);
+        response[creds.username].success.should.equal(true);
         done();
       })
       .catch(function(err) {

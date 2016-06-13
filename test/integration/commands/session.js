@@ -19,11 +19,11 @@ describe('mavensmate session', function() {
 
   it('should initiate new salesforce session', function(done) {
     this.timeout(20000);
-
+    var creds = helper.getTestCreds();
     var payload = {
-      username: process.env.SALESFORCE_USERNAME || 'mm4@force.com',
-      password: process.env.SALESFORCE_PASSWORD || 'force',
-      orgType: process.env.SALESFORCE_ORG_TYPE || 'developer',
+      username: creds.username,
+      password: creds.password,
+      orgType: creds.environment,
       subscription: ['ApexClass']
     };
 
