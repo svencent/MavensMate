@@ -21,7 +21,7 @@ exports.getTestCreds = function() {
     var parallelismIndex = '0';
     try {
       parallelismIndex = process.env.PARALLELISM_INDEX || '0';
-    } catch(e)
+    } catch(e){}
 
     return {
       username: 'mm'+parallelismIndex+'@force.com',
