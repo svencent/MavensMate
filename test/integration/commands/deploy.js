@@ -86,7 +86,7 @@ describe('mavensmate deploy-to-server', function() {
         });
       })
       .then(function(conns) {
-        conns[0].environment.should.equal('production');
+        conns[0].environment.should.equal(creds.environment);
         var deployPayload = {
           destinations: [conns[0].id],
           package: { 'ApexClass': ['DeployClass']  },
