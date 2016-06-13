@@ -17,7 +17,7 @@ var SalesforceClient  = require('../lib/mavensmate/sfdc-client');
 sinonAsPromised(require('bluebird'));
 
 exports.getTestCreds = function() {
-  if (process.env.CIRCLECI === 'true' || process.env.CIRCLECI) {
+  if (process.env.CIRCLECI === 'true' || process.env.CIRCLECI || process.env.CI === 'true' || process.env.CI) {
     var parallelismIndex = '0';
     try {
       parallelismIndex = process.env.PARALLELISM_INDEX || '0';
