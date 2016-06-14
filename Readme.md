@@ -10,7 +10,7 @@ For more information, check out [http://mavensmate.com](http://mavensmate.com)!
 - [Bugs and Feature Requests](#bugs-and-feature-requests)
 - [Documentation](#documentation)
 
-[![Circle CI](https://circleci.com/gh/joeferraro/MavensMate.png?style=shield)](https://circleci.com/gh/joeferraro/MavensMate)
+[![Build Status](https://travis-ci.org/joeferraro/MavensMate.svg?branch=master)](https://travis-ci.org/joeferraro/MavensMate)
 
 [![NPM Version](https://img.shields.io/npm/v/mavensmate.svg)](https://www.npmjs.org/package/mavensmate)
 [![Coverage Status](https://coveralls.io/repos/joeferraro/MavensMate/badge.svg?branch=master)](https://coveralls.io/r/joeferraro/MavensMate?branch=master)
