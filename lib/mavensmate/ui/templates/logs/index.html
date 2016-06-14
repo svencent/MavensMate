@@ -44,7 +44,7 @@
 
 {% endblock %}
 
-{% block buttons %}         
+{% block buttons %}
   <button style="margin:0px 5px 0px 5px" onclick="startLogging(this)" class="btn btn-info btn-embossed">Start Logging</button>
   <button style="margin:0px 5px 0px 0px" onclick="stopLogging(this)" class="btn btn-default btn-embossed">Stop Logging</button>
   <button style="margin:0px 5px 0px 0px" onclick="flushLogs(this)" class="btn btn-danger btn-embossed">Flush Logs</button>
@@ -54,7 +54,8 @@
 <style>
   div#log {
     padding:10px;
-    overflow-y:scroll; 
+    overflow-y:scroll;
+    transform: translate3d(0,0,0);
     display: block;
     padding: 9.5px;
     font-size: 13px;
@@ -64,7 +65,7 @@
     white-space: pre;
     white-space: pre-wrap;
     background-color: #f7f9fa;
-    border-color: #e9ecef;    
+    border-color: #e9ecef;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
@@ -75,7 +76,8 @@
 
   div#logsWrapper {
     padding:0px;
-    overflow-y:scroll; 
+    overflow-y:scroll;
+    transform: translate3d(0,0,0);
     display: block;
   }
 
@@ -128,7 +130,7 @@
 
   @-webkit-keyframes flash {
       0% { background-color:none;}
-      50% { background-color:#fbf8b2;}        
+      50% { background-color:#fbf8b2;}
       100% {background-color:none;}
   }
 
@@ -145,7 +147,7 @@
   socket.on('new-log', function (data) {
     $('#logs').prepend('<li><a data-location="'+data.locationBasename+'" href="#" onclick="openLog(this)">'+data.locationBasename+'</a></li>');
   });
- 
+
   function resizeComponents() {
     $('#log').height($( window ).height() - 280);
     $('#logsWrapper').height($( window ).height() - 260);
@@ -157,7 +159,7 @@
       if (code === 13) { //enter pressed
         filterLog();
       }
-    }); 
+    });
 
     $(window).resize(function() {
       resizeComponents();
@@ -190,7 +192,7 @@
         if (data.status !== 200) {
           showMessage(JSON.parse(data.responseText).message);
         }
-      } 
+      }
     });
   }
 
@@ -213,7 +215,7 @@
         if (data.status !== 200) {
           showMessage(JSON.parse(data.responseText).message);
         }
-      } 
+      }
     });
   }
 
@@ -238,7 +240,7 @@
           $('ul#logs').html('');
         }
         $button.html('Flush Logs');
-      } 
+      }
     });
   }
 
@@ -260,7 +262,7 @@
         $('#location').val(location);
         $('#log').html(data.responseText);
         $anchor.addClass('selected');
-      } 
+      }
     });
   }
 
@@ -277,7 +279,7 @@
         console.log(data);
         // console.log(data.responseText);
         $('#log').html(data.responseText);
-      } 
+      }
     });
   }
 </script>
