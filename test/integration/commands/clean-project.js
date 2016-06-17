@@ -51,8 +51,6 @@ describe('mavensmate clean-project-command', function() {
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project'),  'Project directory does not exist');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'config'),  'Project config directory does not exist');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'src'),  'Project src directory does not exist');
-        assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'src', 'classes'),  'Project src classes directory does not exist');
-        fs.existsSync(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'src', 'pages')).should.equal(false);
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'clean-project', 'src', 'package.xml'),  'Project package.xml does not exist');
 
         done();
