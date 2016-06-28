@@ -1,5 +1,15 @@
 # [MavensMate](http://mavensmate.com) - Open Source IDEs for Salesforce
 
+## Development Suspended
+
+MavensMate users, 
+
+I have temporarily suspended development & support for MavensMate to focus on spending time with my newborn daughter. If you are experiencing an issue with MavensMate, I encourage you to use the Force.com IDE, Developer Console, or one of the many other 3rd party tools for building Salesforce applications until development resumes.
+
+Thanks very much for your support.
+
+-Joe
+
 MavensMate is a powerful tool for building Salesforce IDEs. Develop Salesforce applications in your favorite text editors, like Sublime Text and Atom. MavensMate is created and maintained by [Joe Ferraro](http://twitter.com/joeferraro) with help from these [contributors](#contributors).
 
 For more information, check out [http://mavensmate.com](http://mavensmate.com)!
