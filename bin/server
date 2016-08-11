@@ -14,7 +14,7 @@ var UIServer    = require('../lib/mavensmate/ui/server');
 var args = parseArgs(process.argv);
 var projectPath = args.project || process.cwd();
 var verbose = args.verbose || false;
-var port = args.port;
+var port = args.port || process.env.MAVENSMATE_SERVER_PORT;
 
 process.title = 'mavensmate server';
 

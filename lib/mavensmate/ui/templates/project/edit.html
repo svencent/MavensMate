@@ -7,64 +7,25 @@
 	</div>
 </div>
 
-<div class="content">	
+<div class="content">
 	<ul class="nav nav-tabs nav-append-content">
-		<li class="">
-			<a id="project_details_tab" href="#form" data-toggle="tab">Project Details</a>
-		</li>
-		<li><a href="#advanced" data-toggle="tab">Advanced</a></li>
+		<li><a href="#advanced" data-toggle="tab">Subscription</a></li>
 		<li class="active">
 			<a href="#metadata" data-toggle="tab">
 				Project Metadata &nbsp;&nbsp;
 				<span onclick="indexOrg(true)" class="label" style="line-height:15px;cursor:pointer;">
 					Refresh <i class="icon-refresh"></i>
-				</span> 	
+				</span>
 			</a>
 		</li>
 	</ul>
-	
-	<div class="tab-content" id="main-tab-content">  
-		<div id="form" class="tab-pane">
-			<form class="form-stacked">
-				<fieldset>
-					<div class="control-group large disabled">
-						<input class="span12" placeholder="Project Name" type="text" id="pn" disabled="disabled">
-						<i class="input-icon fui-lock"></i>
-					</div>
-					<div class="control-group large">
-						<input class="span12" placeholder="Salesforce.com Username" type="text" id="un">
-					</div>
-					<div class="control-group large">
-						<input class="span12" placeholder="Salesforce.com Password" type="password" id="pw">
-					</div>
 
-					<div class="clearfix">
-						<select class="org_type select-block mbl info span12">
-							<option value="production">Production</option>
-							<option value="developer">Developer</option>
-							<option value="sandbox">Sandbox</option>
-							<option value="prerelease">Prerelease</option>
-							<option value="custom">Custom URL</option>
-						</select>
-					</div>
-					<div class="control-group large">
-						<input class="span12" placeholder="Example: https://na1-blitz01.salesforce.com" type="text" id="custom-url" style="display:none;">
-					</div>
-					<div class="clearfix" style="margin-top:20px;">
-						<a class="btn btn-success btn-embossed" onclick="updateProjectCreds();">
-							Update Credentials
-						</a>
-					</div> 												
-				</fieldset>
-				<div id="treeold"></div>
-			</form>
-		</div>
-
+	<div class="tab-content" id="main-tab-content">
 		<div id="advanced" class="tab-pane">
 			<form class="form-stacked" style="padding-top:10px;">
 				<fieldset>
 					<div class="clearfix">
-						<label for="subscription" style="font-weight:bold;">Metadata Subscription List</label> 
+						<label for="subscription" style="font-weight:bold;">Metadata Subscription List</label>
 						<div class="row">
 							<div class="span8">
 								<select name="huge" class="select-block mbl info" style="display:none;" id="subscription" multiple="multiple" data-placeholder="Select 1 or more metadata types..." data-selected-text-format="count>3" data-size="20">
@@ -77,8 +38,8 @@
 										<option {{ selected }} value="{{ m['xmlName'] }}">
 											{{ m['xmlName'] }}
 										</option>
-									{% endfor %} 
-								</select>	
+									{% endfor %}
+								</select>
 							</div>
 							<div class="span4">
 								<a class="btn btn-success btn-embossed" onclick="updateSubscription();">
@@ -90,7 +51,7 @@
 					<div class="alert alert-info" style="margin-top:20px">
 						<ul>
 							<li>
-								If you only plan to work with certain metadata types in this project, specify those types here. Otherwise, MavensMate will index each metadata type available in your org. In larger orgs, this can negatively impact performance. 
+								If you only plan to work with certain metadata types in this project, specify those types here. Otherwise, MavensMate will index each metadata type available in your org. In larger orgs, this can negatively impact performance.
 							</li>
 							<li>
 								The default list of metadata types is controlled by your plugin client's <strong>mm_default_subscription</strong> setting.
@@ -99,8 +60,8 @@
 								Once you've selected your metadata, be sure to click the "Update Subscription" button.
 							</li>
 						</ul>
-						
-					</div>			
+
+					</div>
 				</fieldset>
 			</form>
 		</div>
@@ -116,16 +77,16 @@
 					<div id="tree"></div>
 					<div id="info"></div>
 				</div>
-			</div>				
+			</div>
     	</div>
 	</div>
-</div>  
-{% endblock %}  
+</div>
+{% endblock %}
 
-{% block buttons %}					
+{% block buttons %}
 	<input type="button" id="btnSubmit" class="btn btn-info btn-embossed" value="Update Project" onclick="updateProject();">
 	<button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
-{% endblock %}  
+{% endblock %}
 
 {% block body_js %}
 	<script>
@@ -140,18 +101,18 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-creds?pid={{project.settings.id}}", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-creds?pid={{project.settings.id}}",
 				data: JSON.stringify({
 					username: $("#un").val(),
 		    	password: $("#pw").val(),
 		    	orgType: $(".org_type").val(),
-		    	loginUrl: $("#custom-url").val(), 
+		    	loginUrl: $("#custom-url").val(),
 		    	path: '{{ project.path }}',
 		    	command: "update-creds"
 				}),
 				beforeSend: function() { showLoading('Updating project credentials'); },
 				complete: function(data){
-					console.log(data)				
+					console.log(data)
 					var response = JSON.parse(data.responseText)
 					if (response.error) {
 						showMessage(response.error)
@@ -170,7 +131,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-subscription?pid={{project.settings.id}}", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-subscription?pid={{project.settings.id}}",
 				data: JSON.stringify({
 		    	path: '{{ project.path }}',
 		    	subscription: $("#subscription").val(),
@@ -196,7 +157,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update?pid={{project.settings.id}}", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update?pid={{project.settings.id}}",
 				data: JSON.stringify({
 					package: getTree(),
 					path: '{{ project.path }}',
@@ -205,7 +166,7 @@
 				beforeSend: function() { showLoading('Updating project'); },
 				complete: function(data){
 					responseHandler(data)
-				} 
+				}
 			});
 		}
 
@@ -216,15 +177,15 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/index-metadata?pid={{project.settings.id}}", 
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/index-metadata?pid={{project.settings.id}}",
 				data: JSON.stringify({
 					path: '{{ project.path }}',
 					command: 'index-metadata'
 				}),
 				beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs. To minimize indexing time, limit your project\'s subscription to only those metadata types you absolutely need.<br/><br/>Thanks for being patient! :)'); },
 				complete: function(data, status, xhr){
-					responseHandler(data)				
-				} 
+					responseHandler(data)
+				}
 			});
 		}
 
@@ -234,7 +195,7 @@
 					showMessage(response.error)
 				} else {
 					if (!tree) {
-						renderTree(PROJECT_WRAPPER_OFFSET, null, '{{ project.settings.id}}');  
+						renderTree(PROJECT_WRAPPER_OFFSET, null, '{{ project.settings.id}}');
 					} else {
 						$("#tree").dynatree("getTree").reload();
 					}
@@ -259,9 +220,9 @@
 			$(".input-icon.fui-lock").css('width', '20px');
 			$(".input-icon.fui-lock").css('left', siblingInputWidth-30+'px');
 		}
-			
-		$(function() {		
-			$("#pn").val("{{ project.name }}");  
+
+		$(function() {
+			$("#pn").val("{{ project.name }}");
 			$("#un").val("{{ project.sfdcClient.getUsername() }}");
 			$("select.org_type").val("{{ project.sfdcClient.getOrgType() }}");
 			$("select.org_type").change();
@@ -270,7 +231,7 @@
 				$("#custom-url").show()
 			}
 
-			$("#pn").prop('disabled', true);  
+			$("#pn").prop('disabled', true);
 
 			$(window).resize(function() {
 				resizeProjectWrapper(PROJECT_WRAPPER_OFFSET);
@@ -323,7 +284,7 @@
 
 			$('a[data-toggle="tab"]').on('shown', function (e) {
 				if (e.target.href.indexOf("form") != -1) {
-					positionInputIcons()	
+					positionInputIcons()
 				}
 		    });
 

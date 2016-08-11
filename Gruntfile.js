@@ -21,11 +21,12 @@ module.exports = function(grunt) {
             });
           },
           env: {
-            PORT: '8000'
+            MAVENSMATE_SERVER_PORT: '56248',
+            MM_DEBUG_LEVEL: 'debug'
           },
           cwd: __dirname,
           ignore: ['node_modules/**'],
-          ext: 'js,coffee',
+          ext: 'js,html',
           watch: ['lib'],
           delay: 1000,
           legacyWatch: true
