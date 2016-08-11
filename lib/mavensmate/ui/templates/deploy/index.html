@@ -89,14 +89,12 @@
 
 	<ul class="nav nav-tabs nav-append-content" id="main-tabs">
 		<li class="active"><a href="#form" data-toggle="tab">Deploy Options</a></li>
-		<li><a href="#connections" data-toggle="tab">Org Connections</a></li>
 		<li>
 			<a href="#metadata" data-toggle="tab">
 				Metadata &nbsp;&nbsp;
 				<span onclick="refresh_index()" class="label" style="line-height:15px;cursor:pointer;">Refresh <i class="icon-refresh"></i></span>
 			</a>
 		</li>
-		<li><a href="#arcade" id="arcade_tab" data-toggle="tab">Arcade</a></li>
 		<li class="compare_results_hidden hidden dropdown active">
       		<a class="dropdown-toggle" data-toggle="dropdown" href="#">
         		Compare Results
@@ -124,22 +122,32 @@
 					<div class="clearfix">
 						<div class="row">
 							<div class="span8">
-								<label for="un_list" style="font-weight:bold;">Deployment Targets</label>
-								<select name="huge" data-none-selected-text="No targets selected (You can create targets via the org connections tab)" class="select-block mbl info" style="display:none;" id="un_list" multiple="multiple" data-placeholder="Select 1 or more connections...">
-									{% for c in connections %}
-										{% if loop.index0 == 0 %}
-											{% set selected = 'selected="selected"' %}
-										{% else %}
-											{% set selected = '' %}
-										{% endif %}
-										<option {{ selected }} data-username="{{c.username}}" value="{{c.id}}">
-											{{ c['username'] }}
-										</option>
-									{% endfor %}
-								</select>
+								{% if connections.length === 0 %}
+									<div class="alert alert-info">
+									 	<i class="icon-exchange icon-2x pull-left"></i>A deployment connection is a Salesforce.com org that you wish to deploy to from this MavensMate project.
+									 	<div>
+									 		<a href="/app/connections/index?pid={{project.settings.id}}" class="btn btn-success btn-embossed" >Manage Deployment Connections</a>
+									 	</div>
+									</div>
+								{% else %}
+									<label for="un_list" style="font-weight:bold;">Deployment Targets</label>
+									<select name="huge" data-none-selected-text="No connection selected (You can create deployment connections via the org connections tab)" class="select-block mbl info" style="display:none;" id="un_list" multiple="multiple" data-placeholder="Select 1 or more connections...">
+										{% for c in connections %}
+											{% if loop.index0 == 0 %}
+												{% set selected = 'selected="selected"' %}
+											{% else %}
+												{% set selected = '' %}
+											{% endif %}
+											<option {{ selected }} data-name="{{c.name}}" value="{{c.id}}">
+												{{ c['name'] }}
+											</option>
+										{% endfor %}
+									</select>
+								{% endif %}
 							</div>
 						</div>
 					</div>
+					{% if connections.length > 0 %}
 					<div class="control-group large">
 						<div class="row">
 							<div class="span8">
@@ -147,9 +155,11 @@
 							</div>
 						</div>
 					</div>
+					{% endif %}
 				</fieldset>
 			</form>
 
+			{% if connections.length > 0 %}
 			<form>
 				<fieldset class="deploy_options" style="margin:0;padding-top:0px;">
 
@@ -186,59 +196,8 @@
 						</div>
 					</div>
 				</fieldset>
-
-
 			</form>
-		</div>
-
-		<div id="connections" class="tab-pane">
-
-			<div class="alert alert-error" id="connection_error_wrapper">
-				<button type="button" class="close fui-cross"></button>
-				<span id="connection_error_message"></span>
-			</div>
-
-			<div class="alert alert-info">
-	        	<i class="icon-exchange icon-2x pull-left"></i>A deployment connection is a Salesforce.com org that you wish to deploy to from this MavensMate project.
-	      	</div>
-
-	      	<div class="row-fluid">
-
-	      		<div class="span5">
-	      			<table class="table table-striped" style="border-bottom: 2px solid #eef0f0;">
-	      				<thead>
-	      					<tr>
-	      						<th style="padding-left:0px">New Connection</th>
-	      					</tr>
-	      				</thead>
-	      			</table>
-	      			<form class="form-stacked">
-	      				<a id="btnCreateConnection" class="btn btn-success btn-embossed" href="/app/auth/index?pid={{project.settings.id}}&title=New%20Org%20Connection&callback=%2Fapp%2Fdeploy%2Ffinish-auth">Create Connection <i class="icon-circle-arrow-right"></i></a>
-	      			</form>
-	      		</div>
-
-	      		<div class="span7">
-	      			<table class="table table-striped">
-	      				<thead>
-	      					<tr>
-	      						<th>Connection</th>
-	      						<th>Action</th>
-	      					</tr>
-	      				</thead>
-	      				<tbody id="connections_list">
-	      					{% for c in connections %}
-	      						<tr>
-	      							<td>{{ c['username'] }} ({{c['environment']}})</td>
-	      							<td>
-	      								<a href="javascript:void(0);" onclick="deleteConnection('{{ c['id'] }}')">Remove</a>
-	      							</td>
-	      						</tr>
-	      					{% endfor %}
-	      				</tbody>
-	      			</table>
-	      		</div>
-
-	      	</div>
+			{% endif %}
 		</div>
 
 		<div id="metadata" class="tab-pane">
@@ -266,8 +225,6 @@
 				</div>
 			</div>
 		</div>
-
-		{% include 'ui/templates/snippets/arcade.html' %}
 
 	</div>
 </div>
@@ -407,8 +364,8 @@
 	function repopulateConnectionList(conns) {
 		var connHtml = ''
 		for (c in conns) {
-			connHtml += '<option data-username="'+conns[c].username+'" value="'+conns[c].id+'">'
-			connHtml += conns[c]['username']
+			connHtml += '<option data-name="'+conns[c].name+'" value="'+conns[c].id+'">'
+			connHtml += conns[c]['name']
 			connHtml += '</option>'
 		}
 		$("#un_list").html(connHtml)
@@ -474,13 +431,11 @@
 				})
 
 				$(".results_hidden").show();
-				if ($("#arcade").css("display") == "none") {
-					$("ul#main-tabs > li.active").removeClass('active')
-					$("div#main-tab-content > div.active").removeClass('active')
-					$("#result-0").addClass('active')
-					$('li.dropdown ul li a.test_result_link').tab('show');
-					$(".results_hidden").addClass('active');
-				}
+				$("ul#main-tabs > li.active").removeClass('active')
+				$("div#main-tab-content > div.active").removeClass('active')
+				$("#result-0").addClass('active')
+				$('li.dropdown ul li a.test_result_link').tab('show');
+				$(".results_hidden").addClass('active');
 
 				toggleRunningIndicator();
 				$("#btnDeploy").show();
@@ -506,7 +461,7 @@
 		var selectOptions = $("#un_list option:selected");
 		var usernames = [];
 		$( selectOptions ).each(function() {
-			usernames.push($(this).data('username'));
+			usernames.push($(this).data('name'));
 		});
 		return usernames;
 	}
@@ -544,93 +499,6 @@
 		indexOrg(true);
 	}
 
-	function getConnections() {
-		$.ajax({
-			type: "GET",
-			url: "{{ mavensmate.ui.getBaseUrl() }}/app/deploy/get-connections",
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			beforeSend: function() { showLoading('Listing connections'); },
-			complete: function(data){
-				// todo catch error
-				var connHtml = ''
-				console.log(data)
-				var conns = JSON.parse(data.responseText);
-				console.log(conns);
-				for (c in conns) {
-					connHtml += '<tr>'
-					connHtml += '<td>'+conns[c]['username']+' ('+conns[c]['environment']+')</td>'
-					connHtml += '<td><a href="javascript:void(0);" onclick="deleteConnection(\''+conns[c]['id']+'\')">Remove</a></td>'
-					connHtml += '</tr>'
-				}
-				repopulateConnectionList(conns)
-				$("#connections_list").html(connHtml)
-				hideLoading()
-			}
-	 	});
-	}
-
-	function deleteConnection(id) {
-		$.ajax({
-			type: "POST",
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			url: "{{ mavensmate.ui.getBaseUrl() }}/app/deploy/delete-connection",
-			data: JSON.stringify({
-				id : id
-			}),
-			beforeSend: function() { showLoading('Removing connection'); },
-			complete: function(data){
-				$("#connection_error_message").html('')
-				console.log(data)
-				var response = JSON.parse(data.responseText)
-				if (response["success"] == false) {
-					$("#connection_error_message").html(response["result"])
-					$("#connection_error_wrapper").show()
-					hideLoading()
-				} else {
-					$("#connection_error_wrapper").hide()
-					hideLoading()
-					getConnections()
-				}
-			}
-	 	});
-	}
-
-	function newConnection() {
-		$.ajax({
-			type: "POST",
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			url: "{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new-connection",
-			data: JSON.stringify({
-				username: $("#connection_un").val(),
-				password: $("#connection_pw").val(),
-				orgType: $("#org_type").val(),
-				loginUrl: $('#custom-url').val(),
-				command: 'new-connection'
-			}),
-			beforeSend: function() { showLoading('Adding connection'); },
-			complete: function(data){
-				$("#connection_error_message").html('')
-				console.log(data)
-				var response = JSON.parse(data.responseText)
-				console.log('response from adding new connection');
-				console.log(response);
-				if (response.error) {
-					$("#connection_error_message").html(response.error)
-					$("#connection_error_wrapper").show()
-					hideLoading()
-				} else {
-					$("#connection_un").val('')
-					$("#connection_pw").val('')
-					$("#connection_error_wrapper").hide()
-					hideLoading()
-					getConnections()
-				}
-			}
-	 	});
-	}
 </script>
 
 {% endblock %}

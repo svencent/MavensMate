@@ -220,7 +220,7 @@
                             </ul>
                         </li>
 
-
+                        <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/connections/index?pid={{project.settings.id}}">Deployment Connections</a></li>
                         <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new?pid={{project.settings.id}}">Deploy to Server</a></li>
                         <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/test/new?pid={{project.settings.id}}">Run Apex Unit Tests</a></li>
                         <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/apex/new?pid={{project.settings.id}}">Execute Apex</a></li>

@@ -2,19 +2,19 @@
 	<ul>
 		{% for destination in args['destinations'] %}
 			{% if loop.first == True  %}
-			<li class="active"><a href="#result-compare-{{ loop.index0 }}">{{ destination['username'] }}</a></li>
+			<li class="active"><a href="#result-compare-{{ loop.index0 }}">{{ destination['name'] }}</a></li>
 			{% else %}
-			<li class=""><a href="#result-compare-{{ loop.index0 }}">{{ destination['username'] }}</a></li>
+			<li class=""><a href="#result-compare-{{ loop.index0 }}">{{ destination['name'] }}</a></li>
 			{% endif %}
 		{% endfor %}
 	</ul>
 </div>
 
 <div id="extra_compare_tabs">
-	{% for username, result in compare_result.iteritems() %}
+	{% for name, result in compare_result.iteritems() %}
 	<div class="tab-pane result_wrapper" id="result-compare-{{ loop.index0 }}" style="padding:10px;">
 		<h5 style="font-size:20px;border-bottom: 2px solid rgb(52, 73, 94);padding-bottom:5px;position:relative;">
-			Destination:&nbsp;{{ username }}
+			Destination:&nbsp;{{ name }}
 		</h5>
 		<table class="table table-striped tablesorter" style="font-size:15px;">
 			<thead>
@@ -43,7 +43,7 @@
 					</tr>
 				{% endfor %}
 			</tbody>
-		</table>			
+		</table>
 	</div>
 	{% endfor %}
 </div>
