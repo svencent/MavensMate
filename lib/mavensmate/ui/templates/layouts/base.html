@@ -196,6 +196,7 @@
                                 <li><a href="javascript:void(0);" onclick="openProjectModal();">Open Project</a></li>
                                 <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new?pid={{project.settings.id}}">New Project</a></li>
                                 <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/project/edit?pid={{project.settings.id}}">Edit Project</a></li>
+                                <li><a {% if mavensmate.ui.getEditor() === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/project/creds?pid={{project.settings.id}}">Salesforce Authentication</a></li>
                             </ul>
                         </li>
 
