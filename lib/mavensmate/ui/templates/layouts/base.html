@@ -126,47 +126,36 @@
             $("#search-btn").removeClass('btn-danger').addClass('btn-success').html('<i class="icon-search"></i>');
         }
 
-        function reloadTree() {
-            hideLoading()
-            showLoading("Loading...")
-            tree_store.load({
-                params: {
-                    path : '{{ project.path }}'
-                },
-                callback:hideLoading
-            })
-        }
-
         //right now this only supports existing projects (not new project UI)
         function refreshNode(mtype) {
-            $.ajax({
-                type: 'POST',
-                dataType : 'json',
-                contentType: 'application/json; charset=utf-8',
-                url: baseLocalServerURL+"/execute",
-                data: JSON.stringify({
-                    metadata_types      : mtype,
-                    path                : '{{ project.path }}',
-                    command             : 'refresh-metadata-index'
-                }),
-                beforeSend: function() { showLoading('Refreshing Metadata Type: '+ mtype +'...'); },
-                complete: function(data){
-                    $('#tree').dynatree('getTree').reload()
-                }
-            });
+          $.ajax({
+            type: 'POST',
+            dataType : 'json',
+            contentType: 'application/json; charset=utf-8',
+            url: baseLocalServerURL+"/execute",
+            data: JSON.stringify({
+              metadata_types: mtype,
+              path: '{{ project.path }}',
+              command: 'refresh-metadata-index'
+            }),
+            beforeSend: function() { showLoading('Refreshing Metadata Type: '+ mtype +'...'); },
+            complete: function(data){
+              $('#tree').dynatree('getTree').reload()
+            }
+          });
         }
 
-        function openProjectInEditor(editor, id) {
-            var projectId = id || '{{project.settings.id}}';
-            $.ajax({
-                type: 'GET',
-                url: baseLocalServerURL+'/execute',
-                data: {
-                    command: 'open-project',
-                    editor: editor,
-                    pid: projectId
-                }
-            });
+        function openProjectInEditor(editor, pid) {
+          pid = pid || '{{project.settings.id}}';
+          $.ajax({
+            type: 'GET',
+            url: baseLocalServerURL+'/execute',
+            data: {
+              command: 'open-project',
+              editor: editor,
+              pid: pid
+            }
+          });
         }
     </script>
 </head>
