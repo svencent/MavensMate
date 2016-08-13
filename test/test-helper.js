@@ -66,6 +66,9 @@ exports.createClient = function(name, settings) {
   /*jshint camelcase: false */
   var clientSettings = settings || {};
   clientSettings.mm_use_keyring = false;
+  if (!clientSettings.mm_workspace) {
+    clientSettings.mm_workspace = [ path.join(this.baseTestDirectory(),'workspace') ];
+  }
   return mavensmate.createClient({
     name: name,
     isNodeApp: true,
@@ -81,8 +84,10 @@ exports.baseTestDirectory = function() {
 
 exports.unlinkEditor = function() {
   try {
+    logger.debug('unlinking editor');
     sinon.stub(EditorService.prototype, 'open').returns(null);
   } catch(e) {
+    logger.error('error unlinking editor', e);
     if (e.message.indexOf('Attempted to wrap open which is already wrapped') === -1) {
       throw e;
     }
@@ -130,7 +135,7 @@ exports.addProject = function(testClient, projectName) {
     var sfdcClient = new SalesforceClient({
       username: creds.username,
       password: creds.password,
-      orgType: creds.environment
+      orgType: creds.orgType
     });
     testClient.addProjectByPath(path.join(self.baseTestDirectory(),'workspace', projectName), sfdcClient)
       .then(function(response) {
@@ -272,6 +277,7 @@ exports.mockExpress = function(project) {
   var res = {};
   res.status = function() { return res; };
   res.render = function() { };
+  res.redirect = function() { };
   res.send = function() { };
   res.locals = {};
   res.locals.project = project;

@@ -63,7 +63,7 @@ describe('mavensmate project-unit', function(){
       });
       /*jshint camelcase: true */
       var project = new Project({
-        name: 'foo'
+        name: 'myproject'
       });
       project._initNew()
         .then(function() {
@@ -71,6 +71,9 @@ describe('mavensmate project-unit', function(){
           assert.isDirectory(path.join(helper.baseTestDirectory(), 'workspace', 'foo'),  'Workspace not created');
           fs.removeSync(path.join(helper.baseTestDirectory(), 'workspace', 'foo'));
           done();
+        })
+        .catch(function(err) {
+          done(err);
         });
     });
   });

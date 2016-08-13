@@ -6,6 +6,7 @@ var should      = chai.should();
 var path        = require('path');
 var assert      = chai.assert;
 var fs          = require('fs-extra');
+var logger      = require('winston');
 
 chai.use(require('chai-fs'));
 
@@ -30,7 +31,7 @@ describe('mavensmate org-connections', function(){
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('org-connections');
+    // helper.cleanUpTestProject('org-connections');
     done();
   });
 
@@ -40,14 +41,13 @@ describe('mavensmate org-connections', function(){
     var payload = {
       username: creds.username,
       password: creds.password,
-      orgType: creds.environment
+      orgType: creds.orgType
     };
     testClient.executeCommand({
         name: 'new-connection',
         body: payload
       })
       .then(function(response) {
-
         response.message.should.equal('Org connection successfully created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'),  'Org Connections file not created');
         var connections = fs.readJsonSync(path.join(helper.baseTestDirectory(),'workspace', 'org-connections', 'config', '.org_connections'));
@@ -69,7 +69,7 @@ describe('mavensmate org-connections', function(){
         response.length.should.equal(1);
         response[0].username.should.equal(creds.username);
         response[0].password.should.equal(creds.password);
-        response[0].environment.should.equal(creds.environment);
+        response[0].orgType.should.equal(creds.orgType);
         response[0].should.have.property('id');
         done();
       })
