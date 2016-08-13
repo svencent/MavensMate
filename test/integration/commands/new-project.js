@@ -6,6 +6,7 @@ var path          = require('path');
 var fs            = require('fs-extra');
 var assert        = chai.assert;
 var should        = chai.should();
+var logger        = require('winston');
 
 chai.use(require('chai-fs'));
 
@@ -35,13 +36,13 @@ describe('mavensmate new-project', function(){
     done();
   });
 
-  it('should require username and password', function(done) {
+  it('should require name', function(done) {
     testClient.executeCommand({
         name: 'new-project',
         body: {}
       })
       .catch(function(err) {
-        err.message.should.equal('Please specify username, password, and project name');
+        err.message.should.equal('Please specify project name');
         done();
       });
   });
@@ -95,12 +96,14 @@ describe('mavensmate new-project', function(){
       username: creds.username,
       password: creds.password,
       workspace: path.join(helper.baseTestDirectory(),'workspace'),
-      orgType: creds.environment,
+      orgType: creds.orgType,
       package: {
         ApexPage: '*',
         CustomObject: ['Account']
       }
     };
+
+    logger.debug('new-project payload', payload);
 
     testClient.executeCommand({
         name: 'new-project',
@@ -113,14 +116,15 @@ describe('mavensmate new-project', function(){
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'config'),  'Project config directory does not exist');
         assert.isDirectory(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src'),  'Project src directory does not exist');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'src', 'package.xml'),  'Project package.xml does not exist');
+        assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'config', '.settings'),  'Project config/.settings does not exist');
+        assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'config', '.credentials'),  'Project config/.credentials does not exist');
         fs.existsSync(path.join(helper.baseTestDirectory(),'workspace', 'new-project', 'tmp.zip')).should.equal(false);
         return helper.addProject(testClient, 'new-project')
       })
       .then(function(response) {
         var project = testClient.getProject();
         project.settings.username.should.equal(creds.username);
-        project.settings.password.should.equal(creds.password);
-        project.settings.environment.should.equal('developer');
+        project.settings.orgType.should.equal('developer');
         done();
       })
       .catch(function(err) {

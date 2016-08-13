@@ -39,8 +39,8 @@ describe('mavensmate update-subscription', function() {
       .then(function(response) {
 
         response.message.should.equal('Subscription updated successfully!');
-        project.getSubscription().length.should.equal(1);
-        project.getSubscription()[0].should.equal('ApexClass');
+        project.settings.subscription.length.should.equal(1);
+        project.settings.subscription[0].should.equal('ApexClass');
         done();
       })
       .catch(function(err) {

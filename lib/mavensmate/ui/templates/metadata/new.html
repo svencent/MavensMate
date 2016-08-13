@@ -8,11 +8,11 @@
 </div>
 
 <div class="content">
-		 
+
 	<ul class="nav nav-tabs nav-append-content">
 		<li class="active"><a id="project_details_tab" href="#form" data-toggle="tab">New {{metadataType}} Details</a></li>
 	</ul>
-	
+
 	<div class="tab-content" id="main-tab-content">
 		<div id="form" class="tab-pane active">
 			<form class="form-stacked">
@@ -42,7 +42,7 @@
 {% endblock %}
 
 
-{% block buttons %}					
+{% block buttons %}
 	<input type="button" id="btnSubmit" class="btn btn-info btn-embossed" value="Create Metadata"  onclick='newMetadata();'>
 	<button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
 {% endblock %}
@@ -60,7 +60,7 @@
 		var templates = {{ JSON.stringify(templates) }};
 		var selectedTemplate = null;
 		var metadataType = '{{metadataType}}';
-		
+
 		function newMetadata() {
 			paramPayload = {}
 
@@ -84,7 +84,7 @@
 				beforeSend: function() { showLoading('Creating new metadata...'); },
 				complete: function(data){
 					responseHandler(data);
-				} 
+				}
 		 	});
 		}
 
@@ -102,9 +102,9 @@
 			}
 			hideLoading();
 		}
-				
-		$(function() {		   									
-		    
+
+		$(function() {
+
 		    $("#template").change(function() {
 		    	var value = $(this).val();
 		    	selectedTemplate = null;
@@ -143,10 +143,10 @@
     					$(".template_body_pre").text(data.responseText);
     					prettyPrint();
     					$("#template_body").show();
-    				} 
+    				}
     		 	});
 		    	$("div#template_params").html(paramsHtml);
-		    	
+
 		    });
 
 			$(window).resize(function() {
@@ -163,30 +163,7 @@
 				 	if ($('#un').val() && $('#pw').val() && $('#pn').val())
 						$("#btnSubmit").click();
 				 }
-			});  
-
-			$("#org_type").change(function() {
-				if ($(this).val() == 'custom') {
-					$("#custom-url").show();
-				} else {
-					$("#custom-url").hide();
-					$("#custom-url").val('');
-				}
 			});
-
-			//when user changes tab to metadata selection, use provided creds to login and get session id
-			$('a[data-toggle="tab"]').on('shown', function (e) {
-				//console.log(e.target.href.indexOf("metadata"))
-				if ((e.target.href.indexOf("metadata") != -1 || e.target.href.indexOf("advanced") != -1) && ($('#sid').val() === null || $('#sid').val() === "")) {
-					//console.log('checking creds');
-					operation = "check_creds";
-					populateMetadataTree('Attempting to authenticate to Salesforce and describe environment using the provided credentials. This could take a few minutes.');
-				}
-		    });
-
 		});
-
-		
-								
 	</script>
 {% endblock %}

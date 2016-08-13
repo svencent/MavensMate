@@ -23,7 +23,7 @@ describe('mavensmate session', function() {
     var payload = {
       username: creds.username,
       password: creds.password,
-      orgType: creds.environment,
+      orgType: creds.orgType,
       subscription: ['ApexClass']
     };
 

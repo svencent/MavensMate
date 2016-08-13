@@ -26,13 +26,13 @@ exports.getTestCreds = function() {
     return {
       username: 'mm'+parallelismIndex+'@force.com',
       password: 'force',
-      environment: process.env.SALESFORCE_ORG_TYPE || 'developer'
+      orgType: process.env.SALESFORCE_ORG_TYPE || 'developer'
     };
   } else {
     return {
       username: process.env.SALESFORCE_USERNAME || 'mm4@force.com',
       password: process.env.SALESFORCE_PASSWORD || 'force',
-      environment: process.env.SALESFORCE_ORG_TYPE || 'developer'
+      orgType: process.env.SALESFORCE_ORG_TYPE || 'developer'
     };
   }
 };
@@ -50,9 +50,12 @@ exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace
     settings.projectName = name;
     settings.workspace = testWorkspace;
     settings.username = creds.username;
-    settings.password = creds.password;
-    settings.environment = creds.environment;
+    settings.orgType = creds.orgType;
     fs.writeJsonSync(path.join(testWorkspace, name, 'config', '.settings'), settings);
+
+    var credentials = {};
+    credentials.password = creds.password;
+    fs.writeJsonSync(path.join(testWorkspace, name, 'config', '.credentials'), credentials);
   }
 };
 
@@ -63,6 +66,9 @@ exports.createClient = function(name, settings) {
   /*jshint camelcase: false */
   var clientSettings = settings || {};
   clientSettings.mm_use_keyring = false;
+  if (!clientSettings.mm_workspace) {
+    clientSettings.mm_workspace = [ path.join(this.baseTestDirectory(),'workspace') ];
+  }
   return mavensmate.createClient({
     name: name,
     isNodeApp: true,
@@ -78,8 +84,10 @@ exports.baseTestDirectory = function() {
 
 exports.unlinkEditor = function() {
   try {
+    logger.debug('unlinking editor');
     sinon.stub(EditorService.prototype, 'open').returns(null);
   } catch(e) {
+    logger.error('error unlinking editor', e);
     if (e.message.indexOf('Attempted to wrap open which is already wrapped') === -1) {
       throw e;
     }
@@ -99,7 +107,7 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
       name: name,
       username: creds.username,
       password: creds.password,
-      orgType: creds.environment,
+      orgType: creds.orgType,
       workspace: testWorkspace,
       package: pkg || {}
     };
@@ -127,7 +135,7 @@ exports.addProject = function(testClient, projectName) {
     var sfdcClient = new SalesforceClient({
       username: creds.username,
       password: creds.password,
-      orgType: creds.environment
+      orgType: creds.orgType
     });
     testClient.addProjectByPath(path.join(self.baseTestDirectory(),'workspace', projectName), sfdcClient)
       .then(function(response) {
@@ -269,6 +277,7 @@ exports.mockExpress = function(project) {
   var res = {};
   res.status = function() { return res; };
   res.render = function() { };
+  res.redirect = function() { };
   res.send = function() { };
   res.locals = {};
   res.locals.project = project;

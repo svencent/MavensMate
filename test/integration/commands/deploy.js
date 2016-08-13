@@ -68,12 +68,14 @@ describe('mavensmate deploy-to-server', function() {
   it('should validate deploy to an org connection', function(done) {
     this.timeout(120000);
     var creds = helper.getTestCreds();
+    var myConnectionName = 'my connection';
     helper.createNewMetadata(testClient, 'ApexClass', 'DeployClass')
       .then(function() {
         var payload = {
+          name: myConnectionName,
           username: creds.username,
           password: creds.password,
-          orgType: creds.environment
+          orgType: creds.orgType
         };
         return testClient.executeCommand({
           name: 'new-connection',
@@ -86,7 +88,7 @@ describe('mavensmate deploy-to-server', function() {
         });
       })
       .then(function(conns) {
-        conns[0].environment.should.equal(creds.environment);
+        conns[0].orgType.should.equal(creds.orgType);
         var deployPayload = {
           destinations: [conns[0].id],
           package: { 'ApexClass': ['DeployClass']  },
@@ -104,10 +106,10 @@ describe('mavensmate deploy-to-server', function() {
         });
       })
       .then(function(response) {
-        response.should.have.property(creds.username);
-        response[creds.username].checkOnly.should.equal(true);
-        response[creds.username].done.should.equal(true);
-        response[creds.username].success.should.equal(true);
+        response.should.have.property(myConnectionName);
+        response[myConnectionName].checkOnly.should.equal(true);
+        response[myConnectionName].done.should.equal(true);
+        response[myConnectionName].success.should.equal(true);
         done();
       })
       .catch(function(err) {
