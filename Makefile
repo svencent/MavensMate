@@ -1,5 +1,9 @@
-REPORTER = html-cov
+# ci will set both of these vars, but when running locally, will run all *.js tests and index will be 0
 TESTS ?= $(shell find test -name '*.js')
+INDEX ?= 0
+
+# coverage options
+REPORTER = html-cov
 COVERAGE_FILE = coverage.html
 
 print-%: ; @echo $*=$($*)
