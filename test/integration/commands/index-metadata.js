@@ -85,7 +85,7 @@ describe('mavensmate index-metadata', function(){
 
     testClient.executeCommand({ name: 'get-metadata-index' })
       .then(function(response) {
-        response.length.should.equal(project.getSubscription().length);
+        response.length.should.equal(project.settings.subscription.length);
         done();
       })
       .catch(function(err) {

@@ -26,13 +26,13 @@ exports.getTestCreds = function() {
     return {
       username: 'mm'+parallelismIndex+'@force.com',
       password: 'force',
-      environment: process.env.SALESFORCE_ORG_TYPE || 'developer'
+      orgType: process.env.SALESFORCE_ORG_TYPE || 'developer'
     };
   } else {
     return {
       username: process.env.SALESFORCE_USERNAME || 'mm4@force.com',
       password: process.env.SALESFORCE_PASSWORD || 'force',
-      environment: process.env.SALESFORCE_ORG_TYPE || 'developer'
+      orgType: process.env.SALESFORCE_ORG_TYPE || 'developer'
     };
   }
 };
@@ -50,9 +50,12 @@ exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace
     settings.projectName = name;
     settings.workspace = testWorkspace;
     settings.username = creds.username;
-    settings.password = creds.password;
-    settings.environment = creds.environment;
+    settings.orgType = creds.orgType;
     fs.writeJsonSync(path.join(testWorkspace, name, 'config', '.settings'), settings);
+
+    var credentials = {};
+    credentials.password = creds.password;
+    fs.writeJsonSync(path.join(testWorkspace, name, 'config', '.credentials'), credentials);
   }
 };
 
@@ -99,7 +102,7 @@ exports.createProject = function(testClient, name, pkg, testWorkspace) {
       name: name,
       username: creds.username,
       password: creds.password,
-      orgType: creds.environment,
+      orgType: creds.orgType,
       workspace: testWorkspace,
       package: pkg || {}
     };

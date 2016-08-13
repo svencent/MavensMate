@@ -30,7 +30,7 @@
 							<div class="span8">
 								<select name="huge" class="select-block mbl info" style="display:none;" id="subscription" multiple="multiple" data-placeholder="Select 1 or more metadata types..." data-selected-text-format="count>3" data-size="20">
 									{% for m in mavensmate.ui.getMetadataObjects(project) %}
-										{% if project.getSubscription().indexOf(m['xmlName']) >= 0 %}
+										{% if project.settings.subscription.indexOf(m['xmlName']) >= 0 %}
 											{% set selected = 'selected="selected"' %}
 										{% else %}
 											{% set selected = '' %}
@@ -93,36 +93,6 @@
 		var hasIndexedMetadata = {{ project.hasIndexedMetadata() }};
 		var operation;
 		var PROJECT_WRAPPER_OFFSET = $("#filter").height() + 60;
-
-		function updateProjectCreds() {
-			console.log('updating project creds')
-			operation = "update-creds"
-			$.ajax({
-				type: "POST",
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/update-creds?pid={{project.settings.id}}",
-				data: JSON.stringify({
-					username: $("#un").val(),
-		    	password: $("#pw").val(),
-		    	orgType: $(".org_type").val(),
-		    	loginUrl: $("#custom-url").val(),
-		    	path: '{{ project.path }}',
-		    	command: "update-creds"
-				}),
-				beforeSend: function() { showLoading('Updating project credentials'); },
-				complete: function(data){
-					console.log(data)
-					var response = JSON.parse(data.responseText)
-					if (response.error) {
-						showMessage(response.error)
-					} else {
-						showMessage(response.message, 'success', true)
-					}
-					hideLoading();
-				}
-			});
-		}
 
 		function updateSubscription() {
 			console.log('updating project subscription')

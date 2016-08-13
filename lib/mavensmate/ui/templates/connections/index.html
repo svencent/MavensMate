@@ -128,7 +128,7 @@
         console.log(conns);
         for (c in conns) {
           connHtml += '<tr>';
-          connHtml += '<td>'+conns[c]['username']+' ('+conns[c]['environment']+')</td>';
+          connHtml += '<td>'+conns[c]['name']+'</td>';
           connHtml += '<td><a href="javascript:void(0);" onclick="deleteConnection(\''+conns[c]['id']+'\')">Remove</a></td>';
           connHtml += '</tr>';
         }
