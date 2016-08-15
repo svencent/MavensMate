@@ -1,0 +1,67 @@
+{% extends "views/layouts/base.html" %}
+{% block yield %}
+<div id="result_output">
+  <div class="alert alert-error">
+    <button type="button" class="close fui-cross"></button>
+    <span id="error_message"></span>
+  </div>
+</div>
+
+<div class="content">
+
+  <ul class="nav nav-tabs nav-append-content">
+    <li class="active"><a id="project_details_tab" href="#form" data-toggle="tab">Connect to Salesforce</a></li>
+  </ul>
+
+  <div class="tab-content" id="main-tab-content">
+    <div id="form" class="tab-pane active">
+      <form class="form-stacked" action="/app/project/start-auth" method="POST">
+        {% if project && project.settings && project.settings.id %}
+        <input type="hidden" name="pid" value="{{project.settings.id}}" />
+        {% endif %}
+        <input type="hidden" name="destination" value="{{destination}}" />
+        <fieldset>
+           <div class="control-group large">
+            <select id="orgType" name="orgType" class="select-block mbl info span12">
+              <option value="production">Production</option>
+              <option value="developer">Developer</option>
+              <option value="sandbox">Sandbox</option>
+              <option value="prerelease">Prerelease</option>
+              <option value="custom">Custom URL</option>
+            </select>
+          </div>
+          <div class="control-group large">
+            <input class="span12" placeholder="Example: https://na1-blitz01.salesforce.com" type="text" id="instanceUrl" name="instanceUrl" style="display:none;">
+          </div>
+          <div class="control-group large">
+            <input type="submit" class="btn btn-success btn-embossed btn-embossed" value="Connect">
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block buttons %}
+  <button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
+{% endblock %}
+
+{% block body_js %}
+
+  <script type="text/javascript">
+    $(function() {
+      $('#orgType').change(function() {
+        if ($(this).val() === 'custom') {
+          $('#instanceUrl').show();
+        } else {
+          $('#instanceUrl').hide();
+          $('#instanceUrl').val('');
+        }
+      });
+    });
+  </script>
+{% endblock %}
