@@ -10,7 +10,7 @@ var router          = express.Router();
 var requestStore    = require('../lib/request-store');
 
 // todo: refactor errors
-router.get('/', function(req, res) {
+router.get('/new', function(req, res) {
   if (!req.project) {
     res.status(500).send('Error: No project configured for this MavensMate client.');
   } else {
