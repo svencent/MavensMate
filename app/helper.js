@@ -9,7 +9,7 @@ var path    = require('path');
 var fs      = require('fs-extra');
 var util    = require('./lib/util').instance;
 var _       = require('lodash');
-var config  = require('./lib/config');
+var config  = require('./config');
 var logger  = require('winston');
 var querystring = require('querystring');
 
@@ -20,12 +20,8 @@ var ViewHelper = function(opts) {
 ViewHelper.prototype.util = util;
 ViewHelper.prototype.config = config;
 
-ViewHelper.prototype.getClient = function() {
-  return this.client;
-};
-
-ViewHelper.prototype.getEditor = function() {
-  return this.client.name;
+ViewHelper.prototype.getSupportedEditors = function() {
+  return this.supportedEditors;
 };
 
 ViewHelper.prototype.getPathBaseName = function(p) {

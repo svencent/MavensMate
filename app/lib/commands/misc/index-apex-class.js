@@ -34,12 +34,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('index-apex-class [className]')
     .description('Indexes Apex class\'s symbols')
     .action(function(className){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name,
         body: {
           className : className

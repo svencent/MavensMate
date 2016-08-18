@@ -11,7 +11,7 @@ var util      = require('../util').instance;
 var fs        = require('fs-extra');
 var logger    = require('winston');
 var moment    = require('moment');
-var config    = require('../config');
+var config    = require('../../config');
 var swig      = require('swig');
 
 /**

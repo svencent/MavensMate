@@ -14,13 +14,12 @@ var MetadataHelper  = require('./metadata').MetadataHelper;
  * @param {Array} args
  * @param {Array[0]} - client instance (object)
  * @param {Array[1]} - payload for the command (object)
- * @param {Array[3]} - name of the editor executing this command (sublime, atom, vim, vscode, etc.)
+ * @param {Array[2]} - editorService for facilitating interaction with the editors (sublime, atom, vim, vscode, etc.)
  */
 var BaseCommand = function(args) {
-  this.client = args[0];
-  this.setProject(args[1]);
-  this.payload = args[2];
-  this.editor = args[3];
+  this.setProject(args[0]);
+  this.payload = args[1];
+  this.editorService = args[2];
   this.metadataHelper = new MetadataHelper();
 };
 

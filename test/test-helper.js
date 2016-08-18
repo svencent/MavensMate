@@ -1,20 +1,21 @@
 'use strict';
 
+var uuid              = require('node-uuid');
 var _                 = require('lodash');
-var mavensmate        = require('../lib/mavensmate');
-var MetadataHelper    = require('../lib/mavensmate/metadata').MetadataHelper;
+var config            = require('../app/config');
+var logger            = require('../app/lib/logger')();
 var fs                = require('fs-extra');
 var path              = require('path');
 var Promise           = require('bluebird');
 var sinon             = require('sinon');
 var sinonAsPromised   = require('sinon-as-promised');
-var EditorService     = require('../lib/mavensmate/editor');
-var temp              = require('temp');
-var TemplateService   = require('../lib/mavensmate/template');
-var logger            = require('winston');
-var SalesforceClient  = require('../lib/mavensmate/sfdc-client');
+var EditorService     = require('../app/lib/services/editor');
+var TemplateService   = require('../app/lib/services/template');
+var SalesforceClient  = require('../app/lib/sfdc-client');
+var Project           = require('../app/lib/project');
+var commandExecutor   = require('../app/lib/commands')();
 
-sinonAsPromised(require('bluebird'));
+sinonAsPromised(Promise);
 
 exports.getTestCreds = function() {
   if (process.env.CIRCLECI === 'true' || process.env.CIRCLECI || process.env.CI === 'true' || process.env.CI) {
@@ -37,7 +38,7 @@ exports.getTestCreds = function() {
   }
 };
 
-exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace) {
+exports.putTestProjectInTestWorkspace = function(name, testWorkspace) {
   var self = this;
   var creds = self.getTestCreds();
   testWorkspace = testWorkspace || path.join(self.baseTestDirectory(),'workspace');
@@ -47,6 +48,7 @@ exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace
   if (!fs.existsSync(path.join(testWorkspace, name))) {
     fs.copySync(path.join(self.baseTestDirectory(),'fixtures', 'test-project'), path.join(testWorkspace, name));
     var settings = fs.readJsonSync(path.join(testWorkspace, name, 'config', '.settings'));
+    settings.id = uuid.v1();
     settings.projectName = name;
     settings.workspace = testWorkspace;
     settings.username = creds.username;
@@ -59,23 +61,31 @@ exports.putTestProjectInTestWorkspace = function(testClient, name, testWorkspace
   }
 };
 
-exports.createClient = function(name, settings) {
-  logger.info('Creating test client');
-  logger.info('Circle parallelism index is: '+process.env.PARALLELISM_INDEX);
+exports.boostrapEnvironment = function() {
+  logger.info('Bootstrapping test environment');
+  if (process.env.PARALLELISM_INDEX)
+    logger.info('CI parallelism index is: '+process.env.PARALLELISM_INDEX);
+  // config.set('mm_workspace', [path.join(this.baseTestDirectory(),'workspace')]);
+  config.set('mm_workspace', path.join(this.baseTestDirectory(),'workspace'));
+  process.env.mm_workspace = path.join(this.baseTestDirectory(),'workspace');
+};
 
-  /*jshint camelcase: false */
-  var clientSettings = settings || {};
-  clientSettings.mm_use_keyring = false;
-  if (!clientSettings.mm_workspace) {
-    clientSettings.mm_workspace = [ path.join(this.baseTestDirectory(),'workspace') ];
-  }
-  return mavensmate.createClient({
-    name: name,
-    isNodeApp: true,
-    verbose: process.env.MAVENSMATE_DEBUG_TESTS === 'true' || false,
-    settings: clientSettings
-  });
-  /*jshint camelcase: true */
+exports.getCommandExecutor = function(openWindowFn) {
+  return require('../app/lib/commands')(openWindowFn);
+};
+
+exports.initCli = function() {
+  delete require.cache[require.resolve('commander')];
+  var program = require('commander');
+  program
+    .option('-v --verbose', 'Output logging statements')
+    .option('-h --headless', 'Runs in headless (non-interactive terminal) mode. You may wish to use this flag when calling this executable from a text editor or IDE client.')
+    .option('-e --editor [name]', 'Specifies the plugin client (sublime, atom)') // no default set
+    .option('-p --port [number]', 'UI server port number') // (for sublime text)
+    .parse(process.argv, true); // parse top-level args, defer subcommand
+  program.commandExecutor = commandExecutor;
+  require('../app/lib/loader')(program);
+  return program;
 };
 
 exports.baseTestDirectory = function() {
@@ -85,61 +95,37 @@ exports.baseTestDirectory = function() {
 exports.unlinkEditor = function() {
   try {
     logger.debug('unlinking editor');
-    sinon.stub(EditorService.prototype, 'open').returns(null);
+    sinon.stub(EditorService.prototype, 'open').resolves(null);
   } catch(e) {
-    logger.error('error unlinking editor', e);
     if (e.message.indexOf('Attempted to wrap open which is already wrapped') === -1) {
       throw e;
     }
   }
 };
 
-exports.createProject = function(testClient, name, pkg, testWorkspace) {
-  var self = this;
-  var creds = self.getTestCreds();
-  self.unlinkEditor();
-  return new Promise(function(resolve, reject) {
-    if (!testWorkspace) {
-      testWorkspace = temp.mkdirSync({ prefix: 'mm_testworkspace_' });
-    }
-
-    var payload = {
-      name: name,
-      username: creds.username,
-      password: creds.password,
-      orgType: creds.orgType,
-      workspace: testWorkspace,
-      package: pkg || {}
-    };
-
-    testClient.executeCommand({
-        name: 'new-project',
-        body: payload
-      })
-      .then(function(res) {
-        return testClient.addProjectByPath(path.join(testWorkspace, name));
-      })
-      .then(function() {
-        resolve(path.join(testWorkspace, name));
-      })
-      .catch(function(err) {
-        reject(err);
-      });
-  });
+exports.stubSalesforceClient = function(sandbox) {
+  sandbox.stub(SalesforceClient.prototype, 'initialize').resolves('ok');
+  sandbox.stub(SalesforceClient.prototype, 'describe').resolves([]);
+  sandbox.stub(SalesforceClient.prototype, 'startSystemStreamingListener').resolves('ok');
 };
 
-exports.addProject = function(testClient, projectName) {
+exports.addProject = function(projectName) {
   var self = this;
   return new Promise(function(resolve, reject) {
+    // process.env.mm_workspace = path.join(self.baseTestDirectory(),'workspace');
     var creds = self.getTestCreds();
     var sfdcClient = new SalesforceClient({
       username: creds.username,
       password: creds.password,
       orgType: creds.orgType
     });
-    testClient.addProjectByPath(path.join(self.baseTestDirectory(),'workspace', projectName), sfdcClient)
-      .then(function(response) {
-        resolve(response);
+    var project = new Project({
+      path: path.join(self.baseTestDirectory(),'workspace', projectName),
+      sfdcClient: sfdcClient
+    });
+    project.initialize(false)
+      .then(function(proj) {
+        resolve(proj);
       })
       .catch(function(err) {
         reject(err);
@@ -147,28 +133,7 @@ exports.addProject = function(testClient, projectName) {
   });
 };
 
-exports.getProjectFiles = function(testClient, typeXmlName, numberOfFiles) {
-  var metadataHelper = new MetadataHelper({ sfdcClient: testClient.getProject().sfdcClient });
-  var metadataType = metadataHelper.getTypeByXmlName(typeXmlName);
-  var projectPath = path.join(this.baseTestDirectory(),'workspace', testClient.getProject().name);
-  var metadataDirectory = path.join(projectPath, 'src', metadataType.directoryName);
-  if (!numberOfFiles) {
-    numberOfFiles = 1;
-  }
-  var files = [];
-  if (fs.existsSync(metadataDirectory)) {
-    fs.readdirSync(metadataDirectory).forEach(function(filename) {
-      if (files.length < numberOfFiles) {
-        if (filename.indexOf('-meta.xml') === -1) {
-          files.push(path.join(metadataDirectory, filename));
-        }
-      }
-    });
-  }
-  return files;
-};
-
-exports.cleanUpTestProject = function(name, testWorkspace) {
+exports.cleanUpProject = function(name, testWorkspace) {
   testWorkspace = testWorkspace || path.join(this.baseTestDirectory(),'workspace');
   name = name || 'existing-project';
   if (fs.existsSync(path.join(testWorkspace, name))) {
@@ -176,7 +141,8 @@ exports.cleanUpTestProject = function(name, testWorkspace) {
   }
 };
 
-exports.cleanUpTestData = function(testClient, paths) {
+exports.cleanUpTestData = function(project, paths) {
+  var self = this;
   return new Promise(function(resolve, reject) {
     var pathsToDelete = [];
     _.each(paths, function(p) {
@@ -187,9 +153,11 @@ exports.cleanUpTestData = function(testClient, paths) {
     var payload = {
       paths: pathsToDelete
     };
-    testClient.executeCommand({
+    var commandExecutor = self.getCommandExecutor();
+    commandExecutor.execute({
         name: 'delete-metadata',
-        body: payload
+        body: payload,
+        project: project
       })
       .then(function(res) {
         resolve(res);
@@ -207,13 +175,16 @@ exports.cleanUpWorkspace = function() {
   }
 };
 
-exports.createNewMetadata = function(testClient, typeXmlName, name, templateFileName, templateValues) {
+exports.createNewMetadata = function(project, typeXmlName, name, templateFileName, templateValues) {
+  var self = this;
   return new Promise(function(resolve, reject) {
     exports.getNewMetadataPayload(typeXmlName, name, templateFileName, templateValues)
       .then(function(payload) {
-        return testClient.executeCommand({
+        var commandExecutor = self.getCommandExecutor();
+        return commandExecutor.execute({
           name: 'new-metadata',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function(response) {

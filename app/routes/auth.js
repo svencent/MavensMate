@@ -6,13 +6,14 @@ var inherits        = require('inherits');
 var logger          = require('winston');
 var querystring     = require('querystring');
 var path            = require('path');
+var util            = require('../lib/util').instance;
 
 router.get('/new', function(req, res) {
   var project;
   if (req.project) {
     project = req.project;
   } else if (req.query.pid) {
-    project = this.client.getProjectById(req.query.pid);
+    project = util.getProjectById(req.app, req.query.pid);
   }
 
   res.render('auth/index.html', {

@@ -5,8 +5,8 @@ var chai            = require('chai');
 var should          = chai.should();
 var fs              = require('fs-extra');
 var path            = require('path');
-var Package         = require('../../lib/mavensmate/package').Package;
-var mavensMateFile  = require('../../lib/mavensmate/file');
+var Package         = require('../../app/lib/package').Package;
+var mavensMateFile  = require('../../app/lib/file');
 var assert          = chai.assert;
 
 chai.use(require('chai-fs'));
@@ -14,13 +14,11 @@ chai.use(require('chai-fs'));
 describe('mavensmate unit-package', function(){
 
   var project;
-  var testClient;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
-    helper.putTestProjectInTestWorkspace(testClient, 'package-test');
-    helper.addProject(testClient, 'package-test')
+    helper.putTestProjectInTestWorkspace('package-test');
+    helper.addProject('package-test')
       .then(function(proj) {
         project = proj;
         done();
@@ -31,7 +29,7 @@ describe('mavensmate unit-package', function(){
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('package-test')
+    helper.cleanUpProject('package-test')
     done();
   });
 

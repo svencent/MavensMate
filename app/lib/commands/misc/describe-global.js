@@ -31,12 +31,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('describe-global')
     .description('Describe your Salesforce.com environment')
     .action(function(/* Args here */){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name
       });
     });

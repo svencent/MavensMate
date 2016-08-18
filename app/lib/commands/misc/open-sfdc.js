@@ -20,7 +20,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     var project = self.getProject();
-    var editorService = new EditorService(self.client, self.editor);
+
     var setupUrl = project.sfdcClient.getInstanceUrl() + '/secur/frontdoor.jsp?sid=' + project.sfdcClient.getAccessToken() + '&retURL=/setup/forcecomHomepage.apexp?setupid=ForceCom';
     editorService.openUrl(setupUrl)
       .then(function() {
@@ -33,12 +33,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('open-sfdc')
     .description('Opens salesforce developer home page in the browser')
     .action(function(){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name
       });
     });

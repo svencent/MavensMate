@@ -16,7 +16,7 @@ var inherits      = require('inherits');
 var stream        = require('stream');
 var Stream        = stream.Stream;
 var logger        = require('winston');
-var config        = require('./config');
+var config        = require('../config');
 
 /**
  * @param {Object} opts
@@ -171,7 +171,7 @@ SalesforceClient.prototype.initialize = function() {
         version: self.apiVersion
       });
       self._initWebServerRefreshHandler();
-      logger.debug('initialized connection', self.conn);
+      logger.silly('initialized connection', self.conn);
       self.conn.identity()
         .then(function(res) {
           self.conn.userInfo = merge(self.conn.userInfo, res);

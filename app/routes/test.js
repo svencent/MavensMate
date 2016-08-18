@@ -14,7 +14,7 @@ var logger          = require('winston');
 
 router.get('/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project configured for this MavensMate client.');
+    res.status(500).send('Error: No project attached to this request.');
   } else {
     res.render('unit_test/index.html', {
       testClasses : _getTestClasses(req.project),
@@ -25,8 +25,8 @@ router.get('/new', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  var client = req.app.get('client');
-  var request = client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
     project: req.project,
     name: 'run-tests',
     body: req.body,
@@ -39,7 +39,7 @@ router.post('/', function(req, res) {
   });
 });
 
-router.get('/coverage', function(req, res) {
+router.post('/coverage', function(req, res) {
   var swig = req.app.get('swig');
   var locals = {
     apexClassOrTriggerName: req.body.apexClassOrTriggerName,

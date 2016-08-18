@@ -34,12 +34,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('delete-connection [connectionId]')
     .description('Removes a new deployment connection')
     .action(function(connectionId){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name,
         body: { id: connectionId }
       });

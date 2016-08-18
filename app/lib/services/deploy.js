@@ -18,7 +18,7 @@ var OrgConnectionService  = require('./org-connection');
 var Package               = require('../package').Package;
 var MetadataHelper        = require('../metadata').MetadataHelper;
 var logger                = require('winston');
-var config                = require('../config');
+var config                = require('../../config');
 var mavensMateFile        = require('../file');
 
 // TODO: create tmp directory on instantiation, set as property

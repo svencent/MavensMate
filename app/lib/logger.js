@@ -1,44 +1,40 @@
 /**
- * @file Sets up winston logging. Client requires and configures, other modules simply require('winston') to share global winston object.
+ * @file Sets up winston logging. bin/mavensmate / bin/server require and configure, other modules simply require('winston') to share global winston object.
  * @author Joseph Ferraro <@joeferraro>
  */
 
-module.exports = function (client) {
-  'use strict';
+ 'use strict';
+
+/**
+ * initiates logging via winston
+ * @param  {Object} opts
+ * @param  {Object} opts.program - Commander.js program (optional)
+ * @return {Object} - winston logger
+ */
+module.exports = function(opts) {
+  opts = opts || {};
 
   var fs = require('fs');
   var path = require('path');
   var winston = require('winston');
-  var config = require('./config');
+  var config = require('../config');
 
   try {
     winston.remove(winston.transports.Console);
   } catch(e) { }
-  
-  var hasDebuggingOption;
-  if (client.isCommandLine()) {
-    // check if global --log is on
-    var argv = client.program.normalize(process.argv);
-    hasDebuggingOption = argv.indexOf('-d') > -1 || argv.indexOf('--verbose') > -1; // Need this early
-  }
 
-  // var logger = new (winston.Logger)({
-  //   exitOnError: false
-  // });
-  // 
-  // file-based logging, set up in client
-  var logFileLevel;
+  var logLevel;
   if (config.get('mm_log_level')) {
-    logFileLevel = config.get('mm_log_level').toLowerCase();
+    logLevel = config.get('mm_log_level').toLowerCase();
   } else {
-    logFileLevel = 'info'; 
+    logLevel = 'info';
   }
 
-  // if --verbose flag, add console logging
-  if (hasDebuggingOption || client.verbose) {
+  // if we're not a cli client or if our cli client is verbose, log to the console
+  if (!opts.program || (opts.program && opts.program.verbose)) {
     winston.cli();
     winston.add(winston.transports.Console, {
-      level: logFileLevel,
+      level: logLevel,
       exitOnError: false,
       prettyPrint: true,
       colorize: true
@@ -48,9 +44,9 @@ module.exports = function (client) {
   // place logs in mm_log_location if it exists
   if (fs.existsSync(config.get('mm_log_location'))) {
     try {
-      winston.add(winston.transports.File, { 
+      winston.add(winston.transports.File, {
         filename: path.join(config.get('mm_log_location'), 'mavensmate.log'),
-        level: logFileLevel,
+        level: logLevel,
         json: false
       });
     } catch(e) {
@@ -60,9 +56,7 @@ module.exports = function (client) {
     }
   }
 
-  if (hasDebuggingOption) {
-    winston.debug('Debug logging is on');
-  }
+  winston.info('MavensMate log level: '+logLevel);
 
   return winston;
 };

@@ -11,14 +11,14 @@ chai.use(require('chai-fs'));
 describe('mavensmate delete-metadata', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'delete-metadata');
-    helper.addProject(testClient, 'delete-metadata')
+    helper.putTestProjectInTestWorkspace('delete-metadata');
+    helper.addProject('delete-metadata')
       .then(function(proj) {
         project = proj;
         done();
@@ -29,7 +29,7 @@ describe('mavensmate delete-metadata', function(){
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('delete-metadata');
+    helper.cleanUpProject('delete-metadata');
     done();
   });
 
@@ -37,21 +37,22 @@ describe('mavensmate delete-metadata', function(){
 
     this.timeout(120000);
 
-    helper.createNewMetadata(testClient, 'ApexClass', 'DeleteMetadataClass')
+    helper.createNewMetadata(project, 'ApexClass', 'DeleteMetadataClass')
       .then(function() {
-        return helper.createNewMetadata(testClient, 'ApexClass', 'DeleteMetadataClass2');
+        return helper.createNewMetadata(project, 'ApexClass', 'DeleteMetadataClass2');
       })
       .then(function() {
         var payload = {
           paths: [
-            path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass.cls') ,
-            path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass2.cls')
+            path.join(project.path, 'src', 'classes', 'DeleteMetadataClass.cls') ,
+            path.join(project.path, 'src', 'classes', 'DeleteMetadataClass2.cls')
           ]
         };
 
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'delete-metadata',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function(response) {
@@ -60,8 +61,8 @@ describe('mavensmate delete-metadata', function(){
         response.status.should.equal('Succeeded');
         response.numberComponentErrors.should.equal(0);
         response.numberComponentsDeployed.should.equal(2);
-        fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass.cls')).should.equal(false);
-        fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'DeleteMetadataClass2.cls')).should.equal(false);
+        fs.existsSync(path.join(project.path, 'src', 'classes', 'DeleteMetadataClass.cls')).should.equal(false);
+        fs.existsSync(path.join(project.path, 'src', 'classes', 'DeleteMetadataClass2.cls')).should.equal(false);
         done();
       })
       .catch(function(err) {

@@ -28,8 +28,8 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      var editorService = new EditorService(self.client, self.editor);
-      editorService.launchUI('new-metadata', { pid: self.getProject().settings.id, type: self.payload.args.type })
+
+      self.editorService.launchUI('new-metadata', { pid: self.getProject().settings.id, type: self.payload.args.type })
         .then(function() {
           resolve('Success');
         })
@@ -77,10 +77,9 @@ Command.prototype.execute = function() {
           logger.debug('attempting to open metadata ...');
           var newMetadataPath = path.join(project.path, 'src', newFile.type.directoryName, [newFile.name, newFile.type.suffix].join('.'));
           logger.debug(newMetadataPath);
-          logger.debug(self.editor);
-          if (self.editor) {
-            var editorService = new EditorService(self.client, self.editor);
-            return editorService.open(newMetadataPath);
+          logger.debug(self.editorService.editor);
+          if (self.editorService) {
+            return self.editorService.open(newMetadataPath);
           } else {
             return resolve('Success');
           }
@@ -97,15 +96,15 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('new-metadata')
     .option('--ui', 'Launches the default UI for the selected command.')
     .option('-t, --type [type]', 'Type of metadata to create (ApexClass, ApexPage, ApexTrigger, ApexComponent, etc.')
     .description('Creates new metadata based on supplied template and params')
     .action(function() {
       if (this.ui) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: { args: { ui: true, type: this.type } }
         });
@@ -113,7 +112,7 @@ exports.addSubCommand = function(client) {
         var self = this;
         util.getPayload()
           .then(function(payload) {
-            client.executeCommand({
+            program.commandExecutor.execute({
               name: self._name,
               body: payload,
               editor: self.parent.editor

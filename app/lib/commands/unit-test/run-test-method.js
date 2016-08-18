@@ -35,8 +35,8 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('run-test-method [testNameOrPath] [testMethodName]')
     .alias('test')
     .description('Runs an Apex unit test method')
@@ -51,7 +51,7 @@ exports.addSubCommand = function(client) {
             }
           ]
         };
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: self._name,
           body: payload,
           editor: self.parent.editor
@@ -59,7 +59,7 @@ exports.addSubCommand = function(client) {
       } else {
         util.getPayload()
           .then(function(payload) {
-            client.executeCommand({
+            program.commandExecutor.execute({
               name: self._name,
               body: payload,
               editor: self.parent.editor

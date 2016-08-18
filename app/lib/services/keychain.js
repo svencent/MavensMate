@@ -11,7 +11,7 @@ try {
 } catch (e) {
   systemKeychainSupported = false;
 }
-var config = require('../config');
+var config = require('../../config');
 var os = require('os');
 var logger = require('winston');
 

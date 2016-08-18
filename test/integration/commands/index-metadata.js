@@ -7,14 +7,14 @@ var should      = chai.should();
 describe('mavensmate index-metadata', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'index-metadata');
-    helper.addProject(testClient, 'index-metadata')
+    helper.putTestProjectInTestWorkspace('index-metadata');
+    helper.addProject('index-metadata')
       .then(function(proj) {
         project = proj;
         done();
@@ -25,15 +25,13 @@ describe('mavensmate index-metadata', function(){
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('index-metadata');
+    helper.cleanUpProject('index-metadata');
     done();
   });
 
   it('should index metadata based on the project subscription', function(done) {
-
     this.timeout(120000);
-
-    testClient.executeCommand({ name: 'index-metadata' })
+    commandExecutor.execute({ name: 'index-metadata', project: project })
       .then(function(response) {
         response.message.should.equal('Metadata successfully indexed');
         done();
@@ -44,15 +42,14 @@ describe('mavensmate index-metadata', function(){
   });
 
   it('should fail to index due to unknown type', function(done) {
-
     this.timeout(120000);
-
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'update-subscription',
-        body: { subscription: [ 'SomeBadType' ] }
+        body: { subscription: [ 'SomeBadType' ] },
+        project: project
       })
       .then(function(response) {
-        return testClient.executeCommand({ name: 'index-metadata' })
+        return commandExecutor.execute({ name: 'index-metadata', project: project })
       })
       .catch(function(err) {
         should.equal(err.message, 'Unknown metadata type: SomeBadType');
@@ -61,14 +58,14 @@ describe('mavensmate index-metadata', function(){
   });
 
   it('should index uncommon types', function(done) {
-
     this.timeout(120000);
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'update-subscription',
-        body: { subscription: [ 'CustomLabel', 'Letterhead', 'Queue', 'RecordType', 'SharingRules' ] }
+        body: { subscription: [ 'CustomLabel', 'Letterhead', 'Queue', 'RecordType', 'SharingRules' ] },
+        project: project
       })
       .then(function(result) {
-        return testClient.executeCommand({ name: 'index-metadata' });
+        return commandExecutor.execute({ name: 'index-metadata', project: project });
       })
       .then(function(response) {
         response.message.should.equal('Metadata successfully indexed');
@@ -80,10 +77,8 @@ describe('mavensmate index-metadata', function(){
   });
 
   it('should get metadata index from project', function(done) {
-
     this.timeout(120000);
-
-    testClient.executeCommand({ name: 'get-metadata-index' })
+    commandExecutor.execute({ name: 'get-metadata-index', project: project })
       .then(function(response) {
         response.length.should.equal(project.settings.subscription.length);
         done();

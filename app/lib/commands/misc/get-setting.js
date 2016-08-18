@@ -8,7 +8,7 @@
 var Promise           = require('bluebird');
 var inherits          = require('inherits');
 var BaseCommand       = require('../../command');
-var config            = require('../../config');
+var config            = require('../../../config');
 
 function Command() {
   Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
@@ -26,12 +26,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('get-setting [key]')
     .description('Returns the setting value for the given key')
     .action(function(key){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name,
         body: {
           key: key

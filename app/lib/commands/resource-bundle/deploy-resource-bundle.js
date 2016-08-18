@@ -34,13 +34,13 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('deploy-resource-bundle [bundlePath]')
     .description('Deploys a resource bundle to the server, e.g. mavensmate deploy-resource-bundle path/to/resource/bundle ')
     .action(function(bundlePath){
       if (bundlePath) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: {
             paths: util.getAbsolutePaths( [ bundlePath ] )

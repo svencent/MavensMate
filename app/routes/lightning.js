@@ -6,7 +6,7 @@ var requestStore    = require('../lib/request-store');
 
 router.get('/app/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project configured for this MavensMate client.');
+    res.status(500).send('Error: No project attached to this request.');
   } else {
     res.render('lightning/new_app.html', {
       title: 'New Lightning App'
@@ -16,7 +16,7 @@ router.get('/app/new', function(req, res) {
 
 router.get('/component/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project configured for this MavensMate client.');
+    res.status(500).send('Error: No project attached to this request.');
   } else {
     res.render('lightning/new_component.html', {
       title: 'New Lightning Component'
@@ -26,7 +26,7 @@ router.get('/component/new', function(req, res) {
 
 router.get('/event/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project configured for this MavensMate client.');
+    res.status(500).send('Error: No project attached to this request.');
   } else {
     res.render('lightning/new_event.html', {
       title: 'New Lightning Event'
@@ -36,7 +36,7 @@ router.get('/event/new', function(req, res) {
 
 router.get('/interface/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project configured for this MavensMate client.');
+    res.status(500).send('Error: No project attached to this request.');
   } else {
     res.render('lightning/new_interface.html', {
       title: 'New Lightning Interface'
@@ -45,8 +45,8 @@ router.get('/interface/new', function(req, res) {
 });
 
 router.post('/app', function(req, res) {
-  var client = req.app.get('client');
-  var requestId = client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
     project: req.project,
     name: 'new-lightning-app',
     body: req.body,
@@ -60,8 +60,8 @@ router.post('/app', function(req, res) {
 });
 
 router.post('/component', function(req, res) {
-  var client = req.app.get('client');
-  var requestId = client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
     project: req.project,
     name: 'new-lightning-component',
     body: req.body,
@@ -75,8 +75,8 @@ router.post('/component', function(req, res) {
 });
 
 router.post('/event', function(req, res) {
-  var client = req.app.get('client');
-  var requestId = client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
     project: req.project,
     name: 'new-lightning-event',
     body: req.body,
@@ -90,8 +90,8 @@ router.post('/event', function(req, res) {
 });
 
 router.post('/interface', function(req, res) {
-  var client = req.app.get('client');
-  var requestId = client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
     project: req.project,
     name: 'new-lightning-interface',
     body: req.body,

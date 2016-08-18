@@ -11,14 +11,14 @@ chai.use(require('chai-fs'));
 describe('mavensmate lightning', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'lightning');
-    helper.addProject(testClient, 'lightning')
+    helper.putTestProjectInTestWorkspace('lightning');
+    helper.addProject('lightning')
       .then(function(proj) {
         project = proj;
         return project.indexLightning()
@@ -40,7 +40,7 @@ describe('mavensmate lightning', function(){
       path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittestinterface')
     ];
 
-    helper.cleanUpTestData(testClient, lightningBundlesToDelete)
+    helper.cleanUpTestData(project, lightningBundlesToDelete)
       .then(function() {
         done();
       })
@@ -48,7 +48,7 @@ describe('mavensmate lightning', function(){
         done(err);
       })
       .finally(function() {
-        helper.cleanUpTestProject('lightning')
+        helper.cleanUpProject('lightning')
       });
   });
 
@@ -64,9 +64,10 @@ describe('mavensmate lightning', function(){
       createDocumentation: true,
       createRenderer: true
     };
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'new-lightning-app',
-        body: payload
+        body: payload,
+        project: project
       })
       .then(function(response) {
         response.message.should.equal('Lightning app created successfully');
@@ -77,9 +78,9 @@ describe('mavensmate lightning', function(){
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittester', 'mmunittesterController.js'),  'Lightning controller not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittester', 'mmunittesterHelper.js'),  'Lightning helper not created');
         assert.isFile(path.join(helper.baseTestDirectory(),'workspace', 'lightning', 'src', 'aura', 'mmunittester', 'mmunittesterRenderer.js'),  'Lightning renderer not created');
-        testClient.getProject().packageXml.subscription.should.have.property('AuraDefinitionBundle');
-        testClient.getProject().packageXml.subscription.AuraDefinitionBundle.length.should.equal(1);
-        testClient.getProject().packageXml.subscription.AuraDefinitionBundle[0].should.equal('mmunittester');
+        project.packageXml.subscription.should.have.property('AuraDefinitionBundle');
+        project.packageXml.subscription.AuraDefinitionBundle.length.should.equal(1);
+        project.packageXml.subscription.AuraDefinitionBundle[0].should.equal('mmunittester');
         done();
       })
       .catch(function(err) {
@@ -99,9 +100,10 @@ describe('mavensmate lightning', function(){
       createDocumentation: true,
       createRenderer: true
     };
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'new-lightning-component',
-        body: payload
+        body: payload,
+        project: project
       })
       .then(function(response) {
         response.message.should.equal('Lightning component created successfully');
@@ -126,9 +128,10 @@ describe('mavensmate lightning', function(){
       apiName : 'mmunittestinterface',
       description : 'something_fun'
     };
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'new-lightning-interface',
-        body: payload
+        body: payload,
+        project: project
       })
       .then(function(response) {
 
@@ -149,9 +152,10 @@ describe('mavensmate lightning', function(){
       apiName : 'mmunittestevent',
       description : 'something_fun'
     };
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'new-lightning-event',
-        body: payload
+        body: payload,
+        project: project
       })
       .then(function(response) {
         response.message.should.equal('Lightning event created successfully');

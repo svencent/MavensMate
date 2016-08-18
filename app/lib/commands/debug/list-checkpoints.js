@@ -33,12 +33,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('new-checkpoint [filePath]')
     .description('List Apex checkpoints for filepath')
     .action(function(filePath){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name,
         body: {
           path: filePath

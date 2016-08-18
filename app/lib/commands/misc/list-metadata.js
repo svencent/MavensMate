@@ -45,13 +45,13 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('list-metadata [typeXmlName')
     .description('Lists metadata for given type')
     .action(function(typeXmlName) {
       if (typeXmlName) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: {
            metadataTypes: [typeXmlName]
@@ -61,7 +61,7 @@ exports.addSubCommand = function(client) {
         var self = this;
         util.getPayload()
           .then(function(payload) {
-            client.executeCommand({
+            program.commandExecutor.execute({
               name: self._name,
               body: payload,
               editor: self.parent.editor

@@ -14,7 +14,7 @@ var TemplateService = require('../lib/services/template');
 
 router.get('/:type/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project configured for this MavensMate client.');
+    res.status(500).send('Error: No project attached to this request.');
   } else {
     _getTemplates(req.params.type)
       .then(function(templates) {
@@ -49,8 +49,8 @@ router.get('/:type/templates/:fileName', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  var client = req.app.get('client');
-  var request = client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
     project: req.project,
     name: 'new-metadata',
     body: req.body,

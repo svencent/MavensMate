@@ -8,11 +8,11 @@ chai.use(require('chai-fs'));
 
 describe('mavensmate session', function() {
 
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
     done();
   });
@@ -27,7 +27,7 @@ describe('mavensmate session', function() {
       subscription: ['ApexClass']
     };
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'session',
         body: payload
       })
@@ -52,7 +52,7 @@ describe('mavensmate session', function() {
       orgType: 'sandbox'
     };
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'session',
         body: payload
       })

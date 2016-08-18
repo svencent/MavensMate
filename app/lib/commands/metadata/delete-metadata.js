@@ -50,14 +50,14 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('delete-metadata [path]')
     .alias('delete')
     .description('Deletes metadata from the salesforce.com server')
     .action(function(path){
       if (path) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: {
             paths: util.getAbsolutePaths( [ path ] )
@@ -67,7 +67,7 @@ exports.addSubCommand = function(client) {
         var self = this;
         util.getPayload()
           .then(function(payload) {
-            client.executeCommand({
+            program.commandExecutor.execute({
               name: self._name,
               body: payload,
               editor: self.parent.editor

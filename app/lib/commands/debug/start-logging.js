@@ -35,12 +35,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('start-logging')
     .description('Starts logging Apex execution for all user ids listed in your project\'s config/.debug file')
     .action(function(/* Args here */){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name
       });
     });

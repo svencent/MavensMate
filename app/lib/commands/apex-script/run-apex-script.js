@@ -33,14 +33,14 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('run-apex-script [scriptPath]')
     .alias('execute-apex-script')
     .description('Executes an apex script')
     .action(function(scriptPath){
       if (scriptPath) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: { paths: util.getAbsolutePaths( [ scriptPath ] ) }
         });

@@ -37,13 +37,13 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('flush-logs')
     .alias('delete-logs')
     .description('Deletes all log files in a project')
     .action(function(/* Args here */){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name
       });
     });

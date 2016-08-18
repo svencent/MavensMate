@@ -16,7 +16,7 @@ var inherits          = require('inherits');
 var events            = require('events');
 var SalesforceClient  = require('./sfdc-client');
 var MetadataHelper    = require('./metadata').MetadataHelper;
-var config            = require('./config');
+var config            = require('../config');
 var logger            = require('winston');
 var normalize         = require('./utilities/normalize-object');
 var IndexService      = require('./services/index');
@@ -50,9 +50,9 @@ var Project = function(opts) {
   this.instanceUrl = opts.instanceUrl;
   this.package = opts.package;
   this.orgType = opts.orgType;
+  this.sfdcClient = opts.sfdcClient;
   this.requiresAuthentication = true;
   this.settings = {};
-  this.sfdcClient = null;
   this.packageXml = null;
   this.orgMetadata = null;
   this.lightningIndex = null;
@@ -280,7 +280,8 @@ Project.prototype._initExisting = function() {
         }
         return self.sfdcClient.initialize();
       })
-      .then(function() {
+      .then(function(res) {
+        logger.warn('INITIALIZED SFDC CLIENT', res);
         self.metadataHelper = new MetadataHelper({ sfdcClient: self.sfdcClient });
         self.getLocalStore();
         return self.getOrgMetadataIndexWithSelections();

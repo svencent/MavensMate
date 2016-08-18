@@ -10,14 +10,14 @@ var logger      = require('winston');
 describe('mavensmate run-tests', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
     helper.unlinkEditor();
-    testClient = helper.createClient('unittest');
-    helper.putTestProjectInTestWorkspace(testClient, 'run-tests');
-    helper.addProject(testClient, 'run-tests')
+    commandExecutor = helper.getCommandExecutor();
+    helper.putTestProjectInTestWorkspace('run-tests');
+    helper.addProject('run-tests')
       .then(function(res) {
         project = res;
         var loggingConfig = {
@@ -42,8 +42,9 @@ describe('mavensmate run-tests', function(){
           'expiration': 480
         };
         fs.writeJsonSync(path.join(helper.baseTestDirectory(), 'workspace', 'run-tests', 'config', '.debug'), loggingConfig);
-        return testClient.executeCommand({
-          name: 'start-logging'
+        return commandExecutor.execute({
+          name: 'start-logging',
+          project: project
         });
       })
       .then(function() {
@@ -62,10 +63,11 @@ describe('mavensmate run-tests', function(){
       path.join(helper.baseTestDirectory(),'workspace', 'run-tests', 'src', 'classes', 'RunTestsApexClass.cls'),
       path.join(helper.baseTestDirectory(),'workspace', 'run-tests', 'src', 'classes', 'CoverMe.cls')
     ];
-    helper.cleanUpTestData(testClient, filesToDelete)
+    helper.cleanUpTestData(project, filesToDelete)
       .then(function() {
-        return testClient.executeCommand({
-          name: 'stop-logging'
+        return commandExecutor.execute({
+          name: 'stop-logging',
+          project: project
         });
       })
       .then(function() {
@@ -75,7 +77,7 @@ describe('mavensmate run-tests', function(){
         done(err);
       })
       .finally(function() {
-        helper.cleanUpTestProject('run-tests');
+        helper.cleanUpProject('run-tests');
       });
   });
 
@@ -90,18 +92,20 @@ describe('mavensmate run-tests', function(){
 
     helper.getNewMetadataPayload('ApexClass', 'RunTestsApexClass', 'UnitTestApexClass.cls')
       .then(function(payload) {
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'new-metadata',
-          body: payload
+          body: payload,
+          project: project
         })
       })
       .then(function() {
         return helper.getNewMetadataPayload('ApexClass', 'CoverMe', 'ApexClass.cls');
       })
       .then(function(payload) {
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'new-metadata',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function() {
@@ -115,18 +119,20 @@ describe('mavensmate run-tests', function(){
           paths: [ coverMePath, testClassPath ]
         };
 
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'compile-metadata',
-          body: compilePayload
+          body: compilePayload,
+          project: project
         });
       })
       .then(function() {
         var testPayload = {
           classes: [ 'RunTestsApexClass.cls' ]
         };
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'run-tests',
-          body: testPayload
+          body: testPayload,
+          project: project
         });
       })
       .then(function(response) {
@@ -153,9 +159,10 @@ describe('mavensmate run-tests', function(){
     it('should get coverage for a specific class', function(done) {
       this.timeout(120000);
       var coverageClasses = [path.join(helper.baseTestDirectory(),'workspace', 'run-tests', 'src', 'classes', 'CoverMe.cls')];
-      testClient.executeCommand({
+      commandExecutor.execute({
           name: 'get-coverage',
-          body: { paths: coverageClasses  }
+          body: { paths: coverageClasses  },
+          project: project
         })
         .then(function(response) {
           response.should.have.property('CoverMe.cls');
@@ -172,9 +179,10 @@ describe('mavensmate run-tests', function(){
 
     it('should get org-wide test coverage', function(done) {
       this.timeout(120000);
-      testClient.executeCommand({
+      commandExecutor.execute({
           name: 'get-coverage',
-          body: { global: true  }
+          body: { global: true  },
+          project: project
         })
         .then(function(response) {
           response.should.be.a('number');

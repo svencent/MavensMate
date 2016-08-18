@@ -38,9 +38,8 @@ Command.prototype.execute = function() {
       .then(function(result) {
         logger.debug('refresh command result: ');
         logger.debug(result);
-        if (self.editor === 'sublime') {
-          var editorService = new EditorService(self.client, self.editor);
-          editorService.runCommand('refresh_folder_list')
+        if (self.editorService && self.editorService.editor === 'sublime') {
+          self.editorService.runCommand('refresh_folder_list')
             .then(function() {
               resolve();
             })
@@ -63,14 +62,14 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('refresh-metadata [path]')
     .alias('refresh')
     .description('Refreshes metadata from the salesforce.com server')
     .action(function(path){
       if (path) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: {
             paths : util.getAbsolutePaths( [ path ] )
@@ -80,7 +79,7 @@ exports.addSubCommand = function(client) {
         var self = this;
         util.getPayload()
           .then(function(payload) {
-            client.executeCommand({
+            program.commandExecutor.execute({
               name: self._name,
               body: payload,
               editor: self.parent.editor

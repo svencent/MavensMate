@@ -82,10 +82,11 @@
     "chai": "1.10.0",
     "chai-fs": "0.1.0",
     "coveralls": "^2.11.2",
-    "mocha": "^2.1.0",
+    "grunt-nodemon": "latest",
+    "mocha": "2.5.3",
     "mocha-lcov-reporter": "0.0.1",
+    "sinon": "1.17.2",
     "sinon-as-promised": "latest",
-    "sinon": "1.12.2",
-    "grunt-nodemon": "latest"
+    "supertest": "^2.0.0"
   }
 }

@@ -34,12 +34,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('update-connection [connectiondId] [username] [password] [orgType]')
     .description('Updates a new deployment connection')
     .action(function(connectiondId, username, password, orgType){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name,
         body: {
           id: connectiondId,

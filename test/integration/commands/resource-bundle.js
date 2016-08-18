@@ -12,14 +12,14 @@ chai.use(require('chai-fs'));
 describe('mavensmate resource-bundle', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'resource-bundle');
-    helper.addProject(testClient, 'resource-bundle')
+    helper.putTestProjectInTestWorkspace('resource-bundle');
+    helper.addProject('resource-bundle')
       .then(function(proj) {
         project = proj;
         done();
@@ -34,7 +34,7 @@ describe('mavensmate resource-bundle', function(){
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource')
     ];
-    helper.cleanUpTestData(testClient, filesToDelete)
+    helper.cleanUpTestData(project, filesToDelete)
       .then(function() {
         done();
       })
@@ -42,7 +42,7 @@ describe('mavensmate resource-bundle', function(){
         done(err);
       })
       .finally(function() {
-        return helper.cleanUpTestProject('resource-bundle');
+        return helper.cleanUpProject('resource-bundle');
       });
   });
 
@@ -63,9 +63,10 @@ describe('mavensmate resource-bundle', function(){
       paths : [path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource')]
     };
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'new-resource-bundle',
-        body: payload
+        body: payload,
+        project: project
       })
       .then(function(response) {
         response.message.should.equal('Resource bundle(s) successfully created');
@@ -88,9 +89,10 @@ describe('mavensmate resource-bundle', function(){
       paths : [path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'src', 'staticresources', 'test_resource_bundle.resource')]
     };
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'new-resource-bundle',
-        body: payload
+        body: payload,
+        project: project
       })
       .catch(function(err) {
         err.message.should.equal('Resource bundle path already exists.');
@@ -105,9 +107,10 @@ describe('mavensmate resource-bundle', function(){
       paths :[ path.join(helper.baseTestDirectory(), 'workspace', 'resource-bundle', 'resource-bundles', 'test_resource_bundle.resource') ]
     };
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'deploy-resource-bundle',
-        body: payload
+        body: payload,
+        project: project
       })
       .then(function(response) {
         response.message.should.equal('Resource bundle successfully deployed');

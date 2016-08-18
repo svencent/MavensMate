@@ -4,67 +4,49 @@ var os              = require('os');
 var assert          = require('assert');
 var sinon           = require('sinon');
 var sinonAsPromised = require('sinon-as-promised');
-var util            = require('../../../../lib/mavensmate/util').instance;
-var mavensmate      = require('../../../../lib/mavensmate');
+var util            = require('../../../../app/lib/util').instance;
 var _               = require('lodash');
+var helper          = require('../../../test-helper');
+var commandExecutor = require('../../../../app/lib/commands')();
 
 sinonAsPromised(require('bluebird'));
 
 describe('mavensmate open-metadata-cli', function(){
 
   var program;
-  var cliClient;
-  var executeCommandStub;
+  var commandExecutorStub;
   var getPayloadStub;
 
-  before(function(done) {
-    delete require.cache[require.resolve('commander')];
-    program = require('commander');
-
-    program
-      .option('-v --verbose', 'Output logging statements')
-      .option('-h --headless', 'Runs in headless (non-interactive terminal) mode. You may wish to use this flag when calling this executable from a text editor or IDE client.')
-      .option('-e --editor [name]', 'Specifies the plugin client (sublime, atom)') // no default set
-      .option('-p --port [number]', 'UI server port number') // (for sublime text)
-      .parse(process.argv, true); // parse top-level args, defer subcommand
-
-    cliClient = mavensmate.createClient({
-      editor: program.editor || 'atom',
-      headless: true,
-      verbose: false,
-      program: program
-    });
-
-    require('../../../../lib/mavensmate/loader')(cliClient);
-    done();
+  before(function() {
+    program = helper.initCli();
   });
 
   beforeEach(function() {
-    executeCommandStub = sinon.stub(cliClient, 'executeCommand');
+    commandExecutorStub = sinon.stub(program.commandExecutor, 'execute');
     getPayloadStub = sinon.stub(util, 'getPayload').resolves({ foo : 'bar' });
   });
 
   afterEach(function() {
-    executeCommandStub.restore();
+    commandExecutorStub.restore();
     getPayloadStub.restore();
   });
 
   it('should accept a metadata path', function(done) {
     if (os.platform() === 'win32') {
-      cliClient.program._events['open-metadata'](['C:\\path\\to\\something']);
+      program._events['open-metadata'](['C:\\path\\to\\something']);
 
-      executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWithMatch({
+      commandExecutorStub.calledOnce.should.equal(true);
+      assert(commandExecutorStub.calledWithMatch({
         name: 'open-metadata',
         body: { paths : [ 'C:\\path\\to\\something' ] }
       }));
 
       done();
     } else {
-      cliClient.program._events['open-metadata'](['/path/to/something']);
+      program._events['open-metadata'](['/path/to/something']);
 
-      executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWithMatch({
+      commandExecutorStub.calledOnce.should.equal(true);
+      assert(commandExecutorStub.calledWithMatch({
         name: 'open-metadata',
         body: { paths : [ '/path/to/something' ] }
       }));
@@ -74,11 +56,11 @@ describe('mavensmate open-metadata-cli', function(){
   });
 
   it('should accept stdin', function(done) {
-    cliClient.program._events['open-metadata']();
+    program._events['open-metadata']();
 
     getPayloadStub().then(function() {
-      executeCommandStub.calledOnce.should.equal(true);
-      assert(executeCommandStub.calledWithMatch({
+      commandExecutorStub.calledOnce.should.equal(true);
+      assert(commandExecutorStub.calledWithMatch({
         name: 'open-metadata'
       }));
       done();

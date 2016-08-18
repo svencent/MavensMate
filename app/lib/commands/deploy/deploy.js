@@ -23,8 +23,8 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      var editorService = new EditorService(self.client, self.editor);
-      editorService.launchUI('deploy', { pid: self.getProject().settings.id })
+
+      self.editorService.launchUI('deploy', { pid: self.getProject().settings.id })
         .then(function() {
           resolve('Success');
         })
@@ -61,14 +61,14 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('deploy')
     .option('--ui', 'Launches the default UI for the selected command.')
     .description('Deploys metadata to one or more remote Salesforce.com orgs')
     .action(function(/* Args here */){
       if (this.ui) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: { args: { ui: true } },
           editor: this.parent.editor
@@ -77,7 +77,7 @@ exports.addSubCommand = function(client) {
         var self = this;
         util.getPayload()
           .then(function(payload) {
-            client.executeCommand({
+            program.commandExecutor.execute({
               name: self._name,
               body: payload,
               editor: self.parent.editor

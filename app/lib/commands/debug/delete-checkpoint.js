@@ -33,12 +33,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('delete-checkpoint [filePath] [lineNumber]')
     .description('Creates Apex checkpoint')
     .action(function(filePath, lineNumber){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name,
         body: {
           path: filePath,

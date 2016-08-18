@@ -26,7 +26,7 @@ Command.prototype.execute = function() {
   return new Promise(function(resolve, reject) {
     var paths = self.payload.paths;
     var project = self.getProject();
-    var editorService = new EditorService(self.client, self.editor);
+
     var frontdoorUrl = project.sfdcClient.getInstanceUrl() + '/secur/frontdoor.jsp?sid=' + project.sfdcClient.getAccessToken() + '&retURL=';
     var openUrlPromises = [];
     var urls = {};
@@ -74,13 +74,13 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('open-metadata [path]')
     .description('Opens metadata in the browser')
     .action(function(path){
       if (path) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: {
             paths : util.getAbsolutePaths( [ path ] )
@@ -90,7 +90,7 @@ exports.addSubCommand = function(client) {
         var self = this;
         util.getPayload()
           .then(function(payload) {
-            client.executeCommand({
+            program.commandExecutor.execute({
               name: self._name,
               body: payload,
               editor: self.parent.editor

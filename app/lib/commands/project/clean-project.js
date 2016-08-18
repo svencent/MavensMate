@@ -22,9 +22,8 @@ Command.prototype.execute = function() {
   return new Promise(function(resolve, reject) {
     self.getProject().clean()
       .then(function() {
-        if (self.editor === 'sublime') {
-          var editorService = new EditorService(self.client, self.editor);
-          editorService.runCommand('refresh_folder_list')
+        if (self.editorService && self.editorService.editor === 'sublime') {
+          self.editorService.runCommand('refresh_folder_list')
             .then(function() {
               resolve();
             })
@@ -47,13 +46,13 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('clean-project')
     .alias('clean')
     .description('Retrieves metadata from server based on project package.xml file, resets session')
     .action(function(/* Args here */){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name
       });
     });

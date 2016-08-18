@@ -24,23 +24,17 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     var editor;
-    if (self.editor) {
-      editor = self.editor;
-    } else if (self.payload && self.payload.editor) {
-      editor = self.payload.editor;
-    }
-    if (!editor) {
+    if (!self.editorService || !self.editorService.editor) {
       return reject(new Error('Please specify an editor either via "MavensMate-Editor-Agent" HTTP header, editor POST body, or -e/--editor command line flag'));
     }
-    var editorService = new EditorService(self.client, editor);
     var projectPath = self.getProject().path;
-    if (editor === 'sublime') {
+    if (self.editorService.editor === 'sublime') {
       var sublimeProjectPath = path.join(projectPath, self.getProject().name+'.sublime-project');
       if (fs.existsSync(sublimeProjectPath)) {
         projectPath = sublimeProjectPath;
       }
     }
-    editorService.open(projectPath)
+    self.editorService.open(projectPath)
       .then(function() {
         resolve('Success');
       })
@@ -51,13 +45,13 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('open-project')
     .alias('open')
     .description('Open a project in the editor')
     .action(function() {
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name
       });
     });

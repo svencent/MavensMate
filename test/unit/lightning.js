@@ -4,8 +4,8 @@ var helper            = require('../test-helper');
 var chai              = require('chai');
 var fs                = require('fs-extra');
 var path              = require('path');
-var LightningService  = require('../../lib/mavensmate/lightning');
-var mavensMateFile    = require('../../lib/mavensmate/file');
+var LightningService  = require('../../app/lib/services/lightning');
+var mavensMateFile    = require('../../app/lib/file');
 var assert            = chai.assert;
 
 chai.use(require('chai-fs'));
@@ -13,14 +13,12 @@ chai.use(require('chai-fs'));
 describe('mavensmate lightning-unit', function(){
 
   var project;
-  var testClient;
 
   before(function(done) {
     this.timeout(120000);
     helper.unlinkEditor();
-    testClient = helper.createClient('unittest');
-    helper.putTestProjectInTestWorkspace(testClient, 'lightning-unit');
-    helper.addProject(testClient, 'lightning-unit')
+    helper.putTestProjectInTestWorkspace('lightning-unit');
+    helper.addProject('lightning-unit')
       .then(function(proj) {
         project = proj;
         done();
@@ -32,7 +30,7 @@ describe('mavensmate lightning-unit', function(){
 
   after(function(done) {
     this.timeout(120000);
-    helper.cleanUpTestProject('lightning-unit');
+    helper.cleanUpProject('lightning-unit');
     done();
   });
 

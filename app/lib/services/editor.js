@@ -1,5 +1,5 @@
 /**
- * @file Responsible for launching MavensMate UIs and opening files in the client editor
+ * @file Responsible for launching MavensMate UIs and opening files in the client self.editor
  * @author Joseph Ferraro <@joeferraro>
  */
 
@@ -11,7 +11,7 @@ var which       = require('which');
 var spawn       = require('child_process').spawn;
 var logger      = require('winston');
 var util        = require('../util').instance;
-var config      = require('../config');
+var config      = require('../../config');
 var path        = require('path');
 var os          = require('os');
 var fs          = require('fs-extra');
@@ -19,15 +19,42 @@ var open        = require('open');
 var querystring = require('querystring');
 
 /**
- * Service to handle interaction with the client's editor (sublime, atom, etc.)
- * @param {Client} client
+ * Service to handle interaction with the self.editor (sublime, atom, etc.)
+ * @param {String} self.editor - name of the self.editor
  */
-var EditorService = function(client, editor) {
-  if (!_.isObject(client)) {
-    throw new Error('Could not initiate editor service. Editor service must include valid client.');
-  }
-  this.client = client;
+var EditorService = function(editor, openWindowFn) {
   this.editor = editor;
+  this.openWindowFn = openWindowFn;
+  this.supportedEditors = this._getSupportedEditors();
+  if (this.editor && !this._isSupportedEditor(this.editor)) {
+    throw new Error(this.editor+' was not found in list of supported editors. Please check your global settings to ensure the self.editor path for '+this.editor+' is configured correctly.');
+  }
+};
+
+EditorService.prototype._isSupportedEditor = function(editor) {
+  if (!this.supportedEditors[this.editor]) {
+    logger.error('Unsupported editor. Supported editors: ', this.supportedEditors);
+    return false;
+  }
+  return true;
+};
+
+EditorService.prototype._getSupportedEditors = function() {
+  var editors = {};
+  var atomLocationConfig = config.get('mm_atom_exec_path')[util.platformConfigKey] || config.get('mm_atom_exec_path');
+  var pathAtomLocation, pathSublLocation;
+  try { pathAtomLocation = which.sync('atom'); } catch(e){}
+  var sublLocationConfig = config.get('mm_subl_location')[util.platformConfigKey] || config.get('mm_subl_location');
+  try { pathSublLocation = which.sync('subl'); } catch(e){}
+  var atomPath = fs.existsSync(atomLocationConfig) ? atomLocationConfig : pathAtomLocation;
+  var sublPath = fs.existsSync(sublLocationConfig) ? sublLocationConfig : pathSublLocation;
+  if (atomPath) {
+    editors.atom = atomPath;
+  }
+  if (sublPath) {
+    editors.sublime = sublPath;
+  }
+  return editors;
 };
 
 /**
@@ -60,10 +87,10 @@ EditorService.prototype._uriMap = {
 EditorService.prototype.launchUI = function(commandName, urlParams) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var portNumber = process.env.MAVENSMATE_SERVER_PORT || self.client.serverPort;
+    var portNumber = process.env.MAVENSMATE_SERVER_PORT;
 
     if (!portNumber) {
-      return reject(new Error('Could not detect local MavensMate server port. Set MAVENSMATE_SERVER_PORT environment variable or client.serverPort.'));
+      return reject(new Error('Could not detect local MavensMate server port. Set MAVENSMATE_SERVER_PORT environment variable.'));
     }
 
     var url = 'http://localhost:'+portNumber+'/app/'+self._uriMap[commandName];
@@ -82,8 +109,9 @@ EditorService.prototype.launchUI = function(commandName, urlParams) {
 
     var useBrowerAsUi = config.get('mm_use_browser_as_ui', false);
 
-    if (self.client.windowOpener) {
-      self.client.windowOpener(url);
+    // todo: refactor windowopener (this is used by mavensmate-app)
+    if (self.openWindowFn) {
+      self.openWindowFn(url);
       resolve();
     } else if (os.platform() === 'darwin' && !useBrowerAsUi) {
       var windowServerPath = path.join(util.getAppRoot(), 'bin', 'MavensMateWindowServer.app');
@@ -91,7 +119,7 @@ EditorService.prototype.launchUI = function(commandName, urlParams) {
         detached: true
       });
       windowServerChildProcess.on('close', function (code) {
-        if (code === 0 && self.client.isCommandLine()) {
+        if (code === 0 && process.env.MAVENSMATE_CONTEXT === 'cli') {
           resolve();
           process.exit(0);
         } else {
@@ -101,7 +129,7 @@ EditorService.prototype.launchUI = function(commandName, urlParams) {
     } else {
       // open web browser
       open(url, function() {
-        if (self.client.isCommandLine()) {
+        if (process.env.MAVENSMATE_CONTEXT === 'cli') {
           resolve();
           process.exit(0);
         } else {
@@ -121,8 +149,8 @@ EditorService.prototype.openUrl = function(url) {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
-      if (self.client.windowOpener) {
-        self.client.windowOpener(url);
+      if (self.openWindowFn) {
+        self.openWindowFn(url);
         resolve();
       } else if (os.platform() === 'darwin') {
         var browserChildProcess = spawn('open', [url], {
@@ -149,11 +177,8 @@ EditorService.prototype.openUrl = function(url) {
 EditorService.prototype.runCommand = function(commandName) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    if (!self.client.supportedEditors[self.editor]) {
-      return reject(new Error(self.editor+' was not found in list of supported editors. Please check your global settings to ensure the editor path for '+self.editor+' is configured correctly.'));
-    }
     if (self.editor === 'sublime') {
-      var editorExe = spawn(self.client.supportedEditors[self.editor], ['--command', commandName]);
+      var editorExe = spawn(self.supportedEditors[self.editor], ['--command', commandName]);
       editorExe.stdout.on('data', function (data) {
         logger.debug('editor command STDOUT:');
         logger.debug(data);
@@ -194,17 +219,14 @@ EditorService.prototype.runCommand = function(commandName) {
 EditorService.prototype.open = function(path) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    if (!self.client.supportedEditors[self.editor]) {
-      return reject(new Error(self.editor+' was not found in list of supported editors. Please check your global settings to ensure the editor path for '+self.editor+' is configured correctly.'));
-    }
-    var editorExe = spawn(self.client.supportedEditors[self.editor], [ path ]);
+    var editorExe = spawn(self.supportedEditors[self.editor], [ path ]);
     editorExe.stdout.on('data', function (data) {
       logger.debug('editorExe STDOUT:');
       logger.debug(data);
     });
 
     editorExe.stderr.on('data', function (data) {
-      logger.error('Result of path open in editor: ');
+      logger.error('Result of path open in self.editor: ');
       logger.error(data);
       return reject(new Error('Could not open in editor'));
     });
@@ -213,7 +235,7 @@ EditorService.prototype.open = function(path) {
       logger.debug('editorExe close: ');
       logger.debug(code);
       if (code !== 0) {
-        reject(new Error('Could not open path in '+self.editor+'. Check your MavensMate global settings to ensure editor paths are configured properly for '+self.editor));
+        reject(new Error('Could not open path in '+self.editor+'. Check your MavensMate global settings to ensure self.editor paths are configured properly for '+self.editor));
       } else {
         resolve();
       }

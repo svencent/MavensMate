@@ -9,13 +9,13 @@ var Promise           = require('bluebird');
 var _                 = require('lodash');
 var logger            = require('winston');
 var temp              = require('temp');
-var config            = require('../config');
+var config            = require('../../config');
 var LightningService  = require('./lightning');
 var MetadataHelper    = require('../metadata').MetadataHelper;
 var Deploy            = require('./deploy');
 var fs                = require('fs-extra');
 var mavensMateFile    = require('../file');
-var config            = require('../config');
+var config            = require('../../config');
 var moment            = require('moment');
 var Package           = require('../package').Package;
 
@@ -24,14 +24,13 @@ var Package           = require('../package').Package;
  * @param {Project} project - project instance (required)
  * @param {Array} paths - array of path strings [ 'foo/bar/src/classes', 'foo/bar/src/pages/foo.page' ]
  */
-var CompileDelegate = function(project, paths, force, editor) {
+var CompileDelegate = function(project, paths, force) {
   if (!project || !paths) {
     throw new Error('CompileDelegate requires a valid project instance and an array of paths to compile.');
   }
   this.project = project;
   this.paths = paths;
   this.force = force;
-  this.editor = editor;
   this.metadataHelper = new MetadataHelper({ sfdcClient : this.project.sfdcClient });
 };
 

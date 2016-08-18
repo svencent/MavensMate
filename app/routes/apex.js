@@ -8,32 +8,33 @@
 var express         = require('express');
 var router          = express.Router();
 var requestStore    = require('../lib/request-store');
+var logger          = require('winston');
 
 // todo: refactor errors
 router.get('/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project configured for this MavensMate client.');
+    res.status(500).send('Error: No project attached to this request.');
   } else {
-    var client = req.app.get('client');
-    client.executeCommand({
-        name: 'start-logging',
-        project: req.project,
-        editor: req.editor
-      })
-      .then(function() {
-        res.render('execute_apex/index.html', {
-          title: 'Execute Apex'
-        });
-      })
-      .catch(function(err) {
-        res.status(500).send('Error: '+err.message);
+    var commandExecutor = req.app.get('commandExecutor');
+    commandExecutor.execute({
+      name: 'start-logging',
+      project: req.project,
+      editor: req.editor
+    })
+    .then(function() {
+      res.render('execute_apex/index.html', {
+        title: 'Execute Apex'
       });
+    })
+    .catch(function(err) {
+      res.status(500).send('Error: '+err.message);
+    });
   }
 });
 
 router.post('/', function(req, res) {
-  var client = req.app.get('client');
-  var request = client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
     project: req.project,
     name: 'execute-apex',
     body: req.body,

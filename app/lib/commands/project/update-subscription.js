@@ -30,15 +30,15 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('update-subscription')
     .description('Updates project metadata subscription')
     .action(function(/* Args here */){
       var self = this;
       util.getPayload()
         .then(function(payload) {
-          client.executeCommand({
+          program.commandExecutor.execute({
             name: self._name,
             body: payload,
             editor: self.parent.editor

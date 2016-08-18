@@ -6,21 +6,21 @@ var should          = chai.should();
 var path            = require('path');
 var fs              = require('fs-extra');
 var assert          = chai.assert;
-var mavensMateFile  = require('../../../lib/mavensmate/file');
+var mavensMateFile  = require('../../../app/lib/file');
 
 chai.use(require('chai-fs'));
 
 describe('mavensmate refresh-metadata', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'refresh-metadata');
-    helper.addProject(testClient, 'refresh-metadata')
+    helper.putTestProjectInTestWorkspace('refresh-metadata');
+    helper.addProject('refresh-metadata')
       .then(function(proj) {
         project = proj;
         done();
@@ -32,31 +32,32 @@ describe('mavensmate refresh-metadata', function(){
 
   after(function(done) {
     this.timeout(120000);
-    helper.cleanUpTestProject('refresh-metadata');
+    helper.cleanUpProject('refresh-metadata');
     done();
   });
 
   it('should refresh class directory from the server', function(done) {
     this.timeout(120000);
 
-    helper.createNewMetadata(testClient, 'ApexClass', 'RefreshMetadataClass')
+    helper.createNewMetadata(project, 'ApexClass', 'RefreshMetadataClass')
       .then(function() {
-        assert.isFile(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass.cls'));
-        fs.removeSync(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass.cls'));
+        assert.isFile(path.join(project.path, 'src', 'classes', 'RefreshMetadataClass.cls'));
+        fs.removeSync(path.join(project.path, 'src', 'classes', 'RefreshMetadataClass.cls'));
 
         var payload = {
-          paths: [ path.join(testClient.getProject().path, 'src', 'classes') ]
+          paths: [ path.join(project.path, 'src', 'classes') ]
         };
 
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'refresh-metadata',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function(response) {
 
         response.message.should.equal('Metadata successfully refreshed');
-        fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass.cls')).should.equal(true);
+        fs.existsSync(path.join(project.path, 'src', 'classes', 'RefreshMetadataClass.cls')).should.equal(true);
         done();
       })
       .catch(function(err) {
@@ -67,22 +68,23 @@ describe('mavensmate refresh-metadata', function(){
   it('should refresh class file from the server', function(done) {
     this.timeout(120000);
 
-    helper.createNewMetadata(testClient, 'ApexClass', 'RefreshMetadataClass2')
+    helper.createNewMetadata(project, 'ApexClass', 'RefreshMetadataClass2')
       .then(function() {
-        assert.isFile(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass2.cls'));
-        fs.removeSync(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass2.cls'));
+        assert.isFile(path.join(project.path, 'src', 'classes', 'RefreshMetadataClass2.cls'));
+        fs.removeSync(path.join(project.path, 'src', 'classes', 'RefreshMetadataClass2.cls'));
         var payload = {
-          paths: [ path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass2.cls') ]
+          paths: [ path.join(project.path, 'src', 'classes', 'RefreshMetadataClass2.cls') ]
         };
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'refresh-metadata',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function(response) {
 
         response.message.should.equal('Metadata successfully refreshed');
-        path.join(testClient.getProject().path, 'src', 'classes', 'RefreshMetadataClass2.cls').should.be.a.file('RefreshMetadataClass2 is missing');
+        path.join(project.path, 'src', 'classes', 'RefreshMetadataClass2.cls').should.be.a.file('RefreshMetadataClass2 is missing');
         done();
       })
       .catch(function(err) {
@@ -93,24 +95,25 @@ describe('mavensmate refresh-metadata', function(){
   it('should refresh a CustomObject from the server ', function(done) {
     this.timeout(120000);
 
-    var accountMetadataFile = new mavensMateFile.MavensMateFile({ project: testClient.getProject() });
+    var accountMetadataFile = new mavensMateFile.MavensMateFile({ project: project });
     accountMetadataFile.setTypeByXmlName('CustomObject');
     accountMetadataFile.setAbstractPath();
-    testClient.getProject().packageXml.subscribe(accountMetadataFile);
-    testClient.getProject().packageXml.writeFileSync();
+    project.packageXml.subscribe(accountMetadataFile);
+    project.packageXml.writeFileSync();
 
     var payload = {
-      paths: [ path.join(testClient.getProject().path, 'src', 'objects', 'Account.object') ]
+      paths: [ path.join(project.path, 'src', 'objects', 'Account.object') ]
     };
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'refresh-metadata',
-        body: payload
+        body: payload,
+        project: project
       })
       .then(function(response) {
 
         response.message.should.equal('Metadata successfully refreshed');
-        fs.existsSync(path.join(testClient.getProject().path, 'src', 'objects', 'Account.object')).should.equal(true);
+        fs.existsSync(path.join(project.path, 'src', 'objects', 'Account.object')).should.equal(true);
         done();
       })
       .catch(function(err) {
@@ -121,39 +124,41 @@ describe('mavensmate refresh-metadata', function(){
   it('should refresh project ', function(done) {
     this.timeout(120000);
 
-    testClient.getProject().packageXml.subscription = {
+    project.packageXml.subscription = {
       ApexClass: '*',
       CustomObject: '*'
     };
-    helper.createNewMetadata(testClient, 'ApexClass', 'RefreshProject')
+    helper.createNewMetadata(project, 'ApexClass', 'RefreshProject')
       .then(function() {
-        assert.isFile(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshProject.cls'));
-        fs.removeSync(path.join(testClient.getProject().path, 'src', 'classes', 'RefreshProject.cls'));
+        assert.isFile(path.join(project.path, 'src', 'classes', 'RefreshProject.cls'));
+        fs.removeSync(path.join(project.path, 'src', 'classes', 'RefreshProject.cls'));
         return;
       })
       .then(function() {
-        return testClient.getProject().packageXml.init();
+        return project.packageXml.init();
       })
       .then(function() {
-        testClient.getProject().packageXml.writeFileSync();
-        return testClient.executeCommand({
-          name: 'index-metadata'
+        project.packageXml.writeFileSync();
+        return commandExecutor.execute({
+          name: 'index-metadata',
+          project: project
         });
       })
       .then(function(response) {
         var payload = {
-          paths: [ path.join(testClient.getProject().path, 'src') ]
+          paths: [ path.join(project.path, 'src') ]
         };
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'refresh-metadata',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function(response) {
         response.message.should.equal('Metadata successfully refreshed');
-        fs.existsSync(path.join(testClient.getProject().path, 'src', 'objects', 'Account.object')).should.equal(true);
-        fs.existsSync(path.join(testClient.getProject().path, 'src', 'classes')).should.equal(true);
-        path.join(testClient.getProject().path, 'src', 'classes', 'RefreshProject.cls').should.be.a.file('RefreshProject is missing');
+        fs.existsSync(path.join(project.path, 'src', 'objects', 'Account.object')).should.equal(true);
+        fs.existsSync(path.join(project.path, 'src', 'classes')).should.equal(true);
+        path.join(project.path, 'src', 'classes', 'RefreshProject.cls').should.be.a.file('RefreshProject is missing');
         done();
       })
       .catch(function(err) {

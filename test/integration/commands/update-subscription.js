@@ -7,14 +7,14 @@ var should      = chai.should();
 describe('mavensmate update-subscription', function() {
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
     helper.unlinkEditor();
-    testClient = helper.createClient('unittest');
-    helper.putTestProjectInTestWorkspace(testClient, 'update-subscription');
-    helper.addProject(testClient, 'update-subscription')
+    commandExecutor = helper.getCommandExecutor();
+    helper.putTestProjectInTestWorkspace('update-subscription');
+    helper.addProject('update-subscription')
       .then(function(proj) {
         project = proj;
         done();
@@ -25,16 +25,17 @@ describe('mavensmate update-subscription', function() {
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('update-subscription')
+    helper.cleanUpProject('update-subscription')
     done();
   });
 
   it('should update the project subscription', function(done) {
     this.timeout(120000);
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'update-subscription',
-        body: { subscription: ['ApexClass'] }
+        body: { subscription: ['ApexClass'] },
+        project: project
       })
       .then(function(response) {
 

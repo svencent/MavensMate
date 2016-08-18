@@ -21,8 +21,8 @@ inherits(Command, BaseCommand);
 Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var editorService = new EditorService(self.client, self.editor);
-    editorService.launchUI('oauth-project', { pid: self.getProject().settings.id })
+
+    self.editorService.launchUI('oauth-project', { pid: self.getProject().settings.id })
       .then(function() {
         resolve('Please authenticate with Salesforce');
       })
@@ -33,12 +33,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('oauth-project')
     .description('Displays oauth UI for project')
     .action(function(){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name,
         body: { args: { ui: true } },
         editor: this.parent.editor

@@ -21,8 +21,8 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      var editorService = new EditorService(self.client, self.editor);
-      editorService.launchUI('execute-apex', { pid: self.getProject().settings.id });
+
+      self.editorService.launchUI('execute-apex', { pid: self.getProject().settings.id });
       resolve('Success');
     } else {
       self.getProject().sfdcClient.executeApex(self.payload)
@@ -38,14 +38,14 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('execute-apex')
     .option('--ui', 'Launches the Apex execute anonymous UI.')
     .description('Execute Apex code anonymously')
     .action(function(/* Args here */){
       if (this.ui) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: { args: { ui: true } },
           editor: this.parent.editor
@@ -54,7 +54,7 @@ exports.addSubCommand = function(client) {
         var self = this;
         util.getPayload()
           .then(function(payload) {
-            client.executeCommand({
+            program.commandExecutor.execute({
               name: self._name,
               body: payload,
               editor: self.parent.editor

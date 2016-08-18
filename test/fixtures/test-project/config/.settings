@@ -2,7 +2,7 @@
     "projectName": "",
     "id": "",
     "namespace": "",
-    "environment": "production",
+    "orgType": "production",
     "workspace": "",
     "subscription": [
         "ApexClass",

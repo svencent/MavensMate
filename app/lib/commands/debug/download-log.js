@@ -33,12 +33,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('download-log [logId]')
     .description('Downloads a log to your project\'s debug/logs directory')
     .action(function(logId){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name,
         body: { logId: logId }
       });

@@ -10,6 +10,7 @@ var router          = express.Router();
 var logger          = require('winston');
 var querystring     = require('querystring');
 var requestStore    = require('../lib/request-store');
+var util            = require('../lib/util').instance;
 
 // create a new project
 router.get('/new', function(req, res) {
@@ -21,14 +22,14 @@ router.get('/new', function(req, res) {
 });
 
 router.get('/auth/finish', function(req, res) {
-  var client = req.app.get('client');
+  var commandExecutor = req.app.get('commandExecutor');
   logger.debug('finishing auth in project: ', req.query);
   var state = JSON.parse(req.query.state);
   logger.debug('state!', state);
   var pid = state.pid;
   if (pid) {
     // updating an existing project
-    var project = client.getProjectById(pid);
+    var project = util.getProjectById(req.app, pid);
     project.updateCredentials({
       accessToken: req.query.access_token,
       instanceUrl: req.query.instance_url,
@@ -39,10 +40,11 @@ router.get('/auth/finish', function(req, res) {
     })
     .catch(function(err) {
       logger.error(err);
+      res.send(500);
     });
   } else {
     // new project
-    client.executeCommand({
+    commandExecutor.execute({
       name: 'session',
       body: {
         accessToken: req.query.access_token,
@@ -71,8 +73,8 @@ router.get('/auth/finish', function(req, res) {
 router.post('/', function(req, res) {
   logger.debug('received request to create new project: ');
   logger.debug(req.body);
-  var client = req.app.get('client');
-  var request = client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
     name: 'new-project',
     body: req.body,
     editor: req.editor
@@ -104,7 +106,7 @@ router.get('/:id/auth', function(req, res) {
 // edit project UI
 router.get('/:id/edit', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project configured for this MavensMate client.');
+    res.status(500).send('Error: No project attached to this request.');
   } else {
     res.render('project/edit.html', {
       title: 'Edit Project'
@@ -114,8 +116,8 @@ router.get('/:id/edit', function(req, res) {
 
 // update an existing project
 router.post('/:id', function(req, res) {
-  var client = req.app.get('client');
-  var request = client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
     project: req.project,
     name: 'edit-project',
     body: req.body,
@@ -130,8 +132,8 @@ router.post('/:id', function(req, res) {
 
 // updates the project subscription
 router.post('/:id/subscription', function(req, res) {
-  var client = req.app.get('client');
-  client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  commandExecutor.execute({
     project: req.project,
     name: 'update-subscription',
     body: req.body,
@@ -147,8 +149,8 @@ router.post('/:id/subscription', function(req, res) {
 
 // indexes metadata
 router.post('/:id/index', function(req, res) {
-  var client = req.app.get('client');
-  var request = client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
     project: req.project,
     name: 'index-metadata',
     body: req.body,
@@ -164,8 +166,8 @@ router.post('/:id/index', function(req, res) {
 // gets metadata index for a project
 router.get('/:id/index', function(req, res) {
   var commandName = req.body && req.body.packageLocation && req.body.packageLocation !== 'package.xml' ? 'get-metadata-index-for-package' : 'get-metadata-index';
-  var client = req.app.get('client');
-  client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  commandExecutor.execute({
     project: req.project,
     name: commandName,
     body: req.body,
@@ -186,7 +188,7 @@ router.get('/:id/index', function(req, res) {
 //   logger.debug('received request to create new project frome existing directory: ');
 //   logger.debug(req.body);
 
-//   client.executeCommand({
+//   commandExecutor.execute({
 //       name: 'new-project-from-existing-directory',
 //       body: req.body,
 //       editor: req.editor

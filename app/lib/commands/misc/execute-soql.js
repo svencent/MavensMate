@@ -31,12 +31,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('execute-soql [soql]')
     .description('Executes soql query')
     .action(function(soql){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name,
         body: {
           soql: soql

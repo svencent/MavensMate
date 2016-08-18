@@ -310,7 +310,7 @@
 			$('#'+domId).toggle();
 		} else {
 			$.ajax({
-			    type: 'GET',
+			    type: 'POST',
 			    dataType : 'json',
 			    contentType: 'application/json; charset=utf-8',
 			    url: "{{ mavensmate.ui.getBaseUrl() }}/app/test/coverage?pid={{project.settings.id}}",

@@ -5,23 +5,28 @@
 
 'use strict';
 
-var path            = require('path');
-var Promise         = require('bluebird');
-var ViewHelper      = require('./helper');
-var requestStore    = require('./lib/request-store');
-var inherits        = require('inherits');
-var util            = require('./lib/util').instance;
-var fs              = require('fs-extra');
-var _               = require('lodash');
-var swig            = require('swig');
-var twig            = require('twig')
-var express         = require('express');
-var logger          = require('winston');
-var bodyParser      = require('body-parser');
-
+var path              = require('path');
+var swig              = require('swig');
+var express           = require('express');
+var bodyParser        = require('body-parser');
+var config            = require('./config');
+var logger            = require('./lib/logger')();
+var EditorService     = require('./lib/services/editor');
+var ViewHelper        = require('./helper');
+var requestStore      = require('./lib/request-store');
+var util              = require('./lib/util').instance;
 var app, server;
 
-module.exports.start = function(client) {
+/**
+ * Starts the MavensMate HTTP server
+ * @param  {Object} opts - server options
+ * @param  {Integer} opts.port - server port
+ * @param  {Function} opts.openWindowFn - function used to open windows (optional)
+ * @return {Object} - express app
+ */
+module.exports.start = function(opts) {
+  opts = opts || {};
+
   app = express();
 
   app.use(bodyParser.urlencoded());
@@ -34,8 +39,8 @@ module.exports.start = function(client) {
   app.use(require('./middleware/swig'));
 
   var viewHelper = new ViewHelper({
-    client: client,
-    port: client.serverPort
+    port: opts.port,
+    supportedEditors: new EditorService().supportedEditors
   });
 
   swig.setDefaults({
@@ -54,20 +59,27 @@ module.exports.start = function(client) {
   app.set('views', path.join(__dirname, 'views'));
   app.set('view cache', false);
 
-  app.set('helper', viewHelper); // TODO: do we need this?
+  app.set('helper', viewHelper);
 
   app.use('/app/static', express.static(path.join(util.getAppRoot(), 'app', 'public')));
   app.use(require('./routes'));
 
-  app.set('requestStore', requestStore);
+  app.set('commandExecutor', require('./lib/commands')(opts.openWindowFn));
+  app.set('requestStore', requestStore); // todo: move to proper cache
+  app.set('projects', []); // managed in project middleware (todo: move to proper cache)
 
-  server = app.listen(client.serverPort);
-  process.env.MAVENSMATE_SERVER_PORT = client.serverPort;
+  server = app.listen(opts.port);
+  process.env.MAVENSMATE_SERVER_PORT = opts.port;
+  process.env.MAVENSMATE_CONTEXT = 'server';
   app.set('io', require('socket.io')(server));
-  app.set('client', client);
+  return {
+    app: app,
+    server: server
+  };
 };
 
-module.exports.stop = function(client) {
+module.exports.stop = function() {
   server.close();
   delete process.env.MAVENSMATE_SERVER_PORT;
+  delete process.env.MAVENSMATE_CONTEXT;
 };

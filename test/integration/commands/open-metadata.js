@@ -8,14 +8,14 @@ var path        = require('path');
 describe('mavensmate open-metadata', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'open-metadata');
-    helper.addProject(testClient, 'open-metadata')
+    helper.putTestProjectInTestWorkspace('open-metadata');
+    helper.addProject('open-metadata')
       .then(function(proj) {
         project = proj;
         done();
@@ -30,7 +30,7 @@ describe('mavensmate open-metadata', function(){
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'open-metadata', 'src', 'pages', 'OpenMetadataPage.page')
     ];
-    helper.cleanUpTestData(testClient, filesToDelete)
+    helper.cleanUpTestData(project, filesToDelete)
       .then(function() {
         done();
       })
@@ -38,22 +38,23 @@ describe('mavensmate open-metadata', function(){
         done(err);
       })
       .finally(function() {
-        helper.cleanUpTestProject('open-metadata');
+        helper.cleanUpProject('open-metadata');
       });
   });
 
   it('should return the Visualforce page preview url', function(done) {
     this.timeout(120000);
 
-    helper.createNewMetadata(testClient, 'ApexPage', 'OpenMetadataPage', 'ApexPage.page', { api_name : 'OpenMetadataPage' } )
+    helper.createNewMetadata(project, 'ApexPage', 'OpenMetadataPage', 'ApexPage.page', { api_name : 'OpenMetadataPage' } )
       .then(function() {
         var payload = {
           paths : [ path.join(helper.baseTestDirectory(), 'workspace', 'open-metadata', 'src', 'pages', 'OpenMetadataPage.page') ],
           preview: true
         };
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'open-metadata',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function(response) {

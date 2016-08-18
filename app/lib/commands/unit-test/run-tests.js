@@ -23,12 +23,12 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      var editorService = new EditorService(self.client, self.editor);
+
       var urlParams = { pid: self.getProject().settings.id };
       if (self.payload && self.payload.classes && _.isArray(self.payload.classes)) {
         urlParams.className = [ self.payload.classes[0] ];
       }
-      editorService.launchUI('run-tests', urlParams)
+      self.editorService.launchUI('run-tests', urlParams)
         .then(function() {
           resolve('Success');
         })
@@ -55,15 +55,15 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('run-tests [testPath]')
     .alias('test')
     .option('--ui', 'Launches the Apex test runner UI.')
     .description('Runs Apex unit tests')
     .action(function(testPath){
       if (this.ui) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: { args: { ui: true } },
           editor: this.parent.editor
@@ -72,7 +72,7 @@ exports.addSubCommand = function(client) {
         var self = this;
         if (testPath) {
           var payload = { tests : [ testPath ] };
-          client.executeCommand({
+          program.commandExecutor.execute({
             name: self._name,
             body: payload,
             editor: self.parent.editor
@@ -80,7 +80,7 @@ exports.addSubCommand = function(client) {
         } else {
           util.getPayload()
             .then(function(payload) {
-              client.executeCommand({
+              program.commandExecutor.execute({
                 name: self._name,
                 body: payload,
                 editor: self.parent.editor

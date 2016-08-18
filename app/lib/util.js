@@ -32,6 +32,16 @@ MavensMateUtil.prototype.getAppRoot = function() {
   return path.resolve(path.join(__dirname, '..', '..'));
 };
 
+MavensMateUtil.prototype.getProjectById = function(app, id) {
+  var projects = app.get('projects');
+  if (id) {
+    return _.find(projects, function(p) {
+      return p.settings.id === id;
+    });
+  }
+  return null;
+};
+
 MavensMateUtil.prototype.endsWith = function(string, suffix) {
   string = string.toLowerCase();
   suffix = suffix.toLowerCase();

@@ -11,7 +11,7 @@ var inherits              = require('inherits');
 var BaseCommand           = require('../../command');
 var SalesforceClient      = require('../../sfdc-client');
 var IndexService          = require('../../services/index');
-var config                = require('../../config');
+var config                = require('../../../config');
 var _                     = require('lodash');
 
 function Command() {
@@ -55,8 +55,8 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('session [username] [password] [orgType]')
     .alias('get-active-session')
     .alias('login')
@@ -64,7 +64,7 @@ exports.addSubCommand = function(client) {
     .description('Creates new salesforce.com session, returns session id')
     .action(function(username, password, orgType) {
       if (username && password) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: {
             username : username,
@@ -76,7 +76,7 @@ exports.addSubCommand = function(client) {
         var self = this;
         util.getPayload()
           .then(function(payload) {
-            client.executeCommand({
+            program.commandExecutor.execute({
               name: self._name,
               body: payload,
               editor: self.parent.editor

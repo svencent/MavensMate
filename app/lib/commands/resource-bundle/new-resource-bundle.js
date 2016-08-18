@@ -34,12 +34,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('new-resource-bundle [staticResourcePath]')
     .description('Creates a resource bundle from a static resource, e.g. mavensmate new-resource-bundle path/to/static/resource')
     .action(function(staticResourcePath){
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name,
         body: {
           paths: util.getAbsolutePaths( [ staticResourcePath ] )

@@ -28,9 +28,9 @@ router.get('/:id', function(req, res) {
 });
 
 function _execute(req, res) {
-  var client = req.app.get('client');
+  var commandExecutor = req.app.get('commandExecutor');
   var command = req.body.command || req.query.command;
-  var request = client.executeCommand({
+  var request = commandExecutor.execute({
     project: req.project,
     name: command,
     body: req.body,

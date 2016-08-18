@@ -1,58 +1,37 @@
 'use strict';
 
+var helper          = require('../../../test-helper');
 var assert          = require('assert');
 var sinon           = require('sinon');
-var sinonAsPromised = require('sinon-as-promised');
-var util            = require('../../../../lib/mavensmate/util').instance;
-var mavensmate      = require('../../../../lib/mavensmate');
+var util            = require('../../../../app/lib/util').instance;
 var _               = require('lodash');
-
-sinonAsPromised(require('bluebird'));
+var commandExecutor = require('../../../../app/lib/commands')();
 
 describe('mavensmate get-coverage-cli', function(){
 
   var program;
-  var cliClient;
-  var executeCommandStub;
+  var commandExecutorStub;
   var getPayloadStub;
 
-  before(function(done) {
-    delete require.cache[require.resolve('commander')];
-    program = require('commander');
-
-    program
-      .option('-v --verbose', 'Output logging statements')
-      .option('-h --headless', 'Runs in headless (non-interactive terminal) mode. You may wish to use this flag when calling this executable from a text editor or IDE client.')
-      .option('-e --editor [name]', 'Specifies the plugin client (sublime, atom)') // no default set
-      .option('-p --port [number]', 'UI server port number') // (for sublime text)
-      .parse(process.argv, true); // parse top-level args, defer subcommand
-
-    cliClient = mavensmate.createClient({
-      editor: program.editor || 'atom',
-      headless: true,
-      verbose: false,
-      program: program
-    });
-
-    require('../../../../lib/mavensmate/loader')(cliClient);
-    done();
+  before(function() {
+    program = helper.initCli();
   });
 
   beforeEach(function() {
-    executeCommandStub = sinon.stub(cliClient, 'executeCommand');
+    commandExecutorStub = sinon.stub(program.commandExecutor, 'execute');
     getPayloadStub = sinon.stub(util, 'getPayload').resolves({ foo : 'bar' });
   });
 
   afterEach(function() {
-    executeCommandStub.restore();
+    commandExecutorStub.restore();
     getPayloadStub.restore();
   });
 
   it('should accept an apex class path', function(done) {
-    cliClient.program._events['get-coverage'](['/path/to/something']);
+    program._events['get-coverage'](['/path/to/something']);
 
-    executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWithMatch({
+    commandExecutorStub.calledOnce.should.equal(true);
+    assert(commandExecutorStub.calledWithMatch({
       name: 'get-coverage',
       body: { paths : [ '/path/to/something' ] }
     }));
@@ -64,10 +43,10 @@ describe('mavensmate get-coverage-cli', function(){
     var cmd = _.find(program.commands, { _name : 'get-coverage' });
     cmd.global = true;
 
-    cliClient.program._events['get-coverage']();
+    program._events['get-coverage']();
 
-    executeCommandStub.calledOnce.should.equal(true);
-    assert(executeCommandStub.calledWithMatch({
+    commandExecutorStub.calledOnce.should.equal(true);
+    assert(commandExecutorStub.calledWithMatch({
       name: 'get-coverage',
       body: { global : true }
     }));

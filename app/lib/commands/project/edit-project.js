@@ -22,8 +22,8 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      var editorService = new EditorService(self.client, self.editor);
-      editorService.launchUI('edit-project', { pid: self.getProject().settings.id })
+
+      self.editorService.launchUI('edit-project', { pid: self.getProject().settings.id })
         .then(function() {
           resolve('Success');
         })
@@ -33,9 +33,8 @@ Command.prototype.execute = function() {
     } else {
       self.getProject().edit(self.payload.package)
         .then(function() {
-          if (self.editor === 'sublime') {
-            var editorService = new EditorService(self.client, self.editor);
-            editorService.runCommand('refresh_folder_list')
+          if (self.editorService && self.editorService.editor === 'sublime') {
+            self.editorService.runCommand('refresh_folder_list')
               .then(function() {
                 resolve();
               })
@@ -59,15 +58,15 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('edit-project')
     .alias('edit')
     .option('--ui', 'Launches the default UI for the selected command.')
     .description('Edits an existing project')
     .action(function(){
       if (this.ui) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: { args: { ui: true } },
           editor: this.parent.editor
@@ -76,7 +75,7 @@ exports.addSubCommand = function(client) {
         var self = this;
         util.getPayload()
           .then(function(payload) {
-            client.executeCommand({
+            program.commandExecutor.execute({
               name: self._name,
               body: payload,
               editor: self.parent.editor

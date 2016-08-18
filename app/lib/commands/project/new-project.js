@@ -15,7 +15,7 @@ var SalesforceClient  = require('../../sfdc-client');
 var inherits          = require('inherits');
 var logger            = require('winston');
 var EditorService     = require('../../services/editor');
-var config            = require('../../config');
+var config            = require('../../../config');
 
 var _getSobjectList = function(describeResult) {
   var sobjects = [];
@@ -35,8 +35,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      var editorService = new EditorService(self.client, self.editor);
-      editorService.launchUI('new-project')
+      self.editorService.launchUI('new-project')
         .then(function() {
           resolve('Success');
         })
@@ -47,7 +46,6 @@ Command.prototype.execute = function() {
       if (!self.payload.name) {
         return reject(new Error('Please specify project name'));
       }
-
       var newProject;
       var sfdcClient = new SalesforceClient(self.payload);
       sfdcClient.initialize()
@@ -60,15 +58,14 @@ Command.prototype.execute = function() {
           logger.debug('Initiated new project, prepping to write to disk');
           return newProject.retrieveAndWriteToDisk();
         })
+        // .then(function() {
+        //   logger.debug('Written to disk ...');
+        //   logger.debug('attempting to open in editor');
+        //   return self.client.addProjectById(newProject.id);
+        // })
         .then(function() {
-          logger.debug('Written to disk ...');
-          logger.debug('attempting to open in editor');
-          return self.client.addProjectById(newProject.id);
-        })
-        .then(function() {
-          if (self.editor) {
-            var editorService = new EditorService(self.client, self.editor);
-            return editorService.open(newProject.path);
+          if (self.editorService) {
+            return self.editorService.open(newProject.path);
           } else {
             return resolve({
               message: 'Project created successfully',
@@ -93,14 +90,15 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('new-project')
     .option('--ui', 'Launches the default UI for the selected command.')
     .description('Creates a new Salesforce1 project')
     .action(function(){
       if (this.ui) {
-        client.executeCommand({
+        logger.debug(program.commandExecutor)
+        program.commandExecutor.execute({
           name: this._name,
           body: { args: { ui: true } },
           editor: this.parent.editor
@@ -109,7 +107,7 @@ exports.addSubCommand = function(client) {
         var self = this;
         util.getPayload()
           .then(function(payload) {
-            client.executeCommand({
+            program.commandExecutor.execute({
               name: self._name,
               body: payload,
               editor: self.parent.editor

@@ -14,13 +14,13 @@ var querystring     = require('querystring');
 
 router.get('/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project configured for this MavensMate client.');
+    res.status(500).send('Error: No project attached to this request.');
   } else {
-    var client = req.app.get('client');
+    var commandExecutor = req.app.get('commandExecutor');
     var deployDelegate = new Deploy({
       project: req.project
     });
-    client.executeCommand({
+    commandExecutor.execute({
       project: req.project,
       name: 'get-connections',
       editor: req.editor
@@ -41,8 +41,8 @@ router.get('/new', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  var client = req.app.get('client');
-  var request = client.executeCommand({
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
     project: req.project,
     name: 'deploy',
     body: req.body,

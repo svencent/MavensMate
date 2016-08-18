@@ -21,9 +21,9 @@ inherits(Command, BaseCommand);
 Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var editorService = new EditorService(self.client, self.editor);
+
     var urlParams = self.getProject() ? { pid: self.getProject().settings.id } : undefined;
-    editorService.launchUI('settings', urlParams)
+    self.editorService.launchUI('settings', urlParams)
       .then(function() {
         resolve('Success');
       })
@@ -34,12 +34,12 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('open-settings')
     .description('Launches the settings ui')
     .action(function() {
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name
       });
     });

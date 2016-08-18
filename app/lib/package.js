@@ -11,7 +11,7 @@ var swig    = require('swig');
 var fs      = require('fs-extra');
 var path    = require('path');
 var logger  = require('winston');
-var config  = require('./config');
+var config  = require('../config');
 var xmldoc  = require('xmldoc');
 var sax     = require('sax');
 

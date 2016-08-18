@@ -3,7 +3,11 @@
  * @author Joseph Ferraro <@joeferraro>
  */
 
-module.exports = function (client) {
+/**
+ * Bootstraps subcommands
+ * @param  {Program} program - commander.js cli program
+ */
+module.exports = function (program) {
   'use strict';
 
   var _       = require('lodash');
@@ -16,14 +20,14 @@ module.exports = function (client) {
   opts.name = path.basename(process.mainModule.filename);
   opts.path = path.join(__dirname, 'commands');
 
-  function _require(filepath) { 
-    if (typeof filepath === 'string') { 
+  function _require(filepath) {
+    if (typeof filepath === 'string') {
       var _f = require(filepath).addSubCommand;
       if (typeof _f === 'function') {
-        _f(client);    // This adds the command to this program
+        _f(program);    // This adds the command to this program
       }
     }
-    return client.program;
+    return program;
   }
 
   // Load tasks in a given folder.
@@ -40,7 +44,7 @@ module.exports = function (client) {
   }
 
   if (opts.path) {
-    _loadCmds(opts.path);  
+    _loadCmds(opts.path);
     var _lib = path.join(opts.path, '../'+opts.name+'.js');
     // loads parent program
     if (fs.existsSync(_lib)) {

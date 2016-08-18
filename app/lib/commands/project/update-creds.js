@@ -31,8 +31,8 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('update-creds [username] [password] [orgType] [loginUrl]')
     .description('Update project\'s salesfore.com credentials')
     .action(function(username, password, orgType, loginUrl){
@@ -42,7 +42,7 @@ exports.addSubCommand = function(client) {
         orgType: orgType,
         loginUrl: loginUrl
       };
-      client.executeCommand({
+      program.commandExecutor.execute({
         name: this._name,
         body: payload
       });

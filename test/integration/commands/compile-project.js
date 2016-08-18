@@ -7,14 +7,14 @@ var should      = chai.should();
 describe('mavensmate compile-project', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'compile-project');
-    helper.addProject(testClient, 'compile-project')
+    helper.putTestProjectInTestWorkspace('compile-project');
+    helper.addProject('compile-project')
       .then(function(proj) {
         project = proj;
         done();
@@ -25,20 +25,22 @@ describe('mavensmate compile-project', function(){
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('compile-project')
+    helper.cleanUpProject('compile-project')
     done();
   });
 
   it('should compile the project based on package.xml', function(done) {
     this.timeout(120000);
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'edit-project',
-        body: { package: { 'ApexComponent' : '*' } }
+        body: { package: { 'ApexComponent' : '*' } },
+        project: project
       })
       .then(function() {
-        return testClient.executeCommand({
-          name: 'compile-project'
+        return commandExecutor.execute({
+          name: 'compile-project',
+          project: project
         });
       })
       .then(function(response) {

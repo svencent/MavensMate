@@ -30,15 +30,15 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('get-metadata-index-for-package')
     .description('Gets metadata index for a given package location')
     .action(function() {
       var self = this;
       util.getPayload()
         .then(function(payload) {
-          client.executeCommand({
+          program.commandExecutor.execute({
             name: self._name,
             body: payload,
             editor: self.parent.editor

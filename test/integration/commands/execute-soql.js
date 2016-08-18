@@ -8,14 +8,14 @@ var path        = require('path');
 describe('mavensmate execute-soql', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'execute-soql');
-    helper.addProject(testClient, 'execute-soql')
+    helper.putTestProjectInTestWorkspace('execute-soql');
+    helper.addProject('execute-soql')
       .then(function(proj) {
         project = proj;
         done();
@@ -26,16 +26,17 @@ describe('mavensmate execute-soql', function(){
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('execute-soql');
+    helper.cleanUpProject('execute-soql');
     done();
   });
 
   it('should successfully execute soql query', function(done) {
     this.timeout(120000);
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'execute-soql',
-        body: { soql: 'SELECT ID From Account LIMIT 1' }
+        body: { soql: 'SELECT ID From Account LIMIT 1' },
+        project: project
       })
       .then(function(res) {
         res.should.have.property('records');
@@ -51,9 +52,10 @@ describe('mavensmate execute-soql', function(){
   it('should fail to execute soql query', function(done) {
     this.timeout(120000);
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'execute-soql',
-        body: { soql: 'SELECT From Account LIMIT 1' }
+        body: { soql: 'SELECT From Account LIMIT 1' },
+        project: project
       })
       .catch(function(err) {
         err.errorCode.should.contain('MALFORMED_QUERY');

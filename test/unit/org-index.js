@@ -4,20 +4,18 @@ var _             = require('lodash');
 var helper        = require('../test-helper');
 var chai          = require('chai');
 var should        = chai.should();
-var IndexService  = require('../../lib/mavensmate/index');
+var IndexService  = require('../../app/lib/services/index');
 var fs            = require('fs-extra');
 var path          = require('path');
 
 describe('mavensmate org-index', function(){
 
   var project;
-  var testClient;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
-    helper.putTestProjectInTestWorkspace(testClient, 'org-index');
-    helper.addProject(testClient, 'org-index')
+    helper.putTestProjectInTestWorkspace('org-index');
+    helper.addProject('org-index')
       .then(function(proj) {
         project = proj;
         done();
@@ -28,7 +26,7 @@ describe('mavensmate org-index', function(){
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('org-index')
+    helper.cleanUpProject('org-index')
     done();
   });
 
@@ -45,7 +43,7 @@ describe('mavensmate org-index', function(){
       ApexPage : '*'
     };
 
-    testClient.getProject().getOrgMetadataIndexWithSelections()
+    project.getOrgMetadataIndexWithSelections()
       .then(function(m) {
         var apexClass = _.find(m, {id:'ApexClass'});
         apexClass.select.should.equal(true);
@@ -62,7 +60,7 @@ describe('mavensmate org-index', function(){
 
     this.timeout(120000);
 
-    var indexService = new IndexService({project:testClient.getProject()});
+    var indexService = new IndexService({project:project});
     indexService.indexServerProperties(['ApexClass', 'CustomObject', 'Report'])
       .then(function(res) {
         var apexClassResult = res[0];

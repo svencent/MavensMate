@@ -6,7 +6,7 @@ var fs              = require('fs');
 var util            = require('../lib/util').instance;
 var path            = require('path');
 var logger          = require('winston');
-var config          = require('../lib/config');
+var config          = require('../config');
 var defaultSettings = require('../config/default');
 
 router.get('/', function(req, res) {
@@ -27,6 +27,7 @@ router.get('/', function(req, res) {
 
 router.post('/', function(req, res) {
   try {
+    logger.warn('HELLLOOOO ----->', req.body)
     var updatedSetting = defaultSettings[req.body.settingKey];
     var settingValue = req.body.settingValue;
     if (updatedSetting.type === 'integer') {

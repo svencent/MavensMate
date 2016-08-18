@@ -4,24 +4,22 @@ var _             = require('lodash');
 var helper        = require('../test-helper');
 var chai          = require('chai');
 var should        = chai.should();
-var ViewHelper    = require('../../lib/mavensmate/ui/helper');
+var ViewHelper    = require('../../app/helper');
 var fs            = require('fs-extra');
 var path          = require('path');
 
 describe('mavensmate view-helper', function(){
 
   var project;
-  var testClient;
   var viewHelper;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
-    helper.putTestProjectInTestWorkspace(testClient, 'view-helper');
-    helper.addProject(testClient, 'view-helper')
+    helper.putTestProjectInTestWorkspace('view-helper');
+    helper.addProject('view-helper')
       .then(function(proj) {
         project = proj;
-        viewHelper = new ViewHelper({ client: testClient, port: 5000 });
+        viewHelper = new ViewHelper({ port: 5000 });
         done();
       })
       .catch(function(err) {
@@ -30,15 +28,7 @@ describe('mavensmate view-helper', function(){
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('view-helper')
-    done();
-  });
-
-  it('should getClient', function(done) {
-    viewHelper.getClient().should.have.property('name');
-    viewHelper.getClient().should.have.property('isNodeApp');
-    viewHelper.getClient().should.have.property('isServer');
-    viewHelper.getClient().should.have.property('verbose');
+    helper.cleanUpProject('view-helper')
     done();
   });
 

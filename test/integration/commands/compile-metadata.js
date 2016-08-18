@@ -10,17 +10,17 @@ var logger      = require('winston');
 describe('mavensmate compile-metadata', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
     /*jshint camelcase: false */
     process.env.mm_compile_check_conflicts = false;
     /*jshint camelcase: true */
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'compile-metadata');
-    helper.addProject(testClient, 'compile-metadata')
+    helper.putTestProjectInTestWorkspace('compile-metadata');
+    helper.addProject('compile-metadata')
       .then(function(proj) {
         project = proj;
         done();
@@ -38,45 +38,43 @@ describe('mavensmate compile-metadata', function(){
       path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataToolingClass.cls'),
       path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'ConflictCheckClass.cls')
     ];
-
-    testClient.executeCommand({
-        name: 'edit-project',
-        body: { package: { ApexClass: '*' } }
-      })
-      .then(function(err, response) {
-        should.not.equal(response, null);
-        return helper.cleanUpTestData(testClient, filesToDelete);
-      })
-      .then(function() {
-        done();
-      })
-      .catch(function(err) {
-        done(err);
-      })
-      .finally(function() {
-        /*jshint camelcase: false */
-        process.env.mm_compile_check_conflicts = false;
-        /*jshint camelcase: true */
-        helper.cleanUpTestProject('compile-metadata');
-      });
+    commandExecutor.execute({
+      name: 'edit-project',
+      body: { package: { ApexClass: '*' } },
+      project: project
+    })
+    .then(function(response) {
+      should.not.equal(response, null);
+      return helper.cleanUpTestData(project, filesToDelete);
+    })
+    .then(function() {
+      process.env.mm_compile_check_conflicts = false;
+      helper.cleanUpProject('compile-metadata');
+      done();
+    })
+    .catch(function(err) {
+      process.env.mm_compile_check_conflicts = false;
+      helper.cleanUpProject('compile-metadata');
+      done(err);
+    });
   });
 
   it('should compile an apex class successfully via the tooling api', function(done) {
     this.timeout(120000);
-    helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataToolingClass')
+    helper.createNewMetadata(project, 'ApexClass', 'CompileMetadataToolingClass')
       .then(function() {
         var apexClassPath = path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataToolingClass.cls');
         var payload = {
           paths : [ apexClassPath ]
         };
         process.env.mm_compile_with_tooling_api = true;
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'compile-metadata',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function(response) {
-
         response.success.should.equal(true);
         response.details.componentSuccesses.length.should.equal(1);
         response.details.componentSuccesses[0].State.should.equal('Completed');
@@ -91,9 +89,9 @@ describe('mavensmate compile-metadata', function(){
     /*jshint camelcase: false */
     this.timeout(120000);
     process.env.mm_compile_check_conflicts = true;
-    helper.createNewMetadata(testClient, 'ApexClass', 'ConflictCheckClass')
+    helper.createNewMetadata(project, 'ApexClass', 'ConflictCheckClass')
       .then(function() {
-        return testClient.getProject().updateLocalStore({
+        return project.updateLocalStore({
             'createdById': '005o0000000TB1iAAG',
             'createdByName': 'Joseph Ferraro',
             'createdDate': '2014-08-18T16:09:51.000Z',
@@ -111,11 +109,12 @@ describe('mavensmate compile-metadata', function(){
       })
       .then(function() {
         var payload = {
-          paths : [ path.join(testClient.getProject().path, 'src', 'classes', 'ConflictCheckClass.cls') ]
+          paths : [ path.join(project.path, 'src', 'classes', 'ConflictCheckClass.cls') ]
         };
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'compile-metadata',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function(response) {
@@ -135,16 +134,17 @@ describe('mavensmate compile-metadata', function(){
   it('should unsuccessfully attempt to compile an apex class via the tooling api', function(done) {
     this.timeout(120000);
 
-    helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataToolingFailClass')
+    helper.createNewMetadata(project, 'ApexClass', 'CompileMetadataToolingFailClass')
       .then(function() {
         var apexClassPath = path.join(helper.baseTestDirectory(),'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataToolingFailClass.cls');
         var payload = {
           paths : [ apexClassPath ]
         };
         fs.outputFileSync(apexClassPath, 'public class CompileMetadataToolingFailClass { this will not work }');
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'compile-metadata',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function(response) {
@@ -167,15 +167,16 @@ describe('mavensmate compile-metadata', function(){
   it('should compile a meta.xml file via the metadata api', function(done) {
     this.timeout(120000);
 
-    helper.createNewMetadata(testClient, 'ApexClass', 'CompileMetadataClass')
+    helper.createNewMetadata(project, 'ApexClass', 'CompileMetadataClass')
       .then(function() {
         var metaFileLocation = path.join(helper.baseTestDirectory(), 'workspace', 'compile-metadata', 'src', 'classes', 'CompileMetadataClass.cls-meta.xml');
         var payload = {
           paths : [metaFileLocation]
         };
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'compile-metadata',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function(response) {
@@ -191,25 +192,26 @@ describe('mavensmate compile-metadata', function(){
   it('should compile an object file via the metadata api', function(done) {
     this.timeout(120000);
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'edit-project',
-        body: { package: { CustomObject: 'Account' } }
+        body: { package: { CustomObject: 'Account' } },
+        project: project
       })
       .then(function(response) {
         should.not.equal(response, null);
 
-        var accountPath = path.join(testClient.getProject().path, 'src', 'objects', 'Account.object');
+        var accountPath = path.join(project.path, 'src', 'objects', 'Account.object');
         fs.existsSync(accountPath).should.equal(true);
         var payload = {
           paths : [accountPath]
         };
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'compile-metadata',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function(response) {
-
         response.success.should.equal(true);
         done();
       })

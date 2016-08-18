@@ -13,7 +13,7 @@ var logger    = require('winston');
 var RequestStore = function(){};
 
 /**
- * Request hash of requestId --> request
+ * Hash of requestId --> request
  * @type {Object}
  */
 RequestStore.prototype.requests = {};

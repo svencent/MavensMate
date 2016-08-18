@@ -34,13 +34,13 @@ Command.prototype.execute = function() {
 };
 
 exports.command = Command;
-exports.addSubCommand = function(client) {
-  client.program
+exports.addSubCommand = function(program) {
+  program
     .command('sync-with-server [path]')
     .description('Syncs the local path with the server')
     .action(function(path){
       if (path) {
-        client.executeCommand({
+        program.commandExecutor.execute({
           name: this._name,
           body: {
             path : util.getAbsolutePaths( [ path ] )[0]
@@ -50,7 +50,7 @@ exports.addSubCommand = function(client) {
         var self = this;
         util.getPayload()
           .then(function(payload) {
-            client.executeCommand({
+            program.commandExecutor.execute({
               name: self._name,
               body: payload,
               editor: self.parent.editor
