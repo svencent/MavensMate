@@ -4,6 +4,7 @@ var helper      = require('../../test-helper');
 var chai        = require('chai');
 var should      = chai.should();
 var path        = require('path');
+var logger      = require('winston');
 
 chai.use(require('chai-fs'));
 
@@ -84,13 +85,15 @@ describe('mavensmate deploy-to-server', function() {
           project: project
         });
       })
-      .then(function() {
+      .then(function(res) {
+        logger.debug('new connection result', res);
         return commandExecutor.execute({
           name: 'get-connections',
           project: project
         });
       })
       .then(function(conns) {
+        logger.debug('connections result', conns);
         conns[0].orgType.should.equal(creds.orgType);
         var deployPayload = {
           destinations: [conns[0].id],
