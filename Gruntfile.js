@@ -27,7 +27,7 @@ module.exports = function(grunt) {
           cwd: __dirname,
           ignore: ['node_modules/**'],
           ext: 'js,html',
-          watch: ['lib'],
+          watch: ['app'],
           delay: 1000,
           legacyWatch: true
         }

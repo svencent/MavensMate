@@ -1,0 +1,165 @@
+{% extends "views/layouts/base.html" %}
+{% block yield %}
+<div id="result_output">
+	<div class="alert alert-error">
+		<button type="button" class="close fui-cross"></button>
+		<span id="error_message"></span>
+	</div>
+</div>
+
+<div class="content">
+
+	<ul class="nav nav-tabs nav-append-content">
+		<li class="active"><a id="project_details_tab" href="#form" data-toggle="tab">New {{metadataType}} Details</a></li>
+	</ul>
+
+	<div class="tab-content" id="main-tab-content">
+		<div id="form" class="tab-pane active">
+			<form class="form-stacked">
+				<fieldset>
+					<div class="control-group large">
+						<select id="template" class="select-block mbl info span12">
+							<option value="">Select a metadata template</option>
+							{% for t in templates %}
+								<option value="{{ t['name'] }}">{{ t['name'] }}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<div id="template_params">
+
+					</div>
+
+					<div id="template_body">
+
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+
+{% block buttons %}
+	<input type="button" id="btnSubmit" class="btn btn-info btn-embossed" value="Create Metadata"  onclick='newMetadata();'>
+	<button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
+{% endblock %}
+
+{% block body_js %}
+	<style>
+		pre.template_body_pre.prettyprint {
+			padding: 15px;
+		  	border: none;
+		}
+	</style>
+	<script type="text/javascript">
+		var response;
+		var operation;
+		var templates = {{ JSON.stringify(templates) }};
+		var selectedTemplate = null;
+		var metadataType = '{{metadataType}}';
+
+		function newMetadata() {
+			paramPayload = {}
+
+			$("input.templateParam").each(function(index) {
+				var paramName = $( this ).data( "param" );
+				var paramValue = $( this ).val();
+				paramPayload[paramName] = paramValue;
+			})
+
+			operation = "new-metadata";
+			$.ajax({
+				type: "POST",
+				dataType: 'json',
+				contentType: 'application/json; charset=utf-8',
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/metadata",
+				data: JSON.stringify({
+					metadataTypeXmlName: '{{ metadataType }}',
+					templateValues: paramPayload,
+					template: selectedTemplate
+				}),
+				beforeSend: function() { showLoading('Creating new metadata...'); },
+				complete: function(data){
+					responseHandler(data);
+				}
+		 	});
+		}
+
+		function handleResponse(response) {
+			if (response.error) {
+				showMessage(response.error);
+				notifySound();
+			} else {
+				if (response.error) {
+					showMessage('Could not create metadata. '+response.error);
+					notifySound();
+				} else {
+					showMessage('{{ metadataType }} successfully created!', 'success');
+				}
+			}
+			hideLoading();
+		}
+
+		$(function() {
+
+		    $("#template").change(function() {
+		    	var value = $(this).val();
+		    	selectedTemplate = null;
+		    	var paramsHtml = '';
+
+		    	if (value === null || value === '') {
+		    		paramsHtml = '';
+		    		$("#template_body").hide();
+		    	} else {
+		    		for (t in templates) {
+		    			if (templates[t].name === value) {
+		    				console.log('our template!');
+		    				console.log(templates[t]);
+		    				selectedTemplate = templates[t];
+		    				break;
+		    			}
+		    		}
+		    		for (p in selectedTemplate.params) {
+		    			paramsHtml += '<div class="control-group large"><input class="span12 templateParam" data-param="'+selectedTemplate.params[p].name+'" type="text" placeholder="'+selectedTemplate.params[p].description+'"/></div>';
+		    		}
+		    	}
+
+    			$.ajax({
+    				type: "GET",
+    				url: "{{ mavensmate.ui.getBaseUrl() }}/app/metadata/{{metadataType}}/templates/"+encodeURI(selectedTemplate.file_name),
+    				complete: function(data){
+    					if (metadataType === 'ApexClass' || metadataType === 'ApexTrigger') {
+    						$("#template_body").html('<pre class="template_body_pre prettyprint lang-java"></pre>');
+    					} else if (metadataType === 'ApexPage' || metadataType === 'ApexComponent') {
+    						$("#template_body").html('<pre class="template_body_pre prettyprint lang-html"></pre>');
+    					}
+    					$(".template_body_pre").text(data.responseText);
+    					prettyPrint();
+    					$("#template_body").show();
+    				}
+    		 	});
+		    	$("div#template_params").html(paramsHtml);
+
+		    });
+
+			$(window).resize(function() {
+				resizeProjectWrapper(10);
+			});
+
+			window.resizeTo(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+			centerWindow();
+
+			//submit form on enter
+			$(".content").bind('keyup', function(e) {
+				var code = (e.keyCode ? e.keyCode : e.which);
+				 if(code == 13) { //enter pressed
+				 	if ($('#un').val() && $('#pw').val() && $('#pn').val())
+						$("#btnSubmit").click();
+				 }
+			});
+		});
+	</script>
+{% endblock %}

@@ -11,14 +11,14 @@ chai.use(require('chai-fs'));
 describe('mavensmate index-apex', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'index-apex');
-    helper.addProject(testClient, 'index-apex')
+    helper.putTestProjectInTestWorkspace('index-apex');
+    helper.addProject('index-apex')
       .then(function(proj) {
         project = proj;
         done();
@@ -31,9 +31,9 @@ describe('mavensmate index-apex', function(){
   after(function(done) {
     this.timeout(120000);
     var filesToDelete = [path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'src', 'classes', 'IndexMySymbolsClass.cls')];
-    helper.cleanUpTestData(testClient, filesToDelete)
+    helper.cleanUpTestData(project, filesToDelete)
       .finally(function() {
-        helper.cleanUpTestProject('index-apex');
+        helper.cleanUpProject('index-apex');
         done();
       });
   });
@@ -41,8 +41,9 @@ describe('mavensmate index-apex', function(){
   it('should index project apex symbols', function(done) {
     this.timeout(120000);
 
-    testClient.executeCommand({
-        name: 'index-apex'
+    commandExecutor.execute({
+        name: 'index-apex',
+        project: project
       })
       .then(function(response) {
 
@@ -58,11 +59,12 @@ describe('mavensmate index-apex', function(){
   it('should index apex symbols for a specific apex class', function(done) {
     this.timeout(120000);
 
-    helper.createNewMetadata(testClient, 'ApexClass', 'IndexMySymbolsClass')
+    helper.createNewMetadata(project, 'ApexClass', 'IndexMySymbolsClass')
       .then(function() {
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'index-apex-class',
-          body: { 'className' : 'IndexMySymbolsClass' }
+          body: { 'className' : 'IndexMySymbolsClass' },
+          project: project
         });
       })
       .then(function(response) {

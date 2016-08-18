@@ -1,6 +1,6 @@
 'use strict';
 
-var util              = require('../../lib/mavensmate/util').instance;
+var util              = require('../../app/lib/util').instance;
 var fs                = require('fs-extra');
 var chai              = require('chai');
 var assert            = chai.assert;
@@ -17,7 +17,6 @@ describe('mavensmate empty-directory', function(){
 
   var testPath = path.join(helper.baseTestDirectory(), 'fixtures','test-directory-testing');
   before(function(done) {
-    var testClient = helper.createClient('empty-directory');
     if (fs.existsSync(testPath)) {
       fs.removeSync(testPath);
     }
@@ -46,7 +45,6 @@ describe('mavensmate remove-empty-directories', function(){
 
   var testPath = path.join(helper.baseTestDirectory(), 'fixtures','test-directory-testing2');
   before(function(done) {
-    var testClient = helper.createClient('empty-directory');
     if (fs.existsSync(testPath)) {
       fs.removeSync(testPath);
     }

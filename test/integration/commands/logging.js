@@ -11,14 +11,14 @@ chai.use(require('chai-fs'));
 describe('mavensmate logging', function() {
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'logging');
-    helper.addProject(testClient, 'logging')
+    helper.putTestProjectInTestWorkspace('logging');
+    helper.addProject('logging')
       .then(function(proj) {
         project = proj;
         var loggingConfig = {
@@ -47,14 +47,14 @@ describe('mavensmate logging', function() {
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('logging');
+    helper.cleanUpProject('logging');
     done();
   });
 
   it('should start logging for all user ids listed in config/.debug', function(done) {
     this.timeout(120000);
 
-    testClient.executeCommand({ name: 'start-logging' })
+    commandExecutor.execute({ name: 'start-logging', project: project })
       .then(function(response) {
 
         response.message.should.equal('Started logging for debug users');
@@ -68,7 +68,7 @@ describe('mavensmate logging', function() {
   it('should stop logging for all user ids listed in config/.debug', function(done) {
     this.timeout(120000);
 
-    testClient.executeCommand({ name: 'stop-logging' })
+    commandExecutor.execute({ name: 'stop-logging', project: project })
       .then(function(response) {
 
         response.message.should.equal('Stopped logging for debug users');

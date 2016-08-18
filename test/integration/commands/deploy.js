@@ -10,14 +10,14 @@ chai.use(require('chai-fs'));
 describe('mavensmate deploy-to-server', function() {
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
     helper.unlinkEditor();
-    testClient = helper.createClient('unittest');
-    helper.putTestProjectInTestWorkspace(testClient, 'deploy');
-    helper.addProject(testClient, 'deploy')
+    commandExecutor = helper.getCommandExecutor();
+    helper.putTestProjectInTestWorkspace('deploy');
+    helper.addProject('deploy')
       .then(function(proj) {
         project = proj;
         done();
@@ -33,12 +33,12 @@ describe('mavensmate deploy-to-server', function() {
       path.join(helper.baseTestDirectory(),'workspace', 'deploy', 'src', 'classes', 'DeployClass.cls')
     ];
 
-    helper.cleanUpTestData(testClient, filesToDelete)
+    helper.cleanUpTestData(project, filesToDelete)
       .catch(function(err) {
         done(err);
       })
       .finally(function() {
-        helper.cleanUpTestProject('deploy');
+        helper.cleanUpProject('deploy');
         done();
       });
   });
@@ -55,9 +55,10 @@ describe('mavensmate deploy-to-server', function() {
         runAllTests: false
       }
     };
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'deploy',
-        body: deployPayload
+        body: deployPayload,
+        project: project
       })
       .catch(function(err) {
         err.message.should.equal('Please specify at least one destination');
@@ -69,7 +70,7 @@ describe('mavensmate deploy-to-server', function() {
     this.timeout(120000);
     var creds = helper.getTestCreds();
     var myConnectionName = 'my connection';
-    helper.createNewMetadata(testClient, 'ApexClass', 'DeployClass')
+    helper.createNewMetadata(project, 'ApexClass', 'DeployClass')
       .then(function() {
         var payload = {
           name: myConnectionName,
@@ -77,14 +78,16 @@ describe('mavensmate deploy-to-server', function() {
           password: creds.password,
           orgType: creds.orgType
         };
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'new-connection',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function() {
-        return testClient.executeCommand({
-          name: 'get-connections'
+        return commandExecutor.execute({
+          name: 'get-connections',
+          project: project
         });
       })
       .then(function(conns) {
@@ -100,9 +103,10 @@ describe('mavensmate deploy-to-server', function() {
             runAllTests: false
           }
         };
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'deploy',
-          body: deployPayload
+          body: deployPayload,
+          project: project
         });
       })
       .then(function(response) {

@@ -4,7 +4,7 @@
 // var helper 				= require('../test-helper');
 // var chai 					= require('chai');
 // var should 				= chai.should();
-// var IndexService 	= require('../../lib/mavensmate/index');
+// var IndexService 	= require('../../app/lib/services/index');
 
 // describe('mavensmate local-store', function(){
 
@@ -13,8 +13,8 @@
 
 // 		var testClient = helper.createClient('unittest');
 
-// 		helper.addProject(testClient, 'existing-project', function() {
-// 			testClient.getProject().getOrgMetadataIndexWithSelections()
+// 		helper.addProject('existing-project', function() {
+// 			projectgetOrgMetadataIndexWithSelections()
 // 				.then(function(m) {
 // 					var apexClass = _.find(m, {id:'ApexClass'});
 // 					apexClass.select.should.equal(true);

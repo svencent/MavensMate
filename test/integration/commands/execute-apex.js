@@ -7,14 +7,14 @@ var should      = chai.should();
 describe('mavensmate execute-apex', function() {
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
     helper.unlinkEditor();
-    testClient = helper.createClient('unittest');
-    helper.putTestProjectInTestWorkspace(testClient, 'execute-apex');
-    helper.addProject(testClient, 'execute-apex')
+    commandExecutor = helper.getCommandExecutor();
+    helper.putTestProjectInTestWorkspace('execute-apex');
+    helper.addProject('execute-apex')
       .then(function(proj) {
         project = proj;
         done();
@@ -25,16 +25,17 @@ describe('mavensmate execute-apex', function() {
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('execute-apex');
+    helper.cleanUpProject('execute-apex');
     done();
   });
 
   it('should execute anonymous apex', function(done) {
     this.timeout(120000);
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'execute-apex',
-        body: { body: 'String foo = \'bar\';' }
+        body: { body: 'String foo = \'bar\';' },
+        project: project
       })
       .then(function(response) {
 
@@ -50,9 +51,10 @@ describe('mavensmate execute-apex', function() {
   it('should attempt to execute invalid anonymous apex', function(done) {
     this.timeout(120000);
 
-    testClient.executeCommand({
+    commandExecutor.execute({
       name: 'execute-apex',
-      body: { body: 'String foo = \'bar\'' }
+      body: { body: 'String foo = \'bar\'' },
+      project: project
     })
     .then(function(response) {
       response.compiled.should.equal(false);

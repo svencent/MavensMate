@@ -6,10 +6,8 @@
  * @author Joseph Ferraro <@joeferraro>
  */
 
-var parseArgs   = require('minimist');
-var mavensmate  = require('../lib/mavensmate');
-var util        = require('../lib/mavensmate/util').instance;
-var UIServer    = require('../lib/mavensmate/ui/server');
+var parseArgs = require('minimist');
+var server    = require('../app');
 
 var args = parseArgs(process.argv);
 var projectPath = args.project || process.cwd();
@@ -18,33 +16,9 @@ var port = args.port || process.env.MAVENSMATE_SERVER_PORT;
 
 process.title = 'mavensmate server';
 
-var client = mavensmate.createClient({
-  verbose: verbose,
-  serverPort: port,
-  isServer: true
+server.start({
+  port: port,
+  verbose: verbose
 });
-
-var server = new UIServer(client);
-server.start()
-  .then(function(port) {
-    process.env.MAVENSMATE_SERVER_PORT = port;
-    console.log('MavensMate server running on port: '+port);
-    if (projectPath && util.isValidProjectPath(projectPath)) {
-      client.addProjectByPath(projectPath)
-        .then(function(response) {
-          console.log(response);
-        })
-        .catch(function(err) {
-          if (err.message.indexOf('valid MavensMate project') === -1) {
-            console.error('Error initializing project: ', err.message);
-            return;
-          } else {
-            console.warn(err.message);
-          }
-        });
-    }
-  })
-  .catch(function(err) {
-    console.error(err.message);
-  })
-  .done();
+process.env.MAVENSMATE_SERVER_PORT = port;
+console.log('MavensMate server running on port: '+port);

@@ -7,33 +7,25 @@
  */
 
 process.title = 'mavensmate cli';
+process.env.MAVENSMATE_CONTEXT = 'cli'; // todo: rename?
 
-var program     = require('commander');
-var mavensmate  = require('../lib/mavensmate');
-var pjson       = require('../package.json');
+var config            = require('../app/config');
+var program           = require('commander');
+var pjson             = require('../package.json');
 
 // initialize top-level program with global options
 program
   .version(pjson.version)
   .option('-v --verbose', 'Output logging statements')
-  .option('-h --headless', 'Runs in headless (non-interactive terminal) mode. You may wish to use this flag when calling this executable from a text editor or IDE client.')
   .option('-e --editor [name]', 'Specifies the plugin client (sublime, atom)', 'sublime') // default to sublime
   .option('-p --port [number]', 'UI server port number', '56248') // (if you wish to access mavensmate ui's you must run the server in another terminal)
   .parse(process.argv, true); // parse top-level args, defer subcommand
-
-var cliClient = mavensmate.createClient({
-  name: 'terminal',
-  isServer: false,
-  program: program
-});
 
 if (program.port) {
   process.env.MAVENSMATE_SERVER_PORT = program.port;
 }
 
-var logger = require('winston');
-
-// output top-line help
+// top-line cli help
 program.on('--help', function(){
   console.log('  Examples:');
   console.log('');
@@ -48,21 +40,26 @@ if (program.args.length < 1 ) {
   process.exit(1);
 }
 
+program.commandExecutor = require('../app/lib/commands')();
+
+var logger = require('../app/lib/logger')({ program: program });
 program.log = logger; // because autocmdr uses program.log (TODO: remove reliance on autocmdr)
 
-require('../lib/mavensmate/loader')(cliClient);
+require('../app/lib/loader')(program);
 require('autocmdr/lib/completion')(program);
 require('autocmdr/lib/package')(program);
 require('autocmdr/lib/help')(program);
 
-logger.debug('\n\n=====> EXECUTING VIA CLI:\n');
+logger.debug('\n\n=====> EXECUTING COMMAND VIA CLI:\n');
 logger.debug(JSON.stringify(process.argv));
 
+// projects that don't rely on a project for context
 var projectExemptCommands = [
   'new-project',
   'session',
   'get-setting'
 ];
+
 var commandName = program.args[0];
 
 // not all command needs a project

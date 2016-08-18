@@ -55,7 +55,6 @@
     "inquirer": "0.8.0",
     "jsforce": "1.7.0",
     "lodash": "3.10.1",
-    "loophole": "1.0.0",
     "merge": "1.2.0",
     "minimist": "1.1.0",
     "moment": "2.8.3",
@@ -70,7 +69,6 @@
     "strip-json-comments": "1.0.2",
     "swig": "joeferraro/swig",
     "temp": "0.8.1",
-    "underscore-plus": "1.6.1",
     "which": "1.0.5",
     "winston": "0.9.0",
     "xml2js": "0.4.4",
@@ -84,10 +82,11 @@
     "chai": "1.10.0",
     "chai-fs": "0.1.0",
     "coveralls": "^2.11.2",
-    "mocha": "^2.1.0",
+    "grunt-nodemon": "latest",
+    "mocha": "2.5.3",
     "mocha-lcov-reporter": "0.0.1",
+    "sinon": "1.17.2",
     "sinon-as-promised": "latest",
-    "sinon": "1.12.2",
-    "grunt-nodemon": "latest"
+    "supertest": "^2.0.0"
   }
 }

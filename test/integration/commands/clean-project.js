@@ -12,14 +12,14 @@ chai.use(require('chai-fs'));
 describe('mavensmate clean-project-command', function() {
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
     helper.unlinkEditor();
-    testClient = helper.createClient('unittest');
-    helper.putTestProjectInTestWorkspace(testClient, 'clean-project');
-    helper.addProject(testClient, 'clean-project')
+    commandExecutor = helper.getCommandExecutor();
+    helper.putTestProjectInTestWorkspace('clean-project');
+    helper.addProject('clean-project')
       .then(function(proj) {
         project = proj;
         done();
@@ -30,7 +30,7 @@ describe('mavensmate clean-project-command', function() {
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('clean-project');
+    helper.cleanUpProject('clean-project');
     done();
   });
 
@@ -41,8 +41,9 @@ describe('mavensmate clean-project-command', function() {
     var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>36.0</version></Package>';
     fs.writeFileSync(path.join(helper.baseTestDirectory(), 'workspace', 'clean-project', 'src', 'package.xml'), packageXml);
 
-    testClient.executeCommand({
-        name:'clean-project'
+    commandExecutor.execute({
+        name:'clean-project',
+        project: project
       })
       .then(function(response) {
 
@@ -67,8 +68,9 @@ describe('mavensmate clean-project-command', function() {
     var packageXml = '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata">'+members+'<version>36.0</version></Package>';
     fs.writeFileSync(path.join(helper.baseTestDirectory(), 'workspace', 'clean-project', 'src', 'package.xml'), packageXml);
 
-    testClient.executeCommand({
-        name: 'clean-project'
+    commandExecutor.execute({
+        name: 'clean-project',
+        project: project
       })
       .then(function(response) {
 

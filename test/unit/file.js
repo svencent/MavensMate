@@ -3,20 +3,18 @@
 var fs                = require('fs-extra');
 var path              = require('path');
 var helper            = require('../test-helper');
-var mavensMateFile    = require('../../lib/mavensmate/file');
+var mavensMateFile    = require('../../app/lib/file');
 var chai              = require('chai');
 var should            = chai.should();
 
 describe('mavensmate mavensmate-file', function(){
 
   var project;
-  var testClient;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
-    helper.putTestProjectInTestWorkspace(testClient, 'file-test');
-    helper.addProject(testClient, 'file-test')
+    helper.putTestProjectInTestWorkspace('file-test');
+    helper.addProject('file-test')
       .then(function(proj) {
         project = proj;
         done();
@@ -27,7 +25,7 @@ describe('mavensmate mavensmate-file', function(){
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('file-test')
+    helper.cleanUpProject('file-test')
     done();
   });
 

@@ -13,17 +13,17 @@ chai.use(require('chai-fs'));
 describe('mavensmate apex-script', function() {
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
     helper.unlinkEditor();
     logger.info('editor unlinked');
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     logger.info('test client ready');
-    helper.putTestProjectInTestWorkspace(testClient, 'apex-script');
+    helper.putTestProjectInTestWorkspace('apex-script');
     logger.info('project in workspace');
-    helper.addProject(testClient, 'apex-script')
+    helper.addProject('apex-script')
       .then(function(proj) {
         project = proj;
         logger.info('project initied');
@@ -35,16 +35,17 @@ describe('mavensmate apex-script', function() {
   });
 
   after(function(done) {
-    helper.cleanUpTestProject('apex-script');
+    helper.cleanUpProject('apex-script');
     done();
   });
 
   it('should create a new apex script', function(done) {
     this.timeout(120000);
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'new-apex-script',
-        body: { name: 'foo' }
+        body: { name: 'foo' },
+        project: project
       })
       .then(function(response) {
         response.message.should.equal('Apex script created successfully');
@@ -63,9 +64,10 @@ describe('mavensmate apex-script', function() {
     var apexScriptPath = path.join(helper.baseTestDirectory(),'workspace', 'apex-script', 'apex-scripts', 'foo.cls');
     fs.outputFileSync(apexScriptPath, 'system.debug(\'hello!\'');
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'run-apex-script',
-        body: { paths: [ apexScriptPath ] }
+        body: { paths: [ apexScriptPath ] },
+        project: project
       })
       .then(function(response) {
         response[path.basename(apexScriptPath)].success.should.equal(false);
@@ -83,9 +85,10 @@ describe('mavensmate apex-script', function() {
     var apexScriptPath = path.join(helper.baseTestDirectory(),'workspace', 'apex-script', 'apex-scripts', 'foo.cls');
     fs.outputFileSync(apexScriptPath, 'system.debug(\'hello!\');');
 
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'run-apex-script',
-        body: { paths: [ apexScriptPath ] }
+        body: { paths: [ apexScriptPath ] },
+        project: project
       })
       .then(function(response) {
         response[path.basename(apexScriptPath)].success.should.equal(true);

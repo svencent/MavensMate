@@ -13,14 +13,14 @@ chai.use(require('chai-fs'));
 describe('mavensmate org-connections', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'org-connections');
-    helper.addProject(testClient, 'org-connections')
+    helper.putTestProjectInTestWorkspace('org-connections');
+    helper.addProject('org-connections')
       .then(function(proj) {
         project = proj;
         done();
@@ -31,7 +31,7 @@ describe('mavensmate org-connections', function(){
   });
 
   after(function(done) {
-    // helper.cleanUpTestProject('org-connections');
+    // helper.cleanUpProject('org-connections');
     done();
   });
 
@@ -43,9 +43,10 @@ describe('mavensmate org-connections', function(){
       password: creds.password,
       orgType: creds.orgType
     };
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'new-connection',
-        body: payload
+        body: payload,
+        project: project
       })
       .then(function(response) {
         response.message.should.equal('Org connection successfully created');
@@ -62,8 +63,9 @@ describe('mavensmate org-connections', function(){
   it('should get org connections', function(done) {
     this.timeout(120000);
     var creds = helper.getTestCreds();
-    testClient.executeCommand({
-        name: 'get-connections'
+    commandExecutor.execute({
+        name: 'get-connections',
+        project: project
       })
       .then(function(response) {
         response.length.should.equal(1);
@@ -86,9 +88,10 @@ describe('mavensmate org-connections', function(){
       password: 'cool!',
       orgType: 'sandbox'
     };
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'new-connection',
-        body: payload
+        body: payload,
+        project: project
       })
       .catch(function(err) {
         err.message.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out');
@@ -108,9 +111,10 @@ describe('mavensmate org-connections', function(){
     var payload = {
       id: connections[0].id
     };
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'delete-connection',
-        body: payload
+        body: payload,
+        project: project
       })
       .then(function(response) {
 

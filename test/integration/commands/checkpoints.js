@@ -4,29 +4,31 @@ var helper            = require('../../test-helper');
 var chai              = require('chai');
 var should            = chai.should();
 var path              = require('path');
-var CheckpointService = require('../../../lib/mavensmate/checkpoint');
+var CheckpointService = require('../../../app/lib/services/checkpoint');
 
 describe('mavensmate checkpoints', function(){
 
   var project;
-  var testClient;
+  var commandExecutor;
 
   before(function(done) {
     this.timeout(120000);
-    testClient = helper.createClient('unittest');
+    commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    helper.putTestProjectInTestWorkspace(testClient, 'checkpoints');
-    helper.addProject(testClient, 'checkpoints')
+    helper.putTestProjectInTestWorkspace('checkpoints');
+    helper.addProject('checkpoints')
       .then(function(proj) {
         project = proj;
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'update-subscription',
-          body: { subscription: ['ApexClass'] }
+          body: { subscription: ['ApexClass'] },
+          project: project
         });
       })
       .then(function() {
-        return testClient.executeCommand({
-          name: 'index-metadata'
+        return commandExecutor.execute({
+          name: 'index-metadata',
+          project: project
         });
       })
       .then(function() {
@@ -46,7 +48,7 @@ describe('mavensmate checkpoints', function(){
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls')
     ];
-    helper.cleanUpTestData(testClient, filesToDelete)
+    helper.cleanUpTestData(project, filesToDelete)
       .then(function() {
         done();
       })
@@ -54,7 +56,7 @@ describe('mavensmate checkpoints', function(){
         done(err);
       })
       .finally(function() {
-        helper.cleanUpTestProject('checkpoints');
+        helper.cleanUpProject('checkpoints');
       });
   });
 
@@ -62,15 +64,16 @@ describe('mavensmate checkpoints', function(){
   it('should add checkpoint', function(done) {
     this.timeout(120000);
 
-    helper.createNewMetadata(testClient, 'ApexClass', 'CheckpointClass')
+    helper.createNewMetadata(project, 'ApexClass', 'CheckpointClass')
       .then(function(response) {
         var payload = {
           path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls'),
           lineNumber : 1
         };
-        return testClient.executeCommand({
+        return commandExecutor.execute({
           name: 'new-checkpoint',
-          body: payload
+          body: payload,
+          project: project
         });
       })
       .then(function(response) {
@@ -88,9 +91,10 @@ describe('mavensmate checkpoints', function(){
     var payload = {
       path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls')
     };
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'list-checkpoints',
-        body: payload
+        body: payload,
+        project: project
       })
       .then(function(response) {
         response.size.should.equal(1);
@@ -108,9 +112,10 @@ describe('mavensmate checkpoints', function(){
       path: path.join(helper.baseTestDirectory(),'workspace', 'checkpoints', 'src', 'classes', 'CheckpointClass.cls'),
       lineNumber : 1
     };
-    testClient.executeCommand({
+    commandExecutor.execute({
         name: 'delete-checkpoint',
-        body: payload
+        body: payload,
+        project: project
       })
       .then(function(response) {
         response.success.should.equal(true);
