@@ -25,8 +25,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-
-      self.editorService.launchUI('new-project-from-existing-directory', { directory: self.payload.args.directory })
+      self.editorService.launchUI('project/existing/new', { origin: self.payload.args.origin })
         .then(function() {
           resolve('Success');
         })
@@ -34,10 +33,9 @@ Command.prototype.execute = function() {
           reject(error);
         });
     } else {
-      if (!self.payload.username || !self.payload.password || !self.payload.name) {
-        return reject(new Error('Please specify username, password, and project name'));
+      if (!self.payload.name) {
+        return reject(new Error('Please specify project name'));
       }
-
       var newProject;
       var sfdcClient = new SalesforceClient(self.payload);
       sfdcClient.initialize()
@@ -49,14 +47,20 @@ Command.prototype.execute = function() {
         .then(function() {
           logger.debug('New project written to disk ...');
           logger.debug('attempting to open in editor');
-          if (self.editorService) {
+          if (self.editorService && self.editorService.editor) {
             return self.editorService.open(newProject.path);
           } else {
-            return resolve('MavensMate project created successfully');
+            return resolve({
+              message: 'Project created successfully',
+              id: newProject.id
+            });
           }
         })
         .then(function() {
-          resolve('MavensMate project created successfully');
+          return resolve({
+            message: 'Project created successfully',
+            id: newProject.id
+          });
         })
         .catch(function(error) {
           logger.debug('Could not create project: ');

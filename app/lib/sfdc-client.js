@@ -215,6 +215,8 @@ SalesforceClient.prototype.initialize = function() {
           logger.error(err);
           reject(err);
         });
+    } else {
+      reject(new Error('username/password or accesstoken/refreshtoken required'));
     }
   });
 };

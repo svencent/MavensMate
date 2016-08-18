@@ -11,6 +11,7 @@ var logger          = require('winston');
 var querystring     = require('querystring');
 var requestStore    = require('../lib/request-store');
 var util            = require('../lib/util').instance;
+var fs              = require('fs-extra');
 
 // create a new project
 router.get('/new', function(req, res) {
@@ -19,6 +20,20 @@ router.get('/new', function(req, res) {
     callback: '/app/project/auth/finish'
   };
   res.redirect('/app/auth/new?'+querystring.stringify(params));
+});
+
+// create a new project from existing directory
+router.get('/existing/new', function(req, res) {
+  if (req.query.origin) {
+    var params = {
+      title: 'Create MavensMate Project ('+req.query.origin+')',
+      callback: '/app/project/auth/finish',
+      param1: req.query.origin
+    };
+    res.redirect('/app/auth/new?'+querystring.stringify(params));
+  } else {
+    res.status(500).send('Error: You must provide an existing path via the "origin" query param');
+  }
 });
 
 router.get('/auth/finish', function(req, res) {
@@ -41,6 +56,29 @@ router.get('/auth/finish', function(req, res) {
     .catch(function(err) {
       logger.error(err);
       res.send(500);
+    });
+  } else if (state.param1 && fs.existsSync(state.param1)) {
+    // new project from existing directory
+    commandExecutor.execute({
+      name: 'session',
+      body: {
+        accessToken: req.query.access_token,
+        instanceUrl: req.query.instance_url,
+        refreshToken: req.query.refresh_token
+      }
+    })
+    .then(function(response) {
+      res.render('project/new_from_existing.html', {
+        title: 'Create MavensMate Project ('+state.param1+')',
+        accessToken: req.query.access_token,
+        instanceUrl: req.query.instance_url,
+        refreshToken: req.query.refresh_token,
+        session: response,
+        origin: state.param1
+      });
+    })
+    .catch(function(err) {
+      logger.error('Could not initiate session', err);
     });
   } else {
     // new project
@@ -76,6 +114,23 @@ router.post('/', function(req, res) {
   var commandExecutor = req.app.get('commandExecutor');
   var request = commandExecutor.execute({
     name: 'new-project',
+    body: req.body,
+    editor: req.editor
+  });
+  var requestId = requestStore.add(request);
+  return res.send({
+    status: 'pending',
+    id: requestId
+  });
+});
+
+// creates a new project from an existing directory
+router.post('/existing', function(req, res) {
+  logger.debug('received request to create new project frome existing directory: ');
+  logger.debug(req.body);
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
+    name: 'new-project-from-existing-directory',
     body: req.body,
     editor: req.editor
   });
@@ -180,30 +235,5 @@ router.get('/:id/index', function(req, res) {
     res.send(err);
   });
 });
-
-// // todo: standardize endpojint
-// ProjectController.prototype.createFromExisting = function(req, res) {
-//   var requestId = requestStore.add();
-
-//   logger.debug('received request to create new project frome existing directory: ');
-//   logger.debug(req.body);
-
-//   commandExecutor.execute({
-//       name: 'new-project-from-existing-directory',
-//       body: req.body,
-//       editor: req.editor
-//     })
-//     .then(function(response) {
-//       requestStore.finish(requestId, null, response);
-//     })
-//     .catch(function(err) {
-//       requestStore.finish(requestId, err, null);
-//     });
-
-//   return res.send({
-//     status: 'pending',
-//     id: requestId
-//   });
-// };
 
 module.exports = router;

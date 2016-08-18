@@ -77,7 +77,7 @@ Command.prototype.execute = function() {
           var newMetadataPath = path.join(project.path, 'src', newFile.type.directoryName, [newFile.name, newFile.type.suffix].join('.'));
           logger.debug(newMetadataPath);
           logger.debug(self.editorService.editor);
-          if (self.editorService) {
+          if (self.editorService && self.editorService.editor) {
             return self.editorService.open(newMetadataPath);
           } else {
             return resolve('Success');
