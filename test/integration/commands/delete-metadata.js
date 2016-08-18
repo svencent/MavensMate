@@ -15,6 +15,7 @@ describe('mavensmate delete-metadata', function(){
 
   before(function(done) {
     this.timeout(120000);
+    helper.boostrapEnvironment();
     commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace('delete-metadata');

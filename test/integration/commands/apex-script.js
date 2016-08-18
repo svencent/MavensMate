@@ -17,6 +17,7 @@ describe('mavensmate apex-script', function() {
 
   before(function(done) {
     this.timeout(120000);
+    helper.boostrapEnvironment();
     helper.unlinkEditor();
     logger.info('editor unlinked');
     commandExecutor = helper.getCommandExecutor();
