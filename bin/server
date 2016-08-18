@@ -10,7 +10,6 @@ var parseArgs = require('minimist');
 var server    = require('../app');
 
 var args = parseArgs(process.argv);
-var projectPath = args.project || process.cwd();
 var verbose = args.verbose || false;
 var port = args.port || process.env.MAVENSMATE_SERVER_PORT;
 
@@ -20,5 +19,6 @@ server.start({
   port: port,
   verbose: verbose
 });
+
 process.env.MAVENSMATE_SERVER_PORT = port;
 console.log('MavensMate server running on port: '+port);
