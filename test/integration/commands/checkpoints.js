@@ -50,13 +50,12 @@ describe('mavensmate checkpoints', function(){
     ];
     helper.cleanUpTestData(project, filesToDelete)
       .then(function() {
+        helper.cleanUpProject('checkpoints');
         done();
       })
       .catch(function(err) {
-        done(err);
-      })
-      .finally(function() {
         helper.cleanUpProject('checkpoints');
+        done(err);
       });
   });
 

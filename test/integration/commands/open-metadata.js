@@ -32,13 +32,12 @@ describe('mavensmate open-metadata', function(){
     ];
     helper.cleanUpTestData(project, filesToDelete)
       .then(function() {
+        helper.cleanUpProject('open-metadata');
         done();
       })
       .catch(function(err) {
-        done(err);
-      })
-      .finally(function() {
         helper.cleanUpProject('open-metadata');
+        done(err);
       });
   });
 

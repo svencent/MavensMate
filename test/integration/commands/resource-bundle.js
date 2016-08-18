@@ -36,13 +36,12 @@ describe('mavensmate resource-bundle', function(){
     ];
     helper.cleanUpTestData(project, filesToDelete)
       .then(function() {
+        helper.cleanUpProject('resource-bundle');
         done();
       })
       .catch(function(err) {
+        helper.cleanUpProject('resource-bundle');
         done(err);
-      })
-      .finally(function() {
-        return helper.cleanUpProject('resource-bundle');
       });
   });
 

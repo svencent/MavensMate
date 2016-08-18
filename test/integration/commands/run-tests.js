@@ -71,13 +71,12 @@ describe('mavensmate run-tests', function(){
         });
       })
       .then(function() {
+        helper.cleanUpProject('run-tests');
         done();
       })
       .catch(function(err) {
-        done(err);
-      })
-      .finally(function() {
         helper.cleanUpProject('run-tests');
+        done(err);
       });
   });
 

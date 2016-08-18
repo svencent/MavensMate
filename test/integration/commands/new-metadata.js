@@ -34,12 +34,13 @@ describe('mavensmate new-metadata', function(){
       path.join(helper.baseTestDirectory(),'workspace', 'new-metadata', 'src', 'triggers', 'NewMetadataTrigger.trigger'),
     ];
     helper.cleanUpTestData(project, filesToDelete)
-      .catch(function(err) {
-        done(err);
-      })
-      .finally(function() {
+      .then(function(err) {
         helper.cleanUpProject('new-metadata');
         done();
+      })
+      .catch(function(err) {
+        helper.cleanUpProject('new-metadata');
+        done(err);
       });
   });
 

@@ -32,14 +32,14 @@ describe('mavensmate deploy-to-server', function() {
     var filesToDelete = [
       path.join(helper.baseTestDirectory(),'workspace', 'deploy', 'src', 'classes', 'DeployClass.cls')
     ];
-
     helper.cleanUpTestData(project, filesToDelete)
-      .catch(function(err) {
-        done(err);
-      })
-      .finally(function() {
+      .then(function() {
         helper.cleanUpProject('deploy');
         done();
+      })
+      .catch(function(err) {
+        helper.cleanUpProject('deploy');
+        done(err);
       });
   });
 
@@ -69,7 +69,7 @@ describe('mavensmate deploy-to-server', function() {
   it('should validate deploy to an org connection', function(done) {
     this.timeout(120000);
     var creds = helper.getTestCreds();
-    var myConnectionName = 'my connection';
+    var myConnectionName = 'my-connection';
     helper.createNewMetadata(project, 'ApexClass', 'DeployClass')
       .then(function() {
         var payload = {

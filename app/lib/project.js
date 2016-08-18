@@ -281,7 +281,6 @@ Project.prototype._initExisting = function() {
         return self.sfdcClient.initialize();
       })
       .then(function(res) {
-        logger.warn('INITIALIZED SFDC CLIENT', res);
         self.metadataHelper = new MetadataHelper({ sfdcClient: self.sfdcClient });
         self.getLocalStore();
         return self.getOrgMetadataIndexWithSelections();

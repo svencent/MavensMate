@@ -42,13 +42,12 @@ describe('mavensmate lightning', function(){
 
     helper.cleanUpTestData(project, lightningBundlesToDelete)
       .then(function() {
+        helper.cleanUpProject('lightning');
         done();
       })
       .catch(function(err) {
+        helper.cleanUpProject('lightning');
         done(err);
-      })
-      .finally(function() {
-        helper.cleanUpProject('lightning')
       });
   });
 
