@@ -58,33 +58,11 @@ EditorService.prototype._getSupportedEditors = function() {
 };
 
 /**
- * Maps a given command name to the uri
- * @type {Object}
- */
-EditorService.prototype._uriMap = {
-  'home': 'home/index',
-  'settings': 'settings/index',
-  'new-project': 'project/new',
-  'new-project-from-existing-directory': 'project/new-from-existing-directory',
-  'edit-project': 'project/edit',
-  'oauth-project': 'project/auth',
-  'new-metadata': 'metadata/new',
-  'deploy': 'deploy/new',
-  'test': 'test/new',
-  'run-tests': 'test/new',
-  'execute-apex': 'apex/new',
-  'new-lightning-app': 'lightning/new-app',
-  'new-lightning-component': 'lightning/new-component',
-  'new-lightning-event': 'lightning/new-event',
-  'new-lightning-interface': 'lightning/new-interface'
-};
-
-/**
  * Launches the MavensMate UI in either MavensMateWindowServer.app (osx) or the web browser (Linux/Windows)
  * @param  {String} commandName
  * @return {Nothing}
  */
-EditorService.prototype.launchUI = function(commandName, urlParams) {
+EditorService.prototype.launchUI = function(appPath, urlParams) {
   var self = this;
   return new Promise(function(resolve, reject) {
     var portNumber = process.env.MAVENSMATE_SERVER_PORT;
@@ -93,7 +71,7 @@ EditorService.prototype.launchUI = function(commandName, urlParams) {
       return reject(new Error('Could not detect local MavensMate server port. Set MAVENSMATE_SERVER_PORT environment variable.'));
     }
 
-    var url = 'http://localhost:'+portNumber+'/app/'+self._uriMap[commandName];
+    var url = 'http://localhost:'+portNumber+'/app/'+appPath;
     if (self.editor && urlParams) {
       urlParams.editor = self.editor;
     } else if (self.editor) {

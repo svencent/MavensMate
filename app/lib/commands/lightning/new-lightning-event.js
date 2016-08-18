@@ -28,7 +28,7 @@ Command.prototype.execute = function() {
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
 
-      self.editorService.launchUI('new-lightning-event', { pid: self.getProject().settings.id })
+      self.editorService.launchUI('lightning/event/new', { pid: self.getProject().settings.id })
         .then(function() {
           resolve('Success');
         })

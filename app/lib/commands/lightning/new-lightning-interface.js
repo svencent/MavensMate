@@ -27,7 +27,7 @@ Command.prototype.execute = function() {
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
 
-      self.editorService.launchUI('new-lightning-interface', { pid: self.getProject().settings.id })
+      self.editorService.launchUI('lightning/interface/new', { pid: self.getProject().settings.id })
         .then(function() {
           resolve('Success');
         })

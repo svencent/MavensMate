@@ -35,7 +35,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      self.editorService.launchUI('new-project')
+      self.editorService.launchUI('project/new')
         .then(function() {
           resolve('Success');
         })
@@ -64,7 +64,7 @@ Command.prototype.execute = function() {
         //   return self.client.addProjectById(newProject.id);
         // })
         .then(function() {
-          if (self.editorService) {
+          if (self.editorService && self.editorService.editor) {
             return self.editorService.open(newProject.path);
           } else {
             return resolve({

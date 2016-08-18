@@ -21,8 +21,7 @@ inherits(Command, BaseCommand);
 Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-
-    self.editorService.launchUI('oauth-project', { pid: self.getProject().settings.id })
+    self.editorService.launchUI('project/'+self.getProject().settings.id+'/auth', { pid: self.getProject().settings.id })
       .then(function() {
         resolve('Please authenticate with Salesforce');
       })

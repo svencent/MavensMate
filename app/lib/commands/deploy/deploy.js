@@ -24,7 +24,7 @@ Command.prototype.execute = function() {
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
 
-      self.editorService.launchUI('deploy', { pid: self.getProject().settings.id })
+      self.editorService.launchUI('deploy/new', { pid: self.getProject().settings.id })
         .then(function() {
           resolve('Success');
         })

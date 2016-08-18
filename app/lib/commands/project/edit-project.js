@@ -22,8 +22,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-
-      self.editorService.launchUI('edit-project', { pid: self.getProject().settings.id })
+      self.editorService.launchUI('project/'+self.getProject().settings.id+'/edit', { pid: self.getProject().settings.id })
         .then(function() {
           resolve('Success');
         })

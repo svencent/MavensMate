@@ -21,8 +21,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-
-      self.editorService.launchUI('execute-apex', { pid: self.getProject().settings.id });
+      self.editorService.launchUI('apex/new', { pid: self.getProject().settings.id });
       resolve('Success');
     } else {
       self.getProject().sfdcClient.executeApex(self.payload)
