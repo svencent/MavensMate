@@ -45,7 +45,7 @@ KeychainService.prototype.storePassword = function(id, password, type) {
   if (this.useSystemKeychain()) {
     var storePasswordResult = keychain.addPassword('MavensMate-'+type, id, password);
     if (!storePasswordResult) {
-      throw new Error('Could not store '+type+' for '+self.id || self.settings.id);
+      throw new Error('Could not store '+type+' for '+id);
     }
     return storePasswordResult;
   } else {
@@ -65,7 +65,7 @@ KeychainService.prototype.replacePassword = function(id, password, type) {
   if (this.useSystemKeychain()) {
     var replacePasswordResult = keychain.replacePassword('MavensMate-'+type, id, password);
     if (!replacePasswordResult) {
-      throw new Error('Could not replace '+type+' for '+self.id || self.settings.id);
+      throw new Error('Could not replace '+type+' for '+id);
     }
     return replacePasswordResult;
   } else {
@@ -83,7 +83,7 @@ KeychainService.prototype.getPassword = function(id, type) {
   if (this.useSystemKeychain()) {
     var getPasswordResult = keychain.getPassword('MavensMate-'+type, id);
     if (!getPasswordResult) {
-      throw new Error('Could not get '+type+' for '+self.id || self.settings.id);
+      throw new Error('Could not get '+type+' for '+id);
     }
     return getPasswordResult;
   } else {
