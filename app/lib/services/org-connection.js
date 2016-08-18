@@ -39,9 +39,9 @@ OrgConnectionService.prototype.listAll = function() {
       } else {
         _.each(connections, function(c) {
           if (self.keychainService.useSystemKeychain()) {
-            c.accessToken = self.keychainService.getPassword(c.id, 'accessToken');
-            c.refreshToken = self.keychainService.getPassword(c.id, 'refreshToken');
-            c.password = self.keychainService.getPassword(c.id, 'password');
+            c.accessToken = self.keychainService.getPassword(c.id, 'accessToken', true);
+            c.refreshToken = self.keychainService.getPassword(c.id, 'refreshToken', true);
+            c.password = self.keychainService.getPassword(c.id, 'password', true);
           }
         });
         logger.debug('returning all org connections', connections);

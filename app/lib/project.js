@@ -1382,9 +1382,9 @@ Project.prototype._readCredentials = function() {
       return fs.readJsonSync(path.join(this.path, 'config', '.credentials'));
     } else {
       return {
-        accessToken: this.keychainService.getPassword(this.settings.id, 'accessToken'),
-        refreshToken: this.keychainService.getPassword(this.settings.id, 'refreshToken'),
-        password: this.keychainService.getPassword(this.settings.id, 'password')
+        accessToken: this.keychainService.getPassword(this.settings.id, 'accessToken', true),
+        refreshToken: this.keychainService.getPassword(this.settings.id, 'refreshToken', true),
+        password: this.keychainService.getPassword(this.settings.id, 'password', true)
       }
     }
   } catch(err) {

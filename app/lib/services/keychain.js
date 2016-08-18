@@ -78,11 +78,11 @@ KeychainService.prototype.replacePassword = function(id, password, type) {
  * @param  {String} id - the project id or id of the org connection
  * @param  {String} type - either "accessToken" or "refreshToken" or "password"
 */
-KeychainService.prototype.getPassword = function(id, type) {
+KeychainService.prototype.getPassword = function(id, type, canFailSilently) {
   logger.debug('Retrieving password of type', type, 'for', id);
   if (this.useSystemKeychain()) {
     var getPasswordResult = keychain.getPassword('MavensMate-'+type, id);
-    if (!getPasswordResult) {
+    if (!getPasswordResult && !canFailSilently) {
       throw new Error('Could not get '+type+' for '+id);
     }
     return getPasswordResult;
