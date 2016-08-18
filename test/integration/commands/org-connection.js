@@ -68,6 +68,7 @@ describe('mavensmate org-connections', function(){
       project: project
     })
     .then(function(response) {
+      logger.debug('org connections in test: ', response);
       response.length.should.equal(1);
       response[0].username.should.equal(creds.username);
       response[0].password.should.equal(creds.password);
