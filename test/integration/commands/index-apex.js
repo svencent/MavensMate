@@ -32,7 +32,7 @@ describe('mavensmate index-apex', function(){
     this.timeout(120000);
     var filesToDelete = [path.join(helper.baseTestDirectory(),'workspace', 'index-apex', 'src', 'classes', 'IndexMySymbolsClass.cls')];
     helper.cleanUpTestData(project, filesToDelete)
-      then(function() {
+      .then(function() {
         helper.cleanUpProject('index-apex');
         done();
       })
