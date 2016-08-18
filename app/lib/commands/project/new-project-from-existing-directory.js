@@ -20,6 +20,7 @@ function Command() {
 
 inherits(Command, BaseCommand);
 
+// TODO: implement
 Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
