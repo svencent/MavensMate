@@ -65,9 +65,8 @@ exports.boostrapEnvironment = function() {
   logger.info('Bootstrapping test environment');
   if (process.env.PARALLELISM_INDEX)
     logger.info('CI parallelism index is: '+process.env.PARALLELISM_INDEX);
-  // config.set('mm_workspace', [path.join(this.baseTestDirectory(),'workspace')]);
-  config.set('mm_workspace', path.join(this.baseTestDirectory(),'workspace'));
-  config.set('mm_keyring', false);
+  config.set('mm_workspace', [path.join(this.baseTestDirectory(),'workspace')]);
+  config.set('mm_use_keyring', false);
   process.env.mm_workspace = path.join(this.baseTestDirectory(),'workspace');
 };
 
