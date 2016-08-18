@@ -43,7 +43,11 @@ KeychainService.prototype.isSystemKeychainSupported = function() {
 KeychainService.prototype.storePassword = function(id, password, type) {
   logger.debug('Storing password of type', type, 'for', id);
   if (this.useSystemKeychain()) {
-    return keychain.addPassword('MavensMate-'+type, id, password);
+    var storePasswordResult = keychain.addPassword('MavensMate-'+type, id, password);
+    if (!storePasswordResult) {
+      throw new Error('Could not store '+type+' for '+self.id || self.settings.id);
+    }
+    return storePasswordResult;
   } else {
     throw new Error('Attempt to store password failed: system keychain service not supported');
   }
@@ -59,7 +63,11 @@ KeychainService.prototype.storePassword = function(id, password, type) {
 KeychainService.prototype.replacePassword = function(id, password, type) {
   logger.debug('Replacing password of type', type, 'for', id);
   if (this.useSystemKeychain()) {
-    return keychain.replacePassword('MavensMate-'+type, id, password);
+    var replacePasswordResult = keychain.replacePassword('MavensMate-'+type, id, password);
+    if (!replacePasswordResult) {
+      throw new Error('Could not replace '+type+' for '+self.id || self.settings.id);
+    }
+    return replacePasswordResult;
   } else {
     throw new Error('Attempt to replace password in keychain failed: system keychain service not supported');
   }
@@ -73,7 +81,11 @@ KeychainService.prototype.replacePassword = function(id, password, type) {
 KeychainService.prototype.getPassword = function(id, type) {
   logger.debug('Retrieving password of type', type, 'for', id);
   if (this.useSystemKeychain()) {
-    return keychain.getPassword('MavensMate-'+type, id);
+    var getPasswordResult = keychain.getPassword('MavensMate-'+type, id);
+    if (!getPasswordResult) {
+      throw new Error('Could not get '+type+' for '+self.id || self.settings.id);
+    }
+    return getPasswordResult;
   } else {
     throw new Error('Attempt to get password from keychain failed: system keychain service not supported');
   }
