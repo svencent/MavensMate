@@ -28,16 +28,6 @@ ViewHelper.prototype.getPathBaseName = function(p) {
   return path.basename(p);
 };
 
-// todo: move to config
-ViewHelper.prototype.getOauthParams = function(params) {
-  var params = {
-    client_id: '3MVG9uudbyLbNPZP7kLgoRiWVRqiN8gFcKwdAlztVnjgbj9shSk1vMXJNmV7W0ciFbeYiaP9D4tLfBBD06l_7',
-    redirect_uri: 'https://localhost:56248/sfdc/auth/callback',
-    response_type: 'token'
-  };
-  return querystring.stringify(params);
-};
-
 ViewHelper.prototype.listProjects = function() {
   var workspaces = config.get('mm_workspace');
   var projects = [];
