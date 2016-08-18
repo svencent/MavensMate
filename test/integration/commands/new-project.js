@@ -95,7 +95,7 @@ describe('mavensmate new-project', function(){
       this.timeout(120000);
       var creds = helper.getTestCreds();
       var payload = {
-        name: 'new-project2',
+        name: 'new-project',
         username: creds.username,
         password: creds.password,
         workspace: path.join(helper.baseTestDirectory(),'workspace'),
