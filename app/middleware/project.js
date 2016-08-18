@@ -90,7 +90,7 @@ function _addProjectById(app, projectId) {
         resolve(response);
       })
       .catch(function(err) {
-        if (err.message.indexOf('expired access/refresh token') >= 0 || err.message.indexOf('Could not retrieve credentials') >= 0) {
+        if (util.isCredentialsError(err)) {
           logger.warn('Project requiring re-auth added to client');
           app.get('projects').push(project);
           resolve();

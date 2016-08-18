@@ -32,6 +32,10 @@ MavensMateUtil.prototype.getAppRoot = function() {
   return path.resolve(path.join(__dirname, '..', '..'));
 };
 
+MavensMateUtil.prototype.isCredentialsError = function(err) {
+  return err.message.indexOf('expired access/refresh token') >= 0 || err.message.indexOf('Could not retrieve credentials') >= 0 || err.message.indexOf('INVALID_SESSION_ID') >= 0;
+};
+
 MavensMateUtil.prototype.getProjectById = function(app, id) {
   var projects = app.get('projects');
   if (id) {

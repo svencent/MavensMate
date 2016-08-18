@@ -127,7 +127,7 @@ Project.prototype._initEphemeral = function() {
           resolve(res);
         })
         .catch(function(error) {
-          if (error.message.indexOf('expired access/refresh token') >= 0) {
+          if (util.isCredentialsError(error)) {
             self.requiresAuthentication = true;
           }
           reject(error);
@@ -309,7 +309,7 @@ Project.prototype._initExisting = function() {
       })
       .catch(function(error) {
         logger.error(error);
-        if (error.message.indexOf('expired access/refresh token') >= 0 || error.message.indexOf('Could not retrieve credentials') >= 0) {
+        if (util.isCredentialsError(error)) {
           logger.debug('project has expired access/refresh token, marking as invalid');
           self.requiresAuthentication = true;
         }
