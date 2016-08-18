@@ -29,7 +29,7 @@ module.exports.start = function(opts) {
 
   app = express();
 
-  app.use(bodyParser.urlencoded());
+  app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json({ limit: '100mb' }));
 
   app.use(require('./middleware/cors'));
