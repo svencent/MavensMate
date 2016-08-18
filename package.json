@@ -8,8 +8,7 @@
   },
   "main": "./app/lib/mavensmate",
   "scripts": {
-    "test": "make test",
-    "postinstall": "node bin/postInstall"
+    "test": "make test"
   },
   "config": {
     "blanket": {
