@@ -61,10 +61,16 @@ function _handleCommandResult(result) {
   }
 };
 
+/**
+ * Command executor
+ * @param  {Object} opts
+ * @param  {Function} opts.openWindowFn - js function used to open a UI
+ * @param  {Function} opts.project - project instance (used by the cli)
+ * @return {Function}
+ */
 module.exports = function(opts) {
 
   opts = opts || {};
-  opts.openWindowFn = opts.openWindowFn;
 
   return {
     /**
@@ -87,12 +93,14 @@ module.exports = function(opts) {
           name = payload.name;
           body = payload.body;
           editor = payload.editor || process.env.MAVENSMATE_EDITOR;
-          project = payload.project;
-          commandClassName = capitalize(camelize(name))+'Command'; // => new-project -> NewProjectCommand
+          project = payload.project || opts.project;
 
-          // if (_.isString(project)) { // likely a project id
-          //   project = util.getProjectById(project); // todo: remove?
-          // }
+          // if we're in cli mode and our project has expired creds, we intercept the command and send them to authenticate
+          if (process.env.MAVENSMATE_CONTEXT === 'cli' && project && project.requiresAuthentication) {
+            name = 'oauth-project';
+          }
+
+          commandClassName = capitalize(camelize(name))+'Command'; // => new-project -> NewProjectCommand
 
           var editorService = new EditorService(editor, opts.openWindowFn);
 

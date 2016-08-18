@@ -7,11 +7,12 @@
  */
 
 process.title = 'mavensmate cli';
-process.env.MAVENSMATE_CONTEXT = 'cli'; // todo: rename?
+process.env.MAVENSMATE_CONTEXT = 'cli';
 
 var config            = require('../app/config');
 var program           = require('commander');
 var pjson             = require('../package.json');
+var util              = require('../app/lib/util').instance;
 
 // initialize top-level program with global options
 program
@@ -40,8 +41,6 @@ if (program.args.length < 1 ) {
   process.exit(1);
 }
 
-program.commandExecutor = require('../app/lib/commands')();
-
 var logger = require('../app/lib/logger')({ program: program });
 program.log = logger; // because autocmdr uses program.log (TODO: remove reliance on autocmdr)
 
@@ -53,7 +52,7 @@ require('autocmdr/lib/help')(program);
 logger.debug('\n\n=====> EXECUTING COMMAND VIA CLI:\n');
 logger.debug(JSON.stringify(process.argv));
 
-// projects that don't rely on a project for context
+// commands that don't rely on a project for context
 var projectExemptCommands = [
   'new-project',
   'session',
@@ -62,16 +61,28 @@ var projectExemptCommands = [
 
 var commandName = program.args[0];
 
-// not all command needs a project
 if (projectExemptCommands.indexOf(commandName) === -1) {
-  cliClient.addProjectByPath(process.cwd())
-    .then(function() {
-      program.parse(process.argv); // run subcommand if necessary
+  var Project = require('../app/lib/project');
+  var project = new Project({ path: process.cwd() });
+  project.initialize(false)
+    .then(function(res) {
+      program.commandExecutor = require('../app/lib/commands')({
+        project: project
+      });
+      program.parse(process.argv);
     })
     .catch(function(err) {
-      console.error('Could not set project: '+err.message+ ', '+err.stack);
-      process.exit(1);
+      if (util.isCredentialsError(err)) {
+        program.commandExecutor = require('../app/lib/commands')({
+          project: project
+        });
+        program.parse(process.argv);
+      } else {
+        console.error('Could not run command: '+err.message+ ', '+err.stack);
+        process.exit(1);
+      }
     });
 } else {
+  program.commandExecutor = require('../app/lib/commands')();
   program.parse(process.argv); // run subcommand if necessary
 }

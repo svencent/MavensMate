@@ -76,17 +76,7 @@ Project.prototype.initialize = function(isNewProject, isExistingDirectory) {
   return new Promise(function(resolve, reject) {
     isNewProject = isNewProject || false;
 
-    if (process.title === 'mavensmate cli') {
-      self._initEphemeral()
-        .then(function() {
-          resolve(self);
-        })
-        .catch(function(error) {
-          logger.error('Could not initiate ephemeral Project instance: '+error.message);
-          reject(error);
-        })
-        .done();
-    } else if (!isNewProject) {
+    if (!isNewProject) {
       self._initExisting()
         .then(function() {
           resolve(self);
@@ -108,31 +98,6 @@ Project.prototype.initialize = function(isNewProject, isExistingDirectory) {
         })
         .done();
     }
-  });
-};
-
-Project.prototype._initEphemeral = function() {
-  logger.debug('initing ephemeral project ...');
-  var self = this;
-  return new Promise(function(resolve, reject) {
-      self.sfdcClient = new SalesforceClient({
-        accessToken: config.get('mm_cli_salesforce_session_id'),
-        instanceUrl: config.get('mm_cli_salesforce_instance_url'),
-        transient: true
-      });
-      self.sfdcClient.initialize()
-        .then(function(res) {
-          self.metadataHelper = new MetadataHelper({ sfdcClient: self.sfdcClient });
-          self.requiresAuthentication = false;
-          resolve(res);
-        })
-        .catch(function(error) {
-          if (util.isCredentialsError(error)) {
-            self.requiresAuthentication = true;
-          }
-          reject(error);
-        })
-        .done();
   });
 };
 
