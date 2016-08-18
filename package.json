@@ -6,7 +6,7 @@
   "bin": {
     "mavensmate": "./bin/mavensmate"
   },
-  "main": "./lib/mavensmate",
+  "main": "./app/lib/mavensmate",
   "scripts": {
     "test": "make test",
     "postinstall": "node bin/postInstall"
