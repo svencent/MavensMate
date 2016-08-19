@@ -7,6 +7,10 @@ router.get('/sfdc/auth/callback', function(req, res) {
   res.redirect('/app/auth/callback');
 });
 
+router.get('/', function(req, res) {
+  res.redirect('/app/home');
+});
+
 // rpc route
 router.use('/execute', require('./execute'));
 
