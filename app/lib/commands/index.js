@@ -94,6 +94,7 @@ module.exports = function(opts) {
           body = payload.body;
           editor = payload.editor || process.env.MAVENSMATE_EDITOR;
           project = payload.project || opts.project;
+          openWindowFn = payload.openWindowFn || opts.openWindowFn;
 
           // if we're in cli mode and our project has expired creds, we intercept the command and send them to authenticate
           if (process.env.MAVENSMATE_CONTEXT === 'cli' && project && project.requiresAuthentication) {
@@ -102,7 +103,7 @@ module.exports = function(opts) {
 
           commandClassName = capitalize(camelize(name))+'Command'; // => new-project -> NewProjectCommand
 
-          var editorService = new EditorService(editor, opts.openWindowFn);
+          var editorService = new EditorService(editor, openWindowFn);
 
           var command = new commands[commandClassName](project, body, editorService);
 

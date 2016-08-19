@@ -65,6 +65,7 @@ module.exports.start = function(opts) {
   app.use(require('./routes'));
 
   app.set('commandExecutor', require('./lib/commands')(opts.openWindowFn));
+  app.set('openWindowFn', opts.openWindowFn);
   app.set('requestStore', requestStore); // todo: move to proper cache
   app.set('projects', []); // managed in project middleware (todo: move to proper cache)
 

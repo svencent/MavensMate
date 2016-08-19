@@ -34,7 +34,8 @@ function _execute(req, res) {
     project: req.project,
     name: command,
     body: req.body,
-    editor: req.editor
+    editor: req.editor,
+    openWindowFn: req.app.get('openWindowFn')
   });
   if (req.query.async === '1') {
     var requestStore = req.app.get('requestStore');

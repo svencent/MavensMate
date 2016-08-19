@@ -55,7 +55,7 @@ ViewHelper.prototype.listProjects = function() {
     }
   });
   return projects;
-}
+};
 
 ViewHelper.prototype.getStaticResourcePath = function() {
   return this.getBaseUrl() + '/app/static';
