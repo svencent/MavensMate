@@ -58,11 +58,6 @@ Command.prototype.execute = function() {
           logger.debug('Initiated new project, prepping to write to disk');
           return newProject.retrieveAndWriteToDisk();
         })
-        // .then(function() {
-        //   logger.debug('Written to disk ...');
-        //   logger.debug('attempting to open in editor');
-        //   return self.client.addProjectById(newProject.id);
-        // })
         .then(function() {
           if (self.editorService && self.editorService.editor) {
             return self.editorService.open(newProject.path);
