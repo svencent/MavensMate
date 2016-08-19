@@ -89,7 +89,7 @@ module.exports = function(opts) {
           logger.info('\n\n==================> executing command');
           // logger.silly('payload ', payload);
 
-          var name, body, editor, project, commandClassName;
+          var name, body, editor, project, openWindowFn, commandClassName;
           name = payload.name;
           body = payload.body;
           editor = payload.editor || process.env.MAVENSMATE_EDITOR;
