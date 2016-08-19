@@ -144,7 +144,7 @@ SalesforceClient.prototype.initialize = function() {
       self.conn = new jsforce.Connection({
         logLevel: config.get('mm_sfdc_api_log_level') || 'FATAL',
         version: self.apiVersion,
-        instanceUrl: self.instanceUrl,
+        instanceUrl: self.instanceUrl || 'https://na1.salesforce.com',
         accessToken: self.accessToken
       });
       self._configureJsForce();
@@ -164,7 +164,7 @@ SalesforceClient.prototype.initialize = function() {
           redirectUri : self.callbackUrl
         },
         refreshFn: self._refreshFn,
-        instanceUrl: self.instanceUrl,
+        instanceUrl: self.instanceUrl || 'https://na1.salesforce.com',
         accessToken: self.accessToken,
         refreshToken: self.refreshToken,
         logLevel: config.get('mm_sfdc_api_log_level') || 'FATAL',
