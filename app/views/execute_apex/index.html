@@ -181,7 +181,7 @@ var line;
 function executeApex() {
 	$.ajax({
 		type: "POST",
-		url: "{{ mavensmate.ui.getBaseUrl() }}/app/apex/execute",
+		url: "{{ mavensmate.ui.getBaseUrl() }}/app/apex",
 		dataType: "json",
 		contentType: 'application/json; charset=utf-8',
 		data: JSON.stringify({
