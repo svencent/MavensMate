@@ -101,7 +101,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/"+{{project.settings.id}}+"/subscription?pid={{project.settings.id}}",
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/subscription?pid={{project.settings.id}}",
 				data: JSON.stringify({
 		    	path: '{{ project.path }}',
 		    	subscription: $("#subscription").val(),
@@ -127,7 +127,7 @@
 				type: "POST",
 				dataType: 'json',
 				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/"+{{project.settings.id}}+"?pid={{project.settings.id}}",
+				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}?pid={{project.settings.id}}",
 				data: JSON.stringify({
 					package: getTree()
 				}),
