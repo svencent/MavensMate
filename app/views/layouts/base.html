@@ -360,16 +360,7 @@
                 $(".cancel-open-project").html('Opening...');
                 $(".open-project").addClass('disabled');
                 $(".cancel-open-project").addClass('disabled');
-
-                    window.open('{{ mavensmate.ui.getBaseUrl() }}/app/home?pid='+$("#selectedProject").val());
-                    $('#projectModal').modal('hide');
-                    $(".open-project").html('Open Project');
-                    $(".cancel-open-project").html('Cancel');
-                    $(".open-project").removeClass('disabled');
-                    $(".cancel-open-project").removeClass('disabled');
-                {% else %}
-                    window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/home?pid='+$("#selectedProject").val();
-                {% endif %}
+                window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/home?pid='+$("#selectedProject").val();
             });
 
             $(".cancel-open-project").click(function() {
