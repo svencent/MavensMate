@@ -171,53 +171,53 @@
                 </button>
                 <ul class="dropdown-menu multi-level burger" role="menu" style="border-color:#34495e;background-color:#768693;margin-top: 8px;width:auto;">
                     {% if project && project.sfdcClient %}
-                        <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/home?pid={{project.settings.id}}">Home</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/home?pid={{project.settings.id}}">Home</a></li>
 
-                        <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/settings/index?pid={{project.settings.id}}">Settings</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/settings/index?pid={{project.settings.id}}">Settings</a></li>
 
                         <li class="dropdown-submenu">
                             <a tabindex="-1" href="#">Project</a>
                             <ul class="dropdown-menu">
                                 {% for editorName, editorPath in mavensmate.ui.getSupportedEditors() %}
-                                <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}');">Open in {{ editorName|capitalize }}</a></li>
+                                <li><a target="_blank" href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}');">Open in {{ editorName|capitalize }}</a></li>
                                 {% endfor %}
                                 <li class="divider"></li>
                                 <li><a href="javascript:void(0);" onclick="openProjectModal();">Open Project</a></li>
-                                <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new?pid={{project.settings.id}}">New Project</a></li>
-                                <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}">Edit Project</a></li>
-                                <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/auth?pid={{project.settings.id}}">Salesforce Authentication</a></li>
+                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new?pid={{project.settings.id}}">New Project</a></li>
+                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}">Edit Project</a></li>
+                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/auth?pid={{project.settings.id}}">Salesforce Authentication</a></li>
                             </ul>
                         </li>
 
                         <li class="dropdown-submenu">
                             <a tabindex="-1" href="#">Metadata</a>
                             <ul class="dropdown-menu">
-                                <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/ApexClass/new?pid={{project.settings.id}}">New Apex Class</a></li>
-                                <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/ApexTrigger/new?pid={{project.settings.id}}">New Apex Trigger</a></li>
-                                <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/ApexPage/new?pid={{project.settings.id}}">New Visualforce Page</a></li>
-                                <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/ApexComponent/new?pid={{project.settings.id}}">New Visualforce Component</a></li>
+                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/ApexClass/new?pid={{project.settings.id}}">New Apex Class</a></li>
+                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/ApexTrigger/new?pid={{project.settings.id}}">New Apex Trigger</a></li>
+                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/ApexPage/new?pid={{project.settings.id}}">New Visualforce Page</a></li>
+                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/ApexComponent/new?pid={{project.settings.id}}">New Visualforce Component</a></li>
                             </ul>
                         </li>
 
                         <li class="dropdown-submenu">
                             <a tabindex="-1" href="#">Lightning</a>
                             <ul class="dropdown-menu">
-                                <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/app/new?pid={{project.settings.id}}">New Lightning App</a></li>
-                                <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/component/new?pid={{project.settings.id}}">New Lightning Component</a></li>
-                                <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/event/new?pid={{project.settings.id}}">New Lightning Event</a></li>
-                                <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/interface/new?pid={{project.settings.id}}">New Lightning Interface</a></li>
+                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/app/new?pid={{project.settings.id}}">New Lightning App</a></li>
+                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/component/new?pid={{project.settings.id}}">New Lightning Component</a></li>
+                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/event/new?pid={{project.settings.id}}">New Lightning Event</a></li>
+                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/interface/new?pid={{project.settings.id}}">New Lightning Interface</a></li>
                             </ul>
                         </li>
 
-                        <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/connections/new?pid={{project.settings.id}}">Deployment Connections</a></li>
-                        <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new?pid={{project.settings.id}}">Deploy to Server</a></li>
-                        <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/test/new?pid={{project.settings.id}}">Run Apex Unit Tests</a></li>
-                        <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/apex/new?pid={{project.settings.id}}">Execute Apex</a></li>
-                        <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/logs?pid={{project.settings.id}}">Debug Logs</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/connections/new?pid={{project.settings.id}}">Deployment Connections</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new?pid={{project.settings.id}}">Deploy to Server</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/test/new?pid={{project.settings.id}}">Run Apex Unit Tests</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/apex/new?pid={{project.settings.id}}">Execute Apex</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/logs?pid={{project.settings.id}}">Debug Logs</a></li>
                     {% else %}
-                        <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/home">Home</a></li>
-                        <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/settings">Settings</a></li>
-                        <li><a {% if editor === 'mavensmate-app' %}target="_blank"{% endif %} href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new">New Project</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/home">Home</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/settings">Settings</a></li>
+                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new">New Project</a></li>
                         <li><a href="javascript:void(0);" onclick="openProjectModal();">Open Project</a></li>
                     {% endif %}
                 </ul>
@@ -360,7 +360,7 @@
                 $(".cancel-open-project").html('Opening...');
                 $(".open-project").addClass('disabled');
                 $(".cancel-open-project").addClass('disabled');
-                {% if editor === 'mavensmate-app' %}
+
                     window.open('{{ mavensmate.ui.getBaseUrl() }}/app/home?pid='+$("#selectedProject").val());
                     $('#projectModal').modal('hide');
                     $(".open-project").html('Open Project');
