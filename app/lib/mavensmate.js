@@ -24,7 +24,7 @@ mavensmate.startServer = function(opts) {
       res.logger = require('winston');
       resolve(res);
     } catch(e) {
-      console.error('MavensMate server failed to start: '+err.message);
+      console.error('MavensMate server failed to start: '+e.message);
       reject(e);
     }
   });
