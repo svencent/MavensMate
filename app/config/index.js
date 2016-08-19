@@ -22,7 +22,7 @@ function _reload() {
   config.remove('user-client');
   config.remove('default-client');
   config.remove('global');
-  this._initConfig();
+  _init();
 }
 
 function _init() {
