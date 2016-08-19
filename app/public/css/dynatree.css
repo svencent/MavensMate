@@ -178,7 +178,8 @@ span.dynatree-expander i  /* 'Loading' status overrides all others */
 
 .dynatree-loading span.dynatree-expander  /* 'Loading' status overrides all others */
 {
-	background-image: none !important;
+	background-image: url("../images/loading.gif");
+	background-position: 0px 0px;
 }
 
 .dynatree-loading span.dynatree-expander i  /* 'Loading' status overrides all others */
