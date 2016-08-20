@@ -17,9 +17,9 @@ MavensMate Server is a local Node.js Express server that facilitates communicati
 - **Documentation**: https://github.com/joeferraro/MavensMate-app
 - **GitHub Project**: https://github.com/joeferraro/MavensMate
 
-## MavensMate Desktop (MavensMate.app)
+## MavensMate Desktop
 
-MavensMate-app is an application that bundles the local MavensMate server into a desktop application that powers the MavensMate Sublime Text, Atom, and Visual Studio Code plugins.
+MavensMate Desktop (MavensMate-app) is an application that bundles the local MavensMate server into a desktop application that powers the MavensMate Sublime Text, Atom, and Visual Studio Code plugins.
 
 - **Documentation**: https://github.com/joeferraro/MavensMate-app
 - **GitHub Project**: https://github.com/joeferraro/MavensMate-app
