@@ -4,6 +4,12 @@ MavensMate is a collection of open source projects that aim to make building Sal
 
 <img width="851" alt="mavensmate-architecture" src="https://cloud.githubusercontent.com/assets/54157/17833532/27343ec4-66ee-11e6-80ae-f8b56e7b990f.png">
 
+## Quickstart
+
+1. Choose your [editor](#plugins) and install the appropriate MavensMate plugin
+2. Download and install the [MavensMate Desktop client](mavensmate-desktop)
+3. Happy coding!
+
 ## Components
 
 - [MavensMate Server](#mavensmate-server)
