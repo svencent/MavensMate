@@ -5,7 +5,7 @@ MavensMate is a collection of open source projects that aim to make building Sal
 <img width="851" alt="mavensmate-architecture" src="https://cloud.githubusercontent.com/assets/54157/17833532/27343ec4-66ee-11e6-80ae-f8b56e7b990f.png">
 
 - [MavensMate Server](#mavensmate-server)
-- [MavensMate Desktop](#mavensmate-app)
+- [MavensMate Desktop](#mavensmate-desktop)
 - [Editor Plugins](#editor-plugins)
 - [Node Module](#node-module)
 - [Command Line Interface](#command-line-interface)
