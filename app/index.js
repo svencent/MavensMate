@@ -79,6 +79,10 @@ module.exports.start = function(opts) {
   };
 };
 
+/**
+ * Stops express server, clears process vars
+ * @return {Nothing}
+ */
 module.exports.stop = function() {
   server.close();
   delete process.env.MAVENSMATE_SERVER_PORT;
