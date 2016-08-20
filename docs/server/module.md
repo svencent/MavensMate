@@ -8,7 +8,7 @@ You can build your own Salesforce IDEs by integrating with the APIs exposed in t
 
 ## Usage
 
-```
+```javascript
 var mavensmate = require('mavensmate');
 var Project = mavensmate.Project;
 var SalesforceClient = mavensmate.SalesforceClient;
@@ -37,3 +37,4 @@ myProject.initialize(true)
 	.catch(function(err)) {
 		console.error('womp', err);
 	});
+```

@@ -4,7 +4,7 @@
 
 `npm install mavensmate -g`
 
-```
+```bash
 Usage: mavensmate [options]
 
   Options:
