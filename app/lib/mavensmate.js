@@ -6,6 +6,7 @@
 var mavensmate = exports;
 
 var Promise = require('bluebird');
+var server  = require('../index');
 
 mavensmate.CommandExecutor = require('./commands');
 mavensmate.Project = require('./project');
@@ -15,10 +16,8 @@ mavensmate.startServer = function(opts) {
   return new Promise(function(resolve, reject) {
     opts = opts || {};
     try {
-      var server = require('../index');
       var port = opts.port || '56248';
       var verbose = opts.verbose || false;
-
       var res = server.start({
         port: port,
         verbose: opts.verbose,
@@ -33,4 +32,8 @@ mavensmate.startServer = function(opts) {
       reject(e);
     }
   });
+};
+
+mavensmate.stopServer = function(opts) {
+  server.stop();
 };
