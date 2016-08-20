@@ -20,3 +20,7 @@ Usage: mavensmate [options]
     $ mavensmate -e sublime new-project
     $ mavensmate -v edit-project --ui
 ```
+
+## Command Reference
+
+- TODO
