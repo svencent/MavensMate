@@ -19,8 +19,6 @@
         "hideLoading": false,
         "responseHandler": false,
         "resizeProjectWrapper":false,
-        "DEFAULT_WINDOW_HEIGHT":false,
-        "DEFAULT_WINDOW_WIDTH":false,
         "centerWindow":false,
         "renderBufferedTree":false,
         "getTree":false

@@ -1,6 +1,3 @@
-var DEFAULT_WINDOW_WIDTH = 1050;
-var DEFAULT_WINDOW_HEIGHT = 850;
-
 var childMetadata = [
   {"xmlName" : "CustomField", "tagName" : "fields", "parentXmlName" : "CustomObject" },
   {"xmlName" : "BusinessProcess", "tagName" : "businessProcesses", "parentXmlName" : "CustomObject" },
@@ -133,7 +130,10 @@ function renderBufferedTree(metadata) {
 					instanceUrl: $('#instanceUrl').val(),
 					command: 'list-metadata'
 				}),
-        complete: function(data) {
+        error: function(req, textStatus, errorThrown) {
+          handleAjaxError(req, textStatus, errorThrown);
+        },
+        success: function(data, status, xhr) {
           listMetadataResponseHandler(data, node);
         }
       });
@@ -143,39 +143,43 @@ function renderBufferedTree(metadata) {
 }
 
 function listMetadataResponseHandler(data, node) {
-  console.log(data)
-  console.log('node: ')
-  console.log(node)
+  console.log(data);
+  console.log('node:', node);
   try {
-    var response = JSON.parse(data.responseText)
-    checkListStatus(response.id, node)
+    checkListStatus(data.id, node);
   } catch(e) {
     showGlobalError('The local MavensMate server did not respond properly. This likely means it is not running or it is malfunctioning. Try restarting your text editor and MavensMate.app.');
     hideLoading();
   }
 }
 
+function handleAjaxError(req, textStatus, errorThrown) {
+  console.error(req, textStatus, errorThrown);
+  hideLoading();
+  showGlobalError('Request failed with status code '+req.status+'<br/>'+req.responseText);
+}
+
 function checkListStatus(requestId, node) {
   $.ajax({
     type: 'GET',
-    url: baseLocalServerURL+'/status',
-    data: {
-      id: requestId
+    url: baseLocalServerURL+'/execute/'+requestId,
+    data: { id: requestId },
+    dataType: 'json',
+    error: function(req, textStatus, errorThrown) {
+      handleAjaxError(req, textStatus, errorThrown);
     },
-    complete: function(data, status, xhr) {
+    success: function(data, status, xhr) {
       try {
-        console.log('checking status of async request');
-        console.log(data.responseText)
-        var response = JSON.parse(data.responseText);
-        if (response.status === 'pending') {
-            setTimeout(function() { checkListStatus(requestId, node); }, CHECK_STATUS_INTERVAL); //poll for completed async request
+        console.log('checking status of async list metadata request');
+        console.log(data);
+        if (data.status === 'pending') {
+          setTimeout(function() { checkListStatus(requestId, node); }, CHECK_STATUS_INTERVAL); //poll for completed async request
         } else {
-            handleListResponse(response, node);
+          handleListResponse(data, node);
         }
       } catch(e) {
-        console.log(e);
-        console.log('caught an error, polling again...');
-        setTimeout(function() { checkListStatus(requestId, node); }, 2000);
+        console.error(e);
+        showGlobalError('Error listing metadata: '+e.message);
       }
     }
   });
@@ -300,18 +304,6 @@ function resizeFilter() {
 	$("#txtFilter").width($("#filter").width() - $("#search-btn").width() - $("#select-btn").width()  - 70);
 }
 
-function scrollToTop(selector) {
-	$(selector).animate({ scrollTop: 0 }, 300);
-}
-
-function showElement(id) {
-	$("#"+id).show();
-}
-
-function hideElement(id) {
-	$("#"+id).hide();
-}
-
 function toggleRunningIndicator() {
 	$(".running_indicator").toggle();
 }
@@ -333,42 +325,8 @@ function hideLoading() {
 	$(".loading_message_wrapper").hide();
 }
 
-//window resizer and mover
-function resizeAndCenterWindow() {
-	resizeWindow();
-	centerWindow();
-}
-
 function isArray(what) {
-    return Object.prototype.toString.call(what) === '[object Array]';
-}
-
-//window resizer and mover
-function resizeAndCenterWindowByHeight(height) {
-   	window.resizeTo(DEFAULT_WINDOW_WIDTH, height+160);
-	try {
-		$("#deploy_output").height(height);
-	} catch(e) { }
-}
-
-//window resizer and mover
-function resizeAndCenterWindowSpecific(width, height) {
-  window.resizeTo(width, height+160);
-	try {
-		$("#deploy_output").height(height);
-	} catch(e) { }
-	window.moveTo((screen.width-width)/2,(screen.height-document.getElementById('wrapper').offsetHeight-(width+15))/2);
-}
-
-function resizeWindow() {
-  window.resizeTo(DEFAULT_WINDOW_WIDTH, document.getElementById('wrapper').offsetHeight+72);
-	try {
-		$("#deploy_output").height(document.getElementById('wrapper').offsetHeight);
-	} catch(e) { }
-}
-
-function centerWindow() {
-	window.moveTo((screen.width-$(window).width())/2,(screen.height-$(window).height())/2-190);
+  return Object.prototype.toString.call(what) === '[object Array]';
 }
 
 //if dom elements is removed, we need to resize the window
@@ -377,7 +335,6 @@ function resizeWindowOnDomElementRemoved() {
 		"DOMNodeRemoved",
 		function( event ) {
 			if (event.target.id === "result_wrapper") {
-				resizeWindow();
 				$("#project_details_tab").click();
 			}
 		}
@@ -396,7 +353,7 @@ function submitFormOnEnter() {
 
 //gets tree content in json format
 function getTree() {
-	if (tree !== undefined) {
+	if (tree) {
 		return getPackage();
 	} else {
 		return {
@@ -534,20 +491,12 @@ function hideMessage(message) {
 	resizeElements()
 }
 
-function resizeArcade(offset) {
-	if (offset === undefined) {
-		offset = 370
-	}
-	$(".flash_game").css("width", $(".tab-content").width() - 45)
-	$(".flash_game").css("height", $(window).height() - offset)
-}
-
 function resizeElements() {
-    if ($("#result_output").css('display') !== 'none') {
-		  $("#main-tab-content").height($(window).height() - $(".navbar").height() - $("#result_output").height() - $(".footer").height() - 220)
-    } else {
-      $("#main-tab-content").height($(window).height() - $(".navbar").height() - $(".footer").height() - 200)
-    }
+  if ($("#result_output").css('display') !== 'none') {
+	  $("#main-tab-content").height($(window).height() - $(".navbar").height() - $("#result_output").height() - $(".footer").height() - 220);
+  } else {
+    $("#main-tab-content").height($(window).height() - $(".navbar").height() - $(".footer").height() - 200);
+  }
 }
 
 function resizeProjectWrapper(offset) {
@@ -555,14 +504,6 @@ function resizeProjectWrapper(offset) {
 		offset = 90;
 	}
 	$("#project_wrapper").height($("#main-tab-content").height() - offset);
-}
-
-function expandAll() {
-	tree.expandAll()
-}
-
-function collapseAll() {
-	tree.collapseAll()
 }
 
 $.expr[':'].Contains = function(a, i, m) {
