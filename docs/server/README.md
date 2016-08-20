@@ -15,3 +15,15 @@ This will start the local server at `http://localhost:56248/`. Please note that 
 ## Running Tests
 
 To run unit, integration, and command line interface tests for MavensMate server, `cd` to the `mavensmate` directory and run `npm test`.
+
+## Command Line Interface
+
+You can use the command line interface to script compilation, deployment, and other MavensMate tasks.
+
+**Documentation**: https://github.com/joeferraro/MavensMate/blob/master/docs/server/cli.md
+
+## Node Module
+
+You can use the Node module to build your own Salesforce IDE.
+
+**Documentation**: https://github.com/joeferraro/MavensMate/blob/master/docs/server/module.md
