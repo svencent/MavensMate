@@ -32,7 +32,6 @@ function Package(opts) {
   this.metadataTypeXmlNames = opts.metadataTypeXmlNames;
   this.subscription = opts.subscription;
   this.project = opts.project;
-  swig.setDefaults({ runInVm: true, loader: swig.loaders.fs(__dirname) });
 }
 
 Package.prototype._path = null;
@@ -296,7 +295,7 @@ Package.prototype._serialize = function() {
   var self = this;
   logger.debug('serializing package:');
   logger.debug(self.subscription);
-  var serialized = swig.renderFile(path.join('templates', 'package.xml'), {
+  var serialized = swig.renderFile(path.join(__dirname, 'templates', 'package.xml'), {
     obj: self.subscription,
     apiVersion: config.get('mm_api_version')
   });

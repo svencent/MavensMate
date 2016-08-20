@@ -459,7 +459,6 @@ MavensMateFile.prototype.mergeTemplate = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     var apiName = self.name;
-    swig.setDefaults({ runInVm: true, loader: swig.loaders.fs(__dirname) });
     self._getTemplateBody()
       .then(function(templateBody) {
         resolve(swig.render(templateBody, { locals: self.templateValues }));
@@ -480,7 +479,6 @@ MavensMateFile.prototype.renderAndWriteToDisk = function(destination) {
   var self = this;
   return new Promise(function(resolve, reject) {
     var apiName = self.name;
-    swig.setDefaults({ runInVm: true, loader: swig.loaders.fs(__dirname) });
     self._getTemplateBody()
       .then(function(templateBody) {
         var filePath = path.join(destination, self.type.directoryName, [apiName,self.type.suffix].join('.'));
@@ -489,7 +487,7 @@ MavensMateFile.prototype.renderAndWriteToDisk = function(destination) {
 
         if (self.hasMetaFile) {
           var metaFilePath = path.join(destination, self.type.directoryName, [apiName,self.type.suffix+'-meta.xml'].join('.'));
-          var metaFileBody = swig.renderFile(path.join('templates', 'meta.xml'), {
+          var metaFileBody = swig.renderFile(path.join(__dirname, 'templates', 'meta.xml'), {
             metadata: self,
             apiVersion: config.get('mm_api_version')
           });
