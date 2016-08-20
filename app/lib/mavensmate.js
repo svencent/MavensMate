@@ -6,6 +6,11 @@
 var mavensmate = exports;
 
 var Promise = require('bluebird');
+
+mavensmate.CommandExecutor = require('./commands');
+mavensmate.Project = require('./project');
+mavensmate.SalesforceClient = require('./sfdc-client');
+
 mavensmate.startServer = function(opts) {
   return new Promise(function(resolve, reject) {
     opts = opts || {};
