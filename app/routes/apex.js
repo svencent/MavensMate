@@ -13,7 +13,7 @@ var logger          = require('winston');
 // todo: refactor errors
 router.get('/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project attached to this request.');
+    res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
     var commandExecutor = req.app.get('commandExecutor');
     commandExecutor.execute({
@@ -27,7 +27,7 @@ router.get('/new', function(req, res) {
       });
     })
     .catch(function(err) {
-      res.status(500).send('Error: '+err.message);
+      res.render('error', { error: 'Error: '+err.message });
     });
   }
 });

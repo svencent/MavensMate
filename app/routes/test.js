@@ -14,7 +14,7 @@ var logger          = require('winston');
 
 router.get('/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project attached to this request.');
+    res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
     res.render('unit_test/index.html', {
       testClasses : _getTestClasses(req.project),

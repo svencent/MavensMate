@@ -14,7 +14,7 @@ var logger          = require('winston');
 router.get('/', function(req, res) {
   var io = req.app.get('io')
   if (!req.project) {
-    res.status(500).send('Error: No project attached to this request.');
+    res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
     io.on('connection', function(socket) {
       req.project.on('new-log', function(filePath) {

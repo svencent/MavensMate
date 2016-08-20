@@ -14,7 +14,7 @@ var querystring     = require('querystring');
 
 router.get('/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project attached to this request.');
+    res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
     var commandExecutor = req.app.get('commandExecutor');
     var deployDelegate = new Deploy({

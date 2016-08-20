@@ -27,4 +27,15 @@ router.use('/app/project',require('./project'));
 router.use('/app/settings',require('./settings'));
 router.use('/app/test',require('./test'));
 
+router.get('*', function(req, res){
+  var isAjaxRequest = req.xhr;
+  if (isAjaxRequest) {
+    res.send('URL not found: '+req.url, 404);
+  } else {
+    res.render('404.html', {
+      title: '404: Page not found'
+    });
+  }
+});
+
 module.exports = router;

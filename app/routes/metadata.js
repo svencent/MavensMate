@@ -14,7 +14,7 @@ var TemplateService = require('../lib/services/template');
 
 router.get('/:type/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project attached to this request.');
+    res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
     _getTemplates(req.params.type)
       .then(function(templates) {

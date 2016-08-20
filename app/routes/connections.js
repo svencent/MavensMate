@@ -28,7 +28,7 @@ router.get('/new', function(req, res) {
   })
   .catch(function(err) {
     logger.error(err);
-    res.status(500).send({ error: err.message });
+    res.render('error', { error: 'Error: '+err.message });
   });
 });
 

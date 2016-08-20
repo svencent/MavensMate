@@ -6,7 +6,7 @@ var requestStore    = require('../lib/request-store');
 
 router.get('/app/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project attached to this request.');
+    res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
     res.render('lightning/new_app.html', {
       title: 'New Lightning App'
@@ -16,7 +16,7 @@ router.get('/app/new', function(req, res) {
 
 router.get('/component/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project attached to this request.');
+    res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
     res.render('lightning/new_component.html', {
       title: 'New Lightning Component'
@@ -26,7 +26,7 @@ router.get('/component/new', function(req, res) {
 
 router.get('/event/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project attached to this request.');
+    res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
     res.render('lightning/new_event.html', {
       title: 'New Lightning Event'
@@ -36,7 +36,7 @@ router.get('/event/new', function(req, res) {
 
 router.get('/interface/new', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project attached to this request.');
+    res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
     res.render('lightning/new_interface.html', {
       title: 'New Lightning Interface'

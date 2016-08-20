@@ -161,7 +161,7 @@ router.get('/:id/auth', function(req, res) {
 // edit project UI
 router.get('/:id/edit', function(req, res) {
   if (!req.project) {
-    res.status(500).send('Error: No project attached to this request.');
+    res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
     res.render('project/edit.html', {
       title: 'Edit Project'
