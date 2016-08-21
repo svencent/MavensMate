@@ -85,25 +85,10 @@ EditorService.prototype.launchUI = function(appPath, urlParams) {
     logger.debug('opening url --->');
     logger.debug(url);
 
-    var useBrowerAsUi = config.get('mm_use_browser_as_ui', false);
-
-    // todo: refactor windowopener (this is used by mavensmate-app)
+    // todo: refactor windowopener (this is used by mavensmate-desktop)
     if (self.openWindowFn) {
       self.openWindowFn(url);
       resolve();
-    } else if (os.platform() === 'darwin' && !useBrowerAsUi) {
-      var windowServerPath = path.join(util.getAppRoot(), 'bin', 'MavensMateWindowServer.app');
-      var windowServerChildProcess = spawn('open', ['-n', windowServerPath, '--args', '-url', url], {
-        detached: true
-      });
-      windowServerChildProcess.on('close', function (code) {
-        if (code === 0 && process.env.MAVENSMATE_CONTEXT === 'cli') {
-          resolve();
-          process.exit(0);
-        } else {
-          resolve();
-        }
-      });
     } else {
       // open web browser
       open(url, function() {

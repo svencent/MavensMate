@@ -79,7 +79,7 @@ function _addProjectById(app, projectId) {
   return new Promise(function(resolve, reject) {
     var projectPath = _findProjectPathById(projectId);
     if (!projectPath) {
-      return reject(new Error('MavensMate could not find project with the id: '+projectId+'. This is likely because you are trying to open a project that does not reside in a valid mm_workspace. Please go to MavensMate-app global settings and ensure this project is located in a valid mm_workspace.'));
+      return reject(new Error('MavensMate could not find project with the id: '+projectId+'. This is likely because you are trying to open a project that does not reside in a valid mm_workspace. Please go to MavensMate Desktop global settings and ensure this project is located in a valid mm_workspace.'));
     }
     logger.info('adding project by id ----> ', projectId);
     logger.info('path: ', projectPath);

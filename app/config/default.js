@@ -128,20 +128,6 @@ module.exports = {
     default: [".page", ".component", ".cls", ".object", ".trigger", ".layout", ".resource", ".remoteSite", ".labels", ".app", ".dashboard", ".permissionset", ".workflow", ".email", ".profile", ".scf", ".queue", ".reportType", ".report", ".weblink", ".tab", ".letter", ".role", ".homePageComponent", ".homePageLayout", ".objectTranslation", ".flow", ".datacategorygroup", ".snapshot", ".site", ".sharingRules", ".settings", ".callCenter", ".community", ".authProvider", ".customApplicationComponent", ".quickAction", ".approvalProcess", ".html"],
     order: 170
   },
-  // mm_community_api_token: {
-  //   title: 'MavensMate Community API token',
-  //   description: '(placeholder for future functionality)',
-  //   type: 'string',
-  //   default: '',
-  //   order: 180
-  // },
-
-  // //if true, MavensMate will present local/server diff view when conflict is found for the purposes of merging changes (beta)
-  // "mm_diff_server_conflicts": true,
-
-  //if true, mavensmate will store all deployment packages in your project's "deploy" directory
-  // "mm_archive_deployments" : true,
-
   mm_http_proxy: {
     title: 'HTTP Proxy',
     description: 'Set if you are behind a proxy (you can also set via export HTTP_PROXY, export HTTPS_PROXY). Example: http:\/\/10.10.1.10:3128 or http:\/\/user:pass@10.10.1.10:3128/',
@@ -156,16 +142,6 @@ module.exports = {
     default: '',
     order: 200
   },
-  mm_mavensmate_app_path : {
-    title: 'MavensMate app path',
-    description: 'Full path to your MavensMate app',
-    type: 'object',
-    default: {
-      "windows": "C:\\Program Files\\MavensMate\\mavensmate.exe",
-      "linux": "/usr/bin/mavensmate-app/MavensMate",
-      "osx": "/Applications/MavensMate.app"
-    }
-  },
   mm_purge_on_delete: {
     title: 'Purge on delete',
     description: 'Set to true to perform a hard delete when deleting metadata.',
@@ -179,19 +155,5 @@ module.exports = {
     type: 'boolean',
     default: false,
     order: 210
-  },
-  mm_use_browser_as_ui: {
-    title: 'Use browser as UI',
-    description: 'Set to true to open MavensMate UIs in your default browser (advanced users only)',
-    type: 'boolean',
-    default: false,
-    order: 220
   }
-  // mm_hide_dock_icon: {
-  //   title: 'Hides MavensMate icon from dock (RESERVED FOR FUTURE USE)',
-  //   description: 'Hides dock icon, shows MavensMate clickable icon in status bar/system tray with menu',
-  //   type: 'boolean',
-  //   default: false,
-  //   order: 35
-  // }
 };
