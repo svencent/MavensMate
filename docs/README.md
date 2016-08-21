@@ -1,6 +1,6 @@
 # [MavensMate](http://mavensmate.com) - Open Source IDEs for Salesforce
 
-MavensMate is a collection of open source projects that aim to make building Salesforce applications accessible to developers who prefer to build applications using their local machine in text editors like Sublime Text, Atom, and Visual Studio Code. Because there are several MavensMate projects, it can be somewhat confusing. In essence, there are three main components to the architecture: the server, the desktop wrapper, and the editor plugins.
+MavensMate is a collection of open source projects that aims to make building Salesforce applications accessible to developers who prefer to build applications using their local machine in text editors like Sublime Text, Atom, and Visual Studio Code. Because there are several MavensMate projects, it can be somewhat confusing. In essence, there are three main components to the architecture: the [server](https://github.com/joeferraro/MavensMate/tree/master/docs/server), the [desktop application](https://github.com/joeferraro/MavensMate-Desktop), and the [editor plugins](#plugins).
 
 <img width="851" alt="mavensmate-architecture" src="https://cloud.githubusercontent.com/assets/54157/17834705/93204598-671a-11e6-90f2-bfb01ddbc2ad.png">
 
@@ -20,12 +20,22 @@ MavensMate is a collection of open source projects that aim to make building Sal
 
 ## MavensMate Server
 
+[![Build Status](https://travis-ci.org/joeferraro/MavensMate.svg?branch=master)](https://travis-ci.org/joeferraro/MavensMate)
+[![Coverage Status](https://coveralls.io/repos/joeferraro/MavensMate/badge.svg?branch=master)](https://coveralls.io/r/joeferraro/MavensMate?branch=master)
+[![NPM Version](https://img.shields.io/npm/v/mavensmate.svg)](https://www.npmjs.org/package/mavensmate)
+[![License](https://img.shields.io/npm/l/mavensmate.svg)](https://www.npmjs.org/package/mavensmate)
+
 MavensMate Server is a local Node.js Express server that facilitates communication/integration between editors like Sublime Text, Atom, and Visual Studio Code, the local file system, and the Salesforce servers. When a plugin requests a command to be run (e.g. "compile a file"), a local HTTP request is made to MavensMate Server, the server executes the requested command (which often requires communicating with a remote Salesforce.come environment) and returns the response to the plugin.
 
 - **Documentation**: https://github.com/joeferraro/MavensMate/tree/master/docs/server
 - **GitHub Project**: https://github.com/joeferraro/MavensMate
 
 ## MavensMate Desktop
+
+| Platform | Status |
+| --- | --- |
+OS X / Linux | [![Build Status](https://travis-ci.org/joeferraro/MavensMate-app.svg)](https://travis-ci.org/joeferraro/MavensMate-app) |
+Windows | [![Build status](https://ci.appveyor.com/api/projects/status/u0i8yx97wuwylp88?svg=true)](https://ci.appveyor.com/project/joeferraro/mavensmate-app) |
 
 MavensMate Desktop is an application that bundles the local MavensMate server into a desktop application that powers the MavensMate Sublime Text, Atom, and Visual Studio Code plugins.
 
