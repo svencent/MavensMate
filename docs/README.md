@@ -1,14 +1,20 @@
 # [MavensMate](http://mavensmate.com) - Open Source IDEs for Salesforce
 
-MavensMate is a collection of open source projects that aims to make building Salesforce applications accessible to developers who prefer to build applications using their local machine in text editors like Sublime Text, Atom, and Visual Studio Code. Because there are several MavensMate projects, it can be somewhat confusing. In essence, there are three main components to the architecture: the [server](https://github.com/joeferraro/MavensMate/tree/master/docs/server), the [desktop application](https://github.com/joeferraro/MavensMate-Desktop), and the [editor plugins](#plugins).
+MavensMate is a collection of open source projects that aims to make building Salesforce applications accessible to developers who prefer to build applications using their local machine in text editors like Sublime Text, Atom, and Visual Studio Code. MavensMate is created and maintained by [Joe Ferraro](http://twitter.com/joeferraro) with support from [Mavens](https://mavens.com) and these amazing [contributors](https://github.com/joeferraro/MavensMate/tree/master/docs#contributors).
+
+Because there are several open source MavensMate projects, it can be somewhat confusing to navigate the ecosystem. In essence, there are three main components to the architecture: the [server](https://github.com/joeferraro/MavensMate/tree/master/docs/server), the [desktop application](https://github.com/joeferraro/MavensMate-Desktop), and the [editor plugins](#plugins).
 
 <img width="851" alt="mavensmate-architecture" src="https://cloud.githubusercontent.com/assets/54157/17834705/93204598-671a-11e6-90f2-bfb01ddbc2ad.png">
 
-## Quickstart
+## Quickstart for Salesforce Developers
 
 1. Download and install [MavensMate Desktop](https://github.com/joeferraro/MavensMate-Desktop/releases)
 2. Choose your editor (Sublime Text 3, Atom, Visual Studio Code) and install the appropriate [MavensMate plugin](#plugins)
 3. Happy coding!
+
+## Quickstart for MavensMate Contributors
+
+- Coming soon
 
 ## Components
 
