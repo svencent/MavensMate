@@ -148,7 +148,7 @@ function listMetadataResponseHandler(data, node) {
   try {
     checkListStatus(data.id, node);
   } catch(e) {
-    showGlobalError('The local MavensMate server did not respond properly. This likely means it is not running or it is malfunctioning. Try restarting your text editor and MavensMate.app.');
+    showGlobalError('The local MavensMate server did not respond properly. This likely means it is not running or it is malfunctioning. Try restarting your text editor and MavensMate Desktop.');
     hideLoading();
   }
 }
@@ -441,7 +441,7 @@ function responseHandler(data) {
 		var response = JSON.parse(data.responseText)
 		checkRequestStatus(response["id"])
 	} catch(e) {
-		showGlobalError('The local MavensMate server did not respond properly. This likely means it is not running or it is malfunctioning. Try restarting your text editor and MavensMate.app.');
+		showGlobalError('The local MavensMate server did not respond properly. This likely means it is not running or it is malfunctioning. Try restarting your text editor and MavensMate Desktop.');
 		hideLoading()
 	}
 }
