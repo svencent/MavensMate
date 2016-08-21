@@ -1,7 +1,7 @@
 #Quick Start
 
-1. Choose your editor (Sublime Text 3, Atom, Visual Studio Code) and install the appropriate [MavensMate plugin](https://github.com/joeferraro/MavensMate/tree/master/docs#plugins)
-2. Download and install [MavensMate Desktop](https://github.com/joeferraro/MavensMate-Desktop)
+1. Download and install [MavensMate Desktop](https://github.com/joeferraro/MavensMate-Desktop)
+2. Choose your editor (Sublime Text 3, Atom, Visual Studio Code) and install the appropriate [MavensMate plugin](https://github.com/joeferraro/MavensMate/tree/master/docs#plugins)
 3. Happy coding!
 
 
