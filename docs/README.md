@@ -6,7 +6,7 @@ MavensMate is a collection of open source projects that aims to make building Sa
 
 ## Quickstart
 
-1. Download and install [MavensMate Desktop](mavensmate-desktop)
+1. Download and install [MavensMate Desktop](#mavensmate-desktop)
 2. Choose your editor (Sublime Text 3, Atom, Visual Studio Code) and install the appropriate [MavensMate plugin](#plugins)
 3. Happy coding!
 
