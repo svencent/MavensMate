@@ -2,7 +2,7 @@
 
 MavensMate is a collection of open source projects that aim to make building Salesforce applications accessible to developers who prefer to build applications using their local machine in text editors like Sublime Text, Atom, and Visual Studio Code. Because there are several MavensMate projects, it can be somewhat confusing. In essence, there are three main components to the architecture: the server, the desktop wrapper, and the editor plugins.
 
-<img width="851" alt="mavensmate-architecture" src="https://cloud.githubusercontent.com/assets/54157/17833532/27343ec4-66ee-11e6-80ae-f8b56e7b990f.png">
+<img width="851" alt="mavensmate-architecture" src="https://cloud.githubusercontent.com/assets/54157/17834705/93204598-671a-11e6-90f2-bfb01ddbc2ad.png">
 
 ## Quickstart
 
