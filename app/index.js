@@ -5,6 +5,7 @@
 
 'use strict';
 
+var _                 = require('lodash');
 var path              = require('path');
 var swig              = require('swig');
 var express           = require('express');
@@ -26,6 +27,11 @@ var app, server;
  */
 module.exports.start = function(opts) {
   opts = opts || {};
+
+  if (!config.get('mm_workspace') || (_.isArray(config.get('mm_workspace')) && config.get('mm_workspace').length === 0)) {
+    config.set('mm_workspace', [ util.getDefaultWorkspaceSetting() ]);
+    config.save();
+  }
 
   app = express();
 

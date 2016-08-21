@@ -46,6 +46,20 @@ MavensMateUtil.prototype.getProjectById = function(app, id) {
   return null;
 };
 
+/**
+ * Returns a string representing a default workspace
+ * @return {String}
+ */
+MavensMateUtil.prototype.getDefaultWorkspaceSetting = function() {
+  if (this.isMac()) {
+    return path.join(process.env.HOME, 'Documents');
+  } else if (this.isWindows()) {
+    return path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], 'Documents');
+  } else if (this.isLinux()) {
+    return process.env.HOME;
+  }
+};
+
 MavensMateUtil.prototype.endsWith = function(string, suffix) {
   string = string.toLowerCase();
   suffix = suffix.toLowerCase();
