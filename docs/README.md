@@ -34,8 +34,8 @@ MavensMate Server is a local Node.js Express server that facilitates communicati
 
 | Platform | Status |
 | --- | --- |
-OS X / Linux | [![Build Status](https://travis-ci.org/joeferraro/MavensMate-app.svg)](https://travis-ci.org/joeferraro/MavensMate-app) |
-Windows | [![Build status](https://ci.appveyor.com/api/projects/status/u0i8yx97wuwylp88?svg=true)](https://ci.appveyor.com/project/joeferraro/mavensmate-app) |
+OS X / Linux | [![Build Status](https://travis-ci.org/joeferraro/MavensMate-Desktop.svg)](https://travis-ci.org/joeferraro/MavensMate-Desktop) |
+Windows | [![Build status](https://ci.appveyor.com/api/projects/status/u0i8yx97wuwylp88?svg=true)](https://ci.appveyor.com/project/joeferraro/MavensMate-Desktop) |
 
 MavensMate Desktop is an application that bundles the local MavensMate server into a desktop application that powers the MavensMate Sublime Text, Atom, and Visual Studio Code plugins.
 
