@@ -53,6 +53,11 @@
                 $(window).trigger('resize');
             });
 
+            $('.closeable .close').on('click', function() {
+                $(this).parent().hide();
+                $(window).trigger('resize');
+            });
+
             $('#success-open-alert .close').on('click', function() {
                 $('#success-open-alert').hide();
                 $(window).trigger('resize');
