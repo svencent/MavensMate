@@ -23,12 +23,11 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-
       var urlParams = { pid: self.getProject().settings.id };
       if (self.payload && self.payload.classes && _.isArray(self.payload.classes)) {
         urlParams.className = [ self.payload.classes[0] ];
       }
-      self.editorService.launchUI('run-tests', urlParams)
+      self.editorService.launchUI('test/new', urlParams)
         .then(function() {
           resolve('Success');
         })
