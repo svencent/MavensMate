@@ -31,7 +31,7 @@ Because there are several open source MavensMate projects, it can be somewhat co
 [![NPM Version](https://img.shields.io/npm/v/mavensmate.svg)](https://www.npmjs.org/package/mavensmate)
 [![License](https://img.shields.io/npm/l/mavensmate.svg)](https://www.npmjs.org/package/mavensmate)
 
-MavensMate Server is a local Node.js Express server that facilitates communication/integration between editors like Sublime Text, Atom, and Visual Studio Code, the local file system, and the Salesforce servers. When a plugin requests a command to be run (e.g. "compile a file"), a local HTTP request is made to MavensMate Server, the server executes the requested command (which often requires communicating with a remote Salesforce.come environment) and returns the response to the plugin.
+MavensMate Server is a local Node.js Express server that facilitates communication/integration between editors like Sublime Text, Atom, and Visual Studio Code, the local file system, and the Salesforce servers. When a plugin requests a command to be run (e.g. "compile a file"), a local HTTP request is made to MavensMate Server, the server executes the requested command (which often requires communicating with a remote Salesforce.com environment) and returns the response to the plugin.
 
 - **Documentation**: https://github.com/joeferraro/MavensMate/tree/master/docs/server
 - **GitHub Project**: https://github.com/joeferraro/MavensMate
