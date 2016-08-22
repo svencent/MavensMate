@@ -9,6 +9,7 @@ var Promise             = require('bluebird');
 var inherits            = require('inherits');
 var BaseCommand         = require('../../command');
 var EditorService       = require('../../services/editor');
+var logger              = require('winston');
 
 function Command() {
   Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
@@ -20,8 +21,9 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     var project = self.getProject();
-
+    // http://docs.releasenotes.salesforce.com/en-us/winter14/release-notes/security_frontdoorjsp.htm
     var setupUrl = project.sfdcClient.getInstanceUrl() + '/secur/frontdoor.jsp?sid=' + project.sfdcClient.getAccessToken() + '&retURL=/setup/forcecomHomepage.apexp?setupid=ForceCom';
+    logger.debug('attempting to open salesforce org. setupUrl is', setupUrl);
     self.editorService.openUrl(setupUrl)
       .then(function() {
         resolve('Success');
