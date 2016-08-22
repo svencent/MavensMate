@@ -5,7 +5,7 @@
 
 'use strict';
 
-var _         = require('underscore-plus');
+var _         = require('lodash');
 var uuid      = require('node-uuid');
 var events    = require('events');
 var logger    = require('winston');

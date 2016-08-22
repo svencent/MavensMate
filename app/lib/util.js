@@ -10,13 +10,13 @@ var fs          = require('fs-extra-promise');
 var path        = require('path');
 var Promise     = require('bluebird');
 var _           = require('lodash');
-var up          = require('underscore-plus');
 var os          = require('os');
 var stripJson   = require('strip-json-comments');
 var fstream     = require('fstream');
 var archiver    = require('archiver');
 var logger      = require('winston');
 var which       = require('which');
+var camelize    = require('./utilities/camelize');
 
 var platformHash = {
   darwin: 'osx',
@@ -298,7 +298,7 @@ MavensMateUtil.prototype.readStdin = function() {
       var jsonObject = JSON.parse(myJson);
       _.forOwn(jsonObject, function(value, key) {
         if (key.indexOf('_') >= 0) {
-          jsonObject[up.camelize(key)] = jsonObject[key];
+          jsonObject[camelize(key)] = jsonObject[key];
           delete jsonObject[key];
         }
       });
@@ -327,7 +327,7 @@ MavensMateUtil.prototype.getPayload = function() {
 MavensMateUtil.prototype.applyProperties = function(instance, opts) {
   _.forOwn(opts, function(value, key) {
     if (key.indexOf('_') >= 0) {
-      instance[up.camelize(key)] = value;
+      instance[camelize(key)] = value;
     } else {
       instance[key] = value;
     }
