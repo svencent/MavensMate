@@ -26,7 +26,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      self.editorService.launchUI('lightining/component/new', { pid: self.getProject().settings.id })
+      self.editorService.launchUI('lightning/component/new', { pid: self.getProject().settings.id })
         .then(function() {
           resolve('Success');
         })

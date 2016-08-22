@@ -98,7 +98,7 @@ describe('app/lightning', function(){
   });
 
   describe('/app/lightning/app', function() {
-    it('should create a new lighting app', function(done) {
+    it('should create a new lightning app', function(done) {
       request(app)
         .post('/app/lightning/app')
         .expect('Content-Type', /json/)
@@ -118,7 +118,7 @@ describe('app/lightning', function(){
   });
 
    describe('/app/lightning/component', function() {
-    it('should create a new lighting component', function(done) {
+    it('should create a new lightning component', function(done) {
       request(app)
         .post('/app/lightning/component')
         .expect('Content-Type', /json/)
@@ -138,7 +138,7 @@ describe('app/lightning', function(){
   });
 
   describe('/app/lightning/event', function() {
-    it('should create a new lighting event', function(done) {
+    it('should create a new lightning event', function(done) {
       request(app)
         .post('/app/lightning/event')
         .expect('Content-Type', /json/)
@@ -158,7 +158,7 @@ describe('app/lightning', function(){
   });
 
   describe('/app/lightning/interface', function() {
-    it('should create a new lighting interface', function(done) {
+    it('should create a new lightning interface', function(done) {
       request(app)
         .post('/app/lightning/interface')
         .expect('Content-Type', /json/)
