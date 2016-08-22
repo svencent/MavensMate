@@ -154,13 +154,12 @@
 			if (response.error) {
 				showMessage(response.error);
 				notifySound();
+				hideLoading();
 			} else {
 				hideMessage();
 				newProjectId = response.result.id;
-				$('#success-open-alert-message').html(response.result.message);
-				$('#success-open-alert').show();
+				window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/project/'+newProjectId+'/edit?pid='+newProjectId+'&new=1';
 			}
-			hideLoading();
 		}
 
 		$(function() {
@@ -170,9 +169,6 @@
 			$(window).resize(function() {
 				resizeProjectWrapper(10);
 			});
-
-
-
 
 			//submit form on enter
 			$('.content').bind('keyup', function(e) {

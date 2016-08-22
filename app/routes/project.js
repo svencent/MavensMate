@@ -164,7 +164,8 @@ router.get('/:id/edit', function(req, res) {
     res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
     res.render('project/edit.html', {
-      title: 'Edit Project'
+      title: 'Edit Project',
+      isNewProject: req.query.new === '1'
     });
   }
 });

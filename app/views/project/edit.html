@@ -7,6 +7,19 @@
 	</div>
 </div>
 
+{% if isNewProject %}
+<div class="alert alert-success" id="success-open-alert" style="display:block;">
+	<button type="button" class="close fui-cross"></button>
+	<span id="success-open-alert-message">Project created successfully</span>
+	<br/>
+	{% if !editor %}
+		{% for editorName, editorPath in mavensmate.ui.getSupportedEditors() %}
+			<a class="btn btn-info btn-embossed btn-wide" href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}', '{{project.settings.id}}');">Open in {{ editorName|capitalize }}</a>
+		{% endfor %}
+	{% endif %}
+</div>
+{% endif %}
+
 <div class="content">
 	<ul class="nav nav-tabs nav-append-content">
 		<li><a href="#advanced" data-toggle="tab">Subscription</a></li>

@@ -48,9 +48,14 @@
             });
 
             //clicking on close "x" hides message (and resizes elements)
-            $('#result_output .close').click(function() {
+            $('#result_output .close').on('click', function() {
                 $('#result_output').hide();
-                resizeElements();
+                $(window).trigger('resize');
+            });
+
+            $('#success-open-alert .close').on('click', function() {
+                $('#success-open-alert').hide();
+                $(window).trigger('resize');
             });
 
             //fancy select boes
@@ -59,7 +64,6 @@
             //when the windows resizes, resize everything accordingly
             $(window).resize(function() {
                 resizeElements();
-
                 $(".twipsy").height($(window).height());
                 $(".twipsy").width($(window).width());
             });
@@ -367,7 +371,7 @@
                 $('#projectModal').modal('hide');
             });
 
-            resizeElements();
+            $(window).trigger('resize');
         });
 
         function openProjectModal() {
