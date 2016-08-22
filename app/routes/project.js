@@ -17,7 +17,8 @@ var fs              = require('fs-extra');
 router.get('/new', function(req, res) {
   var params = {
     title: 'New Project',
-    callback: '/app/project/auth/finish'
+    callback: '/app/project/auth/finish',
+    new: '1'
   };
   res.redirect('/app/auth/new?'+querystring.stringify(params));
 });
@@ -28,7 +29,8 @@ router.get('/existing/new', function(req, res) {
     var params = {
       title: 'Create MavensMate Project ('+req.query.origin+')',
       callback: '/app/project/auth/finish',
-      param1: req.query.origin
+      param1: req.query.origin,
+      new: '1'
     };
     res.redirect('/app/auth/new?'+querystring.stringify(params));
   } else {
@@ -153,7 +155,8 @@ router.get('/:id/auth', function(req, res) {
   var params = {
     title: 'Update Project Credentials',
     callback: '/app/project/auth/finish',
-    pid: req.project.settings.id
+    pid: req.project.settings.id,
+    update: '1'
   };
   res.redirect('/app/auth/new?'+querystring.stringify(params));
 });

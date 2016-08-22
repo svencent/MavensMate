@@ -7,6 +7,18 @@
   </div>
 </div>
 
+{% if isNew %}
+<div class="alert alert-info closeable" style="display:block;">
+  <span id="success-open-alert-message"><i class="icon-info-sign icon-2x pull-left"></i>MavensMate uses the OAuth 2.0 Web Server Authentication Flow to authenticate to Salesforce. Select the type of Salesforce environment you are connecting to and click "Connect".</span>
+</div>
+{% endif %}
+
+{% if isUpdate %}
+<div class="alert alert-info closeable" style="display:block;">
+  <span id="success-open-alert-message"><i class="icon-info-sign icon-2x pull-left"></i>Please re-authenticate to Salesforce.</span>
+</div>
+{% endif %}
+
 <div class="content">
 
   <ul class="nav nav-tabs nav-append-content">

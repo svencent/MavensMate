@@ -20,7 +20,9 @@ router.get('/new', function(req, res) {
     project: project,
     title: req.query.title,
     callback: req.query.callback,
-    param1: req.query.param1
+    param1: req.query.param1,
+    isNew: req.query.new === '1',
+    isUpdate: req.query.update === '1'
   });
 });
 
