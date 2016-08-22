@@ -53,7 +53,7 @@ Command.prototype.execute = function() {
       }
       logger.debug('url generated : '+frontdoorUrl+retUrl);
       if (self.payload.callThrough) {
-        openUrlPromises.push( editorService.openUrl(frontdoorUrl+retUrl) );
+        openUrlPromises.push( self.editorService.openUrl(frontdoorUrl+retUrl) );
       } else {
         urls[mmFile.basename] = frontdoorUrl+retUrl;
       }

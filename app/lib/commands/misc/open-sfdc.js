@@ -22,7 +22,7 @@ Command.prototype.execute = function() {
     var project = self.getProject();
 
     var setupUrl = project.sfdcClient.getInstanceUrl() + '/secur/frontdoor.jsp?sid=' + project.sfdcClient.getAccessToken() + '&retURL=/setup/forcecomHomepage.apexp?setupid=ForceCom';
-    editorService.openUrl(setupUrl)
+    self.editorService.openUrl(setupUrl)
       .then(function() {
         resolve('Success');
       })
