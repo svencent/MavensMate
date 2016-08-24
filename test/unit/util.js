@@ -19,6 +19,18 @@ describe('mavensmate util', function(){
     });
   });
 
+  describe('isCredentialsError', function() {
+    it('should return false if not a creds-related error', function(done) {
+      util.isCredentialsError(new Error('foobar')).should.equal(false);
+      done();
+    });
+
+    it('should return true when it is a creds error', function(done) {
+      util.isCredentialsError(new Error('expired access/refresh token')).should.equal(true);
+      done();
+    });
+  });
+
   describe('platform checks', function() {
 
     var stub;
@@ -101,6 +113,38 @@ describe('mavensmate util', function(){
     it('should return windows home directory', function(done) {
       stub.returns('win32');
       util.getHomeDirectory();
+      done();
+    });
+
+  });
+
+  describe('getDefaultWorkspaceSetting', function() {
+
+    var stub;
+
+    beforeEach(function() {
+      stub = sinon.stub(os, 'platform');
+    });
+
+    afterEach(function() {
+      stub.restore();
+    });
+
+    it('should return mac home directory', function(done) {
+      stub.returns('darwin');
+      util.getDefaultWorkspaceSetting();
+      done();
+    });
+
+    it('should return linux home directory', function(done) {
+      stub.returns('linux');
+      util.getDefaultWorkspaceSetting();
+      done();
+    });
+
+    it('should return windows home directory', function(done) {
+      stub.returns('win32');
+      util.getDefaultWorkspaceSetting();
       done();
     });
 
