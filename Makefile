@@ -2,10 +2,6 @@
 TESTS ?= $(shell find test -name '*.js')
 INDEX ?= 0
 
-# coverage options
-REPORTER = html-cov
-COVERAGE_FILE = coverage.html
-
 print-%: ; @echo $*=$($*)
 
 test:
@@ -15,18 +11,10 @@ test:
 	$(TESTS)
 
 coverage:
-	@NODE_ENV=test HTTP_MAX_SOCKETS=5000 PARALLELISM_INDEX=$(INDEX) ./node_modules/.bin/mocha \
+	@NODE_ENV=test HTTP_MAX_SOCKETS=5000 PARALLELISM_INDEX=$(INDEX) \
+	./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha \
 	--recursive \
-	--require blanket \
-	--reporter html-cov \
-	$(TESTS) > test/coverage.html
+	--check-leaks \
+	$(TESTS)
 
-coveralls:
-	@NODE_ENV=test HTTP_MAX_SOCKETS=5000 PARALLELISM_INDEX=$(INDEX) YOURPACKAGE_COVERAGE=1 ./node_modules/.bin/mocha \
-	--recursive \
-	--require blanket \
-	--reporter mocha-lcov-reporter \
-	$(TESTS) | ./node_modules/coveralls/bin/coveralls.js
-
-
-.PHONY: test
+.PHONY: test coverage

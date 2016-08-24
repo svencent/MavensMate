@@ -17,4 +17,4 @@ done
 echo "test index ---> ${NODE_INDEX}"
 echo "test files --->"
 echo ${files[@]}
-make TESTS="${files[@]}" INDEX="${NODE_INDEX}" test
+make TESTS="${files[@]}" INDEX="${NODE_INDEX}" coverage

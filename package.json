@@ -9,7 +9,9 @@
   "main": "./app/lib/mavensmate",
   "scripts": {
     "start": "bin/server --port=56248",
-    "test": "make test"
+    "test": "make test",
+    "coverage": "make coverage",
+    "report-coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "config": {
     "blanket": {
@@ -79,10 +81,11 @@
     "blanket": "1.1.5",
     "chai": "1.10.0",
     "chai-fs": "0.1.0",
-    "coveralls": "^2.11.2",
+    "coveralls": "^2.11.12",
     "grunt-nodemon": "latest",
+    "istanbul": "^0.4.5",
     "mocha": "2.5.3",
-    "mocha-lcov-reporter": "0.0.1",
+    "mocha-lcov-reporter": "^1.2.0",
     "sinon": "1.17.2",
     "sinon-as-promised": "latest",
     "supertest": "^2.0.0"
