@@ -85,6 +85,17 @@ module.exports = {
     },
     order: 150
   },
+  mm_vscode_exec_path: {
+    title: 'Visual Studio Code executable location',
+    description: 'The full path to Visual Studio "code" executable (Visual Studio Code users only).',
+    type: 'object',
+    default: {
+      "windows": "C:\\Program Files\\Code\\Code.exe",
+      "linux": "/usr/bin/code",
+      "osx": "/usr/local/bin/code"
+    },
+    order: 150
+  },
   mm_log_location: {
     title: 'MavensMate logs location',
     description: 'Full path to the location where you would like MavensMate to store its logs. When this and mm_log_level are set, MavensMate will write logs to this path with the file name mavensmate.log. Relevant logs should be included with any bug reports.',

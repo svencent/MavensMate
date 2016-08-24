@@ -42,17 +42,23 @@ EditorService.prototype._isSupportedEditor = function(editor) {
 EditorService.prototype._getSupportedEditors = function() {
   var editors = {};
   var atomLocationConfig = config.get('mm_atom_exec_path')[util.platformConfigKey] || config.get('mm_atom_exec_path');
-  var pathAtomLocation, pathSublLocation;
+  var vsCodeLocationConfig = config.get('mm_vscode_exec_path')[util.platformConfigKey] || config.get('mm_vscode_exec_path');
+  var pathAtomLocation, pathSublLocation, pathVsCodeLocation;
+  try { pathVsCodeLocation = which.sync('code'); } catch(e){}
   try { pathAtomLocation = which.sync('atom'); } catch(e){}
   var sublLocationConfig = config.get('mm_subl_location')[util.platformConfigKey] || config.get('mm_subl_location');
   try { pathSublLocation = which.sync('subl'); } catch(e){}
   var atomPath = fs.existsSync(atomLocationConfig) ? atomLocationConfig : pathAtomLocation;
   var sublPath = fs.existsSync(sublLocationConfig) ? sublLocationConfig : pathSublLocation;
+  var vsCodePath = fs.existsSync(atomLocationConfig) ? sublLocationConfig : pathVsCodeLocation;
   if (atomPath) {
     editors.atom = atomPath;
   }
   if (sublPath) {
     editors.sublime = sublPath;
+  }
+  if (vsCodePath) {
+    editors.vscode = vsCodePath;
   }
   return editors;
 };
