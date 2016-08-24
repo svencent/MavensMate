@@ -8,7 +8,7 @@
 var fs        = require('fs-extra');
 var config    = require('nconf');
 var defaults  = require('./default');
-var util      = require('../lib/util').instance;
+var util      = require('../lib/util');
 var path      = require('path');
 var _         = require('lodash');
 

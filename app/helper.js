@@ -7,7 +7,7 @@
 
 var path    = require('path');
 var fs      = require('fs-extra');
-var util    = require('./lib/util').instance;
+var util    = require('./lib/util');
 var _       = require('lodash');
 var config  = require('./config');
 var logger  = require('winston');

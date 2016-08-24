@@ -9,7 +9,7 @@ var Promise           = require('bluebird');
 var BaseCommand       = require('../../command');
 var inherits          = require('inherits');
 var ApexScriptService = require('../../services/apex-script');
-var util              = require('../../util').instance;
+var util              = require('../../util');
 
 function Command() {
   Command.super_.call(this, Array.prototype.slice.call(arguments, 0));

@@ -11,7 +11,7 @@ var logger          = require('winston');
 var requestStore    = require('../lib/request-store');
 var Deploy          = require('../lib/services/deploy');
 var querystring     = require('querystring');
-var util            = require('../lib/util').instance;
+var util            = require('../lib/util');
 
 router.get('/new', function(req, res) {
   var commandExecutor = req.app.get('commandExecutor');

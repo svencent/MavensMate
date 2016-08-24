@@ -12,7 +12,7 @@ var logger            = require('winston');
 var MetadataHelper    = require('./metadata').MetadataHelper;
 var LightningService  = require('./services/lightning');
 var Package           = require('./package').Package;
-var util              = require('./util').instance;
+var util              = require('./util');
 var temp              = require('temp');
 var mavensMateFile    = require('./file');
 

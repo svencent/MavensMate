@@ -8,7 +8,7 @@
 var Promise = require('bluebird');
 var _       = require('lodash');
 var logger  = require('winston');
-var util    = require('../util').instance;
+var util    = require('../util');
 var fs      = require('fs-extra');
 var path    = require('path');
 

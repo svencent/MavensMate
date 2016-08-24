@@ -10,7 +10,7 @@ var fs              = require('fs-extra-promise');
 var path            = require('path');
 var Promise         = require('bluebird');
 var mavensMateFile  = require('../file');
-var util            = require('../util').instance;
+var util            = require('../util');
 var logger          = require('winston');
 var Deploy          = require('./deploy');
 

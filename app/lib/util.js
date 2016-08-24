@@ -24,19 +24,17 @@ var platformHash = {
   win32: 'windows'
 };
 
-function MavensMateUtil() {}
+exports.platformConfigKey = platformHash[os.platform()]
 
-MavensMateUtil.prototype.platformConfigKey = platformHash[os.platform()]
-
-MavensMateUtil.prototype.getAppRoot = function() {
+exports.getAppRoot = function() {
   return path.resolve(path.join(__dirname, '..', '..'));
 };
 
-MavensMateUtil.prototype.isCredentialsError = function(err) {
+exports.isCredentialsError = function(err) {
   return err.message.indexOf('expired access/refresh token') >= 0 || err.message.indexOf('Could not retrieve credentials') >= 0 || err.message.indexOf('INVALID_SESSION_ID') >= 0;
 };
 
-MavensMateUtil.prototype.getProjectById = function(app, id) {
+exports.getProjectById = function(app, id) {
   var projects = app.get('projects');
   if (id) {
     return _.find(projects, function(p) {
@@ -50,7 +48,7 @@ MavensMateUtil.prototype.getProjectById = function(app, id) {
  * Returns a string representing a default workspace
  * @return {String}
  */
-MavensMateUtil.prototype.getDefaultWorkspaceSetting = function() {
+exports.getDefaultWorkspaceSetting = function() {
   if (this.isMac()) {
     return path.join(process.env.HOME, 'Documents');
   } else if (this.isWindows()) {
@@ -60,39 +58,39 @@ MavensMateUtil.prototype.getDefaultWorkspaceSetting = function() {
   }
 };
 
-MavensMateUtil.prototype.endsWith = function(string, suffix) {
+exports.endsWith = function(string, suffix) {
   string = string.toLowerCase();
   suffix = suffix.toLowerCase();
   return string.indexOf(suffix, string.length - suffix.length) !== -1;
 };
 
-MavensMateUtil.prototype.startsWith = function(string, prefix) {
+exports.startsWith = function(string, prefix) {
   string = string.toLowerCase();
   prefix = prefix.toLowerCase();
   return prefix.length > 0 && string.substring( 0, prefix.length ) === prefix;
 };
 
-MavensMateUtil.prototype.isWindows = function() {
+exports.isWindows = function() {
   return os.platform() === 'win32';
 };
 
-MavensMateUtil.prototype.getWindowsAppDataPath = function() {
+exports.getWindowsAppDataPath = function() {
   return process.env.APPDATA;
 };
 
-MavensMateUtil.prototype.isLinux = function() {
+exports.isLinux = function() {
   return os.platform() === 'linux';
 };
 
-MavensMateUtil.prototype.isMac = function() {
+exports.isMac = function() {
   return os.platform() === 'darwin';
 };
 
-MavensMateUtil.prototype.isValidProjectPath = function(projectPath) {
+exports.isValidProjectPath = function(projectPath) {
   return fs.existsSync(path.join(projectPath, 'config', '.settings'));
 };
 
-MavensMateUtil.prototype.getHomeDirectory = function() {
+exports.getHomeDirectory = function() {
   if (this.isMac()) {
     return process.env.HOME;
   } else if (this.isWindows()) {
@@ -102,7 +100,7 @@ MavensMateUtil.prototype.getHomeDirectory = function() {
   }
 };
 
-MavensMateUtil.prototype.removeEmptyDirectoriesRecursiveSync = function(directory) {
+exports.removeEmptyDirectoriesRecursiveSync = function(directory) {
   logger.silly('----------> removing empty directories from', directory);
   var removeEmptyDirs = function(dir) {
     var files = fs.readdirSync(dir);
@@ -129,7 +127,7 @@ MavensMateUtil.prototype.removeEmptyDirectoriesRecursiveSync = function(director
   removeEmptyDirs(directory);
 };
 
-MavensMateUtil.prototype.emptyDirectoryRecursiveSync = function(directory) {
+exports.emptyDirectoryRecursiveSync = function(directory) {
   var emptyDir = function(dir) {
     logger.silly('----------> emptying directory', dir);
     var files = fs.readdirSync(dir);
@@ -158,7 +156,7 @@ MavensMateUtil.prototype.emptyDirectoryRecursiveSync = function(directory) {
  * @param  {Array} paths
  * @return {Array} absolute paths
  */
-MavensMateUtil.prototype.getAbsolutePaths = function(paths) {
+exports.getAbsolutePaths = function(paths) {
   var resolvedPaths = [];
   _.each(paths, function(p) {
     if (path.resolve(p) !== path.normalize(p).replace(new RegExp(path.sep+'$'), '' )) {
@@ -176,7 +174,7 @@ MavensMateUtil.prototype.getAbsolutePaths = function(paths) {
  *
  * @param {string} searchPath
  */
-MavensMateUtil.prototype.isDirectoryEmptySync = function (searchPath) {
+exports.isDirectoryEmptySync = function (searchPath) {
   var stat;
   try {
     stat = fs.statSync(searchPath);
@@ -202,7 +200,7 @@ MavensMateUtil.prototype.isDirectoryEmptySync = function (searchPath) {
  * @param  {Function} done - callback
  * @return {Callback} err, array of file paths
  */
-MavensMateUtil.prototype.walkSync = function(dir) {
+exports.walkSync = function(dir) {
   var walk = function(dir) {
     var _walk;
     _walk = function(dir) {
@@ -231,7 +229,7 @@ MavensMateUtil.prototype.walkSync = function(dir) {
  * @param  {String}   dir  - dir path
  * @return {Array} directories
  */
-MavensMateUtil.prototype.listDirectories = function(dir) {
+exports.listDirectories = function(dir) {
   var contents = fs.readdirSync(dir);
   var directories = [];
   _.each(contents, function(c) {
@@ -248,7 +246,7 @@ MavensMateUtil.prototype.listDirectories = function(dir) {
  * @param  {Function} done - callback
  * @return {Callback} err, array of file paths
  */
-MavensMateUtil.prototype.walk = function(dir, done) {
+exports.walk = function(dir, done) {
   var self = this;
   var results = [];
   fs.readdir(dir, function(err, list) {
@@ -281,7 +279,7 @@ MavensMateUtil.prototype.walk = function(dir, done) {
 };
 
 // reads command payload (STDIN)
-MavensMateUtil.prototype.readStdin = function() {
+exports.readStdin = function() {
   return new Promise(function(resolve, reject) {
     var myJson = '';
 
@@ -309,7 +307,7 @@ MavensMateUtil.prototype.readStdin = function() {
 
 // returns command payload (STDIN)
 // if it's already been read, returns global.payload
-MavensMateUtil.prototype.getPayload = function() {
+exports.getPayload = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     self.readStdin()
@@ -324,7 +322,7 @@ MavensMateUtil.prototype.getPayload = function() {
 
 // takes an instance of an object
 // applies the properties of opts to the instance
-MavensMateUtil.prototype.applyProperties = function(instance, opts) {
+exports.applyProperties = function(instance, opts) {
   _.forOwn(opts, function(value, key) {
     if (key.indexOf('_') >= 0) {
       instance[camelize(key)] = value;
@@ -334,7 +332,7 @@ MavensMateUtil.prototype.applyProperties = function(instance, opts) {
   });
 };
 
-MavensMateUtil.prototype.getFileBody = function(path, parseJSON) {
+exports.getFileBody = function(path, parseJSON) {
   var fileBody = fs.readFileSync(path, 'utf8');
   if (parseJSON) {
     fileBody = stripJson(fileBody);
@@ -344,11 +342,11 @@ MavensMateUtil.prototype.getFileBody = function(path, parseJSON) {
   }
 };
 
-MavensMateUtil.prototype.joinForQuery = function(strings) {
+exports.joinForQuery = function(strings) {
   return '\''+strings.join('\',\'')+'\'';
 };
 
-MavensMateUtil.prototype.zipDirectory = function(directoryToZip, zipFileDestination, dest, ext, filename) {
+exports.zipDirectory = function(directoryToZip, zipFileDestination, dest, ext, filename) {
   return new Promise(function(resolve, reject) {
 
     if (!directoryToZip) {
@@ -395,7 +393,7 @@ MavensMateUtil.prototype.zipDirectory = function(directoryToZip, zipFileDestinat
  * @param  {String} destination
  * @return {Promise}
  */
-MavensMateUtil.prototype.writeStream = function(readableStream, destination) {
+exports.writeStream = function(readableStream, destination) {
   var self = this;
   return new Promise(function(resolve, reject) {
     var tmpZipLocation = path.join(destination, 'tmp.zip');
@@ -490,7 +488,7 @@ MavensMateUtil.prototype.writeStream = function(readableStream, destination) {
   });
 };
 
-MavensMateUtil.prototype.chunkArray = function(arr, chunkSize) {
+exports.chunkArray = function(arr, chunkSize) {
   return [].concat.apply([],
     arr.map(function(elem,i) {
       return i%chunkSize ? [] : [arr.slice(i,i+chunkSize)];
@@ -498,7 +496,7 @@ MavensMateUtil.prototype.chunkArray = function(arr, chunkSize) {
   );
 };
 
-MavensMateUtil.prototype.generateRandomString = function(length) {
+exports.generateRandomString = function(length) {
   var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghiklmnopqrstuvwxyz';
   length = length ? length : 32;
   var string = '';
@@ -508,6 +506,3 @@ MavensMateUtil.prototype.generateRandomString = function(length) {
   }
   return string;
 };
-
-var instance = new MavensMateUtil();
-exports.instance = instance;

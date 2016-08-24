@@ -1,5 +1,5 @@
 var path            = require('path');
-var util            = require('../util').instance;
+var util            = require('../util');
 var logger          = require('winston');
 var _               = require('lodash');
 var capitalize      = require('../utilities/capitalize');

@@ -1,6 +1,6 @@
 'use strict';
 
-var util              = require('../../app/lib/util').instance;
+var util              = require('../../app/lib/util');
 var fs                = require('fs-extra');
 var chai              = require('chai');
 var assert            = chai.assert;

@@ -7,7 +7,7 @@
 
 var Promise           = require('bluebird');
 var _                 = require('lodash');
-var util              = require('../../util').instance;
+var util              = require('../../util');
 var merge             = require('merge');
 var Project           = require('../../project');
 var BaseCommand       = require('../../command');

@@ -4,7 +4,7 @@ var os              = require('os');
 var assert          = require('assert');
 var sinon           = require('sinon');
 var sinonAsPromised = require('sinon-as-promised');
-var util            = require('../../../../app/lib/util').instance;
+var util            = require('../../../../app/lib/util');
 var helper          = require('../../../test-helper');
 var commandExecutor = require('../../../../app/lib/commands')();
 

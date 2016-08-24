@@ -14,7 +14,7 @@ module.exports = function (program) {
   var path    = require('path');
   var fs      = require('fs');
   var logger  = require('winston');
-  var util    = require('./util').instance;
+  var util    = require('./util');
 
   var opts = {};
   opts.name = path.basename(process.mainModule.filename);

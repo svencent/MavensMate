@@ -15,7 +15,7 @@ var logger            = require('./lib/logger')();
 var EditorService     = require('./lib/services/editor');
 var ViewHelper        = require('./helper');
 var requestStore      = require('./lib/request-store');
-var util              = require('./lib/util').instance;
+var util              = require('./lib/util');
 var app, server;
 
 /**

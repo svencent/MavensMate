@@ -7,7 +7,7 @@
 
 var Promise               = require('bluebird');
 var path                  = require('path');
-var util                  = require('../../util').instance;
+var util                  = require('../../util');
 var inherits              = require('inherits');
 var BaseCommand           = require('../../command');
 var RefreshDelegate       = require('../../refresh');

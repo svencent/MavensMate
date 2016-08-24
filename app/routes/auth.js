@@ -6,7 +6,7 @@ var inherits        = require('inherits');
 var logger          = require('winston');
 var querystring     = require('querystring');
 var path            = require('path');
-var util            = require('../lib/util').instance;
+var util            = require('../lib/util');
 
 router.get('/new', function(req, res) {
   var project;

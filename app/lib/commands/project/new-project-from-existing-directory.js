@@ -6,7 +6,7 @@
 'use strict';
 
 var Promise           = require('bluebird');
-var util              = require('../../util').instance;
+var util              = require('../../util');
 var Project           = require('../../project');
 var BaseCommand       = require('../../command');
 var SalesforceClient  = require('../../sfdc-client');

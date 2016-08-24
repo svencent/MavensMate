@@ -9,7 +9,7 @@ var Promise = require('bluebird');
 var _       = require('lodash');
 var path    = require('path');
 var logger  = require('winston');
-var util    = require('../util').instance;
+var util    = require('../util');
 
 // TODO: move source strings to swig templates
 

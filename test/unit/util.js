@@ -1,7 +1,7 @@
 'use strict';
 
 var os    = require('os');
-var util  = require('../../app/lib/util').instance;
+var util  = require('../../app/lib/util');
 var sinon = require('sinon');
 var path  = require('path');
 

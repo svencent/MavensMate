@@ -6,7 +6,7 @@
 'use strict';
 var Promise   = require('bluebird');
 var path      = require('path');
-var util      = require('../util').instance;
+var util      = require('../util');
 var request   = require('request');
 var config    = require('../../config');
 var logger    = require('winston');

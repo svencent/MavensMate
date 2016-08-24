@@ -10,7 +10,7 @@ var router          = express.Router();
 var logger          = require('winston');
 var querystring     = require('querystring');
 var requestStore    = require('../lib/request-store');
-var util            = require('../lib/util').instance;
+var util            = require('../lib/util');
 var fs              = require('fs-extra');
 
 // create a new project

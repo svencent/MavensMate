@@ -2,7 +2,7 @@ var _       = require('lodash');
 var logger  = require('winston');
 var Project = require('../lib/project');
 var config  = require('../config');
-var util    = require('../lib/util').instance;
+var util    = require('../lib/util');
 var path    = require('path');
 var fs      = require('fs-extra');
 
