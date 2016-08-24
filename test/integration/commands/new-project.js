@@ -40,17 +40,16 @@ describe('mavensmate new-project', function(){
 
   it('should require name', function(done) {
     commandExecutor.execute({
-        name: 'new-project',
-        body: {}
-      })
-      .catch(function(err) {
-        err.message.should.equal('Please specify project name');
-        done();
-      });
+      name: 'new-project',
+      body: {}
+    })
+    .catch(function(err) {
+      err.message.should.equal('Please specify project name');
+      done();
+    });
   });
 
-  it('should prompt that project directory already exists', function(done) {
-
+  it('should prevent project creation when the directory already exists', function(done) {
     this.timeout(120000);
     var creds = helper.getTestCreds();
     var payload = {
@@ -69,9 +68,8 @@ describe('mavensmate new-project', function(){
       });
   });
 
-  it('should prompt because of bad salesforce creds', function(done) {
+  it('should throw an exception when saleforce creds are bad', function(done) {
     this.timeout(120000);
-
     var payload = {
       name: 'new-project-bad-creds',
       username: 'thiswontwork@force.com',
@@ -80,17 +78,17 @@ describe('mavensmate new-project', function(){
       workspace: path.join(helper.baseTestDirectory(),'workspace')
     };
     commandExecutor.execute({
-        name: 'new-project',
-        body: payload
-      })
-      .catch(function(err) {
-        err.message.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out');
-        done();
-      });
+      name: 'new-project',
+      body: payload
+    })
+    .catch(function(err) {
+      err.message.should.contain('INVALID_LOGIN: Invalid username, password, security token; or user locked out');
+      done();
+    });
   });
 
   describe('credential storage', function(){
-    it('should use the .credentials when keychain is not enabled', function(done) {
+    it('should use the .credentials when keychain is not enabled (right now this is the only state bc we cannot enable keychain during Travis build)', function(done) {
       config.set('mm_use_keyring', false);
       this.timeout(120000);
       var creds = helper.getTestCreds();
@@ -105,8 +103,6 @@ describe('mavensmate new-project', function(){
           CustomObject: ['Account']
         }
       };
-
-      logger.debug('new-project payload', payload);
 
       commandExecutor.execute({
         name: 'new-project',
