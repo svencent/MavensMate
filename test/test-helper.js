@@ -38,10 +38,10 @@ exports.getTestCreds = function() {
   }
 };
 
-exports.putTestProjectInTestWorkspace = function(name, testWorkspace) {
+exports.putTestProjectInTestWorkspace = function(name) {
   var self = this;
   var creds = self.getTestCreds();
-  testWorkspace = testWorkspace || path.join(self.baseTestDirectory(),'workspace');
+  var testWorkspace = path.join(self.baseTestDirectory(),'workspace');
   if (fs.existsSync(path.join(testWorkspace, name))) {
     fs.removeSync(path.join(testWorkspace, name));
   }
