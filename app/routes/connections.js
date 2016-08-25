@@ -23,7 +23,7 @@ router.get('/new', function(req, res) {
   .then(function(response) {
     res.render('connections/index.html', {
       connections: response,
-      title: 'Org Connections'
+      title: 'Deployment Connections'
     });
   })
   .catch(function(err) {
