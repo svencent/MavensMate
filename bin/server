@@ -20,5 +20,8 @@ server.start({
   verbose: verbose
 });
 
+var spawn = require('child_process').spawn
+spawn('open', ['http://localhost:'+port]);
+
 process.env.MAVENSMATE_SERVER_PORT = port;
 console.log('MavensMate server running on port: '+port);
