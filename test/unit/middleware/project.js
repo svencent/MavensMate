@@ -128,7 +128,7 @@ describe('project-middleware', function(){
           .query({ pid: project.settings.id })
           .expect(302)
           .end(function(err, res) {
-            res.text.should.equal('Found. Redirecting to /app/project/auth?pid='+project.settings.id);
+            res.text.should.equal('Found. Redirecting to /app/project/'+project.settings.id+'/auth?pid='+project.settings.id);
             if (err) throw err;
             done();
           });

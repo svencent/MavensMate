@@ -58,7 +58,7 @@ module.exports = function(req, res, next) {
       req.project = project;
       if (req.url.indexOf('/app/') >= 0 && req.url.indexOf('/auth') === -1) {
         // we can redirect to re-auth
-        res.redirect('/app/project/auth?pid='+req.pid);
+        res.redirect('/app/project/'+req.pid+'/auth?pid='+req.pid);
       } else if ((req.url.indexOf('/execute') >= 0 || req.url.indexOf('/status') >= 0) && req.query.command !== 'oauth-project') {
         // this is an api (headless) request, so we need to 500
         logger.error('requested route/resource requires re-authentication, sending 500');
