@@ -132,6 +132,7 @@ describe('mavensmate util', function(){
 
     it('should return mac home directory', function(done) {
       stub.returns('darwin');
+      process.env.HOME = 'foo';
       util.getDefaultWorkspaceSetting();
       done();
     });
