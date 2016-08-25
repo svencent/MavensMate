@@ -70,6 +70,13 @@
  	padding: 16px 45px 16px 16px;
  }
 
+ div.robot-sound {
+ 	font-size:20px;
+ 	font-weight: 400;
+ 	margin-top:8px;
+ 	font-style: italic;
+ }
+
  #footer {
  	background:#34495e;
  	color:#fff;

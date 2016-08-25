@@ -28,6 +28,18 @@ ViewHelper.prototype.getPathBaseName = function(p) {
   return path.basename(p);
 };
 
+ViewHelper.prototype.getRobotPath = function() {
+  return this.getBaseUrl() + '/app/static/images/robots/'+(Math.floor(Math.random() * 5) + 1).toString()+'.png';
+};
+
+ViewHelper.prototype.getRobotNoise = function() {
+  var noises = [
+    'blerg', 'bloop', 'beep boop boop', 'beep boop beep', 'morp', 'jonk', 'ping', 'zonk', 'xonx', 'morple', 'fwat', 'turple'
+  ];
+  var index = Math.floor(Math.random() * noises.length) + 0;
+  return noises[index];
+};
+
 ViewHelper.prototype.listProjects = function() {
   var workspaces = config.get('mm_workspace');
   var projects = [];
