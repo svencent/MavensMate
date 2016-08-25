@@ -41,7 +41,7 @@
 					</div>
 
 					<div class="control-group large">
-						<input class="span12" placeholder="Project Name" type="text" id="pn">
+						<input class="span12" placeholder="Project Name" type="text" id="pn" value="{{mavensmate.ui.getPathBaseName(origin)}}" disabled="disabled">
 					</div>
 					<div class="control-group large disabled">
 						<input class="span12" placeholder="Salesforce.com Username" type="text" id="un" value="{{session.username}}" disabled="disabled">
@@ -75,7 +75,6 @@
 				contentType: 'application/json; charset=utf-8',
 				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/existing",
 				data: JSON.stringify({
-					name: $('#pn').val(),
 					accessToken: $('#accessToken').val(),
 					refreshToken: $('#refreshToken').val(),
 					instanceUrl: $('#instanceUrl').val(),

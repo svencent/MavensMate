@@ -33,9 +33,6 @@ Command.prototype.execute = function() {
           reject(error);
         });
     } else {
-      if (!self.payload.name) {
-        return reject(new Error('Please specify project name'));
-      }
       var newProject;
       var sfdcClient = new SalesforceClient(self.payload);
       sfdcClient.initialize()

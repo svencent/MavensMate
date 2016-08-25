@@ -112,14 +112,19 @@ Project.prototype._initNewProjectFromExistingDirectory = function() {
     if (!self.workspace) {
       throw new Error('Please select a workspace for this project');
     }
+    if (!self.origin) {
+      throw new Error('Please select an origin for this project');
+    }
     if (!fs.existsSync(path.join(self.origin, 'src'))) {
       return reject(new Error('Project must have a top-level src directory'));
     }
     if (!fs.existsSync(path.join(self.origin, 'src', 'package.xml'))) {
       return reject(new Error('Project must have a valid package.xml file located in the src directory'));
     }
+    self.name = path.basename(self.origin); // set name of the project to the basename of the project's origin path
 
-    if (self.origin !== path.join(self.workspace, self.name)) {
+    // if they're moving the project into a workspace
+    if (self.workspace !== path.dirname(self.origin)) {
       if (fs.existsSync(path.join(self.workspace, self.name))) {
         return reject(new Error('Project with this name already exists in the selected workspace'));
       } else {
@@ -128,6 +133,7 @@ Project.prototype._initNewProjectFromExistingDirectory = function() {
         fs.copySync(self.origin, path.join(self.workspace, self.name));
       }
     }
+
     self.path = path.join(self.workspace, self.name);
     fs.ensureDirSync(path.join(self.path, 'config'));
 
