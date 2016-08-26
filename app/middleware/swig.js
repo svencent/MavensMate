@@ -30,7 +30,7 @@ var resourceMap = {
   settings : {
     iconClassName: 'slds-icon-standard-quotes',
     iconName: 'settings',
-    sldsSprite: 'utility-sprite'
+    sprite: 'utility-sprite'
   }
 };
 
@@ -40,14 +40,14 @@ module.exports = function(req, res, next) {
   // set locals for templates
   if (util.startsWith(req.url, '/app/')) {
     res.locals.url = req.url;
-    var appRoutePattern = /\/app\/([^\/]*)/
+    var appRoutePattern = /\/app\/([^\W]*)/
     var match = req.url.match(appRoutePattern);
     if (match) {
       var resource = match[1];
       if (resourceMap[resource]) {
         res.locals.sldsIconClassName = resourceMap[resource].iconClassName;
         res.locals.sldsIconName = resourceMap[resource].iconName;
-        res.locals.sldsSprite = resourceMap[resource].sldsSprite || 'standard-sprite';
+        res.locals.sldsSprite = resourceMap[resource].sprite || 'standard-sprite';
       }
     }
   }
