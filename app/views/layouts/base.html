@@ -476,7 +476,7 @@
 
             <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
               <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
-                <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'deploy') %} {{sldsIconClassName}} {% endif %}">
+                <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'deploy') || mavensmate.ui.isMenuItemActive(url, 'connections') %} {{sldsIconClassName}} {% endif %}">
                   <svg aria-hidden="true" class="slds-button__icon">
                     <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#socialshare"></use>
                   </svg>
