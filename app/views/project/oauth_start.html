@@ -21,7 +21,7 @@
         {% endif %}
         <input type="hidden" name="destination" value="{{destination}}" />
         <fieldset>
-           <div class="control-group large">
+           <div class="slds-form-element">
             <select id="orgType" name="orgType" class="select-block mbl info span12">
               <option value="production">Production</option>
               <option value="developer">Developer</option>
@@ -30,11 +30,11 @@
               <option value="custom">Custom URL</option>
             </select>
           </div>
-          <div class="control-group large">
+          <div class="slds-form-element">
             <input class="slds-input" placeholder="Example: https://na1-blitz01.salesforce.com" type="text" id="instanceUrl" name="instanceUrl" style="display:none;">
           </div>
-          <div class="control-group large">
-            <input type="submit" class="btn btn-success btn-embossed btn-embossed" value="Connect">
+          <div class="slds-form-element">
+            <input type="submit" class="btn btn-success" value="Connect">
           </div>
         </fieldset>
       </form>
@@ -47,7 +47,7 @@
 
 
 {% block buttons %}
-  <button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
+  <button id="btnCancel" class="btn" onclick="closeWindow();">Cancel</button>
 {% endblock %}
 
 {% block body_js %}

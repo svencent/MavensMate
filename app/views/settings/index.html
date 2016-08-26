@@ -41,12 +41,7 @@
 <script src="{{ mavensmate.ui.getStaticResourcePath() }}/editor/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="{{ mavensmate.ui.getStaticResourcePath() }}/editor/mode-java.js" type="text/javascript" charset="utf-8"></script>
 
-<div id="result_output">
-	<div class="alert alert-error">
-		<button type="button" class="close fui-cross"></button>
-		<span id="error_message"></span>
-	</div>
-</div>
+
 
 <div class="content">
 	<ul class="nav nav-tabs nav-append-content">
@@ -61,7 +56,7 @@
 
 					{% for settingKey, settingValue in userSettings %}
 						{% if defaultSettings[settingKey] %}
-							<div class="control-group large" id="{{ settingKey }}-group" style="margin-bottom:20px;">
+							<div class="slds-form-element" id="{{ settingKey }}-group" style="margin-bottom:20px;">
 								<!-- string or integer -->
 								{% if defaultSettings[settingKey].type === 'string' || defaultSettings[settingKey].type === 'integer' %}
 									<label class="settingsLabel" for="{{ settingKey }}">

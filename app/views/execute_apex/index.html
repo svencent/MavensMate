@@ -129,12 +129,7 @@
 
 </style>
 
-<div id="result_output">
-	<div class="alert alert-error">
-		<button type="button" class="close fui-cross"></button>
-		<span id="error_message"></span>
-	</div>
-</div>
+
 
 
 <div class="content" id="content1">
@@ -166,7 +161,7 @@
 
 
 {% block buttons %}
-	<input type="button" class="slds-button slds-button--brand btn-embossed" value="Execute" onclick="executeApex()" id="btnExecuteApex">
+	<input type="button" class="slds-button slds-button--brand" value="Execute" onclick="executeApex()" id="btnExecuteApex">
 	{% include 'views/partials/cancel_button.html' %}
 	{% include 'views/partials/running_indicator.html' %}
 {% endblock %}

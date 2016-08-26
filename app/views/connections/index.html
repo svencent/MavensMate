@@ -45,11 +45,11 @@
               <form class="slds-form--stacked" action="/app/connections/auth" method="POST">
                 <input type="hidden" name="pid" value="{{project.settings.id}}"/>
                 <fieldset>
-                  <div class="control-group large">
+                  <div class="slds-form-element">
                     <input style="width:100%" placeholder="Deployment Connection Name" type="text" name="name">
                   </div>
-                  <div class="control-group large">
-                    <input type="submit" class="btn btn-success btn-embossed btn-embossed" value="Create Connection">
+                  <div class="slds-form-element">
+                    <input type="submit" class="btn btn-success" value="Create Connection">
                   </div>
                 </fieldset>
               </form>
@@ -91,7 +91,7 @@
 
 
 {% block buttons %}
-  <a class="slds-button slds-button--brand btn-embossed" href="/app/deploy/new?pid={{project.settings.id}}">Go to Deploy to Server</a>
+  <a class="slds-button slds-button--brand" href="/app/deploy/new?pid={{project.settings.id}}">Go to Deploy to Server</a>
   {% include 'views/partials/cancel_button.html' %}
   {% include 'views/partials/running_indicator.html' %}
 {% endblock %}

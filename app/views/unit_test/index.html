@@ -178,16 +178,16 @@
 		<div class="tab-content" id="main-tab-content">
 			<div class="tab-pane active" id="tests_content" style="padding-top:10px;padding-bottom:10px;">
 				<div class="item-search class-list">
-					<div class="control-group large">
+					<div class="slds-form-element">
 					    <div class="row-fluid">
 					    	<div class="span5">
 					    		<input style="height:34px;width:100%" class="" type="text" placeholder="Search">
 					    	</div>
 					    	<div class="span7">
-					    		<button class="btn btn-embossed btn-mini btn-primary" onclick="selectAllTests()">
+					    		<button class="btn btn-mini btn-primary" onclick="selectAllTests()">
 					    			All
 					    		</button>
-					    		<button class="btn btn-embossed btn-mini btn-default" onclick="selectNoTests()">
+					    		<button class="btn btn-mini btn-default" onclick="selectNoTests()">
 					    			None
 					    		</button>
 					    	</div>
@@ -214,7 +214,7 @@
 						<div class="slds-box slds-theme--info">
 							<button type="button" class="close fui-cross"></button>
 							<span>No unit tests found in your MavensMate project.</span>
-							<br/><a href="/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}" class="slds-button slds-button--brand btn-embossed btn-wide">Edit Project</a>
+							<br/><a href="/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}" class="slds-button slds-button--brand btn-wide">Edit Project</a>
 						</div>
 					{% endif %}
 				</div>
@@ -230,7 +230,7 @@
 			</div>
 			<div id="class_coverage" class="tab-pane">
 				<div class="item-search class">
-					<div class="control-group large">
+					<div class="slds-form-element">
 					    <input style="height:34px;width:100%" class="span12" type="text" placeholder="Search">
 					</div>
 				</div>
@@ -239,7 +239,7 @@
 			</div>
 			<div id="trigger_coverage" class="tab-pane">
 				<div class="item-search trigger">
-					<div class="control-group large">
+					<div class="slds-form-element">
 					    <input style="height:34px;width:100%" class="span12" type="text" placeholder="Search">
 					</div>
 				</div>
@@ -257,7 +257,7 @@
 
 
 	{% block buttons %}
-		<input type="button" class="slds-button slds-button--brand btn-embossed" value="Run Tests" onclick="runTests()" id="btnRunTests">
+		<input type="button" class="slds-button slds-button--brand" value="Run Tests" onclick="runTests()" id="btnRunTests">
 		{% include 'views/partials/cancel_button.html' %}
 		{% include 'views/partials/running_indicator.html' %}
 	{% endblock %}

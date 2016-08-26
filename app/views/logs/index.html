@@ -9,7 +9,7 @@
         <div class="row-fluid">
           <div class="span12" style="text-align:right">
             <input type="text" placeholder="Filter log" id="keyword" style="width:300px;height:35px;" />
-            <a href="#" class="btn btn-success btn-embossed no-margin" onclick="filterLog()" style="right:45px"><i class="icon-search"></i></a>
+            <a href="#" class="btn btn-success no-margin" onclick="filterLog()" style="right:45px"><i class="icon-search"></i></a>
 
             <select id="keywords" class="select mbl info" style="display:none;" data-placeholder="Filter by keyword...">>
               <option value="">--CATEGORIES--</option>
@@ -45,9 +45,9 @@
 {% endblock %}
 
 {% block buttons %}
-  <button style="margin:0px 5px 0px 5px" onclick="startLogging(this)" class="slds-button slds-button--brand btn-embossed">Start Logging</button>
-  <button style="margin:0px 5px 0px 0px" onclick="stopLogging(this)" class="btn btn-default btn-embossed">Stop Logging</button>
-  <button style="margin:0px 5px 0px 0px" onclick="flushLogs(this)" class="btn btn-danger btn-embossed">Flush Logs</button>
+  <button style="margin:0px 5px 0px 5px" onclick="startLogging(this)" class="slds-button slds-button--brand">Start Logging</button>
+  <button style="margin:0px 5px 0px 0px" onclick="stopLogging(this)" class="btn btn-default">Stop Logging</button>
+  <button style="margin:0px 5px 0px 0px" onclick="flushLogs(this)" class="btn btn-danger">Flush Logs</button>
 {% endblock %}
 
 {% block body_js %}
