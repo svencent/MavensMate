@@ -220,10 +220,6 @@
 				</div>
 			</div>
 
-			<div class="tab-pane" id="debug_content" style="padding-top:10px;">
-				{% include 'views/partials/log_levels.html' %}
-			</div>
-
 			<div id="tests_results" class="tab-pane">
 				<div id="result_wrapper" style="-webkit-border-radius: 4px 4px 4px 4px;overflow-y:auto;transform: translate3d(0,0,0);padding:0px;position:relative;">
 				</div>
@@ -259,7 +255,6 @@
 	{% block buttons %}
 		<input type="button" class="slds-button slds-button--brand" value="Run Tests" onclick="runTests()" id="btnRunTests">
 		{% include 'views/partials/cancel_button.html' %}
-		{% include 'views/partials/running_indicator.html' %}
 	{% endblock %}
 
 	{% block body_js %}
