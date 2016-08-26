@@ -121,16 +121,6 @@
         });
 
         $(function() {
-          $('#top-menu .slds-button__icon').on('click', function() {
-            $('#top-menu .slds-dropdown-trigger').toggleClass('slds-is-open');
-            var ariaExpanded = $('#top-menu .slds-dropdown-trigger').attr('aria-expanded');
-            if (ariaExpanded === 'false') {
-              $('#top-menu .slds-dropdown-trigger').attr('aria-expanded','true');
-            } else {
-              $('#top-menu .slds-dropdown-trigger').attr('aria-expanded','false');
-            }
-          });
-
           $('[data-aljs="modal"]').modal();
           $('body').notification();
 
@@ -329,39 +319,249 @@
           $('#global-project-modal').modal('show');
           $('#global-project-modal input:text:visible:first').focus();
         }
+
+        $(function() {
+          $('.menu-item-with-submenu').on('click', function(evt) {
+            if (!$(this).parent().hasClass('slds-is-open')) {
+              closeSubMenus();
+              openSubMenu(this);
+            } else {
+              closeSubMenus();
+            }
+            evt.stopPropagation();
+          });
+          $(window).click(function() {
+            closeSubMenus();
+          });
+        });
+
+        function closeSubMenus() {
+          $('#left-menu .slds-dropdown-trigger').removeClass('slds-is-open');
+          $('#left-menu .slds-dropdown-trigger').attr('aria-expanded', 'false');
+        }
+
+        function openSubMenu(el) {
+          $(el).parent().toggleClass('slds-is-open');
+          var ariaExpanded = $(el).parent().attr('aria-expanded');
+          if (ariaExpanded === 'false') {
+            $(el).parent().attr('aria-expanded','true');
+          } else {
+            $(el).parent().attr('aria-expanded','false');
+          }
+          $(el).parent().find('.slds-dropdown').css('right', '-252px');
+          $(el).parent().find('.slds-dropdown').css('top', '-19px');
+        }
     </script>
 </head>
 <body id="body" class="{{ editor }} {% block body_class %}{% endblock %}">
+    <div class="slds-grid slds-grid--vertical-stretch slds-grid--frame">
 
-    {% include 'views/partials/top-menu.html' %}
+      <div id="frame-left-column" class="slds-p-bottom--large slds-theme--alt-inverse">
+        <div class="slds-grid slds-grid--vertical slds-grid--align-center slds-p-top--medium slds-p-bottom--medium" id="left-menu">
+          <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+            <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+              <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container slds-icon-standard-account">
+                <svg aria-hidden="true" class="slds-button__icon">
+                  <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+                </svg>
+                <span class="slds-assistive-text">More Options</span>
+              </button>
+              <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+                <div class="slds-dropdown__header">
+                  <span class="slds-text-heading--label">Project</span>
+                </div>
+                <ul class="dropdown__list" role="menu">
+                  <li class="slds-dropdown__item">
+                    <a href="/app/project/new" role="menuitem">
+                      <p class="slds-truncate">New Project</p>
+                    </a>
+                  </li>
+                  <li class="slds-dropdown__item">
+                    <a href="javascript:void(0)" role="menuitem" onclick="openProjectModal()">
+                      <p class="slds-truncate">Open Project</p>
+                    </a>
+                  </li>
+                  <li class="slds-dropdown__item">
+                    <a href="/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}" role="menuitem">
+                      <p class="slds-truncate">Edit Project</p>
+                    </a>
+                  </li>
+                  <li class="slds-dropdown__item">
+                    <a href="/app/project/{{project.settings.id}}/auth?pid={{project.settings.id}}" role="menuitem">
+                      <p class="slds-truncate">Authentication</p>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+            <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+              <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu">
+                <svg aria-hidden="true" class="slds-button__icon">
+                  <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#page"></use>
+                </svg>
+                <span class="slds-assistive-text">More Options</span>
+              </button>
+              <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+                <div class="slds-dropdown__header">
+                  <span class="slds-text-heading--label">Metadata</span>
+                </div>
+                <ul class="dropdown__list" role="menu">
+                  <li class="slds-dropdown__item">
+                    <a href="/app/metadata/ApexClass/new?pid={{project.settings.id}}" role="menuitem">
+                      <p class="slds-truncate">New Apex Class</p>
+                    </a>
+                  </li>
+                  <li class="slds-dropdown__item">
+                    <a href="/app/metadata/ApexTrigger/new?pid={{project.settings.id}}" role="menuitem">
+                      <p class="slds-truncate">New Apex Trigger</p>
+                    </a>
+                  </li>
+                  <li class="slds-dropdown__item">
+                    <a href="/app/metadata/ApexComponent/new?pid={{project.settings.id}}" role="menuitem">
+                      <p class="slds-truncate">New Visualforce Component</p>
+                    </a>
+                  </li>
+                  <li class="slds-dropdown__item">
+                    <a href="/app/metadata/ApexPage/new?pid={{project.settings.id}}" role="menuitem">
+                      <p class="slds-truncate">New Visualforce Page</p>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+            <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+              <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu">
+                <svg aria-hidden="true" class="slds-button__icon">
+                  <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#connected_apps"></use>
+                </svg>
+                <span class="slds-assistive-text">More Options</span>
+              </button>
+              <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+                <div class="slds-dropdown__header">
+                  <span class="slds-text-heading--label">Lightning</span>
+                </div>
+                <ul class="dropdown__list" role="menu">
+                  <li class="slds-dropdown__item">
+                    <a href="/app/lightning/app/new?pid={{project.settings.id}}" role="menuitem">
+                      <p class="slds-truncate">New Lightning App</p>
+                    </a>
+                  </li>
+                  <li class="slds-dropdown__item">
+                    <a href="/app/lightning/component/new?pid={{project.settings.id}}" role="menuitem">
+                      <p class="slds-truncate">New Lightning Component</p>
+                    </a>
+                  </li>
+                  <li class="slds-dropdown__item">
+                    <a href="/app/lightning/event/new?pid={{project.settings.id}}" role="menuitem">
+                      <p class="slds-truncate">New Lightning Event</p>
+                    </a>
+                  </li>
+                  <li class="slds-dropdown__item">
+                    <a href="/app/lightning/interface/new?pid={{project.settings.id}}" role="menuitem">
+                      <p class="slds-truncate">New Lightning Interface</p>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-    <div class="slds-page-header" role="banner" id="page-header">
-      <div class="slds-grid">
-        <div class="slds-col slds-has-flexi-truncate">
-          <div class="slds-media slds-media--center slds-no-space slds-grow">
-            <div class="slds-media__figure">
-              {% if project && project.sfdcClient %}
-                  <a href="{{ mavensmate.ui.getBaseUrl() }}/app/home?pid={{project.settings.id}}">
-                    <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/>
-                  </a>
-              {% else %}
-                  <a href="{{ mavensmate.ui.getBaseUrl() }}/">
-                    <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/>
-                  </a>
-              {% endif %}
+          <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+            <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+              <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu">
+                <svg aria-hidden="true" class="slds-button__icon">
+                  <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#socialshare"></use>
+                </svg>
+                <span class="slds-assistive-text">More Options</span>
+              </button>
+              <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+                <div class="slds-dropdown__header">
+                  <span class="slds-text-heading--label">Deploy</span>
+                </div>
+                <ul class="dropdown__list" role="menu">
+                  <li class="slds-dropdown__item">
+                    <a href="/app/connections/new?pid={{project.settings.id}}" role="menuitem">
+                      <p class="slds-truncate">Deployment Connections</p>
+                    </a>
+                  </li>
+                  <li class="slds-dropdown__item">
+                    <a href="/app/deploy/new?pid={{project.settings.id}}" role="menuitem">
+                      <p class="slds-truncate">Deploy to Server</p>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+            <button class="slds-button slds-button--icon-border-inverse">
+              <svg aria-hidden="true" class="slds-button__icon">
+                <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#summary"></use>
+              </svg>
+              <span class="slds-assistive-text">More Options</span>
+            </button>
+          </div>
+          <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+            <button class="slds-button slds-button--icon-border-inverse">
+              <svg aria-hidden="true" class="slds-button__icon">
+                <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#salesforce1"></use>
+              </svg>
+              <span class="slds-assistive-text">More Options</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="frame-right-column" class="slds-p-bottom--large">
+        <div class="" role="banner" id="page-header">
+          <div class="slds-grid">
+            <div class="slds-col slds-has-flexi-truncate">
+              <div class="slds-media slds-media--center slds-no-space slds-grow">
+                <div class="slds-media__figure">
+                  {% if project && project.sfdcClient %}
+                      <a href="{{ mavensmate.ui.getBaseUrl() }}/app/home?pid={{project.settings.id}}">
+                        <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/>
+                      </a>
+                  {% else %}
+                      <a href="{{ mavensmate.ui.getBaseUrl() }}/">
+                        <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/>
+                      </a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="slds-col slds-no-flex slds-grid slds-align-bottom">
+              {% block buttons %}{% endblock %}
+              <button class="slds-button slds-button--icon">
+                <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
+                  <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#help"></use>
+                </svg>
+                <span class="slds-assistive-text">Help</span>
+              </button>
+
+              <button class="slds-button slds-button--icon">
+                <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
+                  <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#settings"></use>
+                </svg>
+                <span class="slds-assistive-text">Settings</span>
+              </button>
+
+              <img style="border-radius:4px;height:30px;margin-left: 0.4rem;" src="https://c.na34.content.force.com/profilephoto/005/T?oauth_token=00D61000000ZPlo!AQ8AQKG_Yc5SqFzRiL8t29.exArGemcnIeN3lU2GBfikQ1AQ8bc3.QgnyYm7dubeV7fKnMQRI7Lct9NhJTajJzNMXdx00gzg"/>
             </div>
           </div>
         </div>
-        <div class="slds-col slds-no-flex slds-grid slds-align-bottom">
-          {% block buttons %}{% endblock %}
+
+        <div class="slds-container--fluid" id="main-wrapper">
+          {% block yield %}{% endblock %}
         </div>
       </div>
     </div>
-
-    <div class="slds-container--fluid" id="main-wrapper">
-      {% block yield %}{% endblock %}
-    </div>
-
     {% block body_js %}{% endblock %}
 
     <!-- GLOBAL TOAST -->

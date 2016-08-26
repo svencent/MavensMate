@@ -1,12 +1,27 @@
 {% extends "views/layouts/base.html" %}
 {% block yield %}
 
-<nav role="navigation" aria-label="Breadcrumbs" class="slds-m-bottom--small">
-  <ol class="slds-breadcrumb slds-list--horizontal">
-    <li class="slds-breadcrumb__item slds-text-heading--label"><a href="javascript:void(0);">{{project.name}}</a></li>
-    <li class="slds-breadcrumb__item slds-text-heading--label"><a href="javascript:void(0);">Edit Project</a></li>
-  </ol>
-</nav>
+<div class="slds-page-header slds-m-bottom--medium" role="banner" style="padding: 0.5rem 1.0rem;">
+  <div class="slds-grid">
+	  <div class="slds-col slds-has-flexi-truncate">
+		  <div class="slds-media slds-media--center">
+		    <div class="slds-media__figure">
+		      <svg aria-hidden="true" class="slds-icon slds-icon-standard-opportunity">
+		        <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#opportunity"></use>
+		      </svg>
+		    </div>
+		    <div class="slds-media__body">
+		      <p class="slds-page-header__title slds-truncate slds-align-middle" title="Edit Project">Edit Project</p>
+		      <p class="slds-text-body--small page-header__info">{{project.name}}</p>
+		    </div>
+		  </div>
+		 </div>
+		 <div class="slds-col slds-no-flex slds-grid slds-align-bottom">
+		 	<button class="slds-button slds-button--brand" onclick="updateProject()">Update Project</button>
+		 	<button class="slds-button slds-button--neutral" onclick="closeWindow();">Cancel</button>
+		 	</div>
+	</div>
+</div>
 
 {% if isNewProject %}
 <div class="slds-box slds-theme--info slds-m-bottom--small">
@@ -27,68 +42,71 @@
 	</script>
 {% endif %}
 
-<div class="slds-tabs--scoped" data-aljs="tabs">
-  <ul class="slds-tabs--scoped__nav" role="tablist">
-      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Subscription" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="0" aria-selected="false" aria-controls="tab-default-1" data-aljs-show="tab-default-1">Subscription</a></li>
-      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Advanced" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="true" aria-controls="tab-default-2" data-aljs-show="tab-default-2">Project Metadata</a></li>
-  </ul>
-  <div id="tab-default-1" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
-  	<div class="slds-form--stacked">
-  		<fieldset>
-  			<div class="slds-form-element slds-m-bottom--medium" >
-			    <div class="slds-picklist--draggable slds-grid" data-aljs="multi-select" id="project-subscription">
-		        <div class="slds-form-element">
-		            <span class="slds-form-element__label" aria-label="select-1">Org Metadata</span>
-		            <div class="slds-picklist slds-picklist--multi" data-aljs-multi-select="unselected">
-		                <ul class="slds-picklist__options slds-picklist__options--multi shown" id="ul-org-metadata"></ul>
-		            </div>
-		        </div>
-		        <div class="slds-grid slds-grid--vertical">
-		            <button class="slds-button slds-button--icon-container" data-aljs-multi-select="unselect">
-		                <svg aria-hidden="true" class="slds-button__icon">
-		                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#left"></use>
-		                </svg>
-		                <span class="slds-assistive-text">Pick list</span>
-		            </button>
-		            <button class="slds-button slds-button--icon-container" data-aljs-multi-select="select">
-		                <svg aria-hidden="true" class="slds-button__icon">
-		                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#right"></use>
-		                </svg>
-		                <span class="slds-assistive-text">Pick list</span>
-		            </button>
-		        </div>
-		        <div class="slds-form-element">
-		            <span class="slds-form-element__label" aria-label="select-2">Project Metadata</span>
-		            <div class="slds-picklist slds-picklist--multi" data-aljs-multi-select="selected">
-		                <ul class="slds-picklist__options slds-picklist__options--multi shown" id="ul-project-metadata"></ul>
-		            </div>
-		        </div>
+<div class="slds-m-left--medium slds-m-right--medium">
+	<div class="slds-tabs--scoped" data-aljs="tabs">
+	  <ul class="slds-tabs--scoped__nav" role="tablist">
+	      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Subscription" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="0" aria-selected="false" aria-controls="tab-default-1" data-aljs-show="tab-default-1">Subscription</a></li>
+	      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Advanced" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="true" aria-controls="tab-default-2" data-aljs-show="tab-default-2">Project Metadata</a></li>
+	  </ul>
+	  <div id="tab-default-1" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
+	  	<div class="slds-form--stacked">
+	  		<fieldset>
+	  			<div class="slds-form-element slds-m-bottom--medium" >
+				    <div class="slds-picklist--draggable slds-grid" data-aljs="multi-select" id="project-subscription">
+			        <div class="slds-form-element">
+			            <span class="slds-form-element__label" aria-label="select-1">Org Metadata</span>
+			            <div class="slds-picklist slds-picklist--multi" data-aljs-multi-select="unselected">
+			                <ul class="slds-picklist__options slds-picklist__options--multi shown" id="ul-org-metadata"></ul>
+			            </div>
+			        </div>
+			        <div class="slds-grid slds-grid--vertical">
+			            <button class="slds-button slds-button--icon-container" data-aljs-multi-select="unselect">
+			                <svg aria-hidden="true" class="slds-button__icon">
+			                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#left"></use>
+			                </svg>
+			                <span class="slds-assistive-text">Pick list</span>
+			            </button>
+			            <button class="slds-button slds-button--icon-container" data-aljs-multi-select="select">
+			                <svg aria-hidden="true" class="slds-button__icon">
+			                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#right"></use>
+			                </svg>
+			                <span class="slds-assistive-text">Pick list</span>
+			            </button>
+			        </div>
+			        <div class="slds-form-element">
+			            <span class="slds-form-element__label" aria-label="select-2">Project Metadata</span>
+			            <div class="slds-picklist slds-picklist--multi" data-aljs-multi-select="selected">
+			                <ul class="slds-picklist__options slds-picklist__options--multi shown" id="ul-project-metadata"></ul>
+			            </div>
+			        </div>
 
-			    </div>
-  			</div>
-  		</fieldset>
-  	</div>
-  </div>
-  <div id="tab-default-2" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
+				    </div>
+	  			</div>
+	  		</fieldset>
+	  	</div>
+	  </div>
+	  <div id="tab-default-2" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
 
-		<div class="slds-box slds-theme--shade slds-m-bottom--x-small" id="filter">
-			<input type="text" placeholder="Search for metadata" id="txtFilter" class="slds-input slds-size--4-of-12" />
-			<button href="#" class="slds-button slds-button--success" id="search-btn"><i class="icon-search"></i></a>
-			<button href="#" class="slds-button slds-button--default" id="select-btn" ><i class="icon-check-empty"></i></a>
-			<button class="slds-button slds-button--brand" onclick="indexOrg()">Refresh Metadata Index</button>
-		</div>
+			<div class="slds-box slds-theme--shade slds-m-bottom--x-small" id="filter">
+				<input type="text" placeholder="Search for metadata" id="txtFilter" class="slds-input slds-size--4-of-12" />
+				<button href="#" class="slds-button slds-button--success" id="search-btn"><i class="icon-search"></i></a>
+				<button href="#" class="slds-button slds-button--default" id="select-btn" ><i class="icon-check-empty"></i></a>
+				<button class="slds-button slds-button--brand" onclick="indexOrg()">Refresh Metadata Index</button>
+			</div>
 
-		<div id="project_wrapper">
-			<div id="tree"></div>
-			<div id="info"></div>
-		</div>
-  </div>
+			<div id="project_wrapper">
+				<div id="tree"></div>
+				<div id="info"></div>
+			</div>
+	  </div>
+	</div>
 </div>
+
 {% endblock %}
 
 {% block buttons %}
-	<button class="slds-button slds-button--brand" onclick="updateProject()">Update Project</button>
-	<button class="slds-button slds-button--neutral" onclick="closeWindow();">Cancel</button>
+	<!-- <button class="slds-button slds-button--brand" onclick="updateProject()">Update Project</button>
+	<button class="slds-button slds-button--neutral" onclick="closeWindow();">Cancel</button> -->
 {% endblock %}
 
 {% block body_js %}

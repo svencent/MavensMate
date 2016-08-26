@@ -1,5 +1,17 @@
+html, body {
+  height: 100%;
+}
+
+#frame-left-column {
+  width:70px;
+}
+
+#frame-right-column {
+  width: calc(100% - 70px);
+}
+
 #mmlogo {
-	width:187px;
+	width:150px;
 	padding-top: 2px;
 }
 
@@ -7,8 +19,9 @@ ul.dynatree-container {
 	border: none !important;
 }
 
-#main-wrapper {
-	padding:0.8rem;
+#left-menu .slds-dropdown--actions a {
+  color: #0070d2;
+  text-decoration: none;
 }
 
 #top-menu {
@@ -24,6 +37,8 @@ ul.dynatree-container {
 
 #page-header {
 	padding: 0.7rem 0.8rem;
+  box-shadow: 1px 1px 2px #ccc;
+  position:relative;
 }
 
 #top-menu a {
