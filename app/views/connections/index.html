@@ -23,7 +23,7 @@
           <div class="slds-truncate" title="Username">Instance URL</div>
         </th>
         <th scope="col">
-          <div class="slds-truncate" title=""></div>
+          <div class="slds-truncate" title="">Action</div>
         </th>
       </tr>
     </thead>
@@ -31,12 +31,12 @@
       {% for c in connections %}
         <tr>
           <th scope="row" data-label="Connection Name">
-            <div class="slds-truncate" title="{{ c['name'] }}"><a href="javascript:void(0);">{{ c['name'] }}</a></div>
+            <div class="slds-truncate" title="{{ c['name'] }}">{{ c['name'] }}</div>
           </th>
           <td data-label="Instance URL">
             <div class="slds-truncate" title="{{ c.instanceUrl || '' }}">{{ c.instanceUrl || '' }}</div>
           </td>
-          <td>
+          <td data-label="Action">
             <a href="javascript:void(0);" onclick="deleteConnection('{{ c['id'] }}')">Delete</a>
           </td>
         </tr>
