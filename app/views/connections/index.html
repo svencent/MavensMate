@@ -1,15 +1,13 @@
 {% extends "views/layouts/base.html" %}
 {% block yield %}
 
-  <nav role="navigation" aria-label="Breadcrumbs" class="slds-m-bottom--small">
-    <ol class="slds-breadcrumb slds-list--horizontal">
-      <li class="slds-breadcrumb__item slds-text-heading--label"><a href="javascript:void(0);">{{project.name}}</a></li>
-      <li class="slds-breadcrumb__item slds-text-heading--label"><a href="javascript:void(0);">Deployment Connections</a></li>
-    </ol>
-  </nav>
-
   <div class="slds-box slds-theme--info slds-m-bottom--small">
-    <i class="icon-exchange icon-2x pull-left"></i>A deployment connection is a Salesforce.com org that you wish to deploy to from this MavensMate project.
+    <span class="slds-icon_container slds-p-right--xx-small">
+      <svg aria-hidden="true" class="slds-icon slds-icon--small">
+        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
+      </svg>
+    </span>
+    A deployment connection is a Salesforce.com org that you wish to deploy to from this MavensMate project.
   </div>
 
   {% if connections.length > 0 %}

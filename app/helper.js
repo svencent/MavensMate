@@ -24,6 +24,27 @@ ViewHelper.prototype.getSupportedEditors = function() {
   return this.supportedEditors;
 };
 
+ViewHelper.prototype.getPageStyles = function(url) {
+  var styles = {};
+  logger.warn(url);
+  if (url.indexOf('/app/project') >= 0) {
+    styles.svgIconName = 'open_folder';
+    styles.containerClassName = 'slds-icon-standard-account';
+  } else {
+    styles.svgIconName = 'link';
+    styles.containerClassName = 'slds-icon-standard-opportunity';
+  }
+  return styles;
+};
+
+ViewHelper.prototype.isMenuItemActive = function(url, menuCategory) {
+  return url.indexOf('/app/'+menuCategory) > 0;
+};
+
+ViewHelper.prototype.getPhotoUrl = function(project) {
+  return project.sfdcClient.conn.userInfo.photos.thumbnail + '?oauth_token=' + project.sfdcClient.accessToken;
+};
+
 ViewHelper.prototype.getPathBaseName = function(p) {
   return path.basename(p);
 };

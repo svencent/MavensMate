@@ -360,7 +360,7 @@
         <div class="slds-grid slds-grid--vertical slds-grid--align-center slds-p-top--medium slds-p-bottom--medium" id="left-menu">
           <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
             <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
-              <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container slds-icon-standard-account">
+              <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container">
                 <svg aria-hidden="true" class="slds-button__icon">
                   <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
                 </svg>
@@ -381,144 +381,151 @@
                       <p class="slds-truncate">Open Project</p>
                     </a>
                   </li>
-                  <li class="slds-dropdown__item">
-                    <a href="/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}" role="menuitem">
-                      <p class="slds-truncate">Edit Project</p>
-                    </a>
-                  </li>
-                  <li class="slds-dropdown__item">
-                    <a href="/app/project/{{project.settings.id}}/auth?pid={{project.settings.id}}" role="menuitem">
-                      <p class="slds-truncate">Authentication</p>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
-            <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
-              <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu">
-                <svg aria-hidden="true" class="slds-button__icon">
-                  <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#page"></use>
-                </svg>
-                <span class="slds-assistive-text">More Options</span>
-              </button>
-              <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
-                <div class="slds-dropdown__header">
-                  <span class="slds-text-heading--label">Metadata</span>
-                </div>
-                <ul class="dropdown__list" role="menu">
-                  <li class="slds-dropdown__item">
-                    <a href="/app/metadata/ApexClass/new?pid={{project.settings.id}}" role="menuitem">
-                      <p class="slds-truncate">New Apex Class</p>
-                    </a>
-                  </li>
-                  <li class="slds-dropdown__item">
-                    <a href="/app/metadata/ApexTrigger/new?pid={{project.settings.id}}" role="menuitem">
-                      <p class="slds-truncate">New Apex Trigger</p>
-                    </a>
-                  </li>
-                  <li class="slds-dropdown__item">
-                    <a href="/app/metadata/ApexComponent/new?pid={{project.settings.id}}" role="menuitem">
-                      <p class="slds-truncate">New Visualforce Component</p>
-                    </a>
-                  </li>
-                  <li class="slds-dropdown__item">
-                    <a href="/app/metadata/ApexPage/new?pid={{project.settings.id}}" role="menuitem">
-                      <p class="slds-truncate">New Visualforce Page</p>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
-            <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
-              <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu">
-                <svg aria-hidden="true" class="slds-button__icon">
-                  <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#connected_apps"></use>
-                </svg>
-                <span class="slds-assistive-text">More Options</span>
-              </button>
-              <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
-                <div class="slds-dropdown__header">
-                  <span class="slds-text-heading--label">Lightning</span>
-                </div>
-                <ul class="dropdown__list" role="menu">
-                  <li class="slds-dropdown__item">
-                    <a href="/app/lightning/app/new?pid={{project.settings.id}}" role="menuitem">
-                      <p class="slds-truncate">New Lightning App</p>
-                    </a>
-                  </li>
-                  <li class="slds-dropdown__item">
-                    <a href="/app/lightning/component/new?pid={{project.settings.id}}" role="menuitem">
-                      <p class="slds-truncate">New Lightning Component</p>
-                    </a>
-                  </li>
-                  <li class="slds-dropdown__item">
-                    <a href="/app/lightning/event/new?pid={{project.settings.id}}" role="menuitem">
-                      <p class="slds-truncate">New Lightning Event</p>
-                    </a>
-                  </li>
-                  <li class="slds-dropdown__item">
-                    <a href="/app/lightning/interface/new?pid={{project.settings.id}}" role="menuitem">
-                      <p class="slds-truncate">New Lightning Interface</p>
-                    </a>
-                  </li>
+                  {% if project %}
+                    <li class="slds-dropdown__item">
+                      <a href="/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">Edit Project</p>
+                      </a>
+                    </li>
+                    <li class="slds-dropdown__item">
+                      <a href="/app/project/{{project.settings.id}}/auth?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">Authentication</p>
+                      </a>
+                    </li>
+                  {% endif %}
                 </ul>
               </div>
             </div>
           </div>
 
-          <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
-            <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
-              <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu">
+          {% if project %}
+            <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+              <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+                <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu">
+                  <svg aria-hidden="true" class="slds-button__icon">
+                    <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#page"></use>
+                  </svg>
+                  <span class="slds-assistive-text">More Options</span>
+                </button>
+                <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+                  <div class="slds-dropdown__header">
+                    <span class="slds-text-heading--label">Metadata</span>
+                  </div>
+                  <ul class="dropdown__list" role="menu">
+                    <li class="slds-dropdown__item">
+                      <a href="/app/metadata/ApexClass/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">New Apex Class</p>
+                      </a>
+                    </li>
+                    <li class="slds-dropdown__item">
+                      <a href="/app/metadata/ApexTrigger/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">New Apex Trigger</p>
+                      </a>
+                    </li>
+                    <li class="slds-dropdown__item">
+                      <a href="/app/metadata/ApexComponent/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">New Visualforce Component</p>
+                      </a>
+                    </li>
+                    <li class="slds-dropdown__item">
+                      <a href="/app/metadata/ApexPage/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">New Visualforce Page</p>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+              <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+                <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu">
+                  <svg aria-hidden="true" class="slds-button__icon">
+                    <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#connected_apps"></use>
+                  </svg>
+                  <span class="slds-assistive-text">More Options</span>
+                </button>
+                <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+                  <div class="slds-dropdown__header">
+                    <span class="slds-text-heading--label">Lightning</span>
+                  </div>
+                  <ul class="dropdown__list" role="menu">
+                    <li class="slds-dropdown__item">
+                      <a href="/app/lightning/app/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">New Lightning App</p>
+                      </a>
+                    </li>
+                    <li class="slds-dropdown__item">
+                      <a href="/app/lightning/component/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">New Lightning Component</p>
+                      </a>
+                    </li>
+                    <li class="slds-dropdown__item">
+                      <a href="/app/lightning/event/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">New Lightning Event</p>
+                      </a>
+                    </li>
+                    <li class="slds-dropdown__item">
+                      <a href="/app/lightning/interface/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">New Lightning Interface</p>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+              <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+                <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu">
+                  <svg aria-hidden="true" class="slds-button__icon">
+                    <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#socialshare"></use>
+                  </svg>
+                  <span class="slds-assistive-text">More Options</span>
+                </button>
+                <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+                  <div class="slds-dropdown__header">
+                    <span class="slds-text-heading--label">Deploy</span>
+                  </div>
+                  <ul class="dropdown__list" role="menu">
+                    <li class="slds-dropdown__item">
+                      <a href="/app/connections/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">Deployment Connections</p>
+                      </a>
+                    </li>
+                    <li class="slds-dropdown__item">
+                      <a href="/app/deploy/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">Deploy to Server</p>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+              <button class="slds-button slds-button--icon-border-inverse">
                 <svg aria-hidden="true" class="slds-button__icon">
-                  <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#socialshare"></use>
+                  <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#summary"></use>
                 </svg>
                 <span class="slds-assistive-text">More Options</span>
               </button>
-              <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
-                <div class="slds-dropdown__header">
-                  <span class="slds-text-heading--label">Deploy</span>
-                </div>
-                <ul class="dropdown__list" role="menu">
-                  <li class="slds-dropdown__item">
-                    <a href="/app/connections/new?pid={{project.settings.id}}" role="menuitem">
-                      <p class="slds-truncate">Deployment Connections</p>
-                    </a>
-                  </li>
-                  <li class="slds-dropdown__item">
-                    <a href="/app/deploy/new?pid={{project.settings.id}}" role="menuitem">
-                      <p class="slds-truncate">Deploy to Server</p>
-                    </a>
-                  </li>
-                </ul>
-              </div>
             </div>
-          </div>
-
-
-          <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
-            <button class="slds-button slds-button--icon-border-inverse">
-              <svg aria-hidden="true" class="slds-button__icon">
-                <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#summary"></use>
-              </svg>
-              <span class="slds-assistive-text">More Options</span>
-            </button>
-          </div>
-          <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
-            <button class="slds-button slds-button--icon-border-inverse">
-              <svg aria-hidden="true" class="slds-button__icon">
-                <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#salesforce1"></use>
-              </svg>
-              <span class="slds-assistive-text">More Options</span>
-            </button>
-          </div>
+            <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+              <button class="slds-button slds-button--icon-border-inverse">
+                <svg aria-hidden="true" class="slds-button__icon">
+                  <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#salesforce1"></use>
+                </svg>
+                <span class="slds-assistive-text">More Options</span>
+              </button>
+            </div>
+          {% endif %}
         </div>
       </div>
 
       <div id="frame-right-column" class="slds-p-bottom--large">
+
+        <!-- HEADER -->
         <div class="" role="banner" id="page-header">
           <div class="slds-grid">
             <div class="slds-col slds-has-flexi-truncate">
@@ -537,28 +544,56 @@
               </div>
             </div>
             <div class="slds-col slds-no-flex slds-grid slds-align-bottom">
-              {% block buttons %}{% endblock %}
-              <button class="slds-button slds-button--icon">
+              <!-- <button class="slds-button slds-button--icon">
                 <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
                   <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#help"></use>
                 </svg>
                 <span class="slds-assistive-text">Help</span>
-              </button>
+              </button> -->
 
-              <button class="slds-button slds-button--icon">
+              <button class="slds-button slds-button--icon" onClick="location.href='/app/settings'">
                 <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
                   <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#settings"></use>
                 </svg>
                 <span class="slds-assistive-text">Settings</span>
               </button>
-
-              <img style="border-radius:4px;height:30px;margin-left: 0.4rem;" src="https://c.na34.content.force.com/profilephoto/005/T?oauth_token=00D61000000ZPlo!AQ8AQKG_Yc5SqFzRiL8t29.exArGemcnIeN3lU2GBfikQ1AQ8bc3.QgnyYm7dubeV7fKnMQRI7Lct9NhJTajJzNMXdx00gzg"/>
+              {% if project %}
+                <img style="border-radius:4px;height:30px;margin-left: 0.4rem;" src="{{mavensmate.ui.getPhotoUrl(project)}}"/>
+              {% endif %}
             </div>
           </div>
         </div>
+        <!-- END HEADER -->
 
+        <!-- PAGE HEADER -->
+        <div class="slds-page-header slds-m-bottom--medium" role="banner" style="padding: 0.5rem 1.0rem;">
+          <div class="slds-grid">
+            <div class="slds-col slds-has-flexi-truncate">
+              <div class="slds-media slds-media--center">
+                <div class="slds-media__figure">
+                  <svg aria-hidden="true" class="slds-icon {{sldsIconClassName}}">
+                    <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#{{sldsIconName}}"></use>
+                  </svg>
+                </div>
+                <div class="slds-media__body">
+                  <p class="slds-page-header__title slds-truncate slds-align-middle" title="{{title}}">{{title}}</p>
+                  {% if project %}
+                  <p class="slds-text-body--small page-header__info">{{project.name}}</p>
+                  {% endif %}
+                </div>
+              </div>
+             </div>
+             <div class="slds-col slds-no-flex slds-grid slds-align-bottom">
+              {% block buttons %}{% endblock %}
+              </div>
+          </div>
+        </div>
+
+        <!-- CONTENT -->
         <div class="slds-container--fluid" id="main-wrapper">
-          {% block yield %}{% endblock %}
+          <div class="slds-m-left--medium slds-m-right--medium">
+            {% block yield %}{% endblock %}
+          </div>
         </div>
       </div>
     </div>

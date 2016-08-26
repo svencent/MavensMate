@@ -1,13 +1,6 @@
 {% extends "views/layouts/base.html" %}
 {% block yield %}
 
-<nav role="navigation" aria-label="Breadcrumbs" class="slds-m-bottom--small">
-  <ol class="slds-breadcrumb slds-list--horizontal">
-    <li class="slds-breadcrumb__item slds-text-heading--label"><a href="javascript:void(0);">{{project.name}}</a></li>
-    <li class="slds-breadcrumb__item slds-text-heading--label"><a href="javascript:void(0);">New {{metadataType}}</a></li>
-  </ol>
-</nav>
-
 <div class="tab-content" id="main-tab-content">
 	<div id="form" class="tab-pane active">
 		<div class="slds-form--stacked">
