@@ -1,0 +1,112 @@
+<script>
+  function showTopMenuLoading() {
+    $('#top-menu-loading-indicator').show();
+  }
+
+  function hideTopMenuLoading() {
+    $('#top-menu-loading-indicator').hide();
+  }
+</script>
+<div class="slds-box slds-box--x-small slds-theme--alt-inverse" id="top-menu" style="border-radius:0px;">
+  <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+    <button class="slds-button slds-button--icon-border-filled" aria-haspopup="true" style="border:none;background:transparent;">
+      <svg aria-hidden="true" class="slds-button__icon">
+        <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#rows"></use>
+      </svg>
+      <span class="slds-assistive-text">Show More</span>
+    </button>
+    <div class="slds-dropdown slds-dropdown--left slds-dropdown--small slds-nubbin--top">
+      <div class="slds-dropdown__header">
+        <span class="slds-text-heading--label">Project</span>
+      </div>
+      <ul class="dropdown__list" role="menu">
+        <li class="slds-dropdown__item">
+          <a href="/app/project/new" role="menuitem">
+            <p class="slds-truncate">New Project</p>
+          </a>
+        </li>
+        <li class="slds-dropdown__item">
+          <a href="javascript:void(0)" role="menuitem" onclick="openProjectModal()">
+            <p class="slds-truncate">Open Project</p>
+          </a>
+        </li>
+        <li class="slds-dropdown__item">
+          <a href="/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}" role="menuitem">
+            <p class="slds-truncate">Edit Project</p>
+          </a>
+        </li>
+      </ul>
+      <div class="slds-dropdown__header">
+        <span class="slds-text-heading--label">Metadata</span>
+      </div>
+      <ul class="dropdown__list" role="menu">
+        <li class="slds-dropdown__item">
+          <a href="/app/metadata/ApexClass/new?pid={{project.settings.id}}" role="menuitem">
+            <p class="slds-truncate">New Apex Class</p>
+          </a>
+        </li>
+        <li class="slds-dropdown__item">
+          <a href="/app/metadata/ApexTrigger/new?pid={{project.settings.id}}" role="menuitem">
+            <p class="slds-truncate">New Apex Trigger</p>
+          </a>
+        </li>
+        <li class="slds-dropdown__item">
+          <a href="/app/metadata/ApexComponent/new?pid={{project.settings.id}}" role="menuitem">
+            <p class="slds-truncate">New Visualforce Component</p>
+          </a>
+        </li>
+        <li class="slds-dropdown__item">
+          <a href="/app/metadata/ApexPage/new?pid={{project.settings.id}}" role="menuitem">
+            <p class="slds-truncate">New Visualforce Page</p>
+          </a>
+        </li>
+      </ul>
+      <div class="slds-dropdown__header">
+        <span class="slds-text-heading--label">Lightning</span>
+      </div>
+      <ul class="dropdown__list" role="menu">
+        <li class="slds-dropdown__item">
+          <a href="/app/lightning/app/new?pid={{project.settings.id}}" role="menuitem">
+            <p class="slds-truncate">New Lightning App</p>
+          </a>
+        </li>
+        <li class="slds-dropdown__item">
+          <a href="/app/lightning/component/new?pid={{project.settings.id}}" role="menuitem">
+            <p class="slds-truncate">New Lightning Component</p>
+          </a>
+        </li>
+        <li class="slds-dropdown__item">
+          <a href="/app/lightning/event/new?pid={{project.settings.id}}" role="menuitem">
+            <p class="slds-truncate">New Lightning Event</p>
+          </a>
+        </li>
+        <li class="slds-dropdown__item">
+          <a href="/app/lightning/interface/new?pid={{project.settings.id}}" role="menuitem">
+            <p class="slds-truncate">New Lightning Interface</p>
+          </a>
+        </li>
+      </ul>
+      <div class="slds-dropdown__header">
+        <span class="slds-text-heading--label">Deploy</span>
+      </div>
+      <ul class="dropdown__list" role="menu">
+        <li class="slds-dropdown__item">
+          <a href="/app/connections?pid={{project.settings.id}}" role="menuitem">
+            <p class="slds-truncate">Deployment Connections</p>
+          </a>
+        </li>
+        <li class="slds-dropdown__item">
+          <a href="/app/deploy/new?pid={{project.settings.id}}" role="menuitem">
+            <p class="slds-truncate">Deploy to Server</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="slds-spinner--inverse slds-spinner slds-spinner--small" aria-hidden="false" role="alert" id="top-menu-loading-indicator">
+    <div class="slds-spinner__dot-a"></div>
+    <div class="slds-spinner__dot-b"></div>
+  </div>
+</div>

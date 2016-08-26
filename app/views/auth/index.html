@@ -1,58 +1,59 @@
 {% extends "views/layouts/base.html" %}
 {% block yield %}
-<div id="result_output">
-  <div class="alert alert-error">
-    <button type="button" class="close fui-cross"></button>
-    <span id="error_message"></span>
-  </div>
-</div>
 
-{% if isNew %}
-<div class="alert alert-info closeable" style="display:block;">
-  <span id="success-open-alert-message"><i class="icon-info-sign icon-2x pull-left"></i>MavensMate uses the OAuth 2.0 Web Server Authentication Flow to authenticate to Salesforce. Select the type of Salesforce environment you are connecting to and click "Connect".</span>
-</div>
-{% endif %}
+<div class="slds-container--small slds-container--center">
 
-{% if isUpdate %}
-<div class="alert alert-info closeable" style="display:block;">
-  <span id="success-open-alert-message"><i class="icon-info-sign icon-2x pull-left"></i>Please re-authenticate to Salesforce.</span>
-</div>
-{% endif %}
-
-<div class="content">
-
-  <ul class="nav nav-tabs nav-append-content">
-    <li class="active"><a id="project_details_tab" href="#form" data-toggle="tab">Connect to Salesforce</a></li>
-  </ul>
-
-  <div class="tab-content" id="main-tab-content">
-    <div id="form" class="tab-pane active">
-      <form class="form-stacked" action="/app/auth" method="POST">
-        {% if project && project.settings && project.settings.id %}
-        <input type="hidden" name="pid" value="{{project.settings.id}}" />
-        {% endif %}
-        <input type="hidden" name="callback" value="{{callback}}" />
-        <input type="hidden" name="param1" value="{{param1}}" />
-        <fieldset>
-            <div class="control-group large">
-              <select id="orgType" name="orgType" class="select-block mbl info span12">
-                <option value="production">Production</option>
-                <option value="developer">Developer</option>
-                <option value="sandbox">Sandbox</option>
-                <option value="prerelease">Prerelease</option>
-                <option value="custom">Custom URL</option>
-              </select>
-            </div>
-          <div class="control-group large">
-            <input class="span12" placeholder="Example: https://na1-blitz01.salesforce.com" type="text" id="instanceUrl" name="instanceUrl" style="display:none;">
-          </div>
-          <div class="control-group large">
-            <input type="submit" class="btn btn-success btn-embossed btn-embossed" value="Connect">
-          </div>
-        </fieldset>
-      </form>
+  <div class="slds-m-bottom--small">
+    {% if isNew %}
+    <div class="slds-box slds-theme--info">
+      <p>MavensMate uses the OAuth 2.0 Web Server Authentication Flow to authenticate to Salesforce. Select the type of Salesforce environment you are connecting to and click "Connect".</p>
     </div>
+    {% endif %}
+
+    {% if isUpdate %}
+    <div class="slds-box slds-theme--info closeable" style="display:block;">
+      <span id="success-open-alert-message"><i class="icon-info-sign icon-2x pull-left"></i>Please re-authenticate to Salesforce.</span>
+    </div>
+    {% endif %}
   </div>
+
+  <form class="slds-form--stacked" action="/app/auth" method="POST">
+
+    {% if project && project.settings && project.settings.id %}
+    <input type="hidden" name="pid" value="{{project.settings.id}}" />
+    {% endif %}
+    <input type="hidden" name="callback" value="{{callback}}" />
+    <input type="hidden" name="param1" value="{{param1}}" />
+
+    <div class="slds-form-element">
+      <label class="slds-form-element__label" for="select-01">Salesforce Environment Type</label>
+      <div class="slds-form-element__control">
+        <div class="slds-select_container">
+          <select id="orgType" class="slds-select">
+            <option value="production">Production</option>
+            <option value="developer">Developer</option>
+            <option value="sandbox">Sandbox</option>
+            <option value="prerelease">Prerelease</option>
+            <option value="custom">Custom URL</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="slds-form-element" style="display:none;" id="instanceUrlWrapper">
+      <label class="slds-form-element__label" for="inputSample2">Salesforce Custom URL</label>
+      <div class="slds-form-element__control">
+        <input id="instanceUrl" name="instanceUrl" class="slds-input" type="text" placeholder="Example: https://na1-blitz01.salesforce.com">
+      </div>
+    </div>
+
+    <div class="slds-form-element">
+      <div class="slds-form-element__control">
+        <button type="submit" class="slds-button slds-button--brand">Connect</button>
+      </div>
+    </div>
+
+  </form>
 
 </div>
 
@@ -60,7 +61,7 @@
 
 
 {% block buttons %}
-  <button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
+  <button class="slds-button slds-button--neutral" onclick="closeWindow();">Cancel</button>
 {% endblock %}
 
 {% block body_js %}
@@ -69,10 +70,10 @@
     $(function() {
       $('#orgType').change(function() {
         if ($(this).val() === 'custom') {
-          $('#instanceUrl').show();
+          $('#instanceUrlWrapper').show();
         } else {
-          $('#instanceUrl').hide();
-          $('#instanceUrl').val('');
+          $('#instanceUrlWrapper').hide();
+          $('#instanceUrlWrapper').val('');
         }
       });
     });

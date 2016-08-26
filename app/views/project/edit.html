@@ -1,104 +1,107 @@
 {% extends "views/layouts/base.html" %}
 {% block yield %}
-<div id="result_output">
-	<div class="alert alert-error">
-		<button type="button" class="close fui-cross"></button>
-		<span id="error_message"></span>
-	</div>
-</div>
+
+<nav role="navigation" aria-label="Breadcrumbs" class="slds-m-bottom--small">
+  <ol class="slds-breadcrumb slds-list--horizontal">
+    <li class="slds-breadcrumb__item slds-text-heading--label"><a href="javascript:void(0);">{{project.name}}</a></li>
+    <li class="slds-breadcrumb__item slds-text-heading--label"><a href="javascript:void(0);">Edit Project</a></li>
+  </ol>
+</nav>
 
 {% if isNewProject %}
-<div class="alert alert-success" id="success-open-alert" style="display:block;">
-	<button type="button" class="close fui-cross"></button>
-	<span id="success-open-alert-message">Project created successfully</span>
-	<br/>
-	{% if !editor %}
-		{% for editorName, editorPath in mavensmate.ui.getSupportedEditors() %}
-			<a class="btn btn-info btn-embossed btn-wide" href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}', '{{project.settings.id}}');">Open in {{ editorName|capitalize }}</a>
-		{% endfor %}
-	{% endif %}
+<div class="slds-box slds-theme--info slds-m-bottom--small">
+ 	<p class="slds-m-bottom--small">Project created successfully</p>
+ 	{% if !editor %}
+ 		{% for editorName, editorPath in mavensmate.ui.getSupportedEditors() %}
+ 			<a class="slds-button slds-button--neutral" href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}', '{{project.settings.id}}');">Open in {{ editorName|capitalize }}</a>
+ 		{% endfor %}
+ 	{% endif %}
 </div>
 {% endif %}
 
-<div class="content">
-	<ul class="nav nav-tabs nav-append-content">
-		<li><a href="#advanced" data-toggle="tab">Subscription</a></li>
-		<li class="active">
-			<a href="#metadata" data-toggle="tab">
-				Project Metadata &nbsp;&nbsp;
-				<span onclick="indexOrg(true)" class="label" style="line-height:15px;cursor:pointer;">
-					Refresh <i class="icon-refresh"></i>
-				</span>
-			</a>
-		</li>
-	</ul>
+{% if isUpdate %}
+	<script>
+		$(function() {
+			showToast('Successfully updated project credentials', 'success', null, 5000);
+		});
+	</script>
+{% endif %}
 
-	<div class="tab-content" id="main-tab-content">
-		<div id="advanced" class="tab-pane">
-			<form class="form-stacked" style="padding-top:10px;">
-				<fieldset>
-					<div class="clearfix">
-						<label for="subscription" style="font-weight:bold;">Metadata Subscription List</label>
-						<div class="row">
-							<div class="span8">
-								<select name="huge" class="select-block mbl info" style="display:none;" id="subscription" multiple="multiple" data-placeholder="Select 1 or more metadata types..." data-selected-text-format="count>3" data-size="20">
-									{% for m in mavensmate.ui.getMetadataObjects(project) %}
-										{% if project.settings.subscription.indexOf(m['xmlName']) >= 0 %}
-											{% set selected = 'selected="selected"' %}
-										{% else %}
-											{% set selected = '' %}
-										{% endif %}
-										<option {{ selected }} value="{{ m['xmlName'] }}">
-											{{ m['xmlName'] }}
-										</option>
-									{% endfor %}
-								</select>
-							</div>
-							<div class="span4">
-								<a class="btn btn-success btn-embossed" onclick="updateSubscription();">
-									Update Subscription
-								</a>
-							</div>
-						</div>
-					</div>
-					<div class="alert alert-info" style="margin-top:20px">
-						<ul>
-							<li>
-								If you only plan to work with certain metadata types in this project, specify those types here. Otherwise, MavensMate will index each metadata type available in your org. In larger orgs, this can negatively impact performance.
-							</li>
-							<li>
-								The default list of metadata types is controlled by your plugin client's <strong>mm_default_subscription</strong> setting.
-							</li>
-							<li>
-								Once you've selected your metadata, be sure to click the "Update Subscription" button.
-							</li>
-						</ul>
+<div class="slds-tabs--scoped" data-aljs="tabs">
+  <ul class="slds-tabs--scoped__nav" role="tablist">
+      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Subscription" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="0" aria-selected="false" aria-controls="tab-default-1" data-aljs-show="tab-default-1">Subscription</a></li>
+      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Advanced" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="true" aria-controls="tab-default-2" data-aljs-show="tab-default-2">Project Metadata</a></li>
+  </ul>
+  <div id="tab-default-1" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
+  	<div class="slds-form--stacked">
+  		<fieldset>
+  			<div class="slds-form-element slds-m-bottom--medium" >
+			    <div class="slds-picklist--draggable slds-grid" data-aljs="multi-select" id="project-subscription">
+		        <div class="slds-form-element">
+		            <span class="slds-form-element__label" aria-label="select-1">Org Metadata</span>
+		            <div class="slds-picklist slds-picklist--multi" data-aljs-multi-select="unselected">
+		                <ul class="slds-picklist__options slds-picklist__options--multi shown"></ul>
+		            </div>
+		        </div>
+		        <div class="slds-grid slds-grid--vertical">
+		            <button class="slds-button slds-button--icon-container" data-aljs-multi-select="unselect">
+		                <svg aria-hidden="true" class="slds-button__icon">
+		                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#left"></use>
+		                </svg>
+		                <span class="slds-assistive-text">Pick list</span>
+		            </button>
+		            <button class="slds-button slds-button--icon-container" data-aljs-multi-select="select">
+		                <svg aria-hidden="true" class="slds-button__icon">
+		                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#right"></use>
+		                </svg>
+		                <span class="slds-assistive-text">Pick list</span>
+		            </button>
+		        </div>
+		        <div class="slds-form-element">
+		            <span class="slds-form-element__label" aria-label="select-2">Project Metadata</span>
+		            <div class="slds-picklist slds-picklist--multi" data-aljs-multi-select="selected">
+		                <ul class="slds-picklist__options slds-picklist__options--multi shown"></ul>
+		            </div>
+		        </div>
+		        <div class="slds-grid slds-grid--vertical">
+		            <button class="slds-button slds-button--icon-container" data-aljs-multi-select="move-up">
+		                <svg aria-hidden="true" class="slds-button__icon">
+		                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#up"></use>
+		                </svg>
+		                <span class="slds-assistive-text">Pick list</span>
+		            </button>
+		            <button class="slds-button slds-button--icon-container" data-aljs-multi-select="move-down">
+		                <svg aria-hidden="true" class="slds-button__icon">
+		                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#down"></use>
+		                </svg>
+		                <span class="slds-assistive-text">Pick list</span>
+		            </button>
+		        </div>
+			    </div>
+  			</div>
+  		</fieldset>
+  	</div>
+  </div>
+  <div id="tab-default-2" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
 
-					</div>
-				</fieldset>
-			</form>
+		<div class="slds-box slds-theme--shade slds-m-bottom--x-small" id="filter">
+			<input type="text" placeholder="Search for metadata" id="txtFilter" class="slds-input slds-size--4-of-12" />
+			<button href="#" class="slds-button slds-button--success" id="search-btn"><i class="icon-search"></i></a>
+			<button href="#" class="slds-button slds-button--default" id="select-btn" ><i class="icon-check-empty"></i></a>
+			<button class="slds-button slds-button--brand" onclick="indexOrg()">Refresh Metadata Index</button>
 		</div>
 
-		<div id="metadata" class="tab-pane active">
-			<div class="alert alert-info" id="filter">
-				<input type="text" placeholder="Search for metadata" id="txtFilter" style="width:300px;height:35px;" />
-				<a href="#" class="btn btn-success btn-embossed" id="search-btn" style="right:42px"><i class="icon-search"></i></a>
-				<a href="#" class="btn btn-select btn-embossed" id="select-btn" ><i class="icon-check-empty"></i></a>
-			</div>
-			<div id="project_wrapper">
-				<div id="treewrapper" style="height:100%;">
-					<div id="tree"></div>
-					<div id="info"></div>
-				</div>
-			</div>
-    	</div>
-	</div>
+		<div id="project_wrapper">
+			<div id="tree"></div>
+			<div id="info"></div>
+		</div>
+  </div>
 </div>
 {% endblock %}
 
 {% block buttons %}
-	<input type="button" id="btnSubmit" class="btn btn-info btn-embossed" value="Update Project" onclick="updateProject();">
-	<button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
+	<button class="slds-button slds-button--brand" onclick="updateProject()">Update Project</button>
+	<button class="slds-button slds-button--neutral" onclick="closeWindow();">Cancel</button>
 {% endblock %}
 
 {% block body_js %}
@@ -107,175 +110,143 @@
 		var operation;
 		var PROJECT_WRAPPER_OFFSET = $("#filter").height() + 60;
 
+		$(function() {
+	    $('[data-aljs="tabs"]').tabs({
+	    	defaultTabId: 'tab-default-2'
+	    });
+
+	    var selectedItems = [
+	       {% for m in mavensmate.ui.getMetadataObjects(project) %}
+	       	{% if project.settings.subscription.indexOf(m.xmlName) >= 0 %}
+	       		{
+	       			id: '{{ m.xmlName }}',
+	       			label: '{{ m.xmlName }}'
+	       		},
+	       	{% endif %}
+	       {% endfor %}
+	    ];
+
+	    var unselectedItems = [
+	    	{% for m in mavensmate.ui.getMetadataObjects(project) %}
+	    		{% if project.settings.subscription.indexOf(m.xmlName) === -1 %}
+	    			{
+	    				id: '{{ m.xmlName }}',
+	    				label: '{{ m.xmlName }}'
+	    			},
+	    		{% endif %}
+	    	{% endfor %}
+	    ];
+	    $('#project-subscription').multiSelect({
+	    	unselectedItems: unselectedItems,
+	      selectedItems: selectedItems
+	    });
+
+	    $('#project-subscription').find('[data-aljs-multi-select="unselect"]').on('click', function() {
+	    	updateSubscription();
+	    });
+
+	    $('#project-subscription').find('[data-aljs-multi-select="select"]').on('click', function() {
+	    	updateSubscription();
+	    });
+
+	    if (hasIndexedMetadata) {
+	    	renderTree(PROJECT_WRAPPER_OFFSET, null, '{{ project.settings.id}}');
+	    	setTimeout(resizeProjectWrapper(PROJECT_WRAPPER_OFFSET),500)
+	    } else {
+	    	indexOrg();
+	    }
+		})
+
 		function updateSubscription() {
-			console.log('updating project subscription')
-			operation = "update_subscription"
-			$.ajax({
-				type: "POST",
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/subscription?pid={{project.settings.id}}",
-				data: JSON.stringify({
-		    	path: '{{ project.path }}',
-		    	subscription: $("#subscription").val(),
-		    	command: "update-subscription"
-				}),
-				beforeSend: function() { showLoading('Updating project subscription'); },
-				complete: function(data){
-					var response = JSON.parse(data.responseText)
-					if (response.error) {
-						showMessage(response.error);
-					} else {
-						showMessageWithCustomAction(response.message, 'success', 'Refresh Index', 'hideMessage();indexOrg(true)')
-					}
-					hideLoading();
-				}
+			var sub = [];
+			_.each($('#project-subscription').multiSelect('getSelectedItems'), function(item) {
+				sub.push(item.id);
 			});
+			sub.sort();
+			var opts = {
+				async: false,
+				ajax: {
+					type: 'POST',
+					url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/subscription?pid={{project.settings.id}}",
+					data: JSON.stringify({
+			    	subscription: sub
+					})
+				},
+				message: {
+					label: 'Updating project subscription...'
+				}
+		 	};
+
+			mavensmate.request(opts)
+				.then(function(response) {
+					showToast(response.message, 'success');
+					// todo: custom action; indexOrg(true);
+				})
+				.catch(function(err) {
+					console.error('could not update subscription', err);
+				})
+				.finally(function() {
+					hideLoading();
+				});
 		}
 
 		function updateProject() {
-			console.log('updating project')
-			operation = "update"
-			$.ajax({
-				type: "POST",
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}?pid={{project.settings.id}}",
-				data: JSON.stringify({
-					package: getTree()
-				}),
-				beforeSend: function() { showLoading('Updating project'); },
-				complete: function(data){
-					responseHandler(data)
+			var opts = {
+				ajax: {
+					type: 'POST',
+					url: '{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}?pid={{project.settings.id}}',
+					data: JSON.stringify({
+						package: getTree()
+					})
+				},
+				message: {
+					label: 'Updating MavensMate project...'
 				}
-			});
+		 	};
+
+			mavensmate.request(opts)
+				.then(function(response) {
+					showToast('Project updated successfully', 'success');
+				})
+				.catch(function(err) {
+					console.error('could not update project', err);
+				})
+				.finally(function() {
+					hideLoading();
+				});
 		}
 
-		function indexOrg(refresh) {
-			console.log('indexing org')
-			operation = "index"
-			$.ajax({
-				type: "POST",
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/index",
-				beforeSend: function() { showLoading('Updating the metadata index for this project. This operation can take a few minutes in large orgs. To minimize indexing time, limit your project\'s subscription to only those metadata types you absolutely need.<br/><br/>Thanks for being patient! :)'); },
-				complete: function(data, status, xhr){
-					responseHandler(data)
+		function indexOrg() {
+			var opts = {
+				ajax: {
+					type: 'POST',
+					url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/index",
+					data: JSON.stringify({
+						package: getTree()
+					})
+				},
+				message: {
+					label: 'Updating metadata index...',
+					detail: ' This operation can take a few minutes in large orgs. To minimize indexing time, limit your project\'s subscription to only those metadata types you absolutely need.<br/><br/>Thanks for being patient! :)'
 				}
-			});
-		}
+		 	};
 
-		function handleResponse(response) {
-			if (operation == "index") {
-				if (response.error) {
-					showMessage(response.error)
-				} else {
+			mavensmate.request(opts)
+				.then(function(response) {
 					if (!tree) {
-						renderTree(PROJECT_WRAPPER_OFFSET, null, '{{ project.settings.id}}');
+						renderTree(PROJECT_WRAPPER_OFFSET, null, '{{project.settings.id}}');
 					} else {
 						$("#tree").dynatree("getTree").reload();
 					}
-				}
-				notifySound();
-				hideLoading();
-			} else if (operation == "update") {
-				if (response.error) {
-					showMessage(response.error)
-				} else {
-					showMessage("Project updated successfully.", "success", true)
-				}
-				notifySound()
-				hideLoading();
-			}
-			resizeProjectWrapper(PROJECT_WRAPPER_OFFSET)
+					showToast('Project metadata index updated successfully', 'success');
+				})
+				.catch(function(err) {
+					console.error('could not update index', err);
+				})
+				.finally(function() {
+					hideLoading();
+				});
 		}
-
-		function positionInputIcons() {
-			var siblingInputWidth = $(".input-icon.fui-lock").prev().width();
-			$(".input-icon.fui-lock").css('right', '0px');
-			$(".input-icon.fui-lock").css('width', '20px');
-			$(".input-icon.fui-lock").css('left', siblingInputWidth-30+'px');
-		}
-
-		$(function() {
-			$("#pn").val("{{ project.name }}");
-			$("#un").val("{{ project.sfdcClient.getUsername() }}");
-			$("select.org_type").val("{{ project.sfdcClient.getOrgType() }}");
-			$("select.org_type").change();
-			$("#custom-url").val("{{ org_url }}"); //TODO
-			if ($("#custom-url").val() != '') {
-				$("#custom-url").show()
-			}
-
-			$("#pn").prop('disabled', true);
-
-			$(window).resize(function() {
-				resizeProjectWrapper(PROJECT_WRAPPER_OFFSET);
-				positionInputIcons();
-			});
-
-			$("ul.nav-tabs li a span").hover(
-				function() {
-					$(this).addClass("label-success")
-				},
-				function() {
-					$(this).removeClass("label-success")
-				}
-			)
-
-			$("select.org_type").change(function() {
-				if ($(this).val() == 'custom') {
-					$("#custom-url").show()
-				} else {
-					$("#custom-url").hide()
-					$("#custom-url").val('')
-				}
-			})
-
-			$("#select-btn").click(function() {
-				if ($(this).html().indexOf('icon-check-empty') !== -1) {
-					$("#tree").dynatree("getRoot").visit(function(node){
-						if ($("#txtFilter").val() == '') {
-							if (node.data.cls !== 'hidden')
-								node.select(true);
-						} else {
-							if (node.data.level != 1 && node.data.cls !== 'hidden')
-								node.select(true);
-						}
-					});
-					$(this).html('<i class="icon-check"></i>')
-				} else {
-					$("#tree").dynatree("getRoot").visit(function(node){
-						if ($("#txtFilter").val() == '') {
-							if (node.data.cls !== 'hidden')
-								node.select(false);
-						} else {
-							if (node.data.level != 1 && node.data.cls !== 'hidden')
-								node.select(false);
-						}
-					});
-					$(this).html('<i class="icon-check-empty"></i>')
-				}
-			})
-
-			$('a[data-toggle="tab"]').on('shown', function (e) {
-				if (e.target.href.indexOf("form") != -1) {
-					positionInputIcons()
-				}
-		    });
-
-		    positionInputIcons()
-
-
-		    if (hasIndexedMetadata) {
-		    	renderTree(PROJECT_WRAPPER_OFFSET, null, '{{ project.settings.id}}');
-		    	setTimeout(resizeProjectWrapper(PROJECT_WRAPPER_OFFSET),500)
-		    } else {
-		    	indexOrg();
-		    }
-
-		});
 	</script>
 
 {% endblock %}

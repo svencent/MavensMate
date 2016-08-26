@@ -53,7 +53,7 @@ router.get('/auth/finish', function(req, res) {
       refreshToken: req.query.refresh_token
     })
     .then(function(response) {
-      res.redirect('/app/project/'+pid+'/edit?pid='+pid);
+      res.redirect('/app/project/'+pid+'/edit?pid='+pid+'&update=1');
     })
     .catch(function(err) {
       logger.error(err);
@@ -168,7 +168,8 @@ router.get('/:id/edit', function(req, res) {
   } else {
     res.render('project/edit.html', {
       title: 'Edit Project',
-      isNewProject: req.query.new === '1'
+      isNewProject: req.query.new === '1',
+      isUpdate: req.query.update === '1'
     });
   }
 });

@@ -1,3 +1,47 @@
 #mmlogo {
 	width:187px;
+	padding-top: 2px;
+}
+
+ul.dynatree-container {
+	border: none !important;
+}
+
+#main-wrapper {
+	padding:0.8rem;
+}
+
+#top-menu {
+	padding: 0.2rem 0.4rem;
+}
+
+#top-menu #top-menu-loading-indicator {
+    top: 19px;
+    right: 0.7rem;
+    left: inherit;
+    display: none;
+}
+
+#page-header {
+	padding: 0.7rem 0.8rem;
+}
+
+#top-menu a {
+	color: #16325c;
+	text-decoration: none;
+}
+
+#top-menu .slds-button__icon {
+	fill:#fff;
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+#top-menu .slds-nubbin--top:before,
+#top-menu .slds-nubbin--top:after {
+	left:15px;
+}
+
+.slds-dropdown-trigger > [class*="slds-button--icon"] ~ .slds-dropdown--left[class*="slds-nubbin"] {
+	left:0px;
 }

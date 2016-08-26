@@ -1,185 +1,137 @@
 {% extends "views/layouts/base.html" %}
 {% block yield %}
-<style>
-	div#main-tab-content .select.select-block {
-		width: 712px;
-	}
-</style>
-<div id="result_output">
-	<div class="alert alert-error">
-		<button type="button" class="close fui-cross"></button>
-		<span id="error_message"></span>
-	</div>
-</div>
 
-<div class="alert alert-success" id="success-open-alert" style="display:none;">
-	<button type="button" class="close fui-cross"></button>
-	<span id="success-open-alert-message"></span>
-	<br/>
-	{% if !editor %}
-		{% for editorName, editorPath in mavensmate.ui.getSupportedEditors() %}
-			<a class="btn btn-info btn-embossed btn-wide" href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}', newProjectId);">Open in {{ editorName|capitalize }}</a>
-		{% endfor %}
-	{% endif %}
-</div>
+<div class="slds-tabs--scoped" data-aljs="tabs">
+  <ul class="slds-tabs--scoped__nav" role="tablist">
+      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Project Details" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" data-aljs-show="tab-default-1">Project Details</a></li>
+      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Advanced" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" data-aljs-show="tab-default-2">Advanced</a></li>
+      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Metadata" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" data-aljs-show="tab-default-3">Metadata</a></li>
+  </ul>
+  <div id="tab-default-1" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
 
-<div class="content">
+  	<form class="slds-form--stacked">
+  		<input type="hidden" value="{{ accessToken }}" id="accessToken"/>
+  		<input type="hidden" value="{{ refreshToken }}" id="refreshToken"/>
+  		<input type="hidden" value="{{ instanceUrl }}" id="instanceUrl"/>
 
-	<ul class="nav nav-tabs nav-append-content">
-		<li class="active"><a id="project_details_tab" href="#form" data-toggle="tab">Project Details</a></li>
-		<li><a href="#advanced" data-toggle="tab">Advanced</a></li>
-		<li>
-			<a href="#metadata" data-toggle="tab">
-				Project Metadata &nbsp;&nbsp;
-				<span onclick="populateMetadataTree('Refreshing Metadata...')" class="label" style="line-height:15px;cursor:pointer;">
-					Refresh <i class="icon-refresh"></i>
-				</span>
-			</a>
-		</li>
-	</ul>
+  		<fieldset>
+  			<div class="slds-form-element">
+  			  <label class="slds-form-element__label" for="inputSample2">Workspace</label>
+  			  <div class="slds-form-element__control">
+  			  	<select id="workspace" class="slds-select"
+  			  		data-placeholder="Select a workspace" data-none-selected-text="No workspace selected (To configure workspaces, set your mm_workspace setting in your MavensMate text editor plugin settings)" data-size="5">
+  			  		{% for m in mavensmate.ui.getWorkspaces() %}
+  			  			<option value="{{ m }}">{{ m }}</option>
+  			  		{% endfor %}
+  			  	</select>
+  			  </div>
+  			</div>
 
-	<div class="tab-content" id="main-tab-content">
-		<div id="form" class="tab-pane active">
-			<form class="form-stacked">
-				<input type="hidden" value="{{ accessToken }}" id="accessToken"/>
-				<input type="hidden" value="{{ refreshToken }}" id="refreshToken"/>
-				<input type="hidden" value="{{ instanceUrl }}" id="instanceUrl"/>
-				<fieldset>
-					<div class="control-group large">
-						<select id="workspace" class="select-block mbl info span12"
-							data-placeholder="Select a workspace" data-none-selected-text="No workspace selected (To configure workspaces, set your mm_workspace setting in your MavensMate text editor plugin settings)" data-size="5">
-							{% for m in mavensmate.ui.getWorkspaces() %}
-								<option value="{{ m }}">{{ m }}</option>
-							{% endfor %}
-						</select>
-					</div>
+  			<div class="slds-form-element slds-m-top--medium large">
+  				<label class="slds-form-element__label" for="inputSample2">Project Name</label>
+  				<div class="slds-form-element__control">
+  					<input class="slds-input" placeholder="Project Name" type="text" id="pn">
+  				</div>
+  			</div>
 
-					<div class="control-group large">
-						<input class="span12" placeholder="Project Name" type="text" id="pn">
-					</div>
-					<div class="control-group large disabled">
-						<input class="span12" placeholder="Salesforce.com Username" type="text" id="un" value="{{session.username}}" disabled="disabled">
-					</div>
-				</fieldset>
-			</form>
-		</div>
+  			<div class="slds-form-element slds-m-top--medium large">
+  				<label class="slds-form-element__label" for="inputSample2">Salesforce.com Username</label>
+  				<div class="slds-form-element__control">
+  					<input class="slds-input" placeholder="Salesforce.com Username" type="text" id="un" value="{{session.username}}" disabled="disabled">
+  				</div>
+  			</div>
 
-		<div id="advanced" class="tab-pane">
-			<form class="form-stacked" style="padding-top:10px;">
-				<fieldset>
-					<div class="clearfix" id="subscriptionWrapper">
-						<label for="subscription" style="font-weight:bold;">Metadata Subscription List</label>
-						<!-- populated by dynamic org data -->
-					</div>
-					<div class="clearfix">
-						<div class="alert alert-info" style="margin-top:20px">
-							<ul>
-								<li>
-									If you only plan to work with certain metadata types in this project, specify those types here. Otherwise, MavensMate will index each metadata type available in your org. In larger orgs, this can negatively impact performance.
-								</li>
-								<li>
-									You can update your project's metadata subscription at any time.
-								</li>
-								<li>
-									The default list of metadata types is controlled by your plugin client's <strong>mm_default_subscription</strong> setting.
-								</li>
-							</ul>
-
-						</div>
-					</div>
-				</fieldset>
-			</form>
-		</div>
-
-		<div id="metadata" class="tab-pane">
-			<div id="project_wrapper">
-				<div id="treewrapper">
-					<div id="tree"></div>
-					<div id="info"></div>
-				</div>
+  		</fieldset>
+  	</form>
+  </div>
+  <div id="tab-default-2" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
+  	<form class="slds-form--stacked">
+			<div class="slds-box slds-theme--info slds-m-bottom--medium">
+				<ul>
+					<li>
+						If you only plan to work with certain metadata types in this project, specify those types here. Otherwise, MavensMate will index each metadata type available in your org. In larger orgs, this can negatively impact performance.
+					</li>
+					<li>
+						You can update your project's metadata subscription at any time.
+					</li>
+					<li>
+						The default list of metadata types is controlled by your plugin client's <strong>mm_default_subscription</strong> setting.
+					</li>
+				</ul>
 			</div>
-		</div>
-	</div>
+  		<fieldset>
+  			<div class="slds-form-element">
+  				<label class="slds-form-element__label" for="">Metadata Subscription</label>
+  				<div class="slds-form-element__control" id="subscriptionWrapper">
+  					<!-- populated by dynamic org data -->
+  				</div>
+  			</div>
+  		</fieldset>
+  	</form>
+  </div>
+  <div id="tab-default-3" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
+  	<div id="project_wrapper">
+  		<div id="treewrapper">
+  			<div id="tree"></div>
+  			<div id="info"></div>
+  		</div>
+  	</div>
+  </div>
 </div>
-
 {% endblock %}
 
-
 {% block buttons %}
-	<input type="button" id="btnSubmit" class="btn btn-info btn-embossed btn-embossed" value="Create Project"  onclick='newCustomProject();'>
-	<button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
+	<button class="slds-button slds-button--brand" onclick="newProject()">Create Project</button>
+	{% include 'views/partials/cancel_button.html' %}
 {% endblock %}
 
 {% block body_js %}
 
 	<script type="text/javascript">
-		/* global $:false */
-
-		'use strict';
-
-		var response;
 		var isSubscriptionListBuilt = false;
-		var newProjectId;
-		/* jshint ignore:start */
 		var defaultSubscription = [
 			"{{ mavensmate.ui.getDefaultSubscription()|join('", "') }}"
 		];
-		/* jshint ignore:end */
-
-		function newCustomProject() {
-			$.ajax({
-				type: 'POST',
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				url: '{{ mavensmate.ui.getBaseUrl() }}/app/project',
-				data: JSON.stringify({
-					name: $('#pn').val(),
-					accessToken: $('#accessToken').val(),
-					refreshToken: $('#refreshToken').val(),
-					instanceUrl: $('#instanceUrl').val(),
-					package: getTree(),
-					workspace: $('#workspace').val(),
-					subscription: $('#subscription').val(),
-					action: 'new'
-				}),
-				beforeSend: function() { showLoading('Creating new MavensMate project'); },
-				complete: function(data){
-					responseHandler(data);
-				}
-		 	});
-		}
-
-		function handleResponse(response) {
-			console.log('handling response', response);
-			if (response.error) {
-				showMessage(response.error);
-				notifySound();
-				hideLoading();
-			} else {
-				hideMessage();
-				newProjectId = response.result.id;
-				window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/project/'+newProjectId+'/edit?pid='+newProjectId+'&new=1';
-			}
-		}
 
 		$(function() {
-
-			populateMetadataTree('...');
-
-			$(window).resize(function() {
-				resizeProjectWrapper(10);
-			});
-
-			//submit form on enter
-			$('.content').bind('keyup', function(e) {
-				var code = (e.keyCode ? e.keyCode : e.which);
-				 if(code === 13) { //enter pressed
-				 	if ($('#un').val() && $('#pw').val() && $('#pn').val()) {
-						$('#btnSubmit').click();
-				 	}
-				 }
-			});
+			$('[data-aljs="tabs"]').tabs();
+      populateMetadataTree('...');
 		});
+
+		function newProject() {
+			var opts = {
+				ajax: {
+					type: 'POST',
+					url: '{{ mavensmate.ui.getBaseUrl() }}/app/project',
+					data: JSON.stringify({
+						name: $('#pn').val(),
+						accessToken: $('#accessToken').val(),
+						refreshToken: $('#refreshToken').val(),
+						instanceUrl: $('#instanceUrl').val(),
+						package: getTree(),
+						workspace: $('#workspace').val(),
+						subscription: $('#subscription').val(),
+						action: 'new'
+					})
+				},
+				message: {
+					label: 'Creating new MavensMate project...',
+					detail: 'This could take a while depending on the amount of metadata selected. Thanks for being patient! :)'
+				}
+		 	};
+
+			mavensmate.request(opts)
+				.then(function(response) {
+					var newProjectId = response.result.id;
+					window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/project/'+newProjectId+'/edit?pid='+newProjectId+'&new=1';
+				})
+				.catch(function(err) {
+					console.error('could not create project', err);
+				})
+				.finally(function() {
+					hideLoading();
+				});
+		}
 
 		function buildSubcriptionList(orgMetadataTypes) {
 			console.log('building sub list!');
@@ -193,13 +145,12 @@
 					htmlWithSelectOptions += '<option value="'+xmlName+'">'+xmlName+'</option>';
 				}
 			}
-			var selectList = '<select name="huge" class="select-block mbl info" style="display:none;" id="subscription" multiple="multiple" data-placeholder="Select 1 or more metadata types..." data-selected-text-format="count>3" data-size="20">';
+			var selectList = '<select name="huge" class="select-block mbl info" id="subscription" multiple="multiple" data-placeholder="Select 1 or more metadata types..." data-selected-text-format="count>3" data-size="20">';
 			htmlWithSelectOptions = selectList+htmlWithSelectOptions+'</select>';
 			console.log(htmlWithSelectOptions);
 			$('#subscriptionWrapper > div').remove();
 			$('#subscriptionWrapper > select').remove();
 			$('#subscriptionWrapper').append(htmlWithSelectOptions);
-			$('select.info').selectpicker({style: 'btn-info btn-embossed'});
 			isSubscriptionListBuilt = true;
 		}
 

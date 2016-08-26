@@ -15,13 +15,13 @@
 
 	<div class="tab-content" id="main-tab-content">
 		<div id="form" class="tab-pane active">
-			<form class="form-stacked">
+			<form class="slds-form--stacked">
 				<fieldset>
 					<div class="control-group large">
-						<input class="span12" placeholder="Name" type="text" id="apiName">
+						<input class="slds-input" placeholder="Name" type="text" id="apiName">
 					</div>
 					<div class="control-group large">
-						<input class="span12" placeholder="Description" type="text" id="description">
+						<input class="slds-input" placeholder="Description" type="text" id="description">
 					</div>
 
 					<div class="control-group large">
@@ -68,7 +68,7 @@
 
 
 {% block buttons %}
-	<input type="button" id="btnSubmit" class="btn btn-info btn-embossed btn-embossed" value="Create Lightning Application"  onclick='newLightningBundle();'>
+	<input type="button" id="btnSubmit" class="slds-button slds-button--brand btn-embossed btn-embossed" value="Create Lightning Application"  onclick='newLightningBundle();'>
 	<button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
 {% endblock %}
 

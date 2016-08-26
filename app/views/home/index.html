@@ -2,12 +2,24 @@
 {% block yield %}
 
 <div class="content">
-  <div class="alert alert-info" style="padding:16px;">
+  <div class="slds-box slds-theme--info" style="padding:16px;">
+    {% if !project %}
     <div class="container">
       <a href="/app/settings" class="btn btn-large btn-info btn-block btn-embossed" href="button">Settings</a>
       <a href="/app/project/new" class="btn btn-large btn-primary btn-block btn-embossed" href="button">New Project</a>
       <a href="javascript:void(0);" onclick="openProjectModal();" class="btn btn-large btn-inverse btn-block btn-embossed" href="button">Open Project</a>
     </div>
+    {% else %}
+    <div class="container">
+      <a href="/app/project/edit" class="btn btn-large btn-info btn-block btn-embossed" href="button">Edit Project</a>
+      <a href="/app/project/new" class="btn btn-large btn-primary btn-block btn-embossed" href="button">Deployment Connections</a>
+      <a href="/app/project/new" class="btn btn-large btn-inverse btn-block btn-embossed" href="button">Deploy to Server</a>
+      <a href="/app/project/new" class="btn btn-large btn-info btn-block btn-embossed" href="button">Run Apex Unit Tests</a>
+      <a href="/app/project/new" class="btn btn-large btn-primary btn-block btn-embossed" href="button">Execute Apex</a>
+      <a href="/app/project/new" class="btn btn-large btn-inverse btn-block btn-embossed" href="button">Debug Logs</a>
+
+    </div>
+    {% endif %}
   </div>
 
   <div style="text-align:center;">

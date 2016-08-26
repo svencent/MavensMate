@@ -54,10 +54,10 @@
 	</ul>
 	<div class="tab-content" id="main-tab-content">
 		<div id="form" class="tab-pane active">
-			<form class="form-stacked">
+			<form class="slds-form--stacked">
 				<fieldset style="padding-top:10px;">
 					<!-- this is only here to prevent bootstrap from auto-selecting the first input -->
-					<input class="span12" class="form-control" type="text" style="display: none;"/>
+					<input class="slds-input" class="form-control" type="text" style="display: none;"/>
 
 					{% for settingKey, settingValue in userSettings %}
 						{% if defaultSettings[settingKey] %}

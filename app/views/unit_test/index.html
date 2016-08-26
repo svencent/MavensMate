@@ -203,7 +203,7 @@
 						{% else %}
 							{% set checked = '' %}
 						{% endif %}
-						<div class="alert alert-info" style="padding:10px;margin-bottom:5px;">
+						<div class="slds-box slds-theme--info" style="padding:10px;margin-bottom:5px;">
 							<label class="checkbox" for="chk-{{cls}}" style="margin:0px;">
 							  <input type="checkbox" value="" id="chk-{{cls}}" data-classname="{{cls}}" data-toggle="checkbox" {{ checked }} >
 							  {{ cls }}
@@ -211,10 +211,10 @@
 						</div>
 					{% endfor %}
 					{% else %}
-						<div class="alert alert-info">
+						<div class="slds-box slds-theme--info">
 							<button type="button" class="close fui-cross"></button>
 							<span>No unit tests found in your MavensMate project.</span>
-							<br/><a href="/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}" class="btn btn-info btn-embossed btn-wide">Edit Project</a>
+							<br/><a href="/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}" class="slds-button slds-button--brand btn-embossed btn-wide">Edit Project</a>
 						</div>
 					{% endif %}
 				</div>
@@ -257,7 +257,7 @@
 
 
 	{% block buttons %}
-		<input type="button" class="btn btn-info btn-embossed" value="Run Tests" onclick="runTests()" id="btnRunTests">
+		<input type="button" class="slds-button slds-button--brand btn-embossed" value="Run Tests" onclick="runTests()" id="btnRunTests">
 		{% include 'views/partials/cancel_button.html' %}
 		{% include 'views/partials/running_indicator.html' %}
 	{% endblock %}

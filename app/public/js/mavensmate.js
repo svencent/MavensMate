@@ -76,10 +76,6 @@ function renderTree(treeOffset, packageLocation, pid) {
 				resizeProjectWrapper();
 			}
 			hideLoading();
-		},
-		onCreate: function(node, span) {
-			if (node.data.level === 1)
-				bindContextMenu(span);
 		}
 	});
 	tree = $("#tree").dynatree("getTree");
@@ -306,23 +302,6 @@ function resizeFilter() {
 
 function toggleRunningIndicator() {
 	$(".running_indicator").toggle();
-}
-
-function showLoading(message) {
-	$(".twipsy").height($(window).height());
-	$(".twipsy").width($(window).width());
-	$("#loading_message").html(message);
-
-	$(".loading").show();
-
-	$(".twipsy").show();
-	$(".loading_message_wrapper").fadeIn(250);
-}
-
-function hideLoading() {
-	$(".loading").hide();
-	$(".twipsy").hide();
-	$(".loading_message_wrapper").hide();
 }
 
 function isArray(what) {

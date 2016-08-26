@@ -3,15 +3,10 @@
  */
 ul.dynatree-container
 {
-	font-family: tahoma, arial, helvetica;
-	font-size: 10pt; /* font size should not be too big */
 	white-space: nowrap;
 	padding: 3px;
 	margin: 0; /* issue 201 */
-
 	background-color: white;
-	border: 1px dotted gray;
-
 	overflow: auto;
 }
 
@@ -363,8 +358,7 @@ span.dynatree-expanded a
 
 span.dynatree-selected a
 {
-/*	color: green; */
-	font-style: italic;
+	font-weight:600;
 }
 
 span.dynatree-active a

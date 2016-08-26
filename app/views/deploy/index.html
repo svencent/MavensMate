@@ -117,13 +117,13 @@
 
 	<div class="tab-content" id="main-tab-content">
 		<div id="form" class="tab-pane active debug-tab-pane">
-			<form class="form-stacked" style="padding-top:10px;">
+			<form class="slds-form--stacked" style="padding-top:10px;">
 				<fieldset>
 					<div class="clearfix">
 						<div class="row">
 							<div class="span8">
 								{% if connections.length === 0 %}
-									<div class="alert alert-info">
+									<div class="slds-box slds-theme--info">
 									 	<i class="icon-exchange icon-2x pull-left"></i>A deployment connection is a Salesforce.com org that you wish to deploy to from this MavensMate project.
 									 	<div>
 									 		<a href="/app/connections/new?pid={{project.settings.id}}" class="btn btn-success btn-embossed" >Manage Deployment Connections</a>
@@ -201,7 +201,7 @@
 		</div>
 
 		<div id="metadata" class="tab-pane">
-			<div class="alert alert-info" id="filter">
+			<div class="slds-box slds-theme--info" id="filter">
 				<input type="text" placeholder="Search for metadata" id="txtFilter" style="width:300px;height:35px;" />
 				<a href="#" class="btn btn-success btn-embossed" id="search-btn" style="right:45px"><i class="icon-search"></i></a>
 				<a href="#" class="btn btn-select btn-embossed" id="select-btn" ><i class="icon-check-empty"></i></a>
@@ -238,9 +238,8 @@
 
 
 {% block buttons %}
-	<input id="btnDeploy" type="button" class="btn btn-info btn-embossed" value="Validate Deployment">
+	<input id="btnDeploy" type="button" class="slds-button slds-button--brand btn-embossed" value="Validate Deployment">
 	{% include 'views/partials/cancel_button.html' %}
-	{% include 'views/partials/running_indicator.html' %}
 {% endblock %}
 
 {% block body_js %}

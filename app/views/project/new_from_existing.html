@@ -13,7 +13,7 @@
 	<br/>
 	{% if !editor %}
 		{% for editorName, editorPath in mavensmate.ui.getSupportedEditors() %}
-			<a class="btn btn-info btn-embossed btn-wide" href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}', newProjectId);">Open in {{ editorName|capitalize }}</a>
+			<a class="slds-button slds-button--brand btn-embossed btn-wide" href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}', newProjectId);">Open in {{ editorName|capitalize }}</a>
 		{% endfor %}
 	{% endif %}
 </div>
@@ -26,7 +26,7 @@
 
 	<div class="tab-content" id="main-tab-content">
 		<div id="form" class="tab-pane active">
-			<form class="form-stacked">
+			<form class="slds-form--stacked">
 				<input type="hidden" value="{{ accessToken }}" id="accessToken"/>
 				<input type="hidden" value="{{ refreshToken }}" id="refreshToken"/>
 				<input type="hidden" value="{{ instanceUrl }}" id="instanceUrl"/>
@@ -41,10 +41,10 @@
 					</div>
 
 					<div class="control-group large">
-						<input class="span12" placeholder="Project Name" type="text" id="pn" value="{{mavensmate.ui.getPathBaseName(origin)}}" disabled="disabled">
+						<input class="slds-input" placeholder="Project Name" type="text" id="pn" value="{{mavensmate.ui.getPathBaseName(origin)}}" disabled="disabled">
 					</div>
 					<div class="control-group large disabled">
-						<input class="span12" placeholder="Salesforce.com Username" type="text" id="un" value="{{session.username}}" disabled="disabled">
+						<input class="slds-input" placeholder="Salesforce.com Username" type="text" id="un" value="{{session.username}}" disabled="disabled">
 					</div>
 				</fieldset>
 			</form>
@@ -58,7 +58,7 @@
 
 
 {% block buttons %}
-	<input type="button" id="btnSubmit" class="btn btn-info btn-embossed" value="Create MavensMate Project"  onclick='new_project();'>
+	<input type="button" id="btnSubmit" class="slds-button slds-button--brand btn-embossed" value="Create MavensMate Project"  onclick='new_project();'>
 	<button id="btnCancel" class="btn btn-embossed" onclick="closeWindow();">Cancel</button>
 {% endblock %}
 

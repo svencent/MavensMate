@@ -80,11 +80,11 @@ Command.prototype.execute = function() {
           if (self.editorService && self.editorService.editor) {
             return self.editorService.open(newMetadataPath);
           } else {
-            return resolve('Success');
+            return resolve('New metadata successfully created');
           }
         })
         .then(function() {
-          resolve('Success');
+          resolve('New metadata successfully created');
         })
         .catch(function(error) {
           reject(error);

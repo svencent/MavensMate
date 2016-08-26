@@ -15,7 +15,7 @@
 
   <div class="tab-content" id="main-tab-content">
     <div id="form" class="tab-pane active">
-      <form class="form-stacked" action="/app/project/start-auth" method="POST">
+      <form class="slds-form--stacked" action="/app/project/start-auth" method="POST">
         {% if project && project.settings && project.settings.id %}
         <input type="hidden" name="pid" value="{{project.settings.id}}" />
         {% endif %}
@@ -31,7 +31,7 @@
             </select>
           </div>
           <div class="control-group large">
-            <input class="span12" placeholder="Example: https://na1-blitz01.salesforce.com" type="text" id="instanceUrl" name="instanceUrl" style="display:none;">
+            <input class="slds-input" placeholder="Example: https://na1-blitz01.salesforce.com" type="text" id="instanceUrl" name="instanceUrl" style="display:none;">
           </div>
           <div class="control-group large">
             <input type="submit" class="btn btn-success btn-embossed btn-embossed" value="Connect">
