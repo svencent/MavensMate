@@ -360,7 +360,7 @@
         <div class="slds-grid slds-grid--vertical slds-grid--align-center slds-p-top--medium slds-p-bottom--medium" id="left-menu">
           <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
             <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
-              <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container">
+              <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'project') %} {{sldsIconClassName}} {% endif %}">
                 <svg aria-hidden="true" class="slds-button__icon">
                   <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
                 </svg>
@@ -401,7 +401,7 @@
           {% if project %}
             <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
               <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
-                <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu">
+                <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'metadata') %} {{sldsIconClassName}} {% endif %}">
                   <svg aria-hidden="true" class="slds-button__icon">
                     <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#page"></use>
                   </svg>
@@ -438,7 +438,7 @@
             </div>
             <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
               <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
-                <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu">
+                <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'lightning') %} {{sldsIconClassName}} {% endif %}">
                   <svg aria-hidden="true" class="slds-button__icon">
                     <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#connected_apps"></use>
                   </svg>
@@ -476,7 +476,7 @@
 
             <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
               <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
-                <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu">
+                <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'deploy') %} {{sldsIconClassName}} {% endif %}">
                   <svg aria-hidden="true" class="slds-button__icon">
                     <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#socialshare"></use>
                   </svg>
@@ -504,7 +504,7 @@
 
 
             <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
-              <button class="slds-button slds-button--icon-border-inverse">
+              <button class="slds-button slds-button--icon-border-inverse slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'test') %} {{sldsIconClassName}} {% endif %}">
                 <svg aria-hidden="true" class="slds-button__icon">
                   <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#summary"></use>
                 </svg>

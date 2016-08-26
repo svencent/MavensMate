@@ -24,21 +24,9 @@ ViewHelper.prototype.getSupportedEditors = function() {
   return this.supportedEditors;
 };
 
-ViewHelper.prototype.getPageStyles = function(url) {
-  var styles = {};
-  logger.warn(url);
-  if (url.indexOf('/app/project') >= 0) {
-    styles.svgIconName = 'open_folder';
-    styles.containerClassName = 'slds-icon-standard-account';
-  } else {
-    styles.svgIconName = 'link';
-    styles.containerClassName = 'slds-icon-standard-opportunity';
-  }
-  return styles;
-};
-
-ViewHelper.prototype.isMenuItemActive = function(url, menuCategory) {
-  return url.indexOf('/app/'+menuCategory) > 0;
+ViewHelper.prototype.isMenuItemActive = function(url, resource) {
+  logger.debug('OH MYYY', url, resource, url.indexOf('/app/'+resource) === 0)
+  return url.indexOf('/app/'+resource) === 0;
 };
 
 ViewHelper.prototype.getPhotoUrl = function(project) {

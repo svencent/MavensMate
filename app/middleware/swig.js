@@ -34,6 +34,7 @@ module.exports = function(req, res, next) {
   swig.setDefaults({ runInVm: true, loader: swig.loaders.fs(path.join(path.dirname(__dirname))) });
   // set locals for templates
   if (util.startsWith(req.url, '/app/')) {
+    res.locals.url = req.url;
     var appRoutePattern = /\/app\/([^\/]*)/
     var match = req.url.match(appRoutePattern);
     if (match) {
