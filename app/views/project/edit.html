@@ -40,7 +40,7 @@
 		        <div class="slds-form-element">
 		            <span class="slds-form-element__label" aria-label="select-1">Org Metadata</span>
 		            <div class="slds-picklist slds-picklist--multi" data-aljs-multi-select="unselected">
-		                <ul class="slds-picklist__options slds-picklist__options--multi shown"></ul>
+		                <ul class="slds-picklist__options slds-picklist__options--multi shown" id="ul-org-metadata"></ul>
 		            </div>
 		        </div>
 		        <div class="slds-grid slds-grid--vertical">
@@ -60,7 +60,7 @@
 		        <div class="slds-form-element">
 		            <span class="slds-form-element__label" aria-label="select-2">Project Metadata</span>
 		            <div class="slds-picklist slds-picklist--multi" data-aljs-multi-select="selected">
-		                <ul class="slds-picklist__options slds-picklist__options--multi shown"></ul>
+		                <ul class="slds-picklist__options slds-picklist__options--multi shown" id="ul-project-metadata"></ul>
 		            </div>
 		        </div>
 
@@ -142,21 +142,45 @@
 	    } else {
 	    	indexOrg();
 	    }
-		})
+		});
+
+		function metadataTypeSort(a, b) {
+			var an = a.getAttribute('id'),
+				bn = b.getAttribute('id');
+			if(an > bn) {
+				return 1;
+			}
+			if(an < bn) {
+				return -1;
+			}
+			return 0;
+		}
 
 		function updateSubscription() {
-			var sub = [];
+			// sort the dom nodes
+			var $orgMetadataLi = $('#ul-org-metadata li');
+			var $projectMetadataLi = $('#ul-project-metadata li');
+
+			$orgMetadataLi.sort(metadataTypeSort);
+			$orgMetadataLi.detach().appendTo($('#ul-org-metadata'));
+
+			$projectMetadataLi.sort(metadataTypeSort);
+			$projectMetadataLi.detach().appendTo($('#ul-project-metadata'));
+
+			// update the project
+			var selectedMetadataTypes = [];
 			_.each($('#project-subscription').multiSelect('getSelectedItems'), function(item) {
-				sub.push(item.id);
+				selectedMetadataTypes.push(item.id);
 			});
-			sub.sort();
+			selectedMetadataTypes.sort();
+
 			var opts = {
 				async: false,
 				ajax: {
 					type: 'POST',
 					url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/subscription?pid={{project.settings.id}}",
 					data: JSON.stringify({
-			    	subscription: sub
+			    	subscription: selectedMetadataTypes
 					})
 				},
 				message: {
