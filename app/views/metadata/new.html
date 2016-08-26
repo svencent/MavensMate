@@ -22,8 +22,13 @@
 
 				</div>
 
-				<div id="template_body">
+				<div class="slds-form-element slds-m-top--small" id="template_body_wrapper">
+					<label class="slds-form-element__label" for="inputSample2">Metadata Template</label>
+					<div class="slds-form-element__control">
+						<div id="template_body" class="slds-box">
 
+						</div>
+					</div>
 				</div>
 
 			</fieldset>
@@ -41,8 +46,13 @@
 {% block body_js %}
 	<style>
 		pre.template_body_pre.prettyprint {
-			padding: 15px;
-		  	border: none;
+			padding: 0px;
+		  border: none;
+		  margin:0px;
+		}
+
+		#template_body_wrapper {
+			display: none;
 		}
 	</style>
 	<script type="text/javascript">
@@ -94,7 +104,7 @@
 	    	var paramsHtml = '';
 	    	if (value === null || value === '') {
 	    		paramsHtml = '';
-	    		$("#template_body").hide();
+	    		$("#template_body_wrapper").hide();
 	    	} else {
 	    		for (t in templates) {
 	    			if (templates[t].name === value) {
@@ -128,7 +138,7 @@
 		 				}
 		 				$(".template_body_pre").text(response);
 		 				prettyPrint();
-		 				$("#template_body").show();
+		 				$("#template_body_wrapper").show();
 		 			})
 		 			.catch(function(err) {
 		 				console.error('could not retrieve template', err);
