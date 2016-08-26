@@ -43,9 +43,6 @@
   </table>
   {% endif %}
 
-  <button class="slds-button slds-button--brand" onclick="openConnectionModal()">New Deployment Connection</button>
-
-
   <!-- NEW CONNECTION MODAL -->
   <div aria-hidden="true" role="dialog" class="slds-modal slds-fade-in-open slds-hide" id="connection-modal">
     <form class="slds-form--stacked" action="/app/connections/auth" method="POST">
@@ -77,7 +74,8 @@
 
 
 {% block buttons %}
-  <a class="slds-button slds-button--brand" href="/app/deploy/new?pid={{project.settings.id}}">Go to Deploy to Server</a>
+  <button class="slds-button slds-button--brand" onclick="openConnectionModal()">New Deployment Connection</button>
+  <a class="slds-button slds-button--neutral" href="/app/deploy/new?pid={{project.settings.id}}">Go to Deploy to Server</a>
   {% include 'views/partials/cancel_button.html' %}
 {% endblock %}
 

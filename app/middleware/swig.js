@@ -26,6 +26,11 @@ var resourceMap = {
   auth : {
     iconClassName: 'slds-icon-standard-avatar',
     iconName: 'avatar'
+  },
+  settings : {
+    iconClassName: 'slds-icon-standard-quotes',
+    iconName: 'settings',
+    sldsSprite: 'utility-sprite'
   }
 };
 
@@ -42,7 +47,7 @@ module.exports = function(req, res, next) {
       if (resourceMap[resource]) {
         res.locals.sldsIconClassName = resourceMap[resource].iconClassName;
         res.locals.sldsIconName = resourceMap[resource].iconName;
-        logger.warn('fooooo', res.locals);
+        res.locals.sldsSprite = resourceMap[resource].sldsSprite || 'standard-sprite';
       }
     }
   }

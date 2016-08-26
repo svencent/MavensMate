@@ -551,7 +551,7 @@
                 <span class="slds-assistive-text">Help</span>
               </button> -->
 
-              <button class="slds-button slds-button--icon" onClick="location.href='/app/settings'">
+              <button class="slds-button slds-button--icon" onClick="location.href='/app/settings{% if project %}?pid={{project.settings.id}}{% endif %}'">
                 <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
                   <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#settings"></use>
                 </svg>
@@ -572,7 +572,7 @@
               <div class="slds-media slds-media--center">
                 <div class="slds-media__figure">
                   <svg aria-hidden="true" class="slds-icon {{sldsIconClassName}}">
-                    <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#{{sldsIconName}}"></use>
+                    <use xlink:href="/app/static/lds/assets/icons/{{sldsSprite || 'standard-sprite'}}/svg/symbols.svg#{{sldsIconName}}"></use>
                   </svg>
                 </div>
                 <div class="slds-media__body">
@@ -584,7 +584,9 @@
               </div>
              </div>
              <div class="slds-col slds-no-flex slds-grid slds-align-bottom">
-              {% block buttons %}{% endblock %}
+                <div class="slds-button-group" role="group">
+                  {% block buttons %}{% endblock %}
+                </div>
               </div>
           </div>
         </div>

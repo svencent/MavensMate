@@ -68,7 +68,6 @@
 			<input type="text" placeholder="Search for metadata" id="txtFilter" class="slds-input slds-size--4-of-12" />
 			<button href="#" class="slds-button slds-button--success" id="search-btn"><i class="icon-search"></i></a>
 			<button href="#" class="slds-button slds-button--default" id="select-btn" ><i class="icon-check-empty"></i></a>
-			<button class="slds-button slds-button--brand" onclick="indexOrg()">Refresh Metadata Index</button>
 		</div>
 
 		<div id="project_wrapper">
@@ -82,7 +81,7 @@
 
 {% block buttons %}
 	<button class="slds-button slds-button--brand" onclick="updateProject()">Update Project</button>
-	<button class="slds-button slds-button--neutral" onclick="closeWindow();">Cancel</button>
+	<button class="slds-button slds-button--neutral" onclick="indexOrg()">Refresh Metadata Index</button>
 {% endblock %}
 
 {% block body_js %}
