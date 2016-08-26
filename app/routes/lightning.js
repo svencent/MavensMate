@@ -8,8 +8,9 @@ router.get('/app/new', function(req, res) {
   if (!req.project) {
     res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
-    res.render('lightning/new_app.html', {
-      title: 'New Lightning App'
+    res.render('lightning/new.html', {
+      title: 'Create Lightning App',
+      lightningType: 'app'
     });
   }
 });
@@ -18,8 +19,9 @@ router.get('/component/new', function(req, res) {
   if (!req.project) {
     res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
-    res.render('lightning/new_component.html', {
-      title: 'New Lightning Component'
+    res.render('lightning/new.html', {
+      title: 'Create Lightning Component',
+      lightningType: 'component'
     });
   }
 });
@@ -28,8 +30,9 @@ router.get('/event/new', function(req, res) {
   if (!req.project) {
     res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
-    res.render('lightning/new_event.html', {
-      title: 'New Lightning Event'
+    res.render('lightning/new.html', {
+      title: 'Create Lightning Event',
+      lightningType: 'event'
     });
   }
 });
@@ -38,8 +41,9 @@ router.get('/interface/new', function(req, res) {
   if (!req.project) {
     res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
-    res.render('lightning/new_interface.html', {
-      title: 'New Lightning Interface'
+    res.render('lightning/new.html', {
+      title: 'Create Lightning Interface',
+      lightningType: 'interface'
     });
   }
 });
