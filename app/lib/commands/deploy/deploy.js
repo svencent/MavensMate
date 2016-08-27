@@ -47,7 +47,7 @@ Command.prototype.execute = function() {
       deploy.executeRemote(deployOptions)
         .then(function(result) {
           if (self.payload.ui) {
-            resolve(deploy.getResultHtml(deployPayload.usernames, deployPayload.destinations, deployPayload.deployOptions, result));
+            resolve(deploy.getResultHtml(deployPayload.destinations, deployPayload.deployOptions, result));
           } else {
             resolve(result);
           }

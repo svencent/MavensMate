@@ -63,17 +63,7 @@
   	</div>
   </div>
   <div id="tab-default-2" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
-
-		<div class="slds-box slds-theme--shade slds-m-bottom--x-small" id="filter">
-			<input type="text" placeholder="Search for metadata" id="txtFilter" class="slds-input slds-size--4-of-12" />
-			<button href="#" class="slds-button slds-button--success" id="search-btn"><i class="icon-search"></i></a>
-			<button href="#" class="slds-button slds-button--default" id="select-btn" ><i class="icon-check-empty"></i></a>
-		</div>
-
-		<div id="project_wrapper">
-			<div id="tree"></div>
-			<div id="info"></div>
-		</div>
+  {% include 'views/partials/project_tree.html' %}
   </div>
 </div>
 
@@ -86,9 +76,7 @@
 
 {% block body_js %}
 	<script>
-		var hasIndexedMetadata = {{ project.hasIndexedMetadata() }};
-		var operation;
-		var PROJECT_WRAPPER_OFFSET = $("#filter").height() + 60;
+		var projectTree;
 
 		$(function() {
 	    $('[data-aljs="tabs"]').tabs({
@@ -129,9 +117,9 @@
 	    	updateSubscription();
 	    });
 
-	    if (hasIndexedMetadata) {
-	    	renderTree(PROJECT_WRAPPER_OFFSET, null, '{{ project.settings.id}}');
-	    	setTimeout(resizeProjectWrapper(PROJECT_WRAPPER_OFFSET),500)
+	    if ({{ project.hasIndexedMetadata() }}) {
+	    	projectTree = new mavensmate.ProjectTree();
+	    	projectTree.render();
 	    } else {
 	    	indexOrg();
 	    }
@@ -200,7 +188,7 @@
 					type: 'POST',
 					url: '{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}?pid={{project.settings.id}}',
 					data: JSON.stringify({
-						package: getTree()
+						package: projectTree.getPackage()
 					})
 				},
 				message: {
@@ -226,7 +214,7 @@
 					type: 'POST',
 					url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/index",
 					data: JSON.stringify({
-						package: getTree()
+						package: projectTree.getPackage()
 					})
 				},
 				message: {
@@ -237,10 +225,11 @@
 
 			mavensmate.request(opts)
 				.then(function(response) {
-					if (!tree) {
-						renderTree(PROJECT_WRAPPER_OFFSET, null, '{{project.settings.id}}');
+					if (!projectTree) {
+						projectTree = new mavensmate.ProjectTree();
+						projectTree.render();
 					} else {
-						$("#tree").dynatree("getTree").reload();
+						projectTree.dynatree.reload();
 					}
 					showToast('Project metadata index updated successfully', 'success');
 				})

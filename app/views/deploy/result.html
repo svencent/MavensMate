@@ -1,10 +1,10 @@
 <div id="destination_options">
 	<ul>
-		{% for username in usernames %}
+		{% for target in targets %}
 			{% if loop.first  %}
-			<li class="active"><a href="#result-{{ loop.index0 }}">{{ username }}</a></li>
+			<li class="active"><a href="#result-{{ loop.index0 }}">{{ target.name }}</a></li>
 			{% else %}
-			<li class=""><a href="#result-{{ loop.index0 }}">{{ username }}</a></li>
+			<li class=""><a href="#result-{{ loop.index0 }}">{{ target.name }}</a></li>
 			{% endif %}
 		{% endfor %}
 	</ul>
@@ -12,9 +12,9 @@
 
 <div id="extra_tabs">
 	{% for result in results %}
-	
+
 	<div class="tab-pane result_wrapper" id="result-{{ loop.index0 }}" style="padding:10px;">
-		
+
 		<div style="display:none;">
 			{{ JSON.stringify(result) }}
 		</div>
@@ -22,9 +22,9 @@
 		<h5 style="font-size:20px;border-bottom: 2px solid rgb(52, 73, 94);padding-bottom:5px;position:relative;">
 			Destination:&nbsp;{{ loop.key }}
 		</h5>
-		
+
 		{% if result.success %}
-			
+
 			{% if deployOptions.checkOnly %}
 				{% set deploy_type = 'validation'  %}
 				{% set further_instruction = ' Click "Deploy to Server" to complete deployment.' %}
@@ -37,7 +37,7 @@
 				<button type="button" class="close fui-cross" data-dismiss="alert"></button>
 				<i class="icon-ok-sign icon-2x pull-left"></i>
 				<strong>Success!</strong>{{' '}}Your{{' '}}{{ deploy_type }}{{' '}}completed{{' '}}successfully.{{' '}}{{ further_instruction }}</p>
-			</div> 
+			</div>
 
 		{% endif %}
 
@@ -47,15 +47,15 @@
 				<button type="button" class="close fui-cross" data-dismiss="alert"></button>
 				<i class="icon-exclamation-sign icon-2x pull-left"></i>
 				Deployment Failed!
-			</div> 
+			</div>
 
 		{% endif %}
-		
+
 		<div class="result_table_class">
-			
+
 		    {% if result.details %}
 			    {% if result.details.componentFailures || result.details.componentSuccesses %}
-				<div class="deploy-category" onclick="$('#{{ result['id'] }}-table').toggle();"><i class="icon-info-sign"></i>&nbsp;Deploy Messages</div>			
+				<div class="deploy-category" onclick="$('#{{ result['id'] }}-table').toggle();"><i class="icon-info-sign"></i>&nbsp;Deploy Messages</div>
 				<table id="{{ result['id'] }}-table" class="table table-striped test_result">
 					<thead>
 						<tr>
@@ -67,9 +67,9 @@
 					<tbody>
 
 						{% if result.details.componentSuccesses %}
-							
+
 							{% for message in result.details.componentSuccesses %}
-								
+
 								{% if message.fullName !== 'package.xml' %}
 
 								<tr>
@@ -83,7 +83,7 @@
 									</td>
 									<td>
 										{% if mavensmate.ui.isFalse(message.success) %}
-											{{ message.problem }} 
+											{{ message.problem }}
 											{% if message.lineNumber %}
 												[Line: {{ message.lineNumber }}, Column: {% if message.columnNumber %}{{ message.columnNumber }}{% endif %}]
 											{% endif %}
@@ -98,7 +98,7 @@
 						{% endif %}
 
 						{% if result.details.componentFailures %}
-							
+
 							{% for message in result.details.componentFailures %}
 								<tr>
 									<td style="width:210px;">{{ mavensmate.ui.getDeployMessageFileNameBaseName(message.fileName) }}</td>
@@ -111,7 +111,7 @@
 									</td>
 									<td>
 										{% if mavensmate.ui.isFalse(message.success) %}
-											{{ message.problem }} 
+											{{ message.problem }}
 											{% if message.lineNumber %}
 												[Line: {{ message.lineNumber }}, Column: {% if message.columnNumber %}{{ message.columnNumber }}{% endif %}]
 											{% endif %}
@@ -126,7 +126,7 @@
 
 			    <!-- TEST RESULTS -->
 		        {% if result.details.runTestResult && result.details.runTestResult.codeCoverageWarnings %}
-		    	<div class="deploy-category" onclick="$('#{{ result['id'] }}-table').toggle();"><i class="icon-info-sign"></i>&nbsp;Code Coverage Warnings</div>			
+		    	<div class="deploy-category" onclick="$('#{{ result['id'] }}-table').toggle();"><i class="icon-info-sign"></i>&nbsp;Code Coverage Warnings</div>
 		    	<table id="{{ result['id'] }}-table" class="table table-striped test_result">
 		    		<thead>
 		    			<tr>
@@ -135,15 +135,15 @@
 		    			</tr>
 		    		</thead>
 		    		<tbody>
-		    			
+
 	    				{% for message in result.details.runTestResult.codeCoverageWarnings %}
-	    					
+
 	    					<tr>
 	    						<td style="width:210px;">
 	    							{% if message.name !== '[object Object]' %}
 	    								{{ message.name }}
 	    							{% else %}
-	    								
+
 	    							{% endif %}
 	    						</td>
 	    						<td style="">

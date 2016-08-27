@@ -96,3 +96,11 @@ ul.dynatree-container {
 #settings-wrapper .ace_editor.ace-tm {
   background-color: #f4f6f9;
 }
+
+.dynatree-hidden {
+  display: none;
+}
+
+div#div-project-tree-filter {
+  padding:0.5rem;
+}

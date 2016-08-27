@@ -29,7 +29,7 @@ var mavensMateFile        = require('../file');
  * @param {Object} opts
  * @param {Array} opts.project - Project instance
  * @param {Array} opts.sfdcClient - Sfdc Client instance
- * @param {Array} opts.destinations - array of org connections
+ * @param {Array} opts.targets - array of org connections
  * @param {Array} opts.checkOnly - whether this is a validate-only deployment
  * @param {Array} opts.runTests - whether to run tests during this deployment
  * @param {Array} opts.rollbackOnError - whether to rollback when the deployment fails
@@ -46,14 +46,17 @@ function Deploy(opts) {
 inherits(Deploy, events.EventEmitter);
 
 Deploy.prototype._getTargetIds = function() {
-  return this.destinations || [];
+  var targetIds = [];
+  _.each(this.targets, function(t) {
+    targetIds.push(t.id);
+  });
+  return targetIds;
 };
 
-Deploy.prototype.getResultHtml = function(usernames, destinations, deployOptions, deployResult) {
+Deploy.prototype.getResultHtml = function(targets, deployOptions, deployResult) {
   var resultHtml = swig.renderFile('views/deploy/result.html', {
     results: deployResult,
-    usernames: usernames,
-    targets: destinations,
+    targets: targets,
     deployOptions: deployOptions,
     project: this.project
   });

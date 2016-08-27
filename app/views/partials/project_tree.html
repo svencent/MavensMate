@@ -1,0 +1,293 @@
+<!-- TREE FILTER -->
+<div class="slds-box slds-theme--shade slds-m-bottom--x-small" id="div-project-tree-filter">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <input type="text" placeholder="Search for metadata" id="txt-project-tree-search" class="slds-input" />
+    </div>
+    {% if namedDeployments %}
+    <div class="slds-col slds-col--padded slds-has-flexi-truncate">
+      <select id="select-project-tree-selected-deployment-name" class="slds-select">
+        {% for d in namedDeployments %}
+          {% if loop.index0 == 0 %}
+            {% set selected = 'selected="selected"' %}
+          {% else %}
+            {% set selected = '' %}
+          {% endif %}
+          <option value="{{d.path}}">{{d.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endif %}
+    <div class="slds-col slds-col--padded">
+      <div class="slds-button-group" role="group">
+        <button class="slds-button slds-button--neutral" id="btn-project-tree-clear-search" disabled="">Clear Search</button>
+        <button class="slds-button slds-button--neutral" id="a-project-tree-select-all">Select all</button>
+        <button class="slds-button slds-button--neutral" id="a-project-tree-select-none">Select none</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TREE -->
+<div id="project_wrapper">
+  <div id="tree"></div>
+  <div id="info"></div>
+</div>
+
+<script>
+  mavensmate.ProjectTree = function(opts) {
+    var self = this;
+    opts = opts || {};
+    this.filterEnabled = opts.filterEnabled || true;
+    this.packageLocation = opts.packageLocation || 'package.xml';
+    this.dynatree = null;
+    this.allSelected = false;
+
+    $("#txt-project-tree-search").off('keyup').on('keyup', function(e) {
+      var code = (e.keyCode ? e.keyCode : e.which);
+      if (code == 13) {
+        console.log('submitting search...');
+        self.search();
+      }
+    });
+
+    $("#btn-project-tree-clear-search").off('click').on('click', function() {
+      self.clearSearch();
+    });
+
+    $('#a-project-tree-select-all').off('click').on('click', function() {
+      self.check(true);
+    });
+
+    $('#a-project-tree-select-none').off('click').on('click', function() {
+      self.check(false);
+    });
+
+    $("#select-project-tree-selected-deployment-name").change(function() {
+      console.log('selected a deployment!', this.value);
+      self.packageLocation = this.value;
+      self.render();
+    });
+  };
+
+  /**
+   * Returns the tree selections in json package format
+   */
+  mavensmate.ProjectTree.prototype.getPackage = function() {
+    var self = this;
+    var json = {};
+    var child_def = {};
+    for (var item in childMetadata) {
+        child_def[childMetadata[item]['tagName']] = childMetadata[item]['xmlName'];
+    }
+    try {
+        var records = self.dynatree.getSelectedNodes();
+        $.each(records, function(index, rec) {
+          if (rec.data.level == 1) {
+              var drillToType = false;
+              if ('type' in rec.data)
+                drillToType = true; //this is the edit form
+              if (json[rec.parent.data.text] === undefined) {
+                  try {
+                      var childXmlNames = drillToType ? rec.data.type.childXmlNames : rec.data.childXmlNames;
+                      var inFolder = drillToType ? rec.data.type.inFolder : rec.data.inFolder;
+                      if (Object.prototype.toString.call(childXmlNames) === '[object Array]') {
+                          if (childXmlNames.length === 0 && !inFolder) {
+                              json[rec.data.text] = '*';
+                          } else {
+                              json[rec.data.text] = [];
+                          }
+                      } else {
+                          if (inFolder) {
+                            json[rec.data.text] = [];
+                          } else {
+                            json[rec.data.text] = '*';
+                          }
+                      }
+                  } catch(e) {
+                      json[rec.data.text] = '*';
+                  }
+              }
+          } else if (rec.data.level == 2) {
+              if (json[rec.parent.data.text] === undefined) {
+                  json[rec.parent.data.text] = [];
+                  json[rec.parent.data.text].push(rec.data.text);
+              } else if (json[rec.parent.data.text] !== '*') {
+                  json[rec.parent.data.text].push(rec.data.text);
+              }
+          } else if (rec.data.level == 3) {
+              try {
+                var drillToType = false;
+                if ('type' in rec.parent.parent.data)
+                  drillToType = true;
+                var inFolder = drillToType ? rec.parent.parent.data.type.inFolder : rec.parent.parent.data.inFolder;
+                if (inFolder) {
+                    if (json[rec.parent.parent.data.text] === undefined) {
+                        json[rec.parent.parent.data.text] = [];
+                    }
+                    json[rec.parent.parent.data.text].push(rec.parent.data.text + "/" + rec.data.text);
+                } else {
+                    //this is a sub type like a custom field, list view, etc.
+                    //console.log(rec.parent);
+                    if (!rec.parent.bSelected) {
+                      if (rec.children !== undefined && rec.children !== null) {
+                        metadata_type = child_def[rec.data.text];
+                        if (!json[metadata_type]) {
+                            json[metadata_type] = [];
+                        }
+                        // console.log('---->>>>>');
+                        // console.log(rec.children);
+                        $.each(rec.children, function(index, childNode) {
+                            if (childNode.data.checked) {
+                                json[metadata_type].push(childNode.parent.parent.data.text+"."+childNode.data.text);
+                            }
+                        });
+                      }
+                    }
+                }
+              } catch(e) {
+                //todo
+              }
+          } else if (rec.data.level == 4) {
+              try {
+                 //this is a child metadata object, like a custom field
+                metadata_type = child_def[rec.parent.data.text];
+                if (json.hasOwnProperty(rec.parent.parent.parent.data.text)) { //json['CustomObject'] exists already
+                  if ($.inArray(rec.parent.parent.data.text, json[rec.parent.parent.parent.data.text]) === -1) {
+                    if (!json[metadata_type]) {
+                      json[metadata_type] = [];
+                    }
+                    json[metadata_type].push(rec.parent.parent.data.text+"."+rec.data.text);
+                  }
+                } else {
+                  if (!json[metadata_type]) {
+                      json[metadata_type] = [];
+                  }
+                  json[metadata_type].push(rec.parent.parent.data.text+"."+rec.data.text);
+                }
+              } catch(e) {
+                //todo
+              }
+          }
+        });
+    } catch(e) {
+      console.error('Error getting tree package', e);
+      return [];
+    }
+    return json;
+  }
+
+  /**
+   * Selects or deselects all visible nodes
+   */
+  mavensmate.ProjectTree.prototype.check = function(yesOrNo) {
+    $("#tree").dynatree("getRoot").visit(function(node){
+      if ($("#txt-project-tree-search").val() == '') {
+        if (node.data.cls !== 'hidden')
+          node.select(yesOrNo);
+      } else {
+        if (node.data.level != 1 && node.data.cls !== 'hidden')
+          node.select(yesOrNo);
+      }
+    });
+  };
+
+  /**
+   * Renders the tree to the DOM
+   */
+  mavensmate.ProjectTree.prototype.render = function() {
+    var self = this;
+    try {
+      $("#tree").dynatree("destroy");
+    } catch(e) {}
+
+    $('#tree').dynatree({
+      initAjax: {
+        type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        url: baseLocalServerURL+'/app/project/{{project.settings.id}}/index?pid={{project.settings.id}}',
+        data: JSON.stringify({
+          packageLocation: self.packageLocation
+        })
+      },
+      checkbox: true,
+      selectMode: 3,
+      debugLevel: 0,
+      persist: false,
+      selectedIds: '',
+      onSelect: function(check, node) {
+        var selectedNodes = this.getSelectedNodes();
+        var ids = $.map(selectedNodes, function(node) {
+          return node.data.id;
+        });
+        this.selectedIds = ids;
+      },
+      onPostInit: function(isReloading, isError) {
+        if (this.selectedIds === undefined || this.selectedIds === '' || this.selectedIds == []) {
+          this.selectedIds = [];
+          var selected = this.getSelectedNodes();
+          var ids = $.map(selected, function(node){
+                    return node.data.id;
+                });
+          this.selectedIds = ids;
+        }
+        var filter = $("#txt-project-tree-search").val();
+        if (filter && filter.length > 2) {
+          $("#tree").dynatree("getRoot").visit(function(node){
+              node.expand(true);
+          });
+        }
+      }
+    });
+    self.dynatree = $("#tree").dynatree("getTree");
+  };
+
+  /**
+   * Submits a server search based on the value of #txt-project-tree-search
+   */
+  mavensmate.ProjectTree.prototype.search = function() {
+    var self = this;
+    var filter = $('#txt-project-tree-search').val();
+    if (filter && filter.length > 2) {
+      $('#tree').dynatree('option', 'initAjax',
+        {
+          type: 'POST',
+          dataType: 'json',
+          contentType: 'application/json; charset=utf-8',
+          url: '/execute',
+          data: JSON.stringify({
+            keyword: filter,
+            ids: self.dynatree.selectedIds,
+            command: 'search-metadata-index'
+          })
+        }
+      );
+      self.dynatree.reload();
+      $('#btn-project-tree-clear-search').removeAttr('disabled');
+    }
+  };
+
+  /**
+   * Clears the search and re-renders the tree
+   */
+  mavensmate.ProjectTree.prototype.clearSearch = function() {
+    var self = this;
+    $('#tree').dynatree('option', 'initAjax',
+      {
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        url: baseLocalServerURL+'/execute',
+        data: JSON.stringify({
+          ids: self.dynatree.selectedIds,
+          command: 'search-metadata-index'
+        })
+      }
+    );
+    self.dynatree.reload();
+    $('#txt-project-tree-search').val('');
+    $('#txt-project-tree-search').focus();
+    $('#btn-project-tree-clear-search').attr('disabled', '');
+  };
+</script>

@@ -33,6 +33,8 @@
         var mavensmate = {};
         mavensmate.request = function(opts) {
           var self = this;
+          if (opts.showPageHeaderLoading)
+            showPageHeaderLoading();
           if (opts.async === undefined)
             opts.async = true;
           this.async = opts.async; // poll the server
@@ -101,8 +103,13 @@
                   })
                   .error(function(err) {
                     console.error('ajax call returned an error', err);
-                    var res = JSON.parse(err.responseText);
-                    showToast(res.error, 'error');
+                    var res;
+                    try {
+                      var res = JSON.parse(err.responseText);
+                      showToast(res.error, 'error');
+                    } catch(e) {
+                      showToast(err.responseText, 'error');
+                    }
                     reject(err);
                   });
               })
@@ -129,20 +136,6 @@
 
           //focus first input
           $("input[type='text']:first").focus();
-
-          $("#txtFilter").bind('keyup', function(e) {
-            var code = (e.keyCode ? e.keyCode : e.which);
-            if (code == 13) {
-                submitSearch();
-            }
-          });
-          $("#search-btn").click(function() {
-            if ($(this).hasClass('btn-success')) {
-                submitSearch();
-            } else {
-                clearFilter();
-            }
-          });
 
           // project list
           $('.project-checkbox').on('change.radiocheck', function() {
@@ -218,47 +211,6 @@
             var snd = new Audio('{{ mavensmate.ui.getStaticResourcePath() }}/sounds/ding.mp3'); // buffers automatically when created
             snd.play();
           }
-        }
-
-        function submitSearch() {
-          var filter = $('#txtFilter').val();
-          if (filter && filter.length > 2) {
-            $('#tree').dynatree('option', 'initAjax',
-              {
-                type: 'POST',
-                dataType: 'json',
-                contentType: 'application/json; charset=utf-8',
-                url: baseLocalServerURL+'/execute',
-                data: JSON.stringify({
-                  keyword: filter,
-                  ids: $('#tree').dynatree('getTree').selectedIds,
-                  command: 'search-metadata-index'
-                })
-              }
-            );
-            $('#tree').dynatree('getTree').reload();
-            $('#search-btn').removeClass('btn-success').addClass('btn-danger').html('<i class="icon-remove"></i>')
-          }
-        }
-
-        function clearFilter() {
-            $('#tree').dynatree('option', 'initAjax',
-                {
-                    type     : 'POST',
-                    dataType : 'json',
-                    contentType: 'application/json; charset=utf-8',
-                    url      : baseLocalServerURL+'/execute',
-                    data     : JSON.stringify({
-                        path                : '{{ project.path }}',
-                        ids                 : $('#tree').dynatree('getTree').selectedIds,
-                        command             : 'search-metadata-index'
-                    })
-                }
-            );
-            $('#tree').dynatree('getTree').reload();
-            $('#txtFilter').val('');
-            $('#txtFilter').focus();
-            $("#search-btn").removeClass('btn-danger').addClass('btn-success').html('<i class="icon-search"></i>');
         }
 
         function openProjectInEditor(editor, pid) {
@@ -523,6 +475,38 @@
               </div>
             </div>
 
+            <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+              <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+                <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'editor') || mavensmate.ui.isMenuItemActive(url, 'connections') %} {{sldsIconClassName}} {% endif %}">
+                  <svg aria-hidden="true" class="slds-button__icon">
+                    <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#desktop"></use>
+                  </svg>
+                  <span class="slds-assistive-text">More Options</span>
+                </button>
+                <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+                  <div class="slds-dropdown__header">
+                    <span class="slds-text-heading--label">Editors</span>
+                  </div>
+                  <ul class="dropdown__list" role="menu">
+                    <li class="slds-dropdown__item">
+                      <a href="/app/connections/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">Open in Sublime</p>
+                      </a>
+                    </li>
+                    <li class="slds-dropdown__item">
+                      <a href="/app/deploy/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">Open in Atom</p>
+                      </a>
+                    </li>
+                    <li class="slds-dropdown__item">
+                      <a href="/app/deploy/new?pid={{project.settings.id}}" role="menuitem">
+                        <p class="slds-truncate">Open in VS Code</p>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
 
             <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
               <button class="slds-button slds-button--icon-border-inverse slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'test') %} {{sldsIconClassName}} {% endif %}">
