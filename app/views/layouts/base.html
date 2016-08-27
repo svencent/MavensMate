@@ -558,7 +558,7 @@
                 </svg>
                 <span class="slds-assistive-text">Settings</span>
               </button>
-              {% if project %}
+              {% if project && mavensmate.ui.getPhotoUrl(project)%}
                 <img style="border-radius:4px;height:30px;margin-left: 0.4rem;" src="{{mavensmate.ui.getPhotoUrl(project)}}"/>
               {% endif %}
             </div>

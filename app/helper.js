@@ -25,12 +25,15 @@ ViewHelper.prototype.getSupportedEditors = function() {
 };
 
 ViewHelper.prototype.isMenuItemActive = function(url, resource) {
-  logger.debug('OH MYYY', url, resource, url.indexOf('/app/'+resource) === 0)
   return url.indexOf('/app/'+resource) === 0;
 };
 
 ViewHelper.prototype.getPhotoUrl = function(project) {
-  return project.sfdcClient.conn.userInfo.photos.thumbnail + '?oauth_token=' + project.sfdcClient.accessToken;
+  try {
+    return project.sfdcClient.conn.userInfo.photos.thumbnail + '?oauth_token=' + project.sfdcClient.accessToken;
+  } catch(e) {
+    return null;
+  }
 };
 
 ViewHelper.prototype.getPathBaseName = function(p) {
