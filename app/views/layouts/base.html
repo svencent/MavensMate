@@ -139,6 +139,34 @@
               hideLoading();
             });
         }
+        mavensmate.executeCommand = function(commandName, msg, async, data) {
+          data = data || {};
+          if (async === undefined)
+            async = false;
+          data.command = commandName;
+          var opts = {
+            async: async,
+            ajax: {
+              type: 'GET',
+              url: baseLocalServerURL+'/execute',
+              data: data
+            },
+            message: {
+              label: msg
+            }
+          };
+          console.log(opts);
+          mavensmate.request(opts)
+            .then(function(response) {
+              showToast(response.message, 'success');
+            })
+            .catch(function(err) {
+              console.error('could not open execute command', err);
+            })
+            .finally(function() {
+              hideLoading();
+            });
+        }
 
         var headers = { 'MavensMate-Editor-Agent': '{{ editor }}' };
         {% if project && project.settings && project.settings.id %}
