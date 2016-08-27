@@ -143,7 +143,7 @@
   	</div>
   </div>
   <div id="tab-default-3" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
-    {% include 'views/partials/project_tree.html' %}
+    {% include 'views/partials/metadata_tree.html' %}
   </div>
   <div id="tab-default-4" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
     <div id="deploy-result">
@@ -161,7 +161,7 @@
 
 {% block body_js %}
 <script type="text/javascript">
-	var projectTree;
+	var metadataTree;
 
   $(function() {
     $('[data-aljs="tabs"]').tabs();
@@ -199,8 +199,8 @@
 	}
 
 	$(function() {
-		projectTree = new mavensmate.ProjectTree();
-    projectTree.render();
+		metadataTree = new mavensmate.MetadataTree();
+    metadataTree.render();
 
     $("#btnDeploy").click(function() {
 			deploy();
@@ -249,7 +249,7 @@
         type: 'POST',
         url: '/app/project/{{project.settings.id}}/index',
         data: JSON.stringify({
-          package: projectTree.getPackage()
+          package: metadataTree.getPackage()
         })
       },
       message: {
@@ -260,11 +260,11 @@
 
     mavensmate.request(opts)
       .then(function(response) {
-        if (!projectTree) {
-          projectTree = new mavensmate.ProjectTree();
-          projectTree.render();
+        if (!metadataTree) {
+          metadataTree = new mavensmate.MetadataTree();
+          metadataTree.render();
         } else {
-          projectTree.dynatree.reload();
+          metadataTree.dynatree.reload();
         }
         showToast('Project metadata index updated successfully', 'success');
       })
@@ -333,10 +333,10 @@
 				showMessage(response.error)
 			} else {
 				if (tree === undefined) {
-          projectTree = new mavensmate.ProjectTree();
-          projectTree.render();
+          metadataTree = new mavensmate.MetadataTree();
+          metadataTree.render();
 				} else {
-          projectTree.dynatree.reload();
+          metadataTree.dynatree.reload();
 				}
 			}
 		}
@@ -350,7 +350,7 @@
         url: "/app/deploy",
         data: JSON.stringify({
           targets: $('#deploy-targets').multiSelect('getSelectedItems'), // list of org connection ids
-          package: projectTree.getPackage(),
+          package: metadataTree.getPackage(),
           deploymentName: $("#new_deployment_name").val(),
           ui: true,
           deployOptions: {

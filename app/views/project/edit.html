@@ -63,7 +63,7 @@
   	</div>
   </div>
   <div id="tab-default-2" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
-  {% include 'views/partials/project_tree.html' %}
+  {% include 'views/partials/metadata_tree.html' %}
   </div>
 </div>
 
@@ -76,7 +76,7 @@
 
 {% block body_js %}
 	<script>
-		var projectTree;
+		var metadataTree;
 
 		$(function() {
 	    $('[data-aljs="tabs"]').tabs({
@@ -118,8 +118,8 @@
 	    });
 
 	    if ({{ project.hasIndexedMetadata() }}) {
-	    	projectTree = new mavensmate.ProjectTree();
-	    	projectTree.render();
+	    	metadataTree = new mavensmate.MetadataTree();
+	    	metadataTree.render();
 	    } else {
 	    	indexOrg();
 	    }
@@ -188,7 +188,7 @@
 					type: 'POST',
 					url: '{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}?pid={{project.settings.id}}',
 					data: JSON.stringify({
-						package: projectTree.getPackage()
+						package: metadataTree.getPackage()
 					})
 				},
 				message: {
@@ -214,7 +214,7 @@
 					type: 'POST',
 					url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/index",
 					data: JSON.stringify({
-						package: projectTree.getPackage()
+						package: metadataTree.getPackage()
 					})
 				},
 				message: {
@@ -225,11 +225,11 @@
 
 			mavensmate.request(opts)
 				.then(function(response) {
-					if (!projectTree) {
-						projectTree = new mavensmate.ProjectTree();
-						projectTree.render();
+					if (!metadataTree) {
+						metadataTree = new mavensmate.MetadataTree();
+						metadataTree.render();
 					} else {
-						projectTree.dynatree.reload();
+						metadataTree.dynatree.reload();
 					}
 					showToast('Project metadata index updated successfully', 'success');
 				})

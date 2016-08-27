@@ -70,12 +70,7 @@
   	</form>
   </div>
   <div id="tab-default-3" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
-  	<div id="project_wrapper">
-  		<div id="treewrapper">
-  			<div id="tree"></div>
-  			<div id="info"></div>
-  		</div>
-  	</div>
+    {% include 'views/partials/metadata_tree.html' %}
   </div>
 </div>
 {% endblock %}
@@ -88,14 +83,21 @@
 {% block body_js %}
 
 	<script type="text/javascript">
-		var isSubscriptionListBuilt = false;
+		var metadataTree;
+    var isSubscriptionListBuilt = false;
 		var defaultSubscription = [
 			"{{ mavensmate.ui.getDefaultSubscription()|join('", "') }}"
 		];
 
 		$(function() {
 			$('[data-aljs="tabs"]').tabs();
-      populateMetadataTree('...');
+      metadataTree = new mavensmate.MetadataTree({
+        metadata: {{ session.metadataTypes|json|safe }}
+      });
+      metadataTree.renderBuffered();
+      if (!isSubscriptionListBuilt) {
+        buildSubcriptionList({{ session.metadataTypes|json|safe }});
+      }
 		});
 
 		function newProject() {
@@ -108,7 +110,7 @@
 						accessToken: $('#accessToken').val(),
 						refreshToken: $('#refreshToken').val(),
 						instanceUrl: $('#instanceUrl').val(),
-						package: getTree(),
+						package: metadataTree.getPackage(),
 						workspace: $('#workspace').val(),
 						subscription: $('#subscription').val(),
 						action: 'new'
@@ -152,23 +154,6 @@
 			$('#subscriptionWrapper > select').remove();
 			$('#subscriptionWrapper').append(htmlWithSelectOptions);
 			isSubscriptionListBuilt = true;
-		}
-
-		function populateMetadataTree(message) {
-			try {
-				renderBufferedTree({{ session.metadataTypes|json|safe }});
-				if (!isSubscriptionListBuilt) {
-					buildSubcriptionList({{ session.metadataTypes|json|safe }});
-				}
-				hideMessage();
-				resizeProjectWrapper(10);
-				hideLoading();
-			} catch(e) {
-				console.log(e);
-				showMessage('The local MavensMate server did not respond properly. This likely means it is not running or it is malfunctioning. Try restarting your text editor and MavensMate Desktop.');
-				notifySound();
-				hideLoading();
-			}
 		}
 	</script>
 {% endblock %}
