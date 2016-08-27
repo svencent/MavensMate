@@ -8,7 +8,7 @@
 	<br/>
 	{% if !editor %}
 		{% for editorName, editorPath in mavensmate.ui.getSupportedEditors() %}
-			<a class="slds-button slds-button--brand btn-wide" href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}', newProjectId);">Open in {{ editorName|capitalize }}</a>
+			<a class="slds-button slds-button--brand btn-wide" href="javascript:void(0)" onclick="mavensmate.openProjectInEditor('{{editorName}}', newProjectId);">Open in {{ editorName|capitalize }}</a>
 		{% endfor %}
 	{% endif %}
 </div>

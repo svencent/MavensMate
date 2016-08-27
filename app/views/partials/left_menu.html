@@ -1,0 +1,228 @@
+<script type="text/javascript">
+  $(function() {
+    $('.menu-item-with-submenu').on('click', function(evt) {
+      if (!$(this).parent().hasClass('slds-is-open')) {
+        closeSubMenus();
+        openSubMenu(this);
+      } else {
+        closeSubMenus();
+      }
+      evt.stopPropagation();
+    });
+    $(window).click(function() {
+      closeSubMenus();
+    });
+  });
+
+  function closeSubMenus() {
+    $('#left-menu .slds-dropdown-trigger').removeClass('slds-is-open');
+    $('#left-menu .slds-dropdown-trigger').attr('aria-expanded', 'false');
+  }
+
+  function openProjectModal() {
+    $('#global-project-modal').modal('show');
+    $('#global-project-modal input:text:visible:first').focus();
+  }
+
+  function openSubMenu(el) {
+    $(el).parent().toggleClass('slds-is-open');
+    var ariaExpanded = $(el).parent().attr('aria-expanded');
+    if (ariaExpanded === 'false') {
+      $(el).parent().attr('aria-expanded','true');
+    } else {
+      $(el).parent().attr('aria-expanded','false');
+    }
+    $(el).parent().find('.slds-dropdown').css('right', '-252px');
+    $(el).parent().find('.slds-dropdown').css('top', '-19px');
+  }
+</script>
+<div id="frame-left-column" class="slds-p-bottom--large slds-theme--alt-inverse">
+  <div class="slds-grid slds-grid--vertical slds-grid--align-center slds-p-top--medium slds-p-bottom--medium" id="left-menu">
+    <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+      <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+        <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'project') %} {{sldsIconClassName}} {% endif %}">
+          <svg aria-hidden="true" class="slds-button__icon">
+            <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#open_folder"></use>
+          </svg>
+          <span class="slds-assistive-text">More Options</span>
+        </button>
+        <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+          <div class="slds-dropdown__header">
+            <span class="slds-text-heading--label">Project</span>
+          </div>
+          <ul class="dropdown__list" role="menu">
+            <li class="slds-dropdown__item">
+              <a href="/app/project/new" role="menuitem">
+                <p class="slds-truncate">New Project</p>
+              </a>
+            </li>
+            <li class="slds-dropdown__item">
+              <a href="javascript:void(0)" role="menuitem" onclick="openProjectModal()">
+                <p class="slds-truncate">Open Project</p>
+              </a>
+            </li>
+            {% if project %}
+              <li class="slds-dropdown__item">
+                <a href="/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">Edit Project</p>
+                </a>
+              </li>
+              <li class="slds-dropdown__item">
+                <a href="/app/project/{{project.settings.id}}/auth?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">Authentication</p>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    {% if project %}
+      <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+        <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+          <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'metadata') %} {{sldsIconClassName}} {% endif %}">
+            <svg aria-hidden="true" class="slds-button__icon">
+              <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#page"></use>
+            </svg>
+            <span class="slds-assistive-text">More Options</span>
+          </button>
+          <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+            <div class="slds-dropdown__header">
+              <span class="slds-text-heading--label">Metadata</span>
+            </div>
+            <ul class="dropdown__list" role="menu">
+              <li class="slds-dropdown__item">
+                <a href="/app/metadata/ApexClass/new?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">New Apex Class</p>
+                </a>
+              </li>
+              <li class="slds-dropdown__item">
+                <a href="/app/metadata/ApexTrigger/new?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">New Apex Trigger</p>
+                </a>
+              </li>
+              <li class="slds-dropdown__item">
+                <a href="/app/metadata/ApexComponent/new?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">New Visualforce Component</p>
+                </a>
+              </li>
+              <li class="slds-dropdown__item">
+                <a href="/app/metadata/ApexPage/new?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">New Visualforce Page</p>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+        <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+          <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'lightning') %} {{sldsIconClassName}} {% endif %}">
+            <svg aria-hidden="true" class="slds-button__icon">
+              <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#connected_apps"></use>
+            </svg>
+            <span class="slds-assistive-text">More Options</span>
+          </button>
+          <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+            <div class="slds-dropdown__header">
+              <span class="slds-text-heading--label">Lightning</span>
+            </div>
+            <ul class="dropdown__list" role="menu">
+              <li class="slds-dropdown__item">
+                <a href="/app/lightning/app/new?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">New Lightning App</p>
+                </a>
+              </li>
+              <li class="slds-dropdown__item">
+                <a href="/app/lightning/component/new?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">New Lightning Component</p>
+                </a>
+              </li>
+              <li class="slds-dropdown__item">
+                <a href="/app/lightning/event/new?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">New Lightning Event</p>
+                </a>
+              </li>
+              <li class="slds-dropdown__item">
+                <a href="/app/lightning/interface/new?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">New Lightning Interface</p>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+        <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+          <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'deploy') || mavensmate.ui.isMenuItemActive(url, 'connections') %} {{sldsIconClassName}} {% endif %}">
+            <svg aria-hidden="true" class="slds-button__icon">
+              <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#socialshare"></use>
+            </svg>
+            <span class="slds-assistive-text">More Options</span>
+          </button>
+          <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+            <div class="slds-dropdown__header">
+              <span class="slds-text-heading--label">Deploy</span>
+            </div>
+            <ul class="dropdown__list" role="menu">
+              <li class="slds-dropdown__item">
+                <a href="/app/connections/new?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">Deployment Connections</p>
+                </a>
+              </li>
+              <li class="slds-dropdown__item">
+                <a href="/app/deploy/new?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">Deploy to Server</p>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+        <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+          <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'editor') || mavensmate.ui.isMenuItemActive(url, 'connections') %} {{sldsIconClassName}} {% endif %}">
+            <svg aria-hidden="true" class="slds-button__icon">
+              <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#desktop"></use>
+            </svg>
+            <span class="slds-assistive-text">More Options</span>
+          </button>
+          <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+            <div class="slds-dropdown__header">
+              <span class="slds-text-heading--label">Editors</span>
+            </div>
+            <ul class="dropdown__list" role="menu">
+              {% for editorName, editorPath in mavensmate.ui.getSupportedEditors() %}
+                <li class="slds-dropdown__item">
+                  <a href="javascript:void(0)" onclick="mavensmate.openProjectInEditor('{{editorName}}');" role="menuitem">
+                    <p class="slds-truncate">Open in {{ editorName|capitalize }}</p>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+        <button class="slds-button slds-button--icon-border-inverse slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'test') %} {{sldsIconClassName}} {% endif %}">
+          <svg aria-hidden="true" class="slds-button__icon">
+            <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#summary"></use>
+          </svg>
+          <span class="slds-assistive-text">More Options</span>
+        </button>
+      </div>
+      <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+        <button class="slds-button slds-button--icon-border-inverse">
+          <svg aria-hidden="true" class="slds-button__icon">
+            <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#salesforce1"></use>
+          </svg>
+          <span class="slds-assistive-text">More Options</span>
+        </button>
+      </div>
+    {% endif %}
+  </div>
+</div>
