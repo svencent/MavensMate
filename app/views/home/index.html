@@ -1,8 +1,6 @@
 {% extends "views/layouts/base.html" %}
 {% block yield %}
 
-<div class="content">
-  <div class="slds-box slds-theme--info" style="padding:16px;">
     {% if !project %}
     <div class="container">
       <a href="/app/settings" class="btn btn-large btn-info btn-block" href="button">Settings</a>
@@ -10,23 +8,84 @@
       <a href="javascript:void(0);" onclick="openProjectModal();" class="btn btn-large btn-inverse btn-block" href="button">Open Project</a>
     </div>
     {% else %}
-    <div class="container">
-      <a href="/app/project/edit" class="btn btn-large btn-info btn-block" href="button">Edit Project</a>
-      <a href="/app/project/new" class="btn btn-large btn-primary btn-block" href="button">Deployment Connections</a>
-      <a href="/app/project/new" class="btn btn-large btn-inverse btn-block" href="button">Deploy to Server</a>
-      <a href="/app/project/new" class="btn btn-large btn-info btn-block" href="button">Run Apex Unit Tests</a>
-      <a href="/app/project/new" class="btn btn-large btn-primary btn-block" href="button">Execute Apex</a>
-      <a href="/app/project/new" class="btn btn-large btn-inverse btn-block" href="button">Debug Logs</a>
-
-    </div>
+      <div class="app-launcher">
+        <div class="slds-grid slds-wrap slds-grid--pull-padded">
+          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
+              <a class="slds-button slds-icon_container slds-icon-standard-case">
+                <svg aria-hidden="true" class="slds-icon slds-icon--large">
+                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#connected_apps"></use>
+                </svg>
+                <span class="slds-assistive-text">Case icon</span>
+              </a>
+              <div class="slds-text-heading--label slds-p-top--medium">New Lightning App</div>
+            </div>
+          </div>
+          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
+              <a class="slds-button slds-icon_container slds-icon-standard-account">
+                <svg aria-hidden="true" class="slds-icon slds-icon--large">
+                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#folder"></use>
+                </svg>
+                <span class="slds-assistive-text">Case icon</span>
+              </a>
+              <div class="slds-text-heading--label slds-p-top--medium">Edit Project</div>
+            </div>
+          </div>
+          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
+              <a class="slds-button slds-icon_container slds-icon-standard-dashboard">
+                <svg aria-hidden="true" class="slds-icon slds-icon--large">
+                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#dashboard"></use>
+                </svg>
+                <span class="slds-assistive-text">Case icon</span>
+              </a>
+              <div class="slds-text-heading--label slds-p-top--medium">Run Apex Unit Tests</div>
+            </div>
+          </div>
+          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
+              <a class="slds-button slds-icon_container slds-icon-standard-avatar">
+                <svg aria-hidden="true" class="slds-icon slds-icon--large">
+                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#avatar"></use>
+                </svg>
+                <span class="slds-assistive-text">Case icon</span>
+              </a>
+              <div class="slds-text-heading--label slds-p-top--medium">Authentication</div>
+            </div>
+          </div>
+          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
+              <a class="slds-button slds-icon_container slds-icon-standard-environment-hub">
+                <svg aria-hidden="true" class="slds-icon slds-icon--large">
+                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#environment_hub"></use>
+                </svg>
+                <span class="slds-assistive-text">Case icon</span>
+              </a>
+              <div class="slds-text-heading--label slds-p-top--medium">Deploy to Server</div>
+            </div>
+          </div>
+          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
+              <a class="slds-button slds-icon_container slds-icon-standard-default">
+                <svg aria-hidden="true" class="slds-icon slds-icon--large">
+                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#default"></use>
+                </svg>
+                <span class="slds-assistive-text">Case icon</span>
+              </a>
+              <div class="slds-text-heading--label slds-p-top--medium">Open Salesforce</div>
+            </div>
+          </div>
+        </div>
+      </div>
     {% endif %}
-  </div>
 
-  <div style="text-align:center;">
+
+
+  <!-- <div style="text-align:center;">
     <img src="{{mavensmate.ui.getRobotPath()}}" style="width:110px;"/>
     <div class="robot-sound">...{{mavensmate.ui.getRobotNoise()}}...</div>
-  </div>
-</div>
+  </div> -->
 
 <script>
 	$(function() {

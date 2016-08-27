@@ -92,14 +92,17 @@
                           });
                       } else {
                         console.error(res);
-                        reject(new Error('Could not retrieve asynchronous response from server'))
+                        showToast('Could not retrieve asynchronous response from server. Your request may have a synchronous request, in which case your mavensmate.request opts should include an async=false flag', 'error');
+                        reject(new Error('Could not retrieve asynchronous response from server. Your request may have a synchronous request, in which case your mavensmate.request opts should include an async=false flag'))
                       }
                     } else {
                       resolve(res);
                     }
                   })
                   .error(function(err) {
-                    console.error('ajax call failed', err);
+                    console.error('ajax call returned an error', err);
+                    var res = JSON.parse(err.responseText);
+                    showToast(res.error, 'error');
                     reject(err);
                   });
               })
@@ -291,6 +294,9 @@
           severity = severity || 'info';
           if (severity === 'success' && !delay)
             delay = 3000;
+          $('#toast').removeClass('slds-theme--error');
+          $('#toast').removeClass('slds-theme--info');
+          $('#toast').removeClass('slds-theme--success');
           $('#toast').addClass('slds-theme--'+severity);
           $('#toast h2').html(msg);
           $('#toast p').html(detail);
@@ -350,6 +356,21 @@
           }
           $(el).parent().find('.slds-dropdown').css('right', '-252px');
           $(el).parent().find('.slds-dropdown').css('top', '-19px');
+        }
+
+        function showPageHeaderLoading() {
+          $('#page-header-buttons .slds-button-group').hide();
+          $('#page-header-loading-indicator').show();
+        }
+
+        function hidePageHeaderLoading() {
+          $('#page-header-loading-indicator').hide();
+          $('#page-header-buttons .slds-button-group').show();
+        }
+
+        function toggleRunningIndicator() {
+          $('#page-header-loading-indicator').toggle();
+          $('#page-header-buttons .slds-button-group').toggle();
         }
     </script>
 </head>
@@ -566,7 +587,7 @@
         <!-- END HEADER -->
 
         <!-- PAGE HEADER -->
-        <div class="slds-page-header slds-m-bottom--medium" role="banner" style="padding: 0.5rem 1.0rem;">
+        <div class="slds-page-header slds-m-bottom--medium" role="banner" style="padding:0.5rem 1.0rem;margin-top: 53px;">
           <div class="slds-grid">
             <div class="slds-col slds-has-flexi-truncate">
               <div class="slds-media slds-media--center">
@@ -583,9 +604,13 @@
                 </div>
               </div>
              </div>
-             <div class="slds-col slds-no-flex slds-grid slds-align-bottom">
+             <div class="slds-col slds-no-flex slds-grid slds-align-bottom" id="page-header-buttons">
                 <div class="slds-button-group" role="group">
                   {% block buttons %}{% endblock %}
+                </div>
+                <div class="slds-spinner slds-spinner--small" aria-hidden="false" role="alert" id="page-header-loading-indicator">
+                  <div class="slds-spinner__dot-a"></div>
+                  <div class="slds-spinner__dot-b"></div>
                 </div>
               </div>
           </div>
