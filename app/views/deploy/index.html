@@ -6,41 +6,9 @@
 		width:18rem;
 	}
 
-	table.test_result {
-		border-top:none;
-	}
-
-	table.test_result th, table.test_result td {
-		padding:5px;
-		line-height:1;
-	}
-
-	#connection_error_wrapper {
-		display: none;
-	}
-
-	ul.nav .dropdown-menu {
-		width:300px;
-	}
-
-	#package-selector div.btn-group.select.select-block.mbl.info {
-		margin-bottom:12px;
-	}
-
-	table.tablesorter th.sorter-true {
-		cursor:pointer;
-	}
-
-	table.tablesorter th.sorter-true:hover {
-		background: #f9f9f9;
-	}
-
-	table.tablesorter th.tablesorter-headerAsc,
-	table.tablesorter th.tablesorter-headerDesc
-	{
-		background: #f6f6f6;
-	}
-
+  th.tablesorter-header {
+    cursor: pointer;
+  }
 </style>
 
 <div class="slds-tabs--scoped" data-aljs="tabs">
@@ -166,6 +134,22 @@
   $(function() {
     $('[data-aljs="tabs"]').tabs();
 
+    metadataTree = new mavensmate.MetadataTree();
+    metadataTree.render();
+
+    $("#btnDeploy").click(function() {
+      deploy();
+    });
+
+    $("#check_only").change(function() {
+      var text = (this.checked)? 'Validate Deployment' : 'Deploy to Server';
+      $("#btnDeploy").html(text);
+    });
+
+    if (!{{ hasIndexedMetadata }}) {
+      indexOrg();
+    }
+
     // populate deploy target multiselect
     var deploymentConnections = [
     	{% for c in connections %}
@@ -176,6 +160,7 @@
   			},
     	{% endfor %}
     ];
+
     $('#deploy-targets').multiSelect({
     	unselectedItems: deploymentConnections,
       selectedItems: []
@@ -197,51 +182,6 @@
 	function isIgnoreWarnings() {
 		return $("#ignoreWarnings").is(":checked");
 	}
-
-	$(function() {
-		metadataTree = new mavensmate.MetadataTree();
-    metadataTree.render();
-
-    $("#btnDeploy").click(function() {
-			deploy();
-		});
-
-		$("#check_only").change(function() {
-			var text = (this.checked)? 'Validate Deployment' : 'Deploy to Server';
-			$("#btnDeploy").html(text);
-		});
-
-		$("#un_list").change(function() {
-			if (this.value == 'new') {
-				$("#un").val("");
-				$("#un").show();
-			} else {
-				$("#un").hide();
-				$("#un").val(this.value);
-			}
-		});
-
-		$("ul.nav-tabs li a span").hover(
-			$(this).toggleClass("label-success")
-		)
-
-		if ($("#un_list").val() != 'new') {
-			$("#un").val($("#un_list").val());
-		}
-
-		if (!{{ hasIndexedMetadata }}) {
-			indexOrg();
-		}
-
-		$('#org_type').change(function() {
-			if ($(this).val() === 'custom') {
-				$('#custom-url').show();
-			} else {
-				$('#custom-url').hide();
-				$('#custom-url').val('');
-			}
-		});
-	});
 
 	function indexOrg() {
     var opts = {
@@ -276,72 +216,6 @@
       });
 	}
 
-	function handleResponse(response) {
-		console.log('handling responsE!!');
-		console.log(operation);
-		console.log(response);
-		if (operation === "deploy") {
-			if (response.error) {
-				showMessage(response.error);
-				toggleRunningIndicator();
-				$("#btnDeploy").show();
-				notifySound();
-			} else {
-				$(".result_wrapper").remove()
-
-				$("#result").html(response.result.html);
-
-				$("#dropdown-destinations").html($("#destination_options ul").html());
-				$("#destination_options").remove()
-
-				var targets = Object.keys(response.result.object);
-				var isSuccess = true;
-				for (var i in targets) {
-					var targetUsername = targets[i];
-					if (!response.result.object[targetUsername].success) {
-						isSuccess = false;
-						break;
-					}
-				}
-				if (isSuccess) {
-					$("#check_only").attr('checked', false);
-					$("#check_only").parent().removeClass('checked')
-					$("#btnDeploy").html('Deploy to Server');
-				}
-
-				$("#main-tab-content").append($("#extra_tabs").html());
-				$("#extra_tabs").remove()
-
-				$('.nav-tabs a').click(function (e) {
-				  e.preventDefault();
-				  $(this).tab('show');
-				})
-
-				$(".results_hidden").show();
-				$("ul#main-tabs > li.active").removeClass('active')
-				$("div#main-tab-content > div.active").removeClass('active')
-				$("#result-0").addClass('active')
-				$('li.dropdown ul li a.test_result_link').tab('show');
-				$(".results_hidden").addClass('active');
-
-				toggleRunningIndicator();
-				$("#btnDeploy").show();
-				notifySound();
-			}
-		} else if (operation == "index") {
-			if (response.error) {
-				showMessage(response.error)
-			} else {
-				if (tree === undefined) {
-          metadataTree = new mavensmate.MetadataTree();
-          metadataTree.render();
-				} else {
-          metadataTree.dynatree.reload();
-				}
-			}
-		}
-	}
-
 	function deploy() {
     var opts = {
       showPageHeaderLoading: true,
@@ -369,6 +243,8 @@
         console.log('deploy done', response);
         showToast('Deployment complete', 'success');
         $('#deploy-result').html(response.result.html);
+        $('.deploy-result-tabs').tabs();
+        $('.tablesorter').tablesorter();
         $('#li-deploy-result a').click();
       })
       .catch(function(err) {

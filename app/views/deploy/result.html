@@ -1,167 +1,164 @@
-<div id="destination_options">
-	<ul>
-		{% for target in targets %}
-			{% if loop.first  %}
-			<li class="active"><a href="#result-{{ loop.index0 }}">{{ target.name }}</a></li>
-			{% else %}
-			<li class=""><a href="#result-{{ loop.index0 }}">{{ target.name }}</a></li>
-			{% endif %}
-		{% endfor %}
-	</ul>
-</div>
+<div class="slds-tabs--default deploy-result-tabs" data-aljs="tabs">
+  <ul class="slds-tabs--default__nav" role="tablist">
+      {% for target in targets %}
+      	<li class="slds-tabs--default__item slds-text-heading--label" title="{{target.label}}" role="presentation">
+      		<a class="slds-tabs--default__link" href="#" role="tab" tabindex="0" aria-selected="{% if loop.first  %}true{% else %}false{% endif%}" aria-controls="{{ target.id }}" data-aljs-show="{{ target.id }}">
+      			{{ target.label }}
+      		</a>
+      	</li>
+      {% endfor %}
+  </ul>
+  {% for target, result in results %}
+	  <div id="{{ target }}" class="slds-tabs--default__content slds-hide" role="tabpanel">
+	  		{% if result.success %}
 
-<div id="extra_tabs">
-	{% for result in results %}
-
-	<div class="tab-pane result_wrapper" id="result-{{ loop.index0 }}" style="padding:10px;">
-
-		<div style="display:none;">
-			{{ JSON.stringify(result) }}
-		</div>
-
-		<h5 style="font-size:20px;border-bottom: 2px solid rgb(52, 73, 94);padding-bottom:5px;position:relative;">
-			Destination:&nbsp;{{ loop.key }}
-		</h5>
-
-		{% if result.success %}
-
-			{% if deployOptions.checkOnly %}
-				{% set deploy_type = 'validation'  %}
-				{% set further_instruction = ' Click "Deploy to Server" to complete deployment.' %}
-			{% else %}
-				{% set deploy_type = 'deployment'  %}
-				{% set further_instruction = ''  %}
-			{% endif %}
-
-			<div class="alert alert-success">
-				<button type="button" class="close fui-cross" data-dismiss="alert"></button>
-				<i class="icon-ok-sign icon-2x pull-left"></i>
-				<strong>Success!</strong>{{' '}}Your{{' '}}{{ deploy_type }}{{' '}}completed{{' '}}successfully.{{' '}}{{ further_instruction }}</p>
-			</div>
-
-		{% endif %}
+	  			{% if deployOptions.checkOnly %}
+	  				{% set deploy_type = 'validation'  %}
+	  				{% set further_instruction = '' %}
+	  			{% else %}
+	  				{% set deploy_type = 'deployment'  %}
+	  				{% set further_instruction = ''  %}
+	  			{% endif %}
 
 
-		{% if !result.success %}
-			<div class="alert alert-error">
-				<button type="button" class="close fui-cross" data-dismiss="alert"></button>
-				<i class="icon-exclamation-sign icon-2x pull-left"></i>
-				Deployment Failed!
-			</div>
-
-		{% endif %}
-
-		<div class="result_table_class">
-
-		    {% if result.details %}
-			    {% if result.details.componentFailures || result.details.componentSuccesses %}
-				<div class="deploy-category" onclick="$('#{{ result['id'] }}-table').toggle();"><i class="icon-info-sign"></i>&nbsp;Deploy Messages</div>
-				<table id="{{ result['id'] }}-table" class="table table-striped test_result">
-					<thead>
-						<tr>
-							<th>Metadata</th>
-							<th>Result</th>
-							<th>Message</th>
-						</tr>
-					</thead>
-					<tbody>
-
-						{% if result.details.componentSuccesses %}
-
-							{% for message in result.details.componentSuccesses %}
-
-								{% if message.fullName !== 'package.xml' %}
-
-								<tr>
-									<td style="width:210px;">{{ mavensmate.ui.getDeployMessageFileNameBaseName(message.fileName) }}</td>
-									<td style="width:45px;">
-										{% if mavensmate.ui.isFalse(message.success) %}
-											<span class="label label-important">Failed</span>
-										{% else %}
-											<span class="label label-success">Success</span>
-										{% endif %}
-									</td>
-									<td>
-										{% if mavensmate.ui.isFalse(message.success) %}
-											{{ message.problem }}
-											{% if message.lineNumber %}
-												[Line: {{ message.lineNumber }}, Column: {% if message.columnNumber %}{{ message.columnNumber }}{% endif %}]
-											{% endif %}
-										{% endif %}
-									</td>
-								</tr>
-
-								{% endif %}
-
-							{% endfor %}
-
-						{% endif %}
-
-						{% if result.details.componentFailures %}
-
-							{% for message in result.details.componentFailures %}
-								<tr>
-									<td style="width:210px;">{{ mavensmate.ui.getDeployMessageFileNameBaseName(message.fileName) }}</td>
-									<td style="width:45px;">
-										{% if mavensmate.ui.isFalse(message.success) %}
-											<span class="label label-important">Failed</span>
-										{% else %}
-											<span class="label label-success">Success</span>
-										{% endif %}
-									</td>
-									<td>
-										{% if mavensmate.ui.isFalse(message.success) %}
-											{{ message.problem }}
-											{% if message.lineNumber %}
-												[Line: {{ message.lineNumber }}, Column: {% if message.columnNumber %}{{ message.columnNumber }}{% endif %}]
-											{% endif %}
-										{% endif %}
-									</td>
-								</tr>
-							{% endfor %}
-						{% endif %}
-					</tbody>
-				</table>
-			    {% endif %}
-
-			    <!-- TEST RESULTS -->
-		        {% if result.details.runTestResult && result.details.runTestResult.codeCoverageWarnings %}
-		    	<div class="deploy-category" onclick="$('#{{ result['id'] }}-table').toggle();"><i class="icon-info-sign"></i>&nbsp;Code Coverage Warnings</div>
-		    	<table id="{{ result['id'] }}-table" class="table table-striped test_result">
-		    		<thead>
-		    			<tr>
-		    				<th>Name</th>
-		    				<th>Message</th>
-		    			</tr>
-		    		</thead>
-		    		<tbody>
-
-	    				{% for message in result.details.runTestResult.codeCoverageWarnings %}
-
-	    					<tr>
-	    						<td style="width:210px;">
-	    							{% if message.name !== '[object Object]' %}
-	    								{{ message.name }}
-	    							{% else %}
-
-	    							{% endif %}
-	    						</td>
-	    						<td style="">
-	    							{{ message.message }}
-	    						</td>
-	    					</tr>
-
-	    				{% endfor %}
-
-		    		</tbody>
-		    	</table>
-		        {% endif %}
+  			  <div class="slds-notify slds-notify--toast slds-theme--success" role="alert">
+  			    <span class="slds-assistive-text">Success</span>
+  			    <div class="slds-notify__content slds-grid">
+  			      <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
+  			        <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#check"></use>
+  			      </svg>
+  			      <div class="slds-col slds-align-middle">
+  			        <h2 class="slds-text-heading--small ">{{' '}}Your{{' '}}{{ deploy_type }}{{' '}}completed{{' '}}successfully.
+  			        {% if further_instruction %}{{' '}}{{ further_instruction }}{% endif %}</h2>
+  			      </div>
+  			    </div>
+  			  </div>
 
 
-			{% endif %}
+	  		{% endif %}
 
-		</div>
-	</div>
+
+	  		{% if !result.success %}
+
+	  			  <div class="slds-notify slds-notify--toast slds-theme--error" role="alert">
+	  			    <span class="slds-assistive-text">Error</span>
+	  			    <div class="slds-notify__content slds-grid">
+	  			      <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
+	  			        <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+	  			      </svg>
+	  			      <div class="slds-col slds-align-middle">
+	  			        <h2 class="slds-text-heading--small">Deployment Failed!</h2>
+	  			      </div>
+	  			    </div>
+	  			  </div>
+
+	  		{% endif %}
+
+	  		<div class="result_table_class">
+
+	  		    {% if result.details %}
+	  			    {% if result.details.componentFailures || result.details.componentSuccesses %}
+	  			    	<h3 class="slds-section-title--divider">Metadata Results</h3>
+			  				<table class="slds-table slds-table--bordered slds-table--cell-buffer tablesorter">
+			  					<thead>
+			  						<tr class="slds-text-heading--label">
+			  							<th scope="col">Metadata</th>
+			  							<th scope="col">Result</th>
+			  							<th scope="col">Message</th>
+			  						</tr>
+			  					</thead>
+			  					<tbody>
+
+		  						{% if result.details.componentSuccesses %}
+
+		  							{% for message in result.details.componentSuccesses %}
+
+		  								{% if message.fullName !== 'package.xml' %}
+
+		  								<tr>
+		  									<td style="width:210px;">{{ mavensmate.ui.getDeployMessageFileNameBaseName(message.fileName) }}</td>
+		  									<td style="width:45px;">
+		  										{% if mavensmate.ui.isFalse(message.success) %}
+		  											<span class="slds-badge slds-theme--error">Failed</span>
+		  										{% else %}
+		  											<span class="slds-badge slds-theme--success">Success</span>
+		  										{% endif %}
+		  									</td>
+		  									<td>
+		  										{% if mavensmate.ui.isFalse(message.success) %}
+		  											{{ message.problem }}
+		  											{% if message.lineNumber %}
+		  												[Line: {{ message.lineNumber }}, Column: {% if message.columnNumber %}{{ message.columnNumber }}{% endif %}]
+		  											{% endif %}
+		  										{% endif %}
+		  									</td>
+		  								</tr>
+
+		  								{% endif %}
+
+		  							{% endfor %}
+
+		  						{% endif %}
+
+		  						{% if result.details.componentFailures %}
+
+		  							{% for message in result.details.componentFailures %}
+		  								<tr>
+		  									<td style="width:210px;">{{ mavensmate.ui.getDeployMessageFileNameBaseName(message.fileName) }}</td>
+		  									<td style="width:45px;">
+		  										{% if mavensmate.ui.isFalse(message.success) %}
+		  											<span class="slds-badge slds-theme--error">Failed</span>
+		  										{% else %}
+		  											<span class="slds-badge slds-theme--success">Success</span>
+		  										{% endif %}
+		  									</td>
+		  									<td>
+		  										{% if mavensmate.ui.isFalse(message.success) %}
+		  											{{ message.problem }}
+		  											{% if message.lineNumber %}
+		  												[Line: {{ message.lineNumber }}, Column: {% if message.columnNumber %}{{ message.columnNumber }}{% endif %}]
+		  											{% endif %}
+		  										{% endif %}
+		  									</td>
+		  								</tr>
+		  							{% endfor %}
+		  						{% endif %}
+	  						</tbody>
+	  					</table>
+	  			    {% endif %}
+
+
+	  			    <!-- TEST RESULTS -->
+	  			     {% if result.details.runTestResult && result.details.runTestResult.codeCoverageWarnings %}
+	  			     <h3 class="slds-section-title--divider">Code Coverage Warnings</h3>
+	  		    		<table class="slds-table slds-table--bordered slds-table--cell-buffer tablesorter">
+	  		    		<thead>
+	  		    			<tr class="slds-text-heading--label">
+	  		    				<th scope="col">Name</th>
+	  		    				<th scope="col">Message</th>
+	  		    			</tr>
+	  		    		</thead>
+	  		    		<tbody>
+
+  	    				{% for message in result.details.runTestResult.codeCoverageWarnings %}
+  	    					<tr>
+  	    						<td style="width:210px;">
+  	    							{% if message.name !== '[object Object]' %}
+  	    								{{ message.name }}
+  	    							{% endif %}
+  	    						</td>
+  	    						<td style="">
+  	    							{{ message.message }}
+  	    						</td>
+  	    					</tr>
+  	    				{% endfor %}
+	  		    		</tbody>
+	  		    	</table>
+	  		     {% endif %}
+	  			    <!-- END TEST RESULTS -->
+
+	  			{% endif %}
+	  		</div>
+	  </div>
 	{% endfor %}
 </div>
-

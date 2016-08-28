@@ -177,21 +177,21 @@ Deploy.prototype.executeRemote = function(deployOptions) {
       .then(function(deployResults) {
         var result = {};
         _.each(deployResults, function(deployResult) {
-          var connectionName = Object.keys(deployResult)[0];
-          result[connectionName] = deployResult[connectionName];
-          if (result[connectionName].details.componentFailures) {
-            if (!_.isArray(result[connectionName].details.componentFailures)) {
-              result[connectionName].details.componentFailures = [result[connectionName].details.componentFailures];
+          var connectionId = Object.keys(deployResult)[0];
+          result[connectionId] = deployResult[connectionId];
+          if (result[connectionId].details.componentFailures) {
+            if (!_.isArray(result[connectionId].details.componentFailures)) {
+              result[connectionId].details.componentFailures = [result[connectionId].details.componentFailures];
             }
           }
-          if (result[connectionName].details.componentSuccesses) {
-            if (!_.isArray(result[connectionName].details.componentSuccesses)) {
-              result[connectionName].details.componentSuccesses = [result[connectionName].details.componentSuccesses];
+          if (result[connectionId].details.componentSuccesses) {
+            if (!_.isArray(result[connectionId].details.componentSuccesses)) {
+              result[connectionId].details.componentSuccesses = [result[connectionId].details.componentSuccesses];
             }
           }
-          if (result[connectionName].details.runTestResult && result[connectionName].details.runTestResult.codeCoverageWarnings) {
-            if (!_.isArray(result[connectionName].details.runTestResult.codeCoverageWarnings)) {
-              result[connectionName].details.runTestResult.codeCoverageWarnings = [result[connectionName].details.runTestResult.codeCoverageWarnings];
+          if (result[connectionId].details.runTestResult && result[connectionId].details.runTestResult.codeCoverageWarnings) {
+            if (!_.isArray(result[connectionId].details.runTestResult.codeCoverageWarnings)) {
+              result[connectionId].details.runTestResult.codeCoverageWarnings = [result[connectionId].details.runTestResult.codeCoverageWarnings];
             }
           }
         });
@@ -436,12 +436,12 @@ Deploy.prototype._deployToTarget = function(target, deployPath, deployOptions) {
       })
       .then(function(deployResult) {
         var result = {};
-        result[target.name] = deployResult;
+        result[target.id] = deployResult;
         resolve(result);
       })
       .catch(function(err) {
-        logger.debug('_deployToTarget failed: '+target.name+', '+err.message);
-        logger.debug(err);
+        logger.error('_deployToTarget failed', target.name, target.id, err.message);
+        logger.error(err);
         reject(err);
       })
       .done();
