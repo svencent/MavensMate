@@ -27,7 +27,7 @@ router.get('/', function(req, res) {
     req.project.logService.getLogs()
       .then(function(logs) {
         res.render('logs/index.html', {
-          title: 'Logs',
+          title: 'Debug Logs',
           logs: logs
         });
       });

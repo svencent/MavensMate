@@ -3,38 +3,42 @@ var logger = require('winston');
 var util = require('../lib/util');
 
 var resourceMap = {
-  project : {
+  project: {
     iconClassName: 'slds-icon-standard-folder',
     iconName: 'folder'
   },
-  metadata : {
+  metadata: {
     iconClassName: 'slds-icon-standard-document',
     iconName: 'document'
   },
-  lightning : {
+  lightning: {
     iconClassName: 'slds-icon-standard-connected-apps',
     iconName: 'connected_apps'
   },
-  connections : {
+  connections: {
     iconClassName: 'slds-icon-standard-environment-hub',
     iconName: 'environment_hub'
   },
-  deploy : {
+  deploy: {
     iconClassName: 'slds-icon-standard-environment-hub',
     iconName: 'environment_hub'
   },
-  auth : {
+  auth: {
     iconClassName: 'slds-icon-standard-avatar',
     iconName: 'avatar'
   },
-  test : {
+  test: {
     iconClassName: 'slds-icon-standard-dashboard',
     iconName: 'dashboard'
   },
-  settings : {
+  settings: {
     iconClassName: 'slds-icon-standard-quotes',
     iconName: 'settings',
     sprite: 'utility-sprite'
+  },
+  logs: {
+    iconClassName: 'slds-icon-standard-record',
+    iconName: 'record'
   }
 };
 
