@@ -47,7 +47,7 @@ describe('mavensmate deploy-to-server', function() {
 
   it('should require at least one deploy target', function(done) {
     var deployPayload = {
-      destinations: [],
+      targets: [],
       package: { 'ApexClass': ['DeployClass']  },
       deployOptions: {
         rollbackOnError: true,
@@ -97,7 +97,7 @@ describe('mavensmate deploy-to-server', function() {
         logger.debug('connections result', conns);
         conns[0].orgType.should.equal(creds.orgType);
         var deployPayload = {
-          destinations: [conns[0].id],
+          targets: [conns[0].id],
           package: { 'ApexClass': ['DeployClass']  },
           deployOptions: {
             rollbackOnError: true,

@@ -66,7 +66,7 @@ describe('mavensmate view-helper', function(){
   describe('getCoverageCssClass', function() {
     it('should return coverage classes', function(done) {
       viewHelper.getCoverageCssClass(90).should.equal('success');
-      viewHelper.getCoverageCssClass(20).should.equal('danger');
+      viewHelper.getCoverageCssClass(20).should.equal('error');
       viewHelper.getCoverageCssClass(50).should.equal('warning');
       done();
     });
