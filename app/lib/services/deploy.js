@@ -45,14 +45,6 @@ function Deploy(opts) {
 
 inherits(Deploy, events.EventEmitter);
 
-Deploy.prototype._getTargetIds = function() {
-  var targetIds = [];
-  _.each(this.targets, function(t) {
-    targetIds.push(t.id);
-  });
-  return targetIds;
-};
-
 Deploy.prototype.getResultHtml = function(targets, deployOptions, deployResult) {
   var resultHtml = swig.renderFile('views/deploy/result.html', {
     results: deployResult,
@@ -136,7 +128,7 @@ Deploy.prototype.executeRemote = function(deployOptions) {
   logger.debug('deploying to remote');
 
   return new Promise(function(resolve, reject) {
-    if (!self._getTargetIds() || self._getTargetIds().length === 0) {
+    if (!self.targets || self.targets.length === 0) {
       return reject(new Error('Please specify at least one deployment target'));
     }
 
@@ -152,7 +144,7 @@ Deploy.prototype.executeRemote = function(deployOptions) {
     self.project.sfdcClient.retrieveUnpackaged(self.package, true, newPath)
       .then(function(retrieveResult) {
         logger.debug('retrieved deployment payload from remote, preparing to deploy to targets');
-        logger.debug(self._getTargetIds());
+        logger.debug(self.targets);
         if (config.get('mm_archive_deployments') === true) {
           // todo
         }
@@ -165,7 +157,7 @@ Deploy.prototype.executeRemote = function(deployOptions) {
             fs.copySync(path.join(newPath, 'unpackaged'), path.join(self.project.path, 'deploy', self.deploymentName, 'unpackaged'));
           }
         }
-        _.each(self._getTargetIds(), function(targetId) {
+        _.each(self.targets, function(targetId) {
           logger.debug('adding deploy target id: ', targetId);
           logger.debug('deploy options', deployOptions);
           var targetConnection = self.orgConnectionService.getById(targetId);

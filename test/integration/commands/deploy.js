@@ -12,6 +12,7 @@ describe('mavensmate deploy-to-server', function() {
 
   var project;
   var commandExecutor;
+  var connections;
 
   before(function(done) {
     this.timeout(120000);
@@ -63,7 +64,7 @@ describe('mavensmate deploy-to-server', function() {
         project: project
       })
       .catch(function(err) {
-        err.message.should.equal('Please specify at least one destination');
+        err.message.should.equal('Please specify at least one deployment target');
         done();
       });
   });
@@ -94,10 +95,11 @@ describe('mavensmate deploy-to-server', function() {
         });
       })
       .then(function(conns) {
-        logger.debug('connections result', conns);
-        conns[0].orgType.should.equal(creds.orgType);
+        connections = conns;
+        logger.debug('connections result', connections);
+        connections[0].orgType.should.equal(creds.orgType);
         var deployPayload = {
-          targets: [conns[0].id],
+          targets: [connections[0].id],
           package: { 'ApexClass': ['DeployClass']  },
           deployOptions: {
             rollbackOnError: true,
@@ -114,10 +116,10 @@ describe('mavensmate deploy-to-server', function() {
         });
       })
       .then(function(response) {
-        response.should.have.property(myConnectionName);
-        response[myConnectionName].checkOnly.should.equal(true);
-        response[myConnectionName].done.should.equal(true);
-        response[myConnectionName].success.should.equal(true);
+        response.should.have.property(connections[0].id);
+        response[connections[0].id].checkOnly.should.equal(true);
+        response[connections[0].id].done.should.equal(true);
+        response[connections[0].id].success.should.equal(true);
         done();
       })
       .catch(function(err) {
