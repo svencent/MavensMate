@@ -1,86 +1,82 @@
 {% extends "views/layouts/base.html" %}
 {% block yield %}
 
-<div class="slds-container--small slds-container--center">
-
-  <div class="slds-m-bottom--small">
-    {% if !isForced %}
-    <div class="slds-box slds-theme--info" role="alert">
-      <div class="slds-notify__content slds-grid">
-        <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
-          <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#user"></use>
-        </svg>
-        <div class="slds-col slds-align-middle">
-          <h2 class="slds-text-heading--small ">MavensMate uses the OAuth 2.0 Web Server Authentication Flow to authenticate to Salesforce.</h2>
-          <p>Select the type of Salesforce environment you are connecting to and click "Connect".</p>
-        </div>
+<div class="slds-m-bottom--small">
+  {% if !isForced %}
+  <div class="slds-box slds-theme--info" role="alert">
+    <div class="slds-notify__content slds-grid">
+      <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
+        <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#user"></use>
+      </svg>
+      <div class="slds-col slds-align-middle">
+        <h2 class="slds-text-heading--small ">MavensMate uses the OAuth 2.0 Web Server Authentication Flow to authenticate to Salesforce.</h2>
+        <p>Select the type of Salesforce environment you are connecting to and click "Connect".</p>
       </div>
     </div>
-    {% endif %}
+  </div>
+  {% endif %}
 
-    {% if isForced %}
-    <div class="slds-box slds-theme--error" role="alert">
-      <div class="slds-notify__content slds-grid">
-        <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
-          <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
-        </svg>
-        <div class="slds-col slds-align-middle">
-          <h2 class="slds-text-heading--small ">MavensMate is unable to connect to Salesforce. Please re-authenticate to continue.</h2>
-          <p>This can happen if your access/refresh token have been revoked or if MavensMate is unable to retrieve your credentials from secure storage.</p>
-        </div>
+  {% if isForced %}
+  <div class="slds-box slds-theme--error" role="alert">
+    <div class="slds-notify__content slds-grid">
+      <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
+        <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+      </svg>
+      <div class="slds-col slds-align-middle">
+        <h2 class="slds-text-heading--small ">MavensMate is unable to connect to Salesforce. Please re-authenticate to continue.</h2>
+        <p>This can happen if your access/refresh token have been revoked or if MavensMate is unable to retrieve your credentials from secure storage.</p>
       </div>
     </div>
-    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+<form class="slds-form--stacked" action="/app/auth" method="POST">
+
+  {% if project && project.settings && project.settings.id %}
+  <input type="hidden" name="pid" value="{{project.settings.id}}" />
+  {% endif %}
+  <input type="hidden" name="callback" value="{{callback}}" />
+  <input type="hidden" name="param1" value="{{param1}}" />
+
+  {% if project && project.settings && project.settings.username %}
+  <div class="slds-form-element">
+    <label class="slds-form-element__label" for="select-01">Salesforce Username</label>
+    <div class="slds-form-element__control">
+      <input name="username" class="slds-input" type="text" value="{{project.settings.username}}">
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="slds-form-element">
+    <label class="slds-form-element__label" for="select-01">Salesforce Environment Type</label>
+    <div class="slds-form-element__control">
+      <div class="slds-select_container">
+        <select id="orgType" class="slds-select">
+          <option value="production">Production</option>
+          <option value="developer">Developer</option>
+          <option value="sandbox">Sandbox</option>
+          <option value="prerelease">Prerelease</option>
+          <option value="custom">Custom URL</option>
+        </select>
+      </div>
+    </div>
   </div>
 
-  <form class="slds-form--stacked" action="/app/auth" method="POST">
-
-    {% if project && project.settings && project.settings.id %}
-    <input type="hidden" name="pid" value="{{project.settings.id}}" />
-    {% endif %}
-    <input type="hidden" name="callback" value="{{callback}}" />
-    <input type="hidden" name="param1" value="{{param1}}" />
-
-    {% if project && project.settings && project.settings.username %}
-    <div class="slds-form-element">
-      <label class="slds-form-element__label" for="select-01">Salesforce Username</label>
-      <div class="slds-form-element__control">
-        <input name="username" class="slds-input" type="text" value="{{project.settings.username}}">
-      </div>
+  <div class="slds-form-element" style="display:none;" id="instanceUrlWrapper">
+    <label class="slds-form-element__label" for="inputSample2">Salesforce Custom URL</label>
+    <div class="slds-form-element__control">
+      <input id="instanceUrl" name="instanceUrl" class="slds-input" type="text" placeholder="Example: https://na1-blitz01.salesforce.com">
     </div>
-    {% endif %}
+  </div>
 
-    <div class="slds-form-element">
-      <label class="slds-form-element__label" for="select-01">Salesforce Environment Type</label>
-      <div class="slds-form-element__control">
-        <div class="slds-select_container">
-          <select id="orgType" class="slds-select">
-            <option value="production">Production</option>
-            <option value="developer">Developer</option>
-            <option value="sandbox">Sandbox</option>
-            <option value="prerelease">Prerelease</option>
-            <option value="custom">Custom URL</option>
-          </select>
-        </div>
-      </div>
+  <div class="slds-form-element">
+    <div class="slds-form-element__control">
+      <button type="submit" class="slds-button slds-button--brand">Connect</button>
     </div>
+  </div>
 
-    <div class="slds-form-element" style="display:none;" id="instanceUrlWrapper">
-      <label class="slds-form-element__label" for="inputSample2">Salesforce Custom URL</label>
-      <div class="slds-form-element__control">
-        <input id="instanceUrl" name="instanceUrl" class="slds-input" type="text" placeholder="Example: https://na1-blitz01.salesforce.com">
-      </div>
-    </div>
-
-    <div class="slds-form-element">
-      <div class="slds-form-element__control">
-        <button type="submit" class="slds-button slds-button--brand">Connect</button>
-      </div>
-    </div>
-
-  </form>
-
-</div>
+</form>
 
 {% endblock %}
 
