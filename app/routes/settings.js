@@ -20,7 +20,7 @@ router.get('/', function(req, res) {
   var locals = {
     userSettings: userSettings,
     defaultSettings: defaultSettings,
-    title: 'Settings'
+    title: 'Global Settings'
   };
   res.render('settings/index.html', locals);
 });
