@@ -344,7 +344,7 @@
                 {% endif %}
                 <div class="slds-media__body">
                   <p class="slds-page-header__title slds-truncate slds-align-middle" title="{{title}}">{{title}}</p>
-                  {% if project %}
+                  {% if project && url.indexOf('/app/settings') !== 0 %}
                   <p class="slds-text-body--small page-header__info">{{project.name}}</p>
                   {% endif %}
                 </div>
