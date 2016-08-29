@@ -5,7 +5,9 @@
   <ul class="slds-tabs--scoped__nav" role="tablist">
       <li class="slds-tabs--scoped__item slds-text-heading--label" title="Project Details" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" data-aljs-show="tab-default-1">Project Details</a></li>
       <li class="slds-tabs--scoped__item slds-text-heading--label" title="Advanced" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" data-aljs-show="tab-default-2">Advanced</a></li>
+      {% if !origin %}
       <li class="slds-tabs--scoped__item slds-text-heading--label" title="Metadata" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" data-aljs-show="tab-default-3">Metadata</a></li>
+      {% endif %}
   </ul>
   <div id="tab-default-1" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
 
@@ -30,7 +32,7 @@
   			<div class="slds-form-element slds-m-top--medium large">
   				<label class="slds-form-element__label" for="inputSample2">Project Name</label>
   				<div class="slds-form-element__control">
-  					<input class="slds-input" placeholder="Project Name" type="text" id="pn">
+  					<input class="slds-input" placeholder="Project Name" type="text" id="pn" {% if origin %}value="{{mavensmate.ui.getPathBaseName(origin)}}" disabled="disabled"{% endif %}>
   				</div>
   			</div>
 
@@ -93,6 +95,11 @@
     {% include 'views/partials/metadata_tree.html' %}
   </div>
 </div>
+
+{% if origin %}
+<input type="hidden" value="{{ origin }}" id="origin"/>
+{% endif %}
+
 {% endblock %}
 
 {% block buttons %}
@@ -174,16 +181,18 @@
 			var opts = {
 				ajax: {
 					type: 'POST',
-					url: '{{ mavensmate.ui.getBaseUrl() }}/app/project',
+					url: '{{ mavensmate.ui.getBaseUrl() }}/app/project{% if origin %}/existing{% endif %}',
 					data: JSON.stringify({
 						name: $('#pn').val(),
 						accessToken: $('#accessToken').val(),
 						refreshToken: $('#refreshToken').val(),
 						instanceUrl: $('#instanceUrl').val(),
-						package: metadataTree.getPackage(),
+						{% if !origin %}
+            package: metadataTree.getPackage(),
+            {% endif %}
 						workspace: $('#workspace').val(),
 						subscription: getSubscription(),
-						action: 'new'
+						origin: $('#origin').val()
 					})
 				},
 				message: {

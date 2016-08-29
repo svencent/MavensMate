@@ -58,30 +58,8 @@ router.get('/auth/finish', function(req, res) {
       logger.error(err);
       res.send(500);
     });
-  } else if (state.param1 && fs.existsSync(state.param1)) {
-    // new project from existing directory
-    commandExecutor.execute({
-      name: 'session',
-      body: {
-        accessToken: req.query.access_token,
-        instanceUrl: req.query.instance_url,
-        refreshToken: req.query.refresh_token
-      }
-    })
-    .then(function(response) {
-      res.render('project/new_from_existing.html', {
-        title: 'Create MavensMate Project ('+state.param1+')',
-        accessToken: req.query.access_token,
-        instanceUrl: req.query.instance_url,
-        refreshToken: req.query.refresh_token,
-        session: response,
-        origin: state.param1
-      });
-    })
-    .catch(function(err) {
-      logger.error('Could not initiate session', err);
-    });
   } else {
+    var title = state.param1 && fs.existsSync(state.param1) ? 'Create MavensMate Project ('+state.param1+')' : 'New Project';
     // new project
     commandExecutor.execute({
       name: 'session',
@@ -92,14 +70,13 @@ router.get('/auth/finish', function(req, res) {
       }
     })
     .then(function(response) {
-      logger.debug('got new session!');
-      logger.debug(response);
       res.render('project/new.html', {
-        title: 'New Project',
+        title: title,
         accessToken: req.query.access_token,
         instanceUrl: req.query.instance_url,
         refreshToken: req.query.refresh_token,
-        session: response
+        session: response,
+        origin: state.param1
       });
     })
     .catch(function(err) {
