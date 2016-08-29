@@ -5,11 +5,11 @@
 <!-- TREE FILTER -->
 <div class="slds-box slds-theme--shade slds-m-bottom--x-small" id="div-metadata-tree-filter">
   <div class="slds-grid">
-    <div class="slds-col slds-has-flexi-truncate">
+    <div class="slds-col">
       <input type="text" placeholder="Search for metadata" id="txt-metadata-tree-search" class="slds-input" />
     </div>
     {% if namedDeployments %}
-    <div class="slds-col slds-col--padded slds-has-flexi-truncate">
+    <div class="slds-col slds-col--padded">
       <select id="select-metadata-tree-selected-deployment-name" class="slds-select">
         {% for d in namedDeployments %}
           {% if loop.index0 == 0 %}
@@ -22,7 +22,7 @@
       </select>
     </div>
     {% endif %}
-    <div class="slds-col slds-col--padded">
+    <div class="slds-col {% if !namedDeployments %}slds-col--padded{% endif %}">
       <div class="slds-button-group" role="group">
         <button class="slds-button slds-button--neutral" id="btn-metadata-tree-clear-search" disabled="">Clear Search</button>
         <button class="slds-button slds-button--neutral" id="a-metadata-tree-select-all">Select all</button>
