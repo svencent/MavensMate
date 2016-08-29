@@ -1,10 +1,10 @@
 {% if mavensmate.ui.doesClassOrTriggerExist(project, apexClassOrTriggerName, type) -%}
-  <table class='code' id="class_code_result_{{ loop.index }}">
+  <table class="code slds-table slds-table--bordered slds-no-row-hover">
     <tbody>
-      {% for line in mavensmate.ui.getFileLines(project, apexClassOrTriggerName, type) -%} 
+      {% for line in mavensmate.ui.getFileLines(project, apexClassOrTriggerName, type) -%}
         <tr>
-          <td class="line_numbers">{{ loop.index }}</td>
-          <td class="code {{ {true:"covered", false:"not_covered"}[uncoveredLines.indexOf(loop.index) === -1] }}">{{ mavensmate.ui.htmlize(line) }}</td>
+          <td class="td-line-numbers">{{ loop.index }}</td>
+          <td class="{{ {true:"covered", false:"uncovered slds-theme--error"}[uncoveredLines.indexOf(loop.index) === -1] }}">{{ mavensmate.ui.htmlize(line) }}</td>
         </tr>
       {%- endfor %}
     </tbody>

@@ -29,7 +29,7 @@ var mavensMateFile        = require('../file');
  * @param {Object} opts
  * @param {Array} opts.project - Project instance
  * @param {Array} opts.sfdcClient - Sfdc Client instance
- * @param {Array} opts.destinations - array of org connections
+ * @param {Array} opts.targets - array of org connections
  * @param {Array} opts.checkOnly - whether this is a validate-only deployment
  * @param {Array} opts.runTests - whether to run tests during this deployment
  * @param {Array} opts.rollbackOnError - whether to rollback when the deployment fails
@@ -45,15 +45,10 @@ function Deploy(opts) {
 
 inherits(Deploy, events.EventEmitter);
 
-Deploy.prototype._getTargetIds = function() {
-  return this.destinations || [];
-};
-
-Deploy.prototype.getResultHtml = function(usernames, destinations, deployOptions, deployResult) {
+Deploy.prototype.getResultHtml = function(targets, deployOptions, deployResult) {
   var resultHtml = swig.renderFile('views/deploy/result.html', {
     results: deployResult,
-    usernames: usernames,
-    targets: destinations,
+    targets: targets,
     deployOptions: deployOptions,
     project: this.project
   });
@@ -133,8 +128,8 @@ Deploy.prototype.executeRemote = function(deployOptions) {
   logger.debug('deploying to remote');
 
   return new Promise(function(resolve, reject) {
-    if (!self._getTargetIds() || self._getTargetIds().length === 0) {
-      return reject(new Error('Please specify at least one destination'));
+    if (!self.targets || self.targets.length === 0) {
+      return reject(new Error('Please specify at least one deployment target'));
     }
 
     var deployPromises = [];
@@ -149,7 +144,7 @@ Deploy.prototype.executeRemote = function(deployOptions) {
     self.project.sfdcClient.retrieveUnpackaged(self.package, true, newPath)
       .then(function(retrieveResult) {
         logger.debug('retrieved deployment payload from remote, preparing to deploy to targets');
-        logger.debug(self._getTargetIds());
+        logger.debug(self.targets);
         if (config.get('mm_archive_deployments') === true) {
           // todo
         }
@@ -162,7 +157,7 @@ Deploy.prototype.executeRemote = function(deployOptions) {
             fs.copySync(path.join(newPath, 'unpackaged'), path.join(self.project.path, 'deploy', self.deploymentName, 'unpackaged'));
           }
         }
-        _.each(self._getTargetIds(), function(targetId) {
+        _.each(self.targets, function(targetId) {
           logger.debug('adding deploy target id: ', targetId);
           logger.debug('deploy options', deployOptions);
           var targetConnection = self.orgConnectionService.getById(targetId);
@@ -174,21 +169,21 @@ Deploy.prototype.executeRemote = function(deployOptions) {
       .then(function(deployResults) {
         var result = {};
         _.each(deployResults, function(deployResult) {
-          var connectionName = Object.keys(deployResult)[0];
-          result[connectionName] = deployResult[connectionName];
-          if (result[connectionName].details.componentFailures) {
-            if (!_.isArray(result[connectionName].details.componentFailures)) {
-              result[connectionName].details.componentFailures = [result[connectionName].details.componentFailures];
+          var connectionId = Object.keys(deployResult)[0];
+          result[connectionId] = deployResult[connectionId];
+          if (result[connectionId].details.componentFailures) {
+            if (!_.isArray(result[connectionId].details.componentFailures)) {
+              result[connectionId].details.componentFailures = [result[connectionId].details.componentFailures];
             }
           }
-          if (result[connectionName].details.componentSuccesses) {
-            if (!_.isArray(result[connectionName].details.componentSuccesses)) {
-              result[connectionName].details.componentSuccesses = [result[connectionName].details.componentSuccesses];
+          if (result[connectionId].details.componentSuccesses) {
+            if (!_.isArray(result[connectionId].details.componentSuccesses)) {
+              result[connectionId].details.componentSuccesses = [result[connectionId].details.componentSuccesses];
             }
           }
-          if (result[connectionName].details.runTestResult && result[connectionName].details.runTestResult.codeCoverageWarnings) {
-            if (!_.isArray(result[connectionName].details.runTestResult.codeCoverageWarnings)) {
-              result[connectionName].details.runTestResult.codeCoverageWarnings = [result[connectionName].details.runTestResult.codeCoverageWarnings];
+          if (result[connectionId].details.runTestResult && result[connectionId].details.runTestResult.codeCoverageWarnings) {
+            if (!_.isArray(result[connectionId].details.runTestResult.codeCoverageWarnings)) {
+              result[connectionId].details.runTestResult.codeCoverageWarnings = [result[connectionId].details.runTestResult.codeCoverageWarnings];
             }
           }
         });
@@ -433,12 +428,12 @@ Deploy.prototype._deployToTarget = function(target, deployPath, deployOptions) {
       })
       .then(function(deployResult) {
         var result = {};
-        result[target.name] = deployResult;
+        result[target.id] = deployResult;
         resolve(result);
       })
       .catch(function(err) {
-        logger.debug('_deployToTarget failed: '+target.name+', '+err.message);
-        logger.debug(err);
+        logger.error('_deployToTarget failed', target.name, target.id, err.message);
+        logger.error(err);
         reject(err);
       })
       .done();

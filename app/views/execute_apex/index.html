@@ -4,171 +4,52 @@
 <script src="{{ mavensmate.ui.getStaticResourcePath() }}/editor/mode-java.js" type="text/javascript" charset="utf-8"></script>
 <style>
 	#editor {
-        position:absolute;
-        top:0;
-        bottom:0;
-        left: 0;
-        right:0;
-    }
-	.results_hidden {
-		display:none;
-	}
-	#mm_logger {
-		display:none;
-		height:200px;
-		overflow-y:auto;
-		transform: translate3d(0,0,0);
-		padding:10px;
-		border:1px solid #f2f2f2;
-	}
-
-	table.code {
-		display:none;
-	}
-
-	table.code td {
-		padding:0px;
-	}
-
-	table.code {
-		border: 1px solid #CCC;
-		width: 100%;
-		border-collapse: collapse;
-		font: 95%/105% "Consolas", Monaco, "Courier New", Courier, "Bitstream Vera Sans Mono", monospace;
-	}
-
-	table.code thead .line_numbers, table.code thead {
-		background: #DDD;
-	}
-
-	table.code td.covered {
-		background: #2ecc71;
-	}
-
-	table.code td.not_covered {
-		background: #e74c3c;
-	}
-
-	table.code tr td.line_numbers {
-		text-align: right;
-		vertical-align: top;
-		background: #EEE;
-		color: #555;
-		font-size: 90%;
-		padding: 2px;
-		padding-top: 0;
-		width: 35px;
-		border-right: 1px solid #CCC;
-		border-bottom: 1px solid #DDD;
-		vertical-align:middle;
-	}
-
-	table.code td {
-		vertical-align:middle;
-		border-top: 1px dotted #b5b5b5;
-	}
-
-	.block-message-custom {
-		background-image: none;
-		background-color: #F2F2F2;
-		filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-		padding: 14px;
-		border-color: #CCC;
-		-webkit-box-shadow: none;
-		-moz-box-shadow: none;
-		box-shadow: none;
-	}
-
-	.alert-message .btn {
-		font-weight:normal;
-	}
-
-	table.test_result {
-		border-top:none;
-	}
-	table.test_result th, table.test_result td {
-		padding:5px;
-		line-height:1;
-	}
-
-	embed.hidden {
-	    position: absolute;
-	    left: -10000px;
-	}
+	  position:absolute;
+	  top:0;
+	  left:0;
+	  right:0;
+	  bottom:0;
+  }
 
 	.gutter-mark {
 		background:red;
 	}
 
-	.deploy_options label, .deploy_options div.divlabel {
-		width:180px;
-		font-weight: bold;
+	div#div-editor-wrapper {
+		width:100%;
+		height:100%;
 	}
 
-	.deploy_options label {
-		text-align: left;
+	.ace_gutter-tooltip {
+		background-image: linear-gradient(45deg,rgba(0,0,0,.025) 25%,transparent 25%,transparent 50%,rgba(0,0,0,.025) 50%,rgba(0,0,0,.025) 75%,transparent 75%,transparent);
+		background-size: 64px 64px;
+		background-color: #f4f6f9;
 	}
-
-	.deploy_options .clearfix {
-		margin-left: 20px;
-		margin-bottom:10px;
-	}
-
-	.deploy_options input[type="checkbox"] {
-		margin: 0px;
-		width: 32px;
-		float: left;
-	}
-	.deploy_options .clearfix label > div {
-		float: left;
-		width: auto;
-		font-weight: bold;
-		padding-top: 5px;
-		cursor: pointer;
-	}
-
 </style>
 
-<div id="result_output">
-	<div class="alert alert-error">
-		<button type="button" class="close fui-cross"></button>
-		<span id="error_message"></span>
-	</div>
-</div>
-
-
-<div class="content" id="content1">
-
-
-	<ul class="nav nav-tabs nav-append-content">
-	  <li class="active"><a href="#tests_content" data-toggle="tab">Apex Code</a></li>
-	  <li class=""><a href="#logs" data-toggle="tab">Debug Logs</a></li>
-	</ul>
-
-	<div class="tab-content"  id="main-tab-content">
-	  <div class="tab-pane active" id="tests_content">
-  		<div id="editor_wrapper" style="position:relative;">
-  			<div id="editor"></div>
-  		</div>
-	  </div>
-	  <div class="tab-pane" id="logs">
-		<div id="log_wrapper" style="position:relative;">
-			<div class="alert alert-info">
-				<i class="icon-cogs icon-2x pull-left"></i>
-				Logs are streamed to your project's debug/logs directory. You can run the "Flush Debug Logs" command to clear logs from your file system.
-			</div>
+<div class="slds-grid">
+	<div class="slds-col">
+		<div class="slds-box slds-theme--info slds-m-bottom--medium" role="alert">
+		  <div class="slds-notify__content slds-grid">
+		    <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
+		      <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
+		    </svg>
+		    <div class="slds-col slds-align-middle">
+		      <h2 class="slds-text-heading--small ">Logs are streamed to your project's debug/logs directory. You can run the "Flush Debug Logs" command to clear logs from your file system.</h2>
+		    </div>
+		  </div>
 		</div>
-	  </div>
+		<div id="div-editor-wrapper" style="position:relative;">
+			<div id="editor"></div>
+		</div>
 	</div>
 </div>
-
 {% endblock %}
 
 
 {% block buttons %}
-	<input type="button" class="btn btn-info btn-embossed" value="Execute" onclick="executeApex()" id="btnExecuteApex">
+	<button class="slds-button slds-button--brand" onclick="executeApex()" id="btnExecuteApex">Execute</button>
 	{% include 'views/partials/cancel_button.html' %}
-	{% include 'views/partials/running_indicator.html' %}
 {% endblock %}
 
 {% block body_js %}
@@ -176,112 +57,82 @@
 <script>
 
 var editor;
-var line;
-
-function executeApex() {
-	$.ajax({
-		type: "POST",
-		url: "{{ mavensmate.ui.getBaseUrl() }}/app/apex",
-		dataType: "json",
-		contentType: 'application/json; charset=utf-8',
-		data: JSON.stringify({
-			body: editor.getValue(),
-			command: 'execute-apex'
-		}),
-		beforeSend: function() {
-			toggleRunningIndicator();
-			$("#btnExecuteApex").hide();
-			editor.getSession().clearAnnotations();
-			editor.setReadOnly(true);
-		},
-		complete: function(data){
-			responseHandler(data);
-		}
-	});
-}
-
-function handleResponse(response) {
-	// console.log(response);
-	try {
-		if (response.error) {
-			showMessage(response.error);
-			notifySound();
-		} else {
-			var response = response.result;
-			if (response.success) {
-				showMessage('Apex successfully executed. Check your project\'s debug directory for logs.', 'success');
-			} else {
-				var returnMessage = '';
-				var errorMessage = response["compileProblem"];
-				var exceptionMessage = response["exceptionMessage"];
-				if (errorMessage !== null) {
-					returnMessage += errorMessage;
-				}
-				if (exceptionMessage) {
-					if (returnMessage === '') {
-						returnMessage = exceptionMessage;
-					} else {
-						returnMessage += "<br/><br/>" + exceptionMessage;
-					}
-				}
-				line = (parseInt(response["line"]) === -1) ? 0 : (parseInt(response["line"]) - 1)
-				if (line === -1) {
-					line = 0;
-				}
-				var column = (parseInt(response["column"]) === -1) ? 0 : (parseInt(response["column"]) - 1)
-
-				console.log(line);
-				console.log(column);
-				console.log(returnMessage);
-
-				editor.getSession().setAnnotations([{
-				  row: line,
-				  column: column,
-				  text: returnMessage,
-				  type: 'error' // also warning and information
-				}]);
-				showMessage(returnMessage);
-				notifySound();
-			}
-		}
-	} catch(e) {
-		console.log(e)
-		$("#log_coverage_wrapper").html(response["result"])
-		$(".results_hidden").show();
-		$("#a_result").click();
-	}
-
-	toggleRunningIndicator();
-	$("#btnExecuteApex").show();
-	editor.setReadOnly(false);
-}
-
-function resizeEditor() {
-	$("#editor_wrapper").css("width", $(window).width() - 95)
-	$("#editor_wrapper").css("height", $(window).height() - 210)
-}
 
 $(function(){
-	editor = ace.edit("editor");
-	editor.setTheme("ace/theme/dawn");
-	var JavaMode = ace.require("ace/mode/java").Mode;
+	editor = ace.edit('editor');
+	editor.setTheme('ace/theme/dawn');
+	var JavaMode = ace.require('ace/mode/java').Mode;
 	editor.getSession().setMode(new JavaMode());
 	editor.getSession().setUseWrapMode(true);
 	editor.setFontSize(16);
 	editor.getSession().setTabSize(4);
-	resizeEditor()
-	editor.resize()
-	editor.focus()
-
-
-
+	editor.resize();
+	editor.focus();
 });
 
-$("#log_coverage_wrapper").height($(window).height() - 175)
-$(window).resize(function() {
-	$("#log_coverage_wrapper").height($(window).height() - 175)
-    resizeEditor()
-});
+function executeApex() {
+	editor.getSession().clearAnnotations();
+	editor.setReadOnly(true);
 
+	var opts = {
+	  showPageHeaderLoading: true,
+	  ajax: {
+	    type: 'POST',
+	    url: "/app/apex",
+	    data: JSON.stringify({
+	      body: editor.getValue()
+	    })
+	  }
+	};
+
+	mavensmate.request(opts)
+	  .then(function(response) {
+	    console.log('deploy done', response);
+
+	    var response = response.result;
+	    if (response.success) {
+	    	showToast('Apex successfully executed. Check your project\'s debug directory for logs.', 'success');
+	    } else {
+	    	var returnMessage = '';
+	    	var errorMessage = response.compileProblem;
+	    	var exceptionMessage = response.exceptionMessage;
+	    	if (errorMessage) {
+	    		returnMessage += errorMessage;
+	    	}
+	    	if (exceptionMessage) {
+	    		if (returnMessage === '') {
+	    			returnMessage = exceptionMessage;
+	    		} else {
+	    			returnMessage += '<br/><br/>' + exceptionMessage;
+	    		}
+	    	}
+	    	var line = (parseInt(response.line) === -1) ? 0 : (parseInt(response.line) - 1)
+	    	if (line === -1) {
+	    		line = 0;
+	    	}
+	    	var column = (parseInt(response.column) === -1) ? 0 : (parseInt(response.column) - 1)
+
+	    	console.log(line);
+	    	console.log(column);
+	    	console.log(returnMessage);
+
+	    	editor.getSession().setAnnotations([{
+	    	  row: line,
+	    	  column: column,
+	    	  text: returnMessage,
+	    	  type: 'error' // also warning and information
+	    	}]);
+
+	    	showToast(returnMessage, 'error');
+	    }
+	  })
+	  .catch(function(err) {
+	    console.error('could not execute apex', err);
+	  })
+	  .finally(function() {
+	    hidePageHeaderLoading();
+	    editor.setReadOnly(false);
+	  });
+}
 </script>
 {% endblock %}

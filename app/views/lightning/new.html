@@ -1,0 +1,103 @@
+{% extends "views/layouts/base.html" %}
+{% block yield %}
+
+<form class="slds-form--stacked">
+  <fieldset>
+    <div class="slds-form-element">
+      <label class="slds-form-element__label" for="apiName">API Name</label>
+      <div class="slds-form-element__control">
+        <input class="slds-input" placeholder="Name" type="text" id="apiName">
+      </div>
+    </div>
+    <div class="slds-form-element">
+      <label class="slds-form-element__label" for="description">Description</label>
+      <div class="slds-form-element__control">
+        <input class="slds-input" placeholder="Description" type="text" id="description">
+      </div>
+    </div>
+
+    {% if lightningType === 'app' || lightningType === 'component' %}
+      <div class="slds-form-element">
+        <label class="checkbox" for="controller">
+          <input type="checkbox" checked="checked" value="" id="controller" data-toggle="checkbox">
+          Create Controller
+        </label>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="checkbox" for="helper">
+          <input type="checkbox" checked="checked" value="" id="helper" data-toggle="checkbox">
+          Create Helper
+        </label>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="checkbox" for="style">
+          <input type="checkbox" checked="checked" value="" id="style" data-toggle="checkbox">
+          Create Style
+        </label>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="checkbox" for="documentation">
+          <input type="checkbox" checked="checked" value="" id="documentation" data-toggle="checkbox">
+          Create Documentation
+        </label>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="checkbox" for="renderer">
+          <input type="checkbox" checked="checked" value="" id="renderer" data-toggle="checkbox">
+          Create Renderer
+        </label>
+      </div>
+    {% endif %}
+  </fieldset>
+</form>
+
+{% endblock %}
+
+
+{% block buttons %}
+  <input type="button" id="btnSubmit" class="slds-button slds-button--brand" value="{{title}}"  onclick='create();'>
+  {% include 'views/partials/cancel_button.html' %}
+{% endblock %}
+
+{% block body_js %}
+  <script type="text/javascript">
+    function create() {
+      var opts = {
+        ajax: {
+          type: 'POST',
+          url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning/{{lightningType}}",
+          data: JSON.stringify({
+            apiName : $("#apiName").val(),
+            description : $("#description").val(),
+            {% if lightningType === 'app' || lightningType === 'component' %}
+            createController: $("#controller").is(":checked"),
+            createHelper: $("#helper").is(":checked"),
+            createStyle: $("#style").is(":checked"),
+            createDocumentation: $("#documentation").is(":checked"),
+            createRenderer: $("#renderer").is(":checked")
+            {% endif %}
+          }),
+        },
+        message: {
+          label: 'Creating new Lighting {{lightningType|capitalize}}...'
+        }
+      };
+
+      mavensmate.request(opts)
+        .then(function(response) {
+          console.log(response);
+          showToast(response.result.message, 'success');
+        })
+        .catch(function(err) {
+          console.error('could not create lighting app', err);
+        })
+        .finally(function() {
+          hideLoading();
+        });
+    }
+  </script>
+{% endblock %}

@@ -1,0 +1,386 @@
+<script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/dynatree.min.js" type="text/javascript"></script>
+<link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/dynatree.css"></link>
+
+{% if project %}
+<!-- TREE FILTER -->
+<div class="slds-box slds-theme--shade slds-m-bottom--x-small" id="div-metadata-tree-filter">
+  <div class="slds-grid">
+    <div class="slds-col slds-has-flexi-truncate">
+      <input type="text" placeholder="Search for metadata" id="txt-metadata-tree-search" class="slds-input" />
+    </div>
+    {% if namedDeployments %}
+    <div class="slds-col slds-col--padded slds-has-flexi-truncate">
+      <select id="select-metadata-tree-selected-deployment-name" class="slds-select">
+        {% for d in namedDeployments %}
+          {% if loop.index0 == 0 %}
+            {% set selected = 'selected="selected"' %}
+          {% else %}
+            {% set selected = '' %}
+          {% endif %}
+          <option value="{{d.path}}">{{d.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endif %}
+    <div class="slds-col slds-col--padded">
+      <div class="slds-button-group" role="group">
+        <button class="slds-button slds-button--neutral" id="btn-metadata-tree-clear-search" disabled="">Clear Search</button>
+        <button class="slds-button slds-button--neutral" id="a-metadata-tree-select-all">Select all</button>
+        <button class="slds-button slds-button--neutral" id="a-metadata-tree-select-none">Select none</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- DYNATREE WILL RENDER HERE -->
+<div id="metadataTree"></div>
+
+<script>
+  mavensmate.MetadataTree = function(opts) {
+    var self = this;
+    opts = opts || {};
+    this.filterEnabled = opts.filterEnabled || true;
+    this.packageLocation = opts.packageLocation || 'package.xml';
+    this.dynatree = null;
+    this.allSelected = false;
+    this.metadata = opts.metadata; // for new projects only
+
+    {% if project %}
+      $("#txt-metadata-tree-search").off('keyup').on('keyup', function(e) {
+        var code = (e.keyCode ? e.keyCode : e.which);
+        if (code == 13) {
+          console.log('submitting search...');
+          self.search();
+        }
+      });
+
+      $("#btn-metadata-tree-clear-search").off('click').on('click', function() {
+        self.clearSearch();
+      });
+
+      $('#a-metadata-tree-select-all').off('click').on('click', function() {
+        self.check(true);
+      });
+
+      $('#a-metadata-tree-select-none').off('click').on('click', function() {
+        self.check(false);
+      });
+
+      $("#select-metadata-tree-selected-deployment-name").change(function() {
+        console.log('selected a deployment!', this.value);
+        self.packageLocation = this.value;
+        self.render();
+      });
+    {% endif %}
+  };
+
+  /**
+   * Helper map
+   */
+  mavensmate.MetadataTree.prototype.childMetadata = [
+    {"xmlName" : "CustomField", "tagName" : "fields", "parentXmlName" : "CustomObject" },
+    {"xmlName" : "BusinessProcess", "tagName" : "businessProcesses", "parentXmlName" : "CustomObject" },
+    {"xmlName" : "RecordType", "tagName" : "recordTypes", "parentXmlName" : "CustomObject" },
+    {"xmlName" : "WebLink", "tagName" : "webLinks", "parentXmlName" : "CustomObject" },
+    {"xmlName" : "ValidationRule", "tagName" : "validationRules", "parentXmlName" : "CustomObject" },
+    {"xmlName" : "NamedFilter", "tagName" : "namedFilters", "parentXmlName" : "CustomObject" },
+    {"xmlName" : "SharingReason", "tagName" : "sharingReasons", "parentXmlName" : "CustomObject" },
+    {"xmlName" : "ListView", "tagName" : "listViews", "parentXmlName" : "CustomObject" },
+    {"xmlName" : "FieldSet", "tagName" : "fieldSets", "parentXmlName" : "CustomObject" },
+    {'xmlName' : 'ActionOverride', 'tagName' : 'actionOverrides', 'parentXmlName' : 'CustomObject' },
+    {'xmlName' : 'CompactLayout', 'tagName' : 'compactLayouts', 'parentXmlName' : 'CustomObject' },
+    {'xmlName' : 'SharingRecalculation', 'tagName' : 'sharingRecalculations', 'parentXmlName' : 'CustomObject' },
+    {"xmlName" : "CustomLabel", "tagName" : "customLabels", "parentXmlName" : "CustomLabels" },
+    {'xmlName' : 'SharingCriteriaRule', 'tagName' : 'sharingCriteriaRules', 'parentXmlName' : 'SharingRules' },
+    {'xmlName' : 'SharingOwnerRule', 'tagName' : 'sharingOwnerRules', 'parentXmlName' : 'SharingRules' },
+    {'xmlName' : 'SharingTerritoryRule', 'tagName' : 'sharingTerritoryRules', 'parentXmlName' : 'SharingRules' },
+    {"xmlName" : "WorkflowAlert", "tagName" : "alerts", "parentXmlName" : "Workflow" },
+    {"xmlName" : "WorkflowTask", "tagName" : "tasks", "parentXmlName" : "Workflow" },
+    {"xmlName" : "WorkflowOutboundMessage", "tagName" : "outboundMessages", "parentXmlName" : "Workflow" },
+    {"xmlName" : "WorkflowFieldUpdate", "tagName" : "fieldUpdates", "parentXmlName" : "Workflow" },
+    {"xmlName" : "WorkflowRule", "tagName" : "rules", "parentXmlName" : "Workflow" },
+    {"xmlName" : "WorkflowEmailRecipient", "tagName" : "emailRecipients", "parentXmlName" : "Workflow" },
+    {"xmlName" : "WorkflowTimeTrigger", "tagName" : "timeTriggers", "parentXmlName" : "Workflow" },
+    {"xmlName" : "WorkflowActionReference", "tagName" : "actionReferences", "parentXmlName" : "Workflow" }
+  ];
+
+  /**
+   * Returns the tree selections in json package format
+   */
+  mavensmate.MetadataTree.prototype.getPackage = function() {
+    var self = this;
+    var json = {};
+    var child_def = {};
+    for (var item in self.childMetadata) {
+        child_def[self.childMetadata[item]['tagName']] = self.childMetadata[item]['xmlName'];
+    }
+    try {
+        var records = self.dynatree.getSelectedNodes();
+        $.each(records, function(index, rec) {
+          if (rec.data.level == 1) {
+              var drillToType = false;
+              if ('type' in rec.data)
+                drillToType = true; //this is the edit form
+              if (json[rec.parent.data.text] === undefined) {
+                  try {
+                      var childXmlNames = drillToType ? rec.data.type.childXmlNames : rec.data.childXmlNames;
+                      var inFolder = drillToType ? rec.data.type.inFolder : rec.data.inFolder;
+                      if (Object.prototype.toString.call(childXmlNames) === '[object Array]') {
+                          if (childXmlNames.length === 0 && !inFolder) {
+                              json[rec.data.text] = '*';
+                          } else {
+                              json[rec.data.text] = [];
+                          }
+                      } else {
+                          if (inFolder) {
+                            json[rec.data.text] = [];
+                          } else {
+                            json[rec.data.text] = '*';
+                          }
+                      }
+                  } catch(e) {
+                      json[rec.data.text] = '*';
+                  }
+              }
+          } else if (rec.data.level == 2) {
+              if (json[rec.parent.data.text] === undefined) {
+                  json[rec.parent.data.text] = [];
+                  json[rec.parent.data.text].push(rec.data.text);
+              } else if (json[rec.parent.data.text] !== '*') {
+                  json[rec.parent.data.text].push(rec.data.text);
+              }
+          } else if (rec.data.level == 3) {
+              try {
+                var drillToType = false;
+                if ('type' in rec.parent.parent.data)
+                  drillToType = true;
+                var inFolder = drillToType ? rec.parent.parent.data.type.inFolder : rec.parent.parent.data.inFolder;
+                if (inFolder) {
+                    if (json[rec.parent.parent.data.text] === undefined) {
+                        json[rec.parent.parent.data.text] = [];
+                    }
+                    json[rec.parent.parent.data.text].push(rec.parent.data.text + "/" + rec.data.text);
+                } else {
+                    //this is a sub type like a custom field, list view, etc.
+                    //console.log(rec.parent);
+                    if (!rec.parent.bSelected) {
+                      if (rec.children !== undefined && rec.children !== null) {
+                        metadata_type = child_def[rec.data.text];
+                        if (!json[metadata_type]) {
+                            json[metadata_type] = [];
+                        }
+                        // console.log('---->>>>>');
+                        // console.log(rec.children);
+                        $.each(rec.children, function(index, childNode) {
+                            if (childNode.data.checked) {
+                                json[metadata_type].push(childNode.parent.parent.data.text+"."+childNode.data.text);
+                            }
+                        });
+                      }
+                    }
+                }
+              } catch(e) {
+                //todo
+              }
+          } else if (rec.data.level == 4) {
+              try {
+                 //this is a child metadata object, like a custom field
+                metadata_type = child_def[rec.parent.data.text];
+                if (json.hasOwnProperty(rec.parent.parent.parent.data.text)) { //json['CustomObject'] exists already
+                  if ($.inArray(rec.parent.parent.data.text, json[rec.parent.parent.parent.data.text]) === -1) {
+                    if (!json[metadata_type]) {
+                      json[metadata_type] = [];
+                    }
+                    json[metadata_type].push(rec.parent.parent.data.text+"."+rec.data.text);
+                  }
+                } else {
+                  if (!json[metadata_type]) {
+                      json[metadata_type] = [];
+                  }
+                  json[metadata_type].push(rec.parent.parent.data.text+"."+rec.data.text);
+                }
+              } catch(e) {
+                //todo
+              }
+          }
+        });
+    } catch(e) {
+      console.error('Error getting tree package', e);
+      return [];
+    }
+    return json;
+  }
+
+  /**
+   * Selects or deselects all visible nodes
+   */
+  mavensmate.MetadataTree.prototype.check = function(yesOrNo) {
+    $("#metadataTree").dynatree("getRoot").visit(function(node){
+      if ($("#txt-metadata-tree-search").val() == '') {
+        if (node.data.cls !== 'hidden')
+          node.select(yesOrNo);
+      } else {
+        if (node.data.level != 1 && node.data.cls !== 'hidden')
+          node.select(yesOrNo);
+      }
+    });
+  };
+
+  /**
+   * Renders a lazy load tree (used when creating a new project)
+   */
+  mavensmate.MetadataTree.prototype.renderBuffered = function() {
+    var self = this;
+    try {
+      $('#metadataTree').dynatree('destroy');
+    } catch(e) {}
+
+    $.each( self.metadata, function( key, value ) {
+      value.text = value.xmlName;
+      value.title = value.xmlName;
+      value.key = value.xmlName;
+      value.folder = true;
+      value.checked = false;
+      value.select = false;
+      value.children = [];
+      value.cls = 'folder';
+      value.isLazy = true;
+      value.isFolder = true;
+      value.level = 1;
+      value.id = value.xmlName;
+    });
+
+    $('#metadataTree').dynatree({
+      ajaxDefaults: { // Used by initAjax option
+        timeout: 600000, // >0: Make sure we get an ajax error for invalid URLs
+      },
+      children: self.metadata,
+      checkbox: true,
+      selectMode: 3,
+      debugLevel: 0,
+      persist: false,
+      onLazyRead: function(node) {
+        var opts = {
+          ajax: {
+            type: 'POST',
+            url: '/execute?async=1',
+            data: JSON.stringify({
+              metadataTypes: [ node.data.title ],
+              accessToken: $('#accessToken').val(),
+              refreshToken: $('#refreshToken').val(),
+              instanceUrl: $('#instanceUrl').val(),
+              command: 'list-metadata'
+            })
+          }
+        };
+        mavensmate.request(opts)
+          .then(function(response) {
+            console.log('list metadata response', response);
+            node.setLazyNodeStatus(DTNodeStatus_Ok);
+            node.addChild(response.result[0].children);
+          })
+          .catch(function(err) {
+            console.error('could not list metadata for node', err);
+          });
+      }
+    });
+    self.dynatree = $("#metadataTree").dynatree("getTree");
+  };
+
+  /**
+   * Renders the tree to the DOM
+   */
+  mavensmate.MetadataTree.prototype.render = function() {
+    var self = this;
+    try {
+      $("#metadataTree").dynatree("destroy");
+    } catch(e) {}
+
+    $('#metadataTree').dynatree({
+      initAjax: {
+        type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        url: '/app/project/{{project.settings.id}}/index?pid={{project.settings.id}}&pkg='+encodeURI(self.packageLocation)
+      },
+      checkbox: true,
+      selectMode: 3,
+      debugLevel: 0,
+      persist: false,
+      selectedIds: '',
+      onSelect: function(check, node) {
+        var selectedNodes = this.getSelectedNodes();
+        var ids = $.map(selectedNodes, function(node) {
+          return node.data.id;
+        });
+        this.selectedIds = ids;
+      },
+      onPostInit: function(isReloading, isError) {
+        if (this.selectedIds === undefined || this.selectedIds === '' || this.selectedIds == []) {
+          this.selectedIds = [];
+          var selected = this.getSelectedNodes();
+          var ids = $.map(selected, function(node){
+                    return node.data.id;
+                });
+          this.selectedIds = ids;
+        }
+        var filter = $("#txt-metadata-tree-search").val();
+        if (filter && filter.length > 2) {
+          $("#metadataTree").dynatree("getRoot").visit(function(node){
+              node.expand(true);
+          });
+        }
+      }
+    });
+    self.dynatree = $("#metadataTree").dynatree("getTree");
+  };
+
+  /**
+   * Submits a server search based on the value of #txt-metadata-tree-search
+   */
+  mavensmate.MetadataTree.prototype.search = function() {
+    var self = this;
+    var filter = $('#txt-metadata-tree-search').val();
+    if (filter && filter.length > 2) {
+      $('#metadataTree').dynatree('option', 'initAjax',
+        {
+          type: 'POST',
+          dataType: 'json',
+          contentType: 'application/json; charset=utf-8',
+          url: '/execute',
+          data: JSON.stringify({
+            keyword: filter,
+            ids: self.dynatree.selectedIds,
+            command: 'search-metadata-index'
+          })
+        }
+      );
+      self.dynatree.reload();
+      $('#btn-metadata-tree-clear-search').removeAttr('disabled');
+    }
+  };
+
+  /**
+   * Clears the search and re-renders the tree
+   */
+  mavensmate.MetadataTree.prototype.clearSearch = function() {
+    var self = this;
+    $('#metadataTree').dynatree('option', 'initAjax',
+      {
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        url: baseLocalServerURL+'/execute',
+        data: JSON.stringify({
+          ids: self.dynatree.selectedIds,
+          command: 'search-metadata-index'
+        })
+      }
+    );
+    self.dynatree.reload();
+    $('#txt-metadata-tree-search').val('');
+    $('#txt-metadata-tree-search').focus();
+    $('#btn-metadata-tree-clear-search').attr('disabled', '');
+  };
+</script>

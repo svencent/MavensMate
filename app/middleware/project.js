@@ -34,7 +34,7 @@ module.exports = function(req, res, next) {
           res.locals.project = project;
           if (project.requiresAuthentication) {
             logger.info('Project added to client, but it requires authentication, redirecting to auth endpoint');
-            if (req.url.indexOf('/app/') >= 0) {
+            if (req.url.indexOf('/app/') >= 0 && req.url.indexOf('/auth') === -1 && req.url.indexOf('/settings') === -1) {
               // we can redirect to re-auth
               res.redirect('/app/project/'+req.pid+'/auth?pid='+req.pid);
             } else if ((req.url.indexOf('/execute') >= 0 || req.url.indexOf('/status') >= 0) && req.query.command !== 'oauth-project') {
@@ -56,7 +56,7 @@ module.exports = function(req, res, next) {
         });
     } else if (project.requiresAuthentication) {
       req.project = project;
-      if (req.url.indexOf('/app/') >= 0 && req.url.indexOf('/auth') === -1) {
+      if (req.url.indexOf('/app/') >= 0 && req.url.indexOf('/auth') === -1 && req.url.indexOf('/settings') === -1) {
         // we can redirect to re-auth
         res.redirect('/app/project/'+req.pid+'/auth?pid='+req.pid);
       } else if ((req.url.indexOf('/execute') >= 0 || req.url.indexOf('/status') >= 0) && req.query.command !== 'oauth-project') {

@@ -1,113 +1,138 @@
-{% for res in testResults -%}
-	<div class="alert-message block-message-custom white" style="margin-bottom:0px;padding: 5px;-webkit-border-radius: 4px 4px 0px 0px;">
-			<p style="float:left;"><strong>{{ loop.key }}.cls</strong></p>
-			<p style="float:right;"><strong>{{ res.ExtendedStatus }}&nbsp;tests passed</strong></p>
-		<div style="clear:both;"></div>
+<div class="slds-tabs--default test-result-tabs" data-aljs="tabs">
+	<ul class="slds-tabs--default__nav" role="tablist">
+		<li class="slds-tabs--default__item slds-text-heading--label" title="Test Results" role="presentation">
+			<a class="slds-tabs--default__link" href="#" role="tab" tabindex="0" aria-selected="true" aria-controls="test-results" data-aljs-show="test-results">Test Results</a>
+		</li>
+		<li class="slds-tabs--default__item slds-text-heading--label" title="Class Coverage" role="presentation">
+			<a class="slds-tabs--default__link" href="#" role="tab" tabindex="1" aria-selected="false" aria-controls="class-coverage" data-aljs-show="class-coverage">Class Coverage</a>
+		</li>
+		<li class="slds-tabs--default__item slds-text-heading--label" title="Trigger Coverage" role="presentation">
+			<a class="slds-tabs--default__link" href="#" role="tab" tabindex="2" aria-selected="false" aria-controls="trigger-coverage" data-aljs-show="trigger-coverage">Trigger Coverage</a>
+		</li>
+	</ul>
+	<div id="test-results" class="slds-tabs--default__content slds-hide" role="tabpanel">
+
+		{% for res in testResults -%}
+    	<h3 class="slds-section-title--divider h3-test-class-name"><span>{{ loop.key }}.cls</span>&nbsp;&nbsp;{{ res.ExtendedStatus }}&nbsp;tests passed</h3>
+			<table class="slds-table slds-table--bordered slds-table--cell-buffer tablesorter">
+				<thead>
+					<tr class="slds-text-heading--label">
+						<th scope="col">Test Method</th>
+						<th scope="col">Result</th>
+						<th scope="col">Message</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for test in res.results -%}
+						<tr>
+							<td style="width:210px;">{{ test.MethodName }}</td>
+							<td style="width:45px;">
+								{% if 'Outcome' in test and test.Outcome === 'Pass' -%}
+									<span class="slds-badge slds-theme--success">Passed</span>
+								{% else %}
+									<span class="slds-badge slds-theme--error">Failed</span>
+								{%- endif %}
+							</td>
+							<td>
+								{% if test.Message %}
+									<pre>{{ test.Message }}</pre>
+								{% endif %}
+								{% if test.StackTrace -%}
+									<span class="label">Stack Trace</span>
+									<br/>
+									<br/>
+									<pre>{{ test.StackTrace }}</pre>
+								{%- endif %}
+							</td>
+						</tr>
+					{%- endfor %}
+				</tbody>
+			</table>
+		{%- endfor %}
+
 	</div>
-	<table class="table table-striped test_result" style="-webkit-border-radius: 0px 0px 4px 4px;">
-		<thead>
-			<tr>
-				<th>Test Method</th>
-				<th>Result</th>
-				<th>Message</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for test in res.results -%}
-				<tr>
-					<td style="width:210px;">{{ test.MethodName }}</td>
-					<td style="width:45px;">
-						{% if 'Outcome' in test and test.Outcome === 'Pass' -%}
-							<span class="label label-small label-success">Passed</span>
-						{% else %}
-							<span class="label label-small label-important">Failed</span>
-						{%- endif %}
-					</td>
-					<td>
-						{% if test.Message %}
-							<pre>{{ test.Message }}</pre>
-						{% endif %}
-						{% if test.StackTrace -%}
-							<span class="label">Stack Trace</span>
-							<br/>
-							<br/>
-							<pre>{{ test.StackTrace }}</pre>
-						{%- endif %}
-					</td>
+	<div id="class-coverage" class="slds-tabs--default__content slds-hide" role="tabpanel">
+		<!-- START CLASS COVERAGE -->
+		<table class="slds-table slds-table--bordered slds-table--cell-buffer table-apex-code-test-results tablesorter">
+			<thead>
+				<tr class="slds-text-heading--label">
+					<th scope="col">Apex Class</th>
+					<th scope="col">Code Coverage</th>
 				</tr>
-			{%- endfor %}
-		</tbody>
-	</table>
-{%- endfor %}
+			</thead>
+			<tbody>
+				{% for res in coverageResults.classes -%}
+					{% set apexClassName = loop.key %}
+					<tr id="tr-result-wrapper-ApexClass-{{apexClassName}}">
+						<td>{{ apexClassName }}.cls</td>
+						<td>
+							<span class="coverage slds-align-middle">{{ res.percentCovered }}%</span>
+							<div class="progress-wrapper slds-align-middle slds-p-right--medium">
+								<div class="progress">
+								  <span class="meter slds-theme--{{mavensmate.ui.getCoverageCssClass(res.percentCovered)}}" style="width: {{res.percentCovered}}%"></span>
+								</div>
+							</div>
+							{% if mavensmate.ui.doesClassOrTriggerExist(project, apexClassName, 'ApexClass') -%}
+								<a class="slds-button slds-align-middle a-show-hide-coverage" data-name="{{apexClassName}}" data-metadata-type-xml-name="ApexClass"
+									onclick="showCoverage(this, '{{ apexClassName }}', 'ApexClass', [{{ res.uncoveredLines }}]);">Show Coverage</a>
+							{% endif %}
+						</td>
+					</tr>
+					{% if mavensmate.ui.doesClassOrTriggerExist(project, apexClassName, 'ApexClass') -%}
+					<tr id="tr-coverage-wrapper-ApexClass-{{apexClassName}}" class="tr-coverage-wrapper">
+						<td colspan="2">
+							<div class="coverage-wrapper slds-scrollable">
 
-<div id="class_wrapper">
-	<!-- START CLASS PROCESSING -->
-	{% for res in coverageResults.classes -%}
-		{% set apexClassName = loop.key %}
-		<div class="alert alert-{{ mavensmate.ui.getCoverageCssClass(res.percentCovered) }}">
-			<h3>
-				<div style="float:left;">
-					{{ loop.key }}.cls
-				</div>
-				<div style="float:right;text-align:right;">
-					({{ res.percentCovered }}% covered)
-				</div>
-				<div style="clear:both;"></div>
-			</h3>
+							</div>
+						</td>
+					</tr>
+					{% endif %}
+				{%- endfor %}
+			</tbody>
+		</table>
+		<!-- END CLASS COVERAGE -->
+	</div>
+	<div id="trigger-coverage" class="slds-tabs--default__content slds-hide" role="tabpanel">
+		<!-- START TRIGGER COVERAGE -->
+		<table class="slds-table slds-table--bordered slds-table--cell-buffer table-apex-code-test-results tablesorter">
+			<thead>
+				<tr class="slds-text-heading--label">
+					<th scope="col">Apex Trigger</th>
+					<th scope="col">Code Coverage</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for res in coverageResults.triggers -%}
+					{% set apexTriggerName = loop.key %}
+					<tr id="tr-result-wrapper-ApexClass-{{apexTriggerName}}">
+						<td>{{ apexTriggerName }}.trigger</td>
+						<td>
+							<span class="coverage slds-align-middle">{{ res.percentCovered }}%</span>
+							<div class="progress-wrapper slds-align-middle slds-p-right--medium">
+								<div class="progress">
+								  <span class="meter slds-theme--{{mavensmate.ui.getCoverageCssClass(res.percentCovered)}}" style="width: {{res.percentCovered}}%"></span>
+								</div>
+							</div>
+							{% if mavensmate.ui.doesClassOrTriggerExist(project, apexTriggerName, 'ApexTrigger') -%}
+								<a class="slds-button slds-align-middle a-show-hide-coverage" data-name="{{apexTriggerName}}" data-metadata-type-xml-name="ApexClass"
+									onclick="showCoverage(this, '{{ apexTriggerName }}', 'ApexClass', [{{ res.uncoveredLines }}]);">Show Coverage</a>
+							{% endif %}
+						</td>
+					</tr>
+					{% if mavensmate.ui.doesClassOrTriggerExist(project, apexTriggerName, 'ApexClass') -%}
+					<tr id="tr-coverage-wrapper-ApexClass-{{apexTriggerName}}" class="tr-coverage-wrapper">
+						<td colspan="2">
+							<div class="coverage-wrapper slds-scrollable">
 
-			<div class="progress" style="height:22px;margin:10px 0px;">
-				<div class="bar bar-{{ mavensmate.ui.getCoverageCssClass(res.percentCovered) }}" style="width: {{ res.percentCovered }}%;"></div>
-			</div>
-
-			{% if mavensmate.ui.doesClassOrTriggerExist(project, apexClassName, 'ApexClass') -%}
-		    	<a href="#" class="btn btn-mini btn-info" onclick="showCoverage(this, '{{ apexClassName }}', 'ApexClass', 'coverage-wrapper-class-{{loop.index}}', [{{ res.uncoveredLines }}]);">Show Coverage</a>
-			{%- endif %}
-		</div>
-
-		<div id="coverage-wrapper-class-{{loop.index}}" class="coverage-wrapper">
-
-		</div>
-
-	{%- endfor %}
-	<!-- END CLASS PROCESSING -->
-</div>
-
-<div id="trigger_wrapper">
-	<!-- START TRIGGER PROCESSING -->
-	{% for res in coverageResults.triggers -%}
-		{% set apexTriggerName = loop.key %}
-		<div class="alert alert-{{ mavensmate.ui.getCoverageCssClass(res.percentCovered) }}">
-			<h3>
-				<div style="float:left;">
-					{{ loop.key }}.cls
-				</div>
-				<div style="float:right;text-align:right;">
-					({{ res.percentCovered }}% covered)
-				</div>
-				<div style="clear:both;"></div>
-			</h3>
-
-			<div class="progress" style="height:22px;margin:10px 0px;">
-				<div class="bar bar-{{ mavensmate.ui.getCoverageCssClass(res.percentCovered) }}" style="width: {{ res.percentCovered }}%;"></div>
-			</div>
-
-			{% if mavensmate.ui.doesClassOrTriggerExist(project, apexTriggerName, 'ApexTrigger') -%}
-		    	<a href="#" class="btn btn-mini btn-info" onclick="showCoverage(this, '{{ apexTriggerName }}', 'ApexTrigger', 'coverage-wrapper-trigger-{{loop.index}}', [{{ res.uncoveredLines }}]);">Show Coverage</a>
-			{%- endif %}
-		</div>
-
-		<div id="coverage-wrapper-trigger-{{loop.index}}" class="coverage-wrapper">
-
-		</div>
-
-	{%- endfor %}
-	<!-- END TRIGGER PROCESSING -->
-</div>
-
-
-<div id="log_wrapper" style="position:relative;">
-	<div class="alert alert-info">
-		<i class="icon-cogs icon-2x pull-left"></i>
-		To generate debug logs for your Apex unit tests, be sure to run the "Start Logging" command before running tests. Logs will be streamed to your project's debug/tests/&lt;Apex_Class_Name&gt; directory. You can run the "Flush Debug Logs" command to clear logs from your file system.
+							</div>
+						</td>
+					</tr>
+					{% endif %}
+				{%- endfor %}
+			</tbody>
+		</table>
+		<!-- END TRIGGER COVERAGE -->
 	</div>
 </div>
+
+

@@ -8,451 +8,413 @@
         <title>MavensMate</title>
     {% endif %}
     <link rel="icon" type="image/png" href="{{ mavensmate.ui.getStaticResourcePath() }}/images/favicon.png">
-    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/bootstrap/css/bootstrap.css"></link>
-    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/bootstrap/css/bootstrap-responsive.css"></link>
-    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/flat-ui.css"></link>
+    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/styles/salesforce-lightning-design-system.css"></link>
     <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/mavensmate.css"></link>
-    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/dynatree.css"></link>
-    <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/font-awesome.min.css"></link>
     <link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/prettify.css"></link>
     <script>
         var baseLocalServerURL = '{{ mavensmate.ui.getBaseUrl() }}';
     </script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/bluebird.min.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/lodash.min.js" type="text/javascript"></script>
     <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/jquery.js" type="text/javascript"></script>
     <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/jqueryui.js" type="text/javascript"></script>
-    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/bootstrap.min.js" type="text/javascript"></script>
-    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/bootstrap-select.js" type="text/javascript"></script>
-    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/flatui-checkbox.js" type="text/javascript"></script>
-    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/mavensmate.js" type="text/javascript"></script>
-    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/dynatree2.js" type="text/javascript"></script>
-    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/jquery.contextMenu-custom.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/js/jquery.aljs-init.min.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/js/jquery.aljs-tabs.min.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/js/jquery.aljs-picklist.min.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/js/jquery.aljs-modal.min.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/js/jquery.aljs-notification.min.js" type="text/javascript"></script>
+    <script src="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/js/jquery.aljs-multi-select.min.js" type="text/javascript"></script>
     <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/prettify.js" type="text/javascript"></script>
     <script>
-        var tree;
+        var mavensmate = {};
+        mavensmate.request = function(opts) {
+          var self = this;
+          if (opts.showPageHeaderLoading)
+            showPageHeaderLoading();
+          if (opts.async === undefined)
+            opts.async = true;
+          this.async = opts.async; // poll the server
+          this.ajax = opts.ajax;
+          this.ajax.dataType = opts.ajax.dataType || 'json';
+          this.ajax.contentType = this.ajax.contentType || 'application/json; charset=utf-8';
+          this.message = opts.message;
+          this._getAsyncResult = function(requestId) {
+            console.log('polling for async result...', requestId);
+            return new Promise(function(resolve, reject) {
+              function _pollForAsyncResult(requestId) {
+                var req = $.ajax({
+                  type: 'GET',
+                  url: '{{ mavensmate.ui.getBaseUrl() }}/execute/'+requestId
+                });
+                req
+                  .success(function(res) {
+                    if (res.status === 'pending') {
+                      console.log('request still pending', res);
+                      setTimeout(function() { _pollForAsyncResult(requestId); }, 1000);
+                    } else {
+                      console.log('async polling done', res);
+                      resolve(res);
+                    }
+                  })
+                  .error(function(err) {
+                    reject(err);
+                  });
+              }
+              _pollForAsyncResult(requestId);
+            });
+          };
+          return new Promise(function(resolve, reject) {
+            hideToast();
+            var loadingPromise = self.async && self.message ? showLoading(self.message.label, self.message.detail) : Promise.resolve();
+            loadingPromise
+              .then(function() {
+                var req = $.ajax(self.ajax)
+                console.log(req);
+                req
+                  .success(function(res) {
+                    console.log('ajax call completed successfully, response is:', res);
+                    if (self.async) {
+                      if (res.status === 'pending' && res.id) {
+                        self._getAsyncResult(res.id)
+                          .then(function(res) {
+                            console.log('polling complete', res);
+                            if (res.error) {
+                              showToast(res.error, 'error');
+                              reject(res);
+                            } else {
+                              resolve(res);
+                            }
+                          })
+                          .catch(function(err) {
+                            reject(err);
+                          });
+                      } else {
+                        console.error(res);
+                        showToast('Could not retrieve asynchronous response from server. Your request may have a synchronous request, in which case your mavensmate.request opts should include an async=false flag', 'error');
+                        reject(new Error('Could not retrieve asynchronous response from server. Your request may have a synchronous request, in which case your mavensmate.request opts should include an async=false flag'))
+                      }
+                    } else {
+                      resolve(res);
+                    }
+                  })
+                  .error(function(err) {
+                    console.error('ajax call returned an error', err);
+                    var res;
+                    try {
+                      var res = JSON.parse(err.responseText);
+                      showToast(res.error, 'error');
+                    } catch(e) {
+                      showToast(err.responseText, 'error');
+                    }
+                    reject(err);
+                  });
+              })
+              .catch(function(err) {
+                reject(err);
+              });
+          });
+        };
+        mavensmate.openProjectInEditor = function(editor, pid) {
+          pid = pid || '{{project.settings.id}}';
+          var opts = {
+            async: false,
+            ajax: {
+              type: 'GET',
+              url: baseLocalServerURL+'/execute',
+              data: {
+                command: 'open-project',
+                editor: editor,
+                pid: pid
+              }
+            }
+          };
+          mavensmate.request(opts)
+            .then(function(response) {
+              showToast(response.message, 'success');
+            })
+            .catch(function(err) {
+              console.error('could not open project in editor', err);
+            })
+            .finally(function() {
+              hideLoading();
+            });
+        }
+        mavensmate.executeCommand = function(commandName, msg, async, data) {
+          data = data || {};
+          if (async === undefined)
+            async = false;
+          data.command = commandName;
+          var opts = {
+            async: async,
+            ajax: {
+              type: 'GET',
+              url: baseLocalServerURL+'/execute',
+              data: data
+            },
+            message: {
+              label: msg
+            }
+          };
+          console.log(opts);
+          mavensmate.request(opts)
+            .then(function(response) {
+              showToast(response.message, 'success');
+            })
+            .catch(function(err) {
+              console.error('could not open execute command', err);
+            })
+            .finally(function() {
+              hideLoading();
+            });
+        }
 
         var headers = { 'MavensMate-Editor-Agent': '{{ editor }}' };
         {% if project && project.settings && project.settings.id %}
-            headers['MavensMate-pid'] = '{{ project.settings.id }}';
+          headers['MavensMate-pid'] = '{{ project.settings.id }}';
         {% endif %}
 
         $.ajaxSetup({
-            headers: headers
+          headers: headers
         });
 
         $(function() {
+          $('[data-aljs="modal"]').modal();
+          $('body').notification();
 
-            //instantiate tabs on page, if any
-            $('.nav-tabs a').click(function (e) {
-              e.preventDefault();
-              $(this).tab('show');
-            });
-
-            //clicking on close "x" hides message (and resizes elements)
-            $('#result_output .close').on('click', function() {
-                $('#result_output').hide();
-                $(window).trigger('resize');
-            });
-
-            $('.closeable .close').on('click', function() {
-                $(this).parent().hide();
-                $(window).trigger('resize');
-            });
-
-            $('#success-open-alert .close').on('click', function() {
-                $('#success-open-alert').hide();
-                $(window).trigger('resize');
-            });
-
-            //fancy select boes
-            $("select.info").selectpicker({style: 'btn-info btn-embossed'});
-
-            //when the windows resizes, resize everything accordingly
-            $(window).resize(function() {
-                resizeElements();
-                $(".twipsy").height($(window).height());
-                $(".twipsy").width($(window).width());
-            });
-
-            //focus first input
-            $("input[type='text']:first").focus(); //focus first input element
+          //focus first input
+          $("input[type='text']:first").focus();
         });
 
-        function closeWindow() {
-            var editor = '{{ editor }}';
-            if (editor.toLowerCase() === 'atom') {
-                var event = new CustomEvent('mavensmateCloseIframe', { 'detail': '{{ uid }}' });
-                parent.document.dispatchEvent(event);
-            } else {
-                window.close();
+        function showLoading(msg, detail) {
+          return new Promise(function(resolve, reject) {
+            try {
+              msg = msg || 'Loading...';
+              $('#global-loading-modal h2').html(msg);
+              if (detail) {
+                $('#global-loading-modal p').html(detail);
+                $('#global-loading-modal p').show();
+              } else {
+                $('#global-loading-modal p').html('');
+                $('#global-loading-modal p').hide();
+              }
+              $('#global-loading-modal').modal('show');
+              $('#global-loading-modal').on('shown.aljs.modal', function(evt) {
+                resolve();
+              });
+            } catch(e) {
+              console.error('Could not show global loading indicator', e);
+              reject(e);
             }
+          });
+        }
+
+        function hideLoading() {
+          return new Promise(function(resolve, reject) {
+            try {
+              $('#global-loading-modal').modal('dismiss');
+              $('#global-loading-modal').on('dismissed.aljs.modal', function(evt) {
+                resolve();
+              });
+            } catch(e) {
+              console.error('Could not hide global loading indicator', e);
+              reject(e);
+            }
+          });
         }
 
         function notifySound() {
-            if ({{ mavensmate.ui.config.get('mm_play_sounds') }}) {
-                var snd = new Audio('{{ mavensmate.ui.getStaticResourcePath() }}/sounds/ding.mp3'); // buffers automatically when created
-                snd.play();
-            }
+          if ({{ mavensmate.ui.config.get('mm_play_sounds') }}) {
+            var snd = new Audio('{{ mavensmate.ui.getStaticResourcePath() }}/sounds/ding.mp3'); // buffers automatically when created
+            snd.play();
+          }
         }
 
-        function submitSearch() {
-            var filter = $('#txtFilter').val();
-            if (filter && filter.length > 2) {
-                $('#tree').dynatree('option', 'initAjax',
-                    {
-                        type: 'POST',
-                        dataType: 'json',
-                        contentType: 'application/json; charset=utf-8',
-                        url: baseLocalServerURL+'/execute',
-                        data: JSON.stringify({
-                            keyword: filter,
-                            ids: $('#tree').dynatree('getTree').selectedIds,
-                            command: 'search-metadata-index'
-                        })
-                    }
-                );
-                $('#tree').dynatree('getTree').reload();
-                $('#search-btn').removeClass('btn-success').addClass('btn-danger').html('<i class="icon-remove"></i>')
-            }
+        function showToast(msg, severity, detail, delay) {
+          severity = severity || 'info';
+          if (severity === 'success' && !delay)
+            delay = 3000;
+          $('#toast').removeClass('slds-theme--error');
+          $('#toast').removeClass('slds-theme--info');
+          $('#toast').removeClass('slds-theme--success');
+          $('#toast').addClass('slds-theme--'+severity);
+          $('#toast h2').html(msg);
+          $('#toast p').html(detail);
+          $('#toast').notification('show');
+          var symbolsHref = $('#toast svg.slds-icon use').attr('xlink:href').split('#')[0];
+          if (severity === 'error') {
+            symbolsHref += '#warning';
+          } else if (severity === 'info') {
+            symbolsHref += '#info';
+          } else if (severity === 'success') {
+            symbolsHref += '#check';
+          }
+          $('#toast svg.slds-icon use').attr('xlink:href', symbolsHref);
+          if (delay) {
+            setTimeout(function() {
+              $('#toast').notification('dismiss');
+            }, delay);
+          }
         }
 
-        function clearFilter() {
-            $('#tree').dynatree('option', 'initAjax',
-                {
-                    type     : 'POST',
-                    dataType : 'json',
-                    contentType: 'application/json; charset=utf-8',
-                    url      : baseLocalServerURL+'/execute',
-                    data     : JSON.stringify({
-                        path                : '{{ project.path }}',
-                        ids                 : $('#tree').dynatree('getTree').selectedIds,
-                        command             : 'search-metadata-index'
-                    })
-                }
-            );
-            $('#tree').dynatree('getTree').reload();
-            $('#txtFilter').val('');
-            $('#txtFilter').focus();
-            $("#search-btn").removeClass('btn-danger').addClass('btn-success').html('<i class="icon-search"></i>');
+        function hideToast() {
+          $('#toast').notification('dismiss');
         }
 
-        //right now this only supports existing projects (not new project UI)
-        function refreshNode(mtype) {
-          $.ajax({
-            type: 'POST',
-            dataType : 'json',
-            contentType: 'application/json; charset=utf-8',
-            url: baseLocalServerURL+"/execute",
-            data: JSON.stringify({
-              metadata_types: mtype,
-              path: '{{ project.path }}',
-              command: 'refresh-metadata-index'
-            }),
-            beforeSend: function() { showLoading('Refreshing Metadata Type: '+ mtype +'...'); },
-            complete: function(data){
-              $('#tree').dynatree('getTree').reload()
-            }
-          });
+        function showPageHeaderLoading() {
+          $('#page-header-buttons .slds-button-group').hide();
+          $('#page-header-loading-indicator').show();
         }
 
-        function openProjectInEditor(editor, pid) {
-          pid = pid || '{{project.settings.id}}';
-          $.ajax({
-            type: 'GET',
-            url: baseLocalServerURL+'/execute',
-            data: {
-              command: 'open-project',
-              editor: editor,
-              pid: pid
-            }
-          });
+        function hidePageHeaderLoading() {
+          $('#page-header-loading-indicator').hide();
+          $('#page-header-buttons .slds-button-group').show();
+        }
+
+        function toggleRunningIndicator() {
+          $('#page-header-loading-indicator').toggle();
+          $('#page-header-buttons .slds-button-group').toggle();
+        }
+
+        function metadataTypeSort(a, b) {
+          var an = a.getAttribute('id'),
+            bn = b.getAttribute('id');
+          if(an > bn) {
+            return 1;
+          }
+          if(an < bn) {
+            return -1;
+          }
+          return 0;
         }
     </script>
 </head>
 <body id="body" class="{{ editor }} {% block body_class %}{% endblock %}">
+    <div class="slds-grid slds-grid--vertical-stretch slds-grid--frame">
 
-    {% include 'views/partials/context-menu.html' %}
+      {% include 'views/partials/left_menu.html' %}
 
-    <div id="footer" style="padding:10px 0px;">
-        <div class="container">
-            <div class="btn-group" style="position:absolute;top:7px;left:5px;background:transparent;">
-                <button class="dropdown-toggle" type="button" data-toggle="dropdown" style="border-radius:0 !important;background:none;border:none;">
-                    <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/burger.png" id="" style="width:24px;height:24px;"/>
-                </button>
-                <ul class="dropdown-menu multi-level burger" role="menu" style="border-color:#34495e;background-color:#768693;margin-top: 8px;width:auto;">
-                    {% if project && project.sfdcClient %}
-                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/home?pid={{project.settings.id}}">Home</a></li>
+      <div id="frame-right-column" class="slds-p-bottom--large">
 
-                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/settings?pid={{project.settings.id}}">Settings</a></li>
-
-                        <li class="dropdown-submenu">
-                            <a tabindex="-1" href="#">Project</a>
-                            <ul class="dropdown-menu">
-                                {% for editorName, editorPath in mavensmate.ui.getSupportedEditors() %}
-                                <li><a target="_blank" href="javascript:void(0)" onclick="openProjectInEditor('{{editorName}}');">Open in {{ editorName|capitalize }}</a></li>
-                                {% endfor %}
-                                <li class="divider"></li>
-                                <li><a href="javascript:void(0);" onclick="openProjectModal();">Open Project</a></li>
-                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new?pid={{project.settings.id}}">New Project</a></li>
-                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}">Edit Project</a></li>
-                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/auth?pid={{project.settings.id}}">Salesforce Authentication</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="dropdown-submenu">
-                            <a tabindex="-1" href="#">Metadata</a>
-                            <ul class="dropdown-menu">
-                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/ApexClass/new?pid={{project.settings.id}}">New Apex Class</a></li>
-                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/ApexTrigger/new?pid={{project.settings.id}}">New Apex Trigger</a></li>
-                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/ApexPage/new?pid={{project.settings.id}}">New Visualforce Page</a></li>
-                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/metadata/ApexComponent/new?pid={{project.settings.id}}">New Visualforce Component</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="dropdown-submenu">
-                            <a tabindex="-1" href="#">Lightning</a>
-                            <ul class="dropdown-menu">
-                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/app/new?pid={{project.settings.id}}">New Lightning App</a></li>
-                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/component/new?pid={{project.settings.id}}">New Lightning Component</a></li>
-                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/event/new?pid={{project.settings.id}}">New Lightning Event</a></li>
-                                <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/lightning/interface/new?pid={{project.settings.id}}">New Lightning Interface</a></li>
-                            </ul>
-                        </li>
-
-                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/connections/new?pid={{project.settings.id}}">Deployment Connections</a></li>
-                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/deploy/new?pid={{project.settings.id}}">Deploy to Server</a></li>
-                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/test/new?pid={{project.settings.id}}">Run Apex Unit Tests</a></li>
-                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/apex/new?pid={{project.settings.id}}">Execute Apex</a></li>
-                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/logs?pid={{project.settings.id}}">Debug Logs</a></li>
-                    {% else %}
-                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/home">Home</a></li>
-                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/settings">Settings</a></li>
-                        <li><a target="_blank" href="{{ mavensmate.ui.getBaseUrl() }}/app/project/new">New Project</a></li>
-                        <li><a href="javascript:void(0);" onclick="openProjectModal();">Open Project</a></li>
-                    {% endif %}
-                </ul>
-            </div>
-            <div class="main-wrapper">
-                <div style="text-align:center;font-size:18px;">
-                    {% if project && project.sfdcClient && title %}
-                        {{ project.name }} ({{ project.sfdcClient.getUsername() }}) - {{ title }}
-                    {% else %}
-                        {{ title }}
-                    {% endif %}
+        <!-- HEADER -->
+        <div class="" role="banner" id="page-header">
+          <div class="slds-grid">
+            <div class="slds-col slds-has-flexi-truncate">
+              <div class="slds-media slds-media--center slds-no-space slds-grow">
+                <div class="slds-media__figure">
+                  {% if project && project.sfdcClient %}
+                      <a href="{{ mavensmate.ui.getBaseUrl() }}/app/home?pid={{project.settings.id}}">
+                        <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/>
+                      </a>
+                  {% else %}
+                      <a href="{{ mavensmate.ui.getBaseUrl() }}/">
+                        <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/>
+                      </a>
+                  {% endif %}
                 </div>
+              </div>
             </div>
-            <div class="" style="position:absolute;top:5px;right:5px;background:transparent;">
-                <a href="javascript:void(0);" onclick="openProjectModal();">
-                    <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/open-project.png" id="openProject"/>
-                </a>
+            <div class="slds-col slds-no-flex slds-grid slds-align-bottom">
+              <button class="slds-button slds-button--icon" onClick="location.href='/app/settings{% if project %}?pid={{project.settings.id}}{% endif %}'">
+                <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
+                  <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#settings"></use>
+                </svg>
+                <span class="slds-assistive-text">Settings</span>
+              </button>
+              {% if project && mavensmate.ui.getPhotoUrl(project)%}
+                <img style="border-radius:4px;height:30px;margin-left: 0.4rem;" src="{{mavensmate.ui.getPhotoUrl(project)}}"/>
+              {% else %}
+                <div style="border-radius:4px;height:30px;margin-left: 0.4rem;"></div><!-- spacer -->
+              {% endif %}
             </div>
+          </div>
         </div>
-    </div>
+        <!-- END HEADER -->
 
-    <div class="navbar">
-        <div class="navbar-inner">
-            <div class="container" style="position:relative;">
-                {% if project && project.sfdcClient %}
-                    <a href="{{ mavensmate.ui.getBaseUrl() }}/app/home?pid={{project.settings.id}}">
-                        <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/>
-                    </a>
-                {% else %}
-                    <a href="{{ mavensmate.ui.getBaseUrl() }}/">
-                        <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/>
-                    </a>
+        <!-- PAGE HEADER -->
+        <div class="slds-page-header slds-m-bottom--medium" role="banner" style="padding:0.5rem 1.0rem;margin-top: 53px;">
+          <div class="slds-grid">
+            <div class="slds-col slds-has-flexi-truncate">
+              <div class="slds-media slds-media--center">
+                {% if sldsIconClassName %}
+                <div class="slds-media__figure">
+                  <svg aria-hidden="true" class="slds-icon {{sldsIconClassName}}">
+                    <use xlink:href="/app/static/lds/assets/icons/{{sldsSprite}}/svg/symbols.svg#{{sldsIconName}}"></use>
+                  </svg>
+                </div>
                 {% endif %}
-                <div class="actions-right">
-                    {% block buttons %}{% endblock %}
+                <div class="slds-media__body">
+                  <p class="slds-page-header__title slds-truncate slds-align-middle" title="{{title}}">{{title}}</p>
+                  {% if project && url.indexOf('/app/settings') !== 0 %}
+                  <p class="slds-text-body--small page-header__info">{{project.name}}</p>
+                  {% endif %}
                 </div>
-            </div>
+              </div>
+             </div>
+             <div class="slds-col slds-no-flex slds-grid slds-align-bottom" id="page-header-buttons">
+                <div class="slds-button-group" role="group">
+                  {% block buttons %}{% endblock %}
+                </div>
+                <div class="slds-spinner slds-spinner--small" aria-hidden="false" role="alert" id="page-header-loading-indicator">
+                  <div class="slds-spinner__dot-a"></div>
+                  <div class="slds-spinner__dot-b"></div>
+                </div>
+              </div>
+          </div>
         </div>
-    </div>
 
-    <div class="container">
-        <div class="main-wrapper">
-    		<div id="global_message_wrapper">
-                <div class="alert alert-error">
-                    <button type="button" class="close fui-cross" data-dismiss="alert"></button>
-                    <p id="global_message"></p>
-                </div>
-            </div>
+        <!-- CONTENT -->
+        <div class="slds-container--fluid" id="main-wrapper">
+          <div class="slds-m-left--medium slds-m-right--medium">
             {% block yield %}{% endblock %}
+          </div>
         </div>
-    </div>
-
-    <div class="footer bottom-menu bottom-menu-inverse" style="padding:15px 0px;">
-
-    </div>
-
-    <div class="loading">
-        <div class="twipsy"></div>
-        <div class="loading_message_wrapper">
-            <div class="loading_message">
-                <div id="floatingCirclesG">
-                <div class="f_circleG" id="frotateG_01">
-                </div>
-                <div class="f_circleG" id="frotateG_02">
-                </div>
-                <div class="f_circleG" id="frotateG_03">
-                </div>
-                <div class="f_circleG" id="frotateG_04">
-                </div>
-                <div class="f_circleG" id="frotateG_05">
-                </div>
-                <div class="f_circleG" id="frotateG_06">
-                </div>
-                <div class="f_circleG" id="frotateG_07">
-                </div>
-                <div class="f_circleG" id="frotateG_08">
-                </div>
-                </div>
-
-                <span id="loading_message"></span>
-            </div>
-        </div>
+      </div>
     </div>
     {% block body_js %}{% endblock %}
-    <script>
-        $(function() {
-            resizeFilter()
-            $(window).resize(function() {
-                resizeFilter()
-            })
 
-            //set up global ajax handling
-            try {
-                setUpAjaxErrorHandling()
-            } catch(e) {
-                console.log(e)
-            }
+    <!-- GLOBAL TOAST -->
+    <div class="slds-notify_container">
+      <div class="slds-notify slds-notify--toast slds-hide" role="alert" id="toast">
+        <span class="slds-assistive-text">Error</span>
+        <button class="slds-button slds-button--icon-inverse slds-notify__close" data-aljs-dismiss="notification">
+          <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
+            <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+          </svg>
+          <span class="slds-assistive-text">Close</span>
+        </button>
+        <div class="slds-notify__content slds-grid">
+          <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
+            <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+            <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#check"></use>
+            <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
 
-            if ($("#txtFilter") !== []) {
-                $("#txtFilter").bind('keyup', function(e) {
-                    var code = (e.keyCode ? e.keyCode : e.which);
-                    if (code == 13) {
-                        submitSearch()
-                    }
-                })
-
-                $("#search-btn").click(function() {
-                    if ($(this).hasClass('btn-success')) {
-                        submitSearch()
-                    } else {
-                        clearFilter()
-                    }
-                })
-            }
-
-            // project list
-            $('.project-checkbox').on('change.radiocheck', function() {
-                $('#selectedProject').val($(this).data('pid'));
-                $('.project-checkbox').not($(this)).attr('checked', false);
-                $('.project-checkbox').not($(this)).parent().removeClass('checked');
-            });
-
-            $('.item-search.project-list input').change(function() {
-                var thevalue = $(this).val().toLowerCase();
-                $('#project-list-wrapper').find('div.alert label').each(function() {
-                    var metaname = $(this).html().toLowerCase();
-                    if (metaname.indexOf(thevalue) === -1) {
-                        $(this).parent().hide();
-                    } else {
-                        $(this).parent().show();
-                    }
-                });
-            })
-            .keyup(function() {
-                $(this).change();
-            });
-
-            $(".open-project").click(function() {
-                $(".open-project").html('Opening...');
-                $(".cancel-open-project").html('Opening...');
-                $(".open-project").addClass('disabled');
-                $(".cancel-open-project").addClass('disabled');
-                window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/home?pid='+$("#selectedProject").val();
-            });
-
-            $(".cancel-open-project").click(function() {
-                $('#projectModal').modal('hide');
-            });
-
-            $(window).trigger('resize');
-        });
-
-        function openProjectModal() {
-            $('#projectModal').modal().on('shown', function () {
-                $('input:text:visible:first', this).focus();
-            });
-        }
-
-        function checkRequestStatus(requestId) {
-            $.ajax({
-                type: "GET",
-                url: "{{ mavensmate.ui.getBaseUrl() }}/execute/"+requestId,
-                data: {
-                     id: requestId
-                },
-                complete: function(data, status, xhr) {
-                    try {
-                        console.log('checking status of async request')
-                        console.log(data.responseText)
-                        var response;
-                        try {
-                            response = JSON.parse(data.responseText)
-                            if (response["status"] == 'pending') {
-                                setTimeout(function() { checkRequestStatus(requestId); }, CHECK_STATUS_INTERVAL); //poll for completed async request
-                            } else {
-                                handleResponse(response);
-                            }
-                        } catch(e) {
-                            console.log('error handling response');
-                            console.log(e);
-                            response = data.responseText
-                            showGlobalError(response)
-                        }
-                    } catch(e) {
-                        console.log(e)
-                        console.log('caught an error, polling again...')
-                        setTimeout(function() { checkRequestStatus(requestId); }, 2000);
-                    }
-
-                }
-            });
-        }
-    </script>
-    <div id="projectModal" class="modal hide fade">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h5>Select Project</h5>
+          </svg>
+          <div class="slds-col slds-align-middle">
+            <h2 class="slds-text-heading--small"></h2>
+            <p></p>
+          </div>
         </div>
-        <div class="modal-body" style="height:330px">
-            <div class="row-fluid">
-                <div class="item-search project-list">
-                    <div class="control-group large">
-                        <div class="row-fluid">
-                            <div class="span12">
-                                <input style="height:34px;width:100%" class="" type="text" placeholder="Search" id="projectSearch">
-                            </div>
-                        </div>
-                    </div>
+      </div>
+    </div>
+
+    <!-- LOADING MODAL -->
+    <div aria-hidden="true" role="dialog" class="slds-modal slds-fade-in-open slds-hide" id="global-loading-modal">
+        <div class="slds-modal__container">
+            <div class="slds-modal__header">
+                <h2 class="slds-text-heading--medium"></h2>
+            </div>
+            <div class="slds-modal__content slds-p-around--medium">
+                <div style="position:relative;min-height:70px;">
+                  <div class="slds-spinner--brand slds-spinner slds-spinner--large" aria-hidden="false" role="alert">
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                  </div>
                 </div>
-               <div id="project-list-wrapper" style="height:275px;padding:5px 0px;overflow: scroll;transform: translate3d(0,0,0);">
-                    <input type="hidden" id="selectedProject"/>
-                    {% for p in mavensmate.ui.listProjects() %}
-                         <div class="alert alert-info" style="padding:10px;margin-bottom:5px;">
-                             <label class="checkbox" for="chk-{{p.id}}" style="margin:0px;">
-                                 <input type="checkbox" class="project-checkbox" value="" id="chk-{{p.id}}" data-pid="{{p.id}}" data-toggle="checkbox">
-                                 {{ p.path }}
-                             </label>
-                         </div>
-                    {% endfor %}
-               </div>
+                <p class="slds-m-top--medium" style="text-align:center;"></p>
             </div>
         </div>
-        <div class="modal-footer">
-            <a href="#" class="btn btn-embossed cancel-open-project">Cancel</a>
-            <a href="#" class="btn btn-embossed btn-primary open-project">Open Project</a>
-        </div>
     </div>
+
+    {% include 'views/partials/project_modal.html' %}
 </body>
 </html>

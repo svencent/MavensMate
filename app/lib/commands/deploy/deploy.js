@@ -34,20 +34,18 @@ Command.prototype.execute = function() {
     } else {
       var deployPayload = self.payload;
       deployPayload.project = self.getProject();
-      logger.debug('initiating deploy: ');
-      logger.debug(deployPayload.package);
+      logger.debug('initiating deploy: ', deployPayload.targets, deployPayload.package);
       var deploy = new Deploy(deployPayload);
 
       var deployOptions = deployPayload.deployOptions || undefined;
 
       logger.debug('deploying: ');
-      logger.debug('deployOptions: ');
-      logger.debug(deployOptions);
+      logger.debug('deployOptions: ', deployOptions);
 
       deploy.executeRemote(deployOptions)
         .then(function(result) {
           if (self.payload.ui) {
-            resolve(deploy.getResultHtml(deployPayload.usernames, deployPayload.destinations, deployPayload.deployOptions, result));
+            resolve(deploy.getResultHtml(deployPayload.targets, deployPayload.deployOptions, result));
           } else {
             resolve(result);
           }

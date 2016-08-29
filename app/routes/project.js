@@ -29,8 +29,7 @@ router.get('/existing/new', function(req, res) {
     var params = {
       title: 'Create MavensMate Project ('+req.query.origin+')',
       callback: '/app/project/auth/finish',
-      param1: req.query.origin,
-      new: '1'
+      param1: req.query.origin
     };
     res.redirect('/app/auth/new?'+querystring.stringify(params));
   } else {
@@ -53,7 +52,7 @@ router.get('/auth/finish', function(req, res) {
       refreshToken: req.query.refresh_token
     })
     .then(function(response) {
-      res.redirect('/app/project/'+pid+'/edit?pid='+pid);
+      res.redirect('/app/project/'+pid+'/edit?pid='+pid+'&update=1');
     })
     .catch(function(err) {
       logger.error(err);
@@ -156,7 +155,7 @@ router.get('/:id/auth', function(req, res) {
     title: 'Update Project Credentials',
     callback: '/app/project/auth/finish',
     pid: req.project.settings.id,
-    update: '1'
+    forced: req.project.requiresAuthentication ? '1' : '0'
   };
   res.redirect('/app/auth/new?'+querystring.stringify(params));
 });
@@ -168,7 +167,8 @@ router.get('/:id/edit', function(req, res) {
   } else {
     res.render('project/edit.html', {
       title: 'Edit Project',
-      isNewProject: req.query.new === '1'
+      isNewProject: req.query.new === '1',
+      isUpdate: req.query.update === '1'
     });
   }
 });
@@ -224,12 +224,15 @@ router.post('/:id/index', function(req, res) {
 
 // gets metadata index for a project
 router.get('/:id/index', function(req, res) {
-  var commandName = req.body && req.body.packageLocation && req.body.packageLocation !== 'package.xml' ? 'get-metadata-index-for-package' : 'get-metadata-index';
+  logger.warn(req.query);
+  var commandName = req.query && req.query.pkg && req.query.pkg !== 'package.xml' ? 'get-metadata-index-for-package' : 'get-metadata-index';
   var commandExecutor = req.app.get('commandExecutor');
   commandExecutor.execute({
     project: req.project,
     name: commandName,
-    body: req.body,
+    body: {
+      packageXmlPath: req.query.pkg
+    },
     editor: req.editor
   })
   .then(function(response) {

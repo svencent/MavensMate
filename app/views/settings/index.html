@@ -1,150 +1,99 @@
 {% extends "views/layouts/base.html" %}
 {% block yield %}
-<style>
-	input.setting {
-		font-family: 'Consolas', 'Monaco', 'Lucida Console', monospace;
-	}
-	label.label-checkbox {
-		display: inline-block;
-	}
-	label.label-checkbox {
-	  margin-bottom: 0px;
-	}
-	label.settingsLabel {
-		font-weight: 600;
-		display: inline-block;
-	}
-	.ace-tm .ace_string {
-	  color: #16a085;
-	}
-	.ace-tm .ace_constant.ace_language {
-	  color: #d54d53;
-	}
-	.ace_editor.ace-tm {
-		background-color: #f9f9f9;
-	}
-	div.infobox {
-		display: block;
-	}
-	.dialog.infobox {
-		text-align: left;
-		width:600px;
-		padding:10px;
-		font-size:14px;
-		margin-bottom:10px;
-		margin-top:5px;
-	}
-	.running_indicator {
-		right:25px;
-	}
-</style>
 <script src="{{ mavensmate.ui.getStaticResourcePath() }}/editor/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="{{ mavensmate.ui.getStaticResourcePath() }}/editor/mode-java.js" type="text/javascript" charset="utf-8"></script>
 
-<div id="result_output">
-	<div class="alert alert-error">
-		<button type="button" class="close fui-cross"></button>
-		<span id="error_message"></span>
-	</div>
-</div>
-
-<div class="content">
-	<ul class="nav nav-tabs nav-append-content">
-		<li class="active"><a id="settings_tab" href="#form" data-toggle="tab">MavensMate Settings</a></li>
-	</ul>
-	<div class="tab-content" id="main-tab-content">
+<div class="slds-grid" id="settings-wrapper">
+	<div class="slds-container--medium">
 		<div id="form" class="tab-pane active">
-			<form class="form-stacked">
+			<div class="slds-form--stacked">
 				<fieldset style="padding-top:10px;">
-					<!-- this is only here to prevent bootstrap from auto-selecting the first input -->
-					<input class="span12" class="form-control" type="text" style="display: none;"/>
+					<!-- this is only here to prevent slds from auto-selecting the first input -->
+					<input class="slds-input" class="form-control" type="text" style="display: none;"/>
 
 					{% for settingKey, settingValue in userSettings %}
 						{% if defaultSettings[settingKey] %}
-							<div class="control-group large" id="{{ settingKey }}-group" style="margin-bottom:20px;">
-								<!-- string or integer -->
-								{% if defaultSettings[settingKey].type === 'string' || defaultSettings[settingKey].type === 'integer' %}
-									<label class="settingsLabel" for="{{ settingKey }}">
-										{{ defaultSettings[settingKey].title }} ({{ settingKey }})
-									</label>
-									{% if defaultSettings[settingKey].description %}
-										<div class="dialog dialog-info infobox {{ settingKey }}-info">
-											<span><i class="icon icon-info-sign" onclick="toggleInfo(this)"></i>&nbsp;{{ defaultSettings[settingKey].description }}
+							<div class="slds-form-element" id="{{ settingKey }}-group" style="margin-bottom:20px;">
+								<div class="slds-form-element__control">
+									<!-- string or integer -->
+									{% if defaultSettings[settingKey].type === 'string' || defaultSettings[settingKey].type === 'integer' %}
+										<h3 class="slds-section-title--divider">{{ defaultSettings[settingKey].title }} ({{ settingKey }})</h3>
 
-												{% if defaultSettings[settingKey].example %}
-													<br/><br/><b>Example:</b><br/>
-													{{ defaultSettings[settingKey].example|safe }}
-												{% endif %}
-											</span>
+										{% if defaultSettings[settingKey].description %}
+											<div class="slds-box slds-theme--info slds-m-bottom--small slds-m-top--small">
+											  <span class="slds-icon_container slds-p-right--xx-small">
+											    <svg aria-hidden="true" class="slds-icon slds-icon--small">
+											      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
+											    </svg>
+											  </span>
+											  {{ defaultSettings[settingKey].description }}
+											  {% if defaultSettings[settingKey].example %}
+											  	<br/><br/><b>Example:</b><br/>
+											  	{{ defaultSettings[settingKey].example|safe }}
+											  {% endif %}
+											</div>
+										{% endif %}
+										<input class="slds-input setting" class="form-control" id="{{ settingKey }}" type="text" value="{{ settingValue }}"/>
+									{% endif %}
+									<!-- array or object -->
+									{% if defaultSettings[settingKey].type === 'array' || defaultSettings[settingKey].type === 'object' %}
+										<h3 class="slds-section-title--divider">{{ defaultSettings[settingKey].title }} ({{ settingKey }})</h3>
+										{% if defaultSettings[settingKey].description %}
+											<div class="slds-box slds-theme--info slds-m-bottom--small slds-m-top--small">
+											  <span class="slds-icon_container slds-p-right--xx-small">
+											    <svg aria-hidden="true" class="slds-icon slds-icon--small">
+											      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
+											    </svg>
+											  </span>
+											  {{ defaultSettings[settingKey].description }}
+											  {% if defaultSettings[settingKey].example %}
+											  	<br/><br/><b>Example:</b><br/>
+											  	{{ defaultSettings[settingKey].example|safe }}
+											  {% endif %}
+											</div>
+										{% endif %}
+										<div style="height:110px;">
+											<textarea data-editor="java" rows="15" class="form-control setting" id="{{ settingKey }}">{{ JSON.stringify(settingValue, null, 2) }}</textarea>
 										</div>
 									{% endif %}
-									<input class="span12 setting" class="form-control" id="{{ settingKey }}" type="text" value="{{ settingValue }}"/>
-								{% endif %}
-								<!-- array or object -->
-								{% if defaultSettings[settingKey].type === 'array' || defaultSettings[settingKey].type === 'object' %}
-									<label class="settingsLabel" for="{{ settingKey }}">
-										{{ defaultSettings[settingKey].title }} ({{ settingKey }})
-									</label>
-									{% if defaultSettings[settingKey].description %}
-										<div class="dialog dialog-info infobox {{ settingKey }}-info">
-											<span><i class="icon icon-info-sign" onclick="toggleInfo(this)"></i>&nbsp;{{ defaultSettings[settingKey].description }}
-												{% if defaultSettings[settingKey].example %}
-													<br/><br/><b>Example:</b><br/>
-													{{ defaultSettings[settingKey].example|safe }}
-												{% endif %}
-											</span>
-										</div>
+									<!-- boolean -->
+									{% if defaultSettings[settingKey].type === 'boolean' %}
+									    <label class="slds-checkbox" for="{{ settingKey }}">
+									      <input type="checkbox" class="setting-chk" {% if settingValue === true %}checked="checked"{% endif %} id="{{ settingKey }}" data-toggle="checkbox">
+									      <span class="slds-checkbox--faux"></span>
+									      <span class="slds-form-element__label">{{ defaultSettings[settingKey].title }} ({{ settingKey }})</span>
+									    </label>
+									    {% if defaultSettings[settingKey].description %}
+									    	<div class="slds-box slds-theme--info slds-m-bottom--small slds-m-top--small">
+									    	  <span class="slds-icon_container slds-p-right--xx-small">
+									    	    <svg aria-hidden="true" class="slds-icon slds-icon--small">
+									    	      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
+									    	    </svg>
+									    	  </span>
+									    	  {{ defaultSettings[settingKey].description }}
+									    	  {% if defaultSettings[settingKey].example %}
+									    	  	<br/><br/><b>Example:</b><br/>
+									    	  	{{ defaultSettings[settingKey].example|safe }}
+									    	  {% endif %}
+									    	</div>
+									    {% endif %}
 									{% endif %}
-									<div style="height:110px;width:620px;">
-										<textarea data-editor="java" rows="15" class="form-control setting" id="{{ settingKey }}">{{ JSON.stringify(settingValue, null, 2) }}</textarea>
-									</div>
-								{% endif %}
-								<!-- boolean -->
-								{% if defaultSettings[settingKey].type === 'boolean' %}
-								    <label class="checkbox label-checkbox" for="{{ settingKey }}">
-								      <input type="checkbox" class="setting-chk" {% if settingValue === true %}checked="checked"{% endif %} id="{{ settingKey }}" data-toggle="checkbox">
-								      {{ defaultSettings[settingKey].title }} ({{ settingKey }})
-								    </label>
-								    {% if defaultSettings[settingKey].description %}
-								    	<div class="dialog dialog-info infobox {{ settingKey }}-info">
-								    		<span><i class="icon icon-info-sign" onclick="toggleInfo(this)"></i>&nbsp;{{ defaultSettings[settingKey].description }}
-
-								    			{% if defaultSettings[settingKey].example %}
-								    				<br/><br/><b>Example:</b><br/>
-								    				{{ defaultSettings[settingKey].example|safe }}
-								    			{% endif %}
-								    		</span>
-								    	</div>
-								    {% endif %}
-								{% endif %}
+								</div>
 							</div>
 						{% endif %}
 					{% endfor %}
 				</fieldset>
-			</form>
+			</div>
 		</div>
 	</div>
 </div>
-
-{% endblock %}
-
-{% block buttons %}
-	{% include 'views/partials/running_indicator.html' %}
 {% endblock %}
 
 {% block body_js %}
 	<script>
 		'use strict';
 
-		function toggleInfo(el) {
-			var infoBox = $(el).next();
-			infoBox.toggle();
-		}
-
 		$(function() {
-			$('label.checkbox input').checkbox();
-			$('[data-toggle="tooltip"]').tooltip();
-
 			$('textarea[data-editor]').each(function () {
         var textarea = $(this);
         var wrappingDiv = textarea.parent();
@@ -186,32 +135,29 @@
 			});
 
 			$('div.tab-content').focus();
-
 		});
 
 		function updateSettings(settingValue, settingKey) {
-			$.ajax({
-				type: 'POST',
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				url: '{{ mavensmate.ui.getBaseUrl() }}/app/settings',
-				data: JSON.stringify({
-					settingValue: settingValue,
-					settingKey: settingKey
-				}),
-				beforeSend: function() { toggleRunningIndicator(); },
-				complete: function(data){
-					console.log('config update done ...');
-					console.log(data);
-					setTimeout(function() { toggleRunningIndicator() }, 500);
-					var res = JSON.parse(data.responseText);
-					if (res.error) {
-						showMessage(res.error);
-					} else {
-						hideMessage();
-					}
-				}
-		 	});
+	 		var opts = {
+	 			async: false,
+	 			ajax: {
+		 			type: 'POST',
+					url: '{{ mavensmate.ui.getBaseUrl() }}/app/settings',
+		 			data: JSON.stringify({
+		 				settingValue: settingValue,
+		 				settingKey: settingKey
+		 			})
+	 			}
+	 	 	};
+
+	 		mavensmate.request(opts)
+	 			.then(function(response) {
+	 				console.log(response);
+	 				showToast('Settings updated', 'success');
+	 			})
+	 			.catch(function(err) {
+	 				console.error('could not update settings', err);
+	 			});
 		}
 	</script>
 {% endblock %}

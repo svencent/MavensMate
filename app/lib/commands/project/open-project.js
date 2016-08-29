@@ -36,7 +36,7 @@ Command.prototype.execute = function() {
     }
     self.editorService.open(projectPath)
       .then(function() {
-        resolve('Success');
+        resolve('Opened project in '+self.editorService.editor);
       })
       .catch(function(err) {
         reject(err);

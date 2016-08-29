@@ -13,6 +13,7 @@ var path      = require('path');
 var _         = require('lodash');
 
 function _monitor(filePath) {
+  fs.unwatchFile(filePath);
   fs.watchFile(filePath, function() {
     _reload();
   });

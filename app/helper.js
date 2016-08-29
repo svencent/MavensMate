@@ -24,6 +24,28 @@ ViewHelper.prototype.getSupportedEditors = function() {
   return this.supportedEditors;
 };
 
+ViewHelper.prototype.isMenuItemActive = function(url, resource) {
+  if (_.isString(resource)) {
+    return url.indexOf('/app/'+resource) === 0;
+  } else if (_.isArray(resource)) {
+    for (var r in resource) {
+      if (url.indexOf('/app/'+resource[r]) === 0)
+        return true;
+    }
+    return false;
+  } else {
+    return false;
+  }
+};
+
+ViewHelper.prototype.getPhotoUrl = function(project) {
+  try {
+    return project.sfdcClient.conn.userInfo.photos.thumbnail + '?oauth_token=' + project.sfdcClient.accessToken;
+  } catch(e) {
+    return null;
+  }
+};
+
 ViewHelper.prototype.getPathBaseName = function(p) {
   return path.basename(p);
 };
@@ -113,7 +135,7 @@ ViewHelper.prototype.getFileLines = function(project, classOrTriggerName, type) 
 
 ViewHelper.prototype.getCoverageCssClass = function(percentCovered) {
   if (percentCovered <= 40) {
-    return 'danger';
+    return 'error';
   } else if (percentCovered < 75) {
     return 'warning';
   } else {

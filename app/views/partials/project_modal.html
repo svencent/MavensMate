@@ -1,0 +1,100 @@
+<script type="text/javascript">
+  $(function() {
+    // enforce only a single checkbox checked
+    // allow table row to be selected
+    $('table#table-project-list > tbody > tr').on('click', function() {
+      var $chkBox = $(this).find('input.chk-project');
+      var $txtProjectId = $('#txt-hidden-selected-project-id');
+      $chkBox.prop('checked', !$chkBox.prop('checked'));
+      if ($chkBox.prop('checked')) {
+        $(this).addClass('slds-is-selected');
+        $txtProjectId.val($chkBox.data('pid'));
+      } else {
+        $(this).removeClass('slds-is-selected');
+        $txtProjectId.val('');
+      }
+      $('.chk-project').not($chkBox).attr('checked', false);
+      $('.chk-project').not($chkBox).parent().parent().parent().removeClass('slds-is-selected');
+    });
+
+    // search project list
+    $('input#txt-project-list-search').change(function() {
+      var searchTerm = $(this).val().toLowerCase();
+      $('#project-list-wrapper table > tbody > tr > th > div').each(function() {
+        var metaname = $(this).html().toLowerCase();
+        if (metaname.indexOf(searchTerm) === -1) {
+          $(this).parent().parent().hide();
+        } else {
+          $(this).parent().parent().show();
+        }
+      });
+    })
+    .keyup(function() {
+      $(this).change();
+    });
+
+    // open selected project
+    $("#btn-open-project").on('click', function() {
+      $("#btn-open-project").html('Opening...').addClass('disabled');
+      $("#btn-cancel-open-project").html('Opening...').addClass('disabled');
+      window.location = '/app/home?pid='+$("#txt-hidden-selected-project-id").val();
+    });
+
+    // close modal
+    $("#btn-cancel-open-project").on('click', function() {
+      $('#global-project-modal').modal('dismiss');
+    });
+  });
+</script>
+
+<!-- PROJECT MODAL -->
+<div aria-hidden="true" role="dialog" class="slds-modal slds-fade-in-open slds-hide" id="global-project-modal">
+  <div class="slds-modal__container">
+    <div class="slds-modal__header">
+      <h2 class="slds-text-heading--medium">Select Project</h2>
+    </div>
+    <div class="slds-modal__content slds-p-around--medium">
+
+      <input type="hidden" id="txt-hidden-selected-project-id"/>
+
+      <div class="slds-box slds-theme--shade slds-m-bottom--x-small" id="div-project-list-filter">
+        <div class="slds-grid">
+          <div class="slds-col slds-has-flexi-truncate">
+            <input type="text" placeholder="Search for project" id="txt-project-list-search" class="slds-input" />
+          </div>
+        </div>
+      </div>
+
+      <div id="project-list-wrapper" class="slds-scrollable">
+        <table class="slds-table slds-table--bordered" role="grid" id="table-project-list">
+          <thead>
+            <tr class="slds-text-heading--label">
+              <td role="gridcell" scope="col" style="width:2rem;"></td>
+              <td role="gridcell" scope="col">Project Location</td>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in mavensmate.ui.listProjects() %}
+            <tr class="slds-hint-parent">
+              <td role="gridcell" class="slds-cell-shrink" data-label="Select row {{p.path}}" style="width:2rem;">
+                <label class="slds-checkbox">
+                  <input type="checkbox" data-pid={{p.id}} class="chk-project" />
+                  <span class="slds-checkbox--faux"></span>
+                  <span class="slds-assistive-text">Select row {{p.path}}</span>
+                </label>
+              </td>
+              <th scope="row" data-label="Opportunity Name">
+                <div title="{{ p.path }}">{{ p.path }}</div>
+              </th>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="slds-modal__footer">
+      <button class="slds-button slds-button--neutral" id="btn-cancel-open-project">Cancel</button>
+      <button class="slds-button slds-button--neutral slds-button--brand" id="btn-open-project">Open</button>
+    </div>
+  </div>
+</div>

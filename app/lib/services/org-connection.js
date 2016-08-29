@@ -60,7 +60,7 @@ OrgConnectionService.prototype.getById = function(id) {
     var connections = fs.readJsonSync(path.join(this.project.path, 'config', '.org_connections'));
     return _.find(connections, function(c) { return c.id === id; });
   } catch(e) {
-    if (err.message.indexOf('ENOENT') >= 0) {
+    if (e.message.indexOf('ENOENT') >= 0) {
       return null;
     } else {
       throw e;

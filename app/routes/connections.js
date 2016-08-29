@@ -65,7 +65,7 @@ router.post('/', function(req, res) {
 
 router.post('/auth', function(req, res) {
   var params = {
-    title: 'New Org Connection',
+    title: 'New Deployment Connection',
     callback: '/app/connections/auth/finish',
     param1: req.body.name,
     pid: req.body.pid
