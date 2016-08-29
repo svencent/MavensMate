@@ -31,7 +31,7 @@
   {% endif %}
 </div>
 
-<form class="slds-form--stacked" action="/app/auth" method="POST">
+<form class="slds-form--stacked" action="/app/auth" method="POST" id="auth-form">
 
   {% if project && project.settings && project.settings.id %}
   <input type="hidden" name="pid" value="{{project.settings.id}}" />
@@ -69,19 +69,13 @@
       <input id="instanceUrl" name="instanceUrl" class="slds-input" type="text" placeholder="Example: https://na1-blitz01.salesforce.com">
     </div>
   </div>
-
-  <div class="slds-form-element">
-    <div class="slds-form-element__control">
-      <button type="submit" class="slds-button slds-button--brand">Connect</button>
-    </div>
-  </div>
-
 </form>
 
 {% endblock %}
 
 
 {% block buttons %}
+  <button class="slds-button slds-button--brand" onclick="$('#auth-form').submit();">Connect</button>
   <button class="slds-button slds-button--neutral" onclick="closeWindow();">Cancel</button>
 {% endblock %}
 
