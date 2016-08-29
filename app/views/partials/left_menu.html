@@ -51,11 +51,13 @@
             <span class="slds-text-heading--label">Project</span>
           </div>
           <ul class="dropdown__list" role="menu">
+            {% if project %}
             <li class="slds-dropdown__item">
               <a href="/app/home?pid={{project.settings.id}}" role="menuitem">
                 <p class="slds-truncate">Project Home</p>
               </a>
             </li>
+            {% endif %}
             <li class="slds-dropdown__item">
               <a href="/app/project/new" role="menuitem">
                 <p class="slds-truncate">New Project</p>
@@ -193,16 +195,21 @@
             <svg aria-hidden="true" class="slds-button__icon left-menu-dashboard">
               <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#dashboard"></use>
             </svg>
-            <span class="slds-assistive-text">Apex Testing</span>
+            <span class="slds-assistive-text">Debugging &amp; Testing</span>
           </button>
           <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
             <div class="slds-dropdown__header">
-              <span class="slds-text-heading--label">Apex Testing</span>
+              <span class="slds-text-heading--label">Debugging &amp; Testing</span>
             </div>
             <ul class="dropdown__list" role="menu">
               <li class="slds-dropdown__item">
                 <a href="/app/test/new?pid={{project.settings.id}}" role="menuitem">
                   <p class="slds-truncate">Run Apex Unit Tests</p>
+                </a>
+              </li>
+              <li class="slds-dropdown__item">
+                <a href="/app/apex/new?pid={{project.settings.id}}" role="menuitem">
+                  <p class="slds-truncate">Execute Apex</p>
                 </a>
               </li>
               <li class="slds-dropdown__item">
