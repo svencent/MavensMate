@@ -183,37 +183,6 @@
 
           //focus first input
           $("input[type='text']:first").focus();
-
-          // project list
-          $('.project-checkbox').on('change.radiocheck', function() {
-            $('#selectedProject').val($(this).data('pid'));
-            $('.project-checkbox').not($(this)).attr('checked', false);
-            $('.project-checkbox').not($(this)).parent().removeClass('checked');
-          });
-
-          $('.item-search.project-list input').change(function() {
-             var thevalue = $(this).val().toLowerCase();
-             $('#project-list-wrapper').find('div.alert label').each(function() {
-                 var metaname = $(this).html().toLowerCase();
-                 if (metaname.indexOf(thevalue) === -1) {
-                     $(this).parent().hide();
-                 } else {
-                     $(this).parent().show();
-                 }
-             });
-           })
-           .keyup(function() {
-               $(this).change();
-           });
-
-          $("#btn-open-project").on('click', function() {
-            $("#btn-open-project").html('Opening...').addClass('disabled');
-            $("#btn-cancel-open-project").html('Opening...').addClass('disabled');
-            window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/home?pid='+$("#selectedProject").val();
-          });
-          $("#btn-cancel-open-project").on('click', function() {
-            $('#global-project-modal').modal('dismiss');
-          });
         });
 
         function showLoading(msg, detail) {
@@ -446,33 +415,6 @@
         </div>
     </div>
 
-    <!-- PROJECT MODAL -->
-    <div aria-hidden="true" role="dialog" class="slds-modal slds-fade-in-open slds-hide" id="global-project-modal">
-        <div class="slds-modal__container">
-            <div class="slds-modal__header">
-                <h2 class="slds-text-heading--medium">Select Project</h2>
-            </div>
-            <div class="slds-modal__content slds-p-around--medium">
-              <div class="item-search project-list">
-                <input class="slds-input" type="text" placeholder="Search" id="projectSearch">
-              </div>
-              <input type="hidden" id="selectedProject"/>
-              <div id="project-list-wrapper" style="height:275px;padding:5px 0px;overflow: scroll;transform: translate3d(0,0,0);">
-                {% for p in mavensmate.ui.listProjects() %}
-                  <div class="alert alert-info" style="padding:10px;margin-bottom:5px;">
-                    <label class="checkbox" for="chk-{{p.id}}" style="margin:0px;">
-                      <input type="checkbox" class="project-checkbox" value="" id="chk-{{p.id}}" data-pid="{{p.id}}" data-toggle="checkbox">
-                      {{ p.path }}
-                    </label>
-                  </div>
-                {% endfor %}
-              </div>
-            </div>
-            <div class="slds-modal__footer">
-              <button class="slds-button slds-button--neutral" id="btn-cancel-open-project">Cancel</button>
-              <button class="slds-button slds-button--neutral slds-button--brand" id="btn-open-project">Open</button>
-            </div>
-        </div>
-    </div>
+    {% include 'views/partials/project_modal.html' %}
 </body>
 </html>

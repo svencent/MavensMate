@@ -98,7 +98,8 @@ ul.dynatree-container {
 }
 
 div#div-metadata-tree-filter,
-div#div-test-classes-filter {
+div#div-test-classes-filter,
+div#div-project-list-filter {
   padding:0.5rem;
 }
 
@@ -153,7 +154,8 @@ table.code > tbody > tr:hover > td.uncovered {
   background-color: #c23934; /* todo: move to token */
 }
 
-table#table-apex-test-classes > tbody > tr {
+table#table-apex-test-classes > tbody > tr,
+table#table-project-list > tbody > tr {
   cursor: pointer;
 }
 
