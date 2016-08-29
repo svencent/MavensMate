@@ -349,22 +349,25 @@ span.dynatree-focused a:link  /* @IE */
 
 span.dynatree-has-children a
 {
-/*	font-style: oblique; /* custom: */
+	outline: none;
 }
 
 span.dynatree-expanded a
 {
+	outline: none;
 }
 
 span.dynatree-selected a
 {
 	font-weight:600;
+	outline: none;
 }
 
 span.dynatree-active a
 {
 	border: 1px solid #99DEFD;
 	background-color: #D8F0FA;
+	outline:none;
 }
 
 /*******************************************************************************
