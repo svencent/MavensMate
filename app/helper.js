@@ -125,7 +125,7 @@ ViewHelper.prototype.getFileLines = function(project, classOrTriggerName, type) 
 
 ViewHelper.prototype.getCoverageCssClass = function(percentCovered) {
   if (percentCovered <= 40) {
-    return 'danger';
+    return 'error';
   } else if (percentCovered < 75) {
     return 'warning';
   } else {

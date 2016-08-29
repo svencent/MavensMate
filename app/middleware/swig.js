@@ -27,6 +27,10 @@ var resourceMap = {
     iconClassName: 'slds-icon-standard-avatar',
     iconName: 'avatar'
   },
+  test : {
+    iconClassName: 'slds-icon-standard-dashboard',
+    iconName: 'dashboard'
+  },
   settings : {
     iconClassName: 'slds-icon-standard-quotes',
     iconName: 'settings',

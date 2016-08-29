@@ -101,6 +101,71 @@ ul.dynatree-container {
   display: none;
 }
 
-div#div-metadata-tree-filter {
+div#div-metadata-tree-filter,
+div#div-test-classes-filter {
   padding:0.5rem;
+}
+
+.progress {
+  background-color: #f4f6f9;
+  border: 1px solid white;
+  height: 1.38889rem;
+  padding: 0.11111rem;
+  border-radius: 3px;
+  display: block;
+}
+
+.progress .meter {
+  border-radius: 2px;
+  display: block;
+  height: 100%;
+  width: 0%;
+}
+
+span.coverage {
+  display: inline-block;
+  width:4rem;
+}
+
+div.progress-wrapper {
+  display: inline-block;
+  width: 10rem;
+}
+
+table tr.tr-coverage-wrapper {
+  display: none;
+}
+
+table.code {
+  font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+  font-size: 80%;
+}
+
+table.code td {
+  padding: 0.25rem;
+}
+
+table.table-apex-code-test-results tr.tr-coverage-wrapper:hover > td,
+table.code > tbody > tr:hover > td.covered,
+table.code > tbody > tr:hover > td.td-line-numbers {
+  box-shadow: none !important;
+  background-color: inherit !important;
+}
+
+table.code > tbody > tr:hover > td.uncovered {
+  box-shadow: none !important;
+  background-color: #c23934; /* todo: move to token */
+}
+
+table#table-apex-test-classes > tbody > tr {
+  cursor: pointer;
+}
+
+
+th.tablesorter-header {
+  cursor: pointer;
+}
+
+h3.h3-test-class-name > span {
+  text-transform: none;
 }

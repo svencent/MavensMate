@@ -184,31 +184,6 @@
 
       <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
         <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
-          <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'editor') || mavensmate.ui.isMenuItemActive(url, 'connections') %} {{sldsIconClassName}} {% endif %}">
-            <svg aria-hidden="true" class="slds-button__icon">
-              <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#desktop"></use>
-            </svg>
-            <span class="slds-assistive-text">More Options</span>
-          </button>
-          <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
-            <div class="slds-dropdown__header">
-              <span class="slds-text-heading--label">Editors</span>
-            </div>
-            <ul class="dropdown__list" role="menu">
-              {% for editorName, editorPath in mavensmate.ui.getSupportedEditors() %}
-                <li class="slds-dropdown__item">
-                  <a href="javascript:void(0)" onclick="mavensmate.openProjectInEditor('{{editorName}}');" role="menuitem">
-                    <p class="slds-truncate">Open in {{ editorName|capitalize }}</p>
-                  </a>
-                </li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
-        <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
           <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'test') %} {{sldsIconClassName}} {% endif %}">
             <svg aria-hidden="true" class="slds-button__icon">
               <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#dashboard"></use>
@@ -230,6 +205,31 @@
                   <p class="slds-truncate">Debug Logs</p>
                 </a>
               </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
+        <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
+          <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container">
+            <svg aria-hidden="true" class="slds-button__icon">
+              <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#desktop"></use>
+            </svg>
+            <span class="slds-assistive-text">More Options</span>
+          </button>
+          <div class="slds-dropdown slds-dropdown--right slds-dropdown--small slds-nubbin--left-top slds-dropdown--actions">
+            <div class="slds-dropdown__header">
+              <span class="slds-text-heading--label">Editors</span>
+            </div>
+            <ul class="dropdown__list" role="menu">
+              {% for editorName, editorPath in mavensmate.ui.getSupportedEditors() %}
+                <li class="slds-dropdown__item">
+                  <a href="javascript:void(0)" onclick="mavensmate.openProjectInEditor('{{editorName}}');" role="menuitem">
+                    <p class="slds-truncate">Open in {{ editorName|capitalize }}</p>
+                  </a>
+                </li>
+              {% endfor %}
             </ul>
           </div>
         </div>
