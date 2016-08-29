@@ -21,8 +21,7 @@ router.get('/new', function(req, res) {
     title: req.query.title,
     callback: req.query.callback,
     param1: req.query.param1,
-    isNew: req.query.new === '1',
-    isUpdate: req.query.update === '1'
+    isForced: req.query.forced === '1'
   });
 });
 
@@ -48,6 +47,9 @@ router.post('/', function(req, res) {
     response_type: process.env.SFDC_OAUTH_RESPONSE_TYPE || 'token',
     display: 'popup'
   };
+  if (req.body.username) {
+    params.login_hint = req.body.username;
+  }
   var state = {};
   if (req.body.callback) {
     state.callback = req.body.callback

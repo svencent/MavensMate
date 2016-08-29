@@ -29,8 +29,7 @@ router.get('/existing/new', function(req, res) {
     var params = {
       title: 'Create MavensMate Project ('+req.query.origin+')',
       callback: '/app/project/auth/finish',
-      param1: req.query.origin,
-      new: '1'
+      param1: req.query.origin
     };
     res.redirect('/app/auth/new?'+querystring.stringify(params));
   } else {
@@ -156,7 +155,7 @@ router.get('/:id/auth', function(req, res) {
     title: 'Update Project Credentials',
     callback: '/app/project/auth/finish',
     pid: req.project.settings.id,
-    update: '1'
+    forced: req.project.requiresAuthentication ? '1' : '0'
   };
   res.redirect('/app/auth/new?'+querystring.stringify(params));
 });
