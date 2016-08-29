@@ -302,10 +302,7 @@
         type: 'GET',
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
-        url: baseLocalServerURL+'/app/project/{{project.settings.id}}/index?pid={{project.settings.id}}',
-        data: JSON.stringify({
-          packageLocation: self.packageLocation
-        })
+        url: '/app/project/{{project.settings.id}}/index?pid={{project.settings.id}}&pkg='+encodeURI(self.packageLocation)
       },
       checkbox: true,
       selectMode: 3,

@@ -879,9 +879,10 @@ Project.prototype.getOrgMetadataIndex = function() {
   });
 };
 
-Project.prototype.getOrgMetadataIndexWithSelections = function(keyword, ids, packageLocation) {
+Project.prototype.getOrgMetadataIndexWithSelections = function(keyword, ids, packageXmlPath) {
   var self = this;
   return new Promise(function(resolve, reject) {
+    logger.debug('getOrgMetadataIndexWithSelections, package location: ', packageXmlPath);
     if (fs.existsSync(path.join(self.path, 'config', '.org_metadata'))) {
       try {
         fs.readJson(path.join(self.path, 'config', '.org_metadata'), function(err, orgMetadata) {
@@ -891,18 +892,18 @@ Project.prototype.getOrgMetadataIndexWithSelections = function(keyword, ids, pac
             self.orgMetadata = orgMetadata;
             var promise;
             var customPackage;
-            if (packageLocation) {
-              customPackage = new Package({ path: packageLocation });
+            if (packageXmlPath) {
+              customPackage = new Package({ path: packageXmlPath });
               promise = customPackage.init();
             } else {
-              promise = new Promise(function(r) { r(); });
+              promise = Promise.resolve();
             }
 
             promise
               .then(function() {
                 if (!ids) {
                   ids = [];
-                  var pkg = packageLocation ? customPackage : self.packageXml;
+                  var pkg = packageXmlPath ? customPackage : self.packageXml;
                   _.forOwn(pkg.subscription, function(packageMembers, metadataTypeXmlName) {
                     var metadataType = self.metadataHelper.getTypeByXmlName(metadataTypeXmlName); //inFolder, childXmlNames
                     if (!metadataType) {

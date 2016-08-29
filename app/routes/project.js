@@ -225,12 +225,15 @@ router.post('/:id/index', function(req, res) {
 
 // gets metadata index for a project
 router.get('/:id/index', function(req, res) {
-  var commandName = req.body && req.body.packageLocation && req.body.packageLocation !== 'package.xml' ? 'get-metadata-index-for-package' : 'get-metadata-index';
+  logger.warn(req.query);
+  var commandName = req.query && req.query.pkg && req.query.pkg !== 'package.xml' ? 'get-metadata-index-for-package' : 'get-metadata-index';
   var commandExecutor = req.app.get('commandExecutor');
   commandExecutor.execute({
     project: req.project,
     name: commandName,
-    body: req.body,
+    body: {
+      packageXmlPath: req.query.pkg
+    },
     editor: req.editor
   })
   .then(function(response) {

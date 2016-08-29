@@ -18,7 +18,7 @@ inherits(Command, BaseCommand);
 Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    self.getProject().getOrgMetadataIndexWithSelections(null, null, self.payload.packageLocation)
+    self.getProject().getOrgMetadataIndexWithSelections(null, null, self.payload.packageXmlPath)
       .then(function(metadataIndex) {
         resolve(metadataIndex);
       })

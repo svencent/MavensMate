@@ -137,7 +137,7 @@ Deploy.prototype.executeRemote = function(deployOptions) {
 
   return new Promise(function(resolve, reject) {
     if (!self._getTargetIds() || self._getTargetIds().length === 0) {
-      return reject(new Error('Please specify at least one destination'));
+      return reject(new Error('Please specify at least one deployment target'));
     }
 
     var deployPromises = [];

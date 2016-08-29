@@ -15,7 +15,8 @@
       <li id="li-deploy-result" class="slds-tabs--scoped__item slds-text-heading--label" title="Deploy Results" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="true" aria-controls="tab-default-4" data-aljs-show="tab-default-4">Deploy Results</a></li>
   </ul>
   <div id="tab-default-1" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
-  	<div class="slds-form--stacked">
+  	{% if connections.length > 0 %}
+    <div class="slds-form--stacked">
   		<fieldset>
   			<div class="slds-form-element slds-m-bottom--medium" >
 			    <div class="slds-picklist--draggable slds-grid" data-aljs="multi-select" id="deploy-targets">
@@ -50,6 +51,19 @@
   			</div>
   		</fieldset>
   	</div>
+    {% else %}
+      <div class="slds-notify slds-notify--toast slds-theme--warning" role="alert">
+        <span class="slds-assistive-text">Success</span>
+        <div class="slds-notify__content slds-grid">
+          <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
+            <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+          </svg>
+          <div class="slds-col slds-align-middle">
+            <h2 class="slds-text-heading--small ">No deployment connections have been set up for this project. Go to <a href="/app/connections/new?pid={{project.settings.id}}">Deployment Connections</a>.</h2>
+          </div>
+        </div>
+      </div>
+    {% endif %}
   </div>
   <div id="tab-default-2" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
   	<div class="slds-form--stacked">
