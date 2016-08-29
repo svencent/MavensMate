@@ -111,7 +111,17 @@
   </div>
   <div id="tab-default-4" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
     <div id="deploy-result">
-
+      <div class="slds-notify slds-notify--toast slds-theme--info" role="alert">
+        <span class="slds-assistive-text">Information</span>
+        <div class="slds-notify__content slds-grid">
+          <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
+            <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
+          </svg>
+          <div class="slds-col slds-align-middle">
+            <h2 class="slds-text-heading--small ">Deploy results will display here when available.</h2>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}
