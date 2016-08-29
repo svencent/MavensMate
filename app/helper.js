@@ -25,7 +25,17 @@ ViewHelper.prototype.getSupportedEditors = function() {
 };
 
 ViewHelper.prototype.isMenuItemActive = function(url, resource) {
-  return url.indexOf('/app/'+resource) === 0;
+  if (_.isString(resource)) {
+    return url.indexOf('/app/'+resource) === 0;
+  } else if (_.isArray(resource)) {
+    for (var r in resource) {
+      if (url.indexOf('/app/'+resource[r]) === 0)
+        return true;
+    }
+    return false;
+  } else {
+    return false;
+  }
 };
 
 ViewHelper.prototype.getPhotoUrl = function(project) {

@@ -39,6 +39,10 @@ var resourceMap = {
   logs: {
     iconClassName: 'slds-icon-standard-record',
     iconName: 'record'
+  },
+  apex: {
+    iconClassName: 'slds-icon-standard-custom',
+    iconName: 'custom'
   }
 };
 
