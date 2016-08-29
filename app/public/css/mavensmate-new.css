@@ -169,3 +169,8 @@ th.tablesorter-header {
 h3.h3-test-class-name > span {
   text-transform: none;
 }
+
+svg.left-menu-dashboard {
+  width: 1.5rem;
+  height: 1.5rem;
+}
