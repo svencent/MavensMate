@@ -9,6 +9,9 @@
       }
       evt.stopPropagation();
     });
+    $('#left-menu a').on('click', function() {
+      closeSubMenus();
+    });
     $(window).click(function() {
       closeSubMenus();
     });
@@ -53,7 +56,7 @@
           <ul class="dropdown__list" role="menu">
             {% if project %}
             <li class="slds-dropdown__item">
-              <a href="/app/home?pid={{project.settings.id}}" role="menuitem">
+              <a href="/app/project/{{project.settings.id}}?pid={{project.settings.id}}" role="menuitem">
                 <p class="slds-truncate">Project Home</p>
               </a>
             </li>
@@ -164,8 +167,8 @@
       <div class="slds-col--padded slds-align--absolute-center slds-m-bottom--medium">
         <div class="slds-dropdown-trigger slds-dropdown-trigger--click" aria-expanded="false">
           <button class="slds-button slds-button--icon-border-inverse menu-item-with-submenu slds-icon_container {% if mavensmate.ui.isMenuItemActive(url, 'deploy') || mavensmate.ui.isMenuItemActive(url, 'connections') %} {{sldsIconClassName}} {% endif %}">
-            <svg aria-hidden="true" class="slds-button__icon">
-              <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#socialshare"></use>
+            <svg aria-hidden="true" class="slds-button__icon left-menu-deploy">
+              <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#environment_hub"></use>
             </svg>
             <span class="slds-assistive-text">More Options</span>
           </button>
