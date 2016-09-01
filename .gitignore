@@ -7,3 +7,4 @@ results.txt
 coverage.html
 .env
 /coverage
+*.DS_Store
