@@ -157,7 +157,8 @@ Deploy.prototype.executeRemote = function(deployOptions) {
             fs.copySync(path.join(newPath, 'unpackaged'), path.join(self.project.path, 'deploy', self.deploymentName, 'unpackaged'));
           }
         }
-        _.each(self.targets, function(targetId) {
+        _.each(self.targets, function(t) {
+          var targetId = _.isString(t) ? t : t.id;
           logger.debug('adding deploy target id: ', targetId);
           logger.debug('deploy options', deployOptions);
           var targetConnection = self.orgConnectionService.getById(targetId);
