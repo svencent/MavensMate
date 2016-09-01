@@ -142,8 +142,8 @@
 
 
 {% block buttons %}
-	<button id="btnDeploy" class="slds-button slds-button--brand">Validate Deployment</button>
-	<button class="slds-button slds-button--neutral">Deployment Connections</button>
+	<a id="btnDeploy" class="slds-button slds-button--brand">Validate Deployment</a>
+	<a class="slds-button slds-button--neutral" href="/app/connections/new?pid={{project.settings.id}}">Deployment Connections</a>
 	{% include 'views/partials/cancel_button.html' %}
 {% endblock %}
 
