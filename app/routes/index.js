@@ -14,6 +14,9 @@ router.get('/', function(req, res) {
 // rpc route
 router.use('/execute', require('./execute'));
 
+// deprecated route, used to support atom/sublime plugins that have not yet updated mavensmate desktop
+router.use('/status', require('./status'));
+
 // todo: add middleware that throws 500 if no project context sent for project-specific routes
 router.use('/app/auth',require('./auth'));
 router.use('/app/apex',require('./apex'));
