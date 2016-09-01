@@ -43,6 +43,10 @@ var resourceMap = {
   apex: {
     iconClassName: 'slds-icon-standard-custom',
     iconName: 'custom'
+  },
+  home: {
+    iconClassName: 'slds-icon-standard-home',
+    iconName: 'home'
   }
 };
 
