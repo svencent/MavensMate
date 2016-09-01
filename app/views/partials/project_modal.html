@@ -35,9 +35,16 @@
 
     // open selected project
     $("#btn-open-project").on('click', function() {
+      {% if isDesktop %}
+      $('#global-project-modal').modal('dismiss');
+      window.open('/app/project/'+$("#txt-hidden-selected-project-id").val()+'?pid='+$("#txt-hidden-selected-project-id").val());
+      $('table#table-project-list > tbody > tr').removeClass('slds-is-selected');
+      $('table#table-project-list > tbody > tr input.chk-project').prop('checked', false);
+      {% else %}
       $("#btn-open-project").html('Opening...').addClass('disabled');
       $("#btn-cancel-open-project").html('Opening...').addClass('disabled');
-      window.location = '/app/home?pid='+$("#txt-hidden-selected-project-id").val();
+      window.location = '/app/project/'+$("#txt-hidden-selected-project-id").val()+'?pid='+$("#txt-hidden-selected-project-id").val();
+      {% endif %}
     });
 
     // close modal

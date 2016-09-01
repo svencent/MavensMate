@@ -301,8 +301,8 @@
             <div class="slds-col slds-has-flexi-truncate">
               <div class="slds-media slds-media--center slds-no-space slds-grow">
                 <div class="slds-media__figure">
-                  {% if project && project.sfdcClient %}
-                      <a href="{{ mavensmate.ui.getBaseUrl() }}/app/home?pid={{project.settings.id}}">
+                  {% if project %}
+                      <a href="/app/project/{{project.settings.id}}?pid={{project.settings.id}}">
                         <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/>
                       </a>
                   {% else %}
@@ -314,12 +314,42 @@
               </div>
             </div>
             <div class="slds-col slds-no-flex slds-grid slds-align-bottom">
-              <button class="slds-button slds-button--icon" onClick="location.href='/app/settings{% if project %}?pid={{project.settings.id}}{% endif %}'">
+
+              {% if isDesktop %}
+              <!-- app is embedded in mavensmate-desktop so we use its app launcher feature -->
+              <script type="text/javascript">
+                // TODO: add url blacklist for URLs where we DO NOT want them to be opened via window.open
+                var ipc = require('electron').ipcRenderer;
+                $(function() {
+                  // when page loads, we send contextual information to mavensmate-desktop
+                  ipc.sendToHost('on-load', {
+                    title: '{{title|addslashes}}',
+                    {% if project %}
+                    pid: '{{project.settings.id}}',
+                    projectName: '{{project.name|addslashes}}',
+                    {% endif %}
+                    {% if sldsIconClassName %}
+                    sldsIconName: '{{sldsIconName}}',
+                    sldsIconClassName: '{{sldsIconClassName}}',
+                    sldsSprite: '{{sldsSprite}}',
+                    {% endif %}
+                  });
+                });
+              </script>
+              <a class="slds-button slds-button--icon slds-align-middle" onClick="ipc.send('open-app-launcher');">
+                <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
+                  <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#apps"></use>
+                </svg>
+                <span class="slds-assistive-text">Launcher</span>
+              </a>
+              {% endif %}
+
+              <a class="slds-button slds-button--icon slds-align-middle" href="/app/settings{% if project %}?pid={{project.settings.id}}{% endif %}">
                 <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
                   <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#settings"></use>
                 </svg>
                 <span class="slds-assistive-text">Settings</span>
-              </button>
+              </a>
               {% if project && mavensmate.ui.getPhotoUrl(project)%}
                 <img style="border-radius:4px;height:30px;margin-left: 0.4rem;" src="{{mavensmate.ui.getPhotoUrl(project)}}"/>
               {% else %}
@@ -387,7 +417,6 @@
             <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
             <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#check"></use>
             <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#info"></use>
-
           </svg>
           <div class="slds-col slds-align-middle">
             <h2 class="slds-text-heading--small"></h2>

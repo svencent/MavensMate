@@ -11,13 +11,14 @@ var server    = require('../app');
 
 var args = parseArgs(process.argv);
 var verbose = args.verbose || false;
-var port = args.port || process.env.MAVENSMATE_SERVER_PORT;
+var port = args.port || process.env.MAVENSMATE_SERVER_PORT || '56248';
 
 process.title = 'mavensmate server';
 
 server.start({
   port: port,
-  verbose: verbose
+  verbose: verbose,
+  isDesktop: args.desktop
 });
 
 if (args.window) {
