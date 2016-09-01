@@ -27,6 +27,7 @@ router.use('/app/project',require('./project'));
 router.use('/app/settings',require('./settings'));
 router.use('/app/test',require('./test'));
 
+// if we have an unhandled route, we throw a 404 if it's ajax, otherwise we return our 404.html
 router.get('*', function(req, res){
   var isAjaxRequest = req.xhr;
   if (isAjaxRequest) {
