@@ -22,7 +22,7 @@ mavensmate.startServer = function(opts) {
         port: port,
         verbose: opts.verbose,
         openWindowFn: opts.openWindowFn,
-        isDesktop: opts.isDesktop
+        mode: opts.mode
       });
       console.log('MavensMate server running on port: '+port);
       res.config = require('../config');

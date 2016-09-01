@@ -22,7 +22,7 @@ var app, server;
  * Starts the MavensMate HTTP server
  * @param  {Object} opts - server options
  * @param  {Integer} opts.port - server port
- * @param  {Boolean} opts.isDesktop - whether this is running as a guest in MavensMate-Desktop
+ * @param  {String} opts.mode - when running in MavensMate-Desktop, this value is "desktop"
  * @param  {Function} opts.openWindowFn - function used to open windows (optional)
  * @return {Object} - express app
  */
@@ -75,7 +75,7 @@ module.exports.start = function(opts) {
   app.set('openWindowFn', opts.openWindowFn);
   app.set('requestStore', requestStore); // todo: move to proper cache
   app.set('projects', []); // managed in project middleware (todo: move to proper cache)
-  app.set('isDesktop', opts.isDesktop);
+  app.set('mode', opts.mode);
 
   server = app.listen(opts.port);
   process.env.MAVENSMATE_SERVER_PORT = opts.port;

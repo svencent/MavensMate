@@ -58,8 +58,8 @@ module.exports = function(req, res, next) {
 
   // set locals for templates
   if (util.startsWith(req.url, '/app/') && !util.startsWith(req.url, '/app/static')) {
-    if (req.app.get('isDesktop'))
-      res.locals.isDesktop = req.app.get('isDesktop');
+    if (req.app.get('mode') === 'desktop')
+      res.locals.isDesktop = true;
     res.locals.url = req.url;
     var appRoutePattern = /\/app\/([^\W]*)/
     var match = req.url.match(appRoutePattern);
