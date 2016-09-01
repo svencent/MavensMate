@@ -1,17 +1,6 @@
 {% extends "views/layouts/base.html" %}
 {% block yield %}
 
-{% if isNewProject %}
-<div class="slds-box slds-theme--info slds-m-bottom--small">
- 	<p class="slds-m-bottom--small">Project created successfully</p>
- 	{% if !editor %}
- 		{% for editorName, editorPath in mavensmate.ui.getSupportedEditors() %}
- 			<a class="slds-button slds-button--neutral" href="javascript:void(0)" onclick="mavensmate.openProjectInEditor('{{editorName}}', '{{project.settings.id}}');">Open in {{ editorName|capitalize }}</a>
- 		{% endfor %}
- 	{% endif %}
-</div>
-{% endif %}
-
 {% if isUpdate %}
 	<script>
 		$(function() {

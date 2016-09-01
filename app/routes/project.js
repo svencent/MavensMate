@@ -121,8 +121,9 @@ router.post('/existing', function(req, res) {
 
 // project landing page
 router.get('/:id', function(req, res) {
-  res.render('home/index.html', {
-    title: 'Home'
+  res.render('project/home.html', {
+    title: 'Project Launchpad',
+    isNewProject: req.query.new === '1'
   });
 });
 
@@ -144,7 +145,6 @@ router.get('/:id/edit', function(req, res) {
   } else {
     res.render('project/edit.html', {
       title: 'Edit Project',
-      isNewProject: req.query.new === '1',
       isUpdate: req.query.update === '1'
     });
   }

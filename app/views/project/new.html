@@ -204,7 +204,7 @@
 			mavensmate.request(opts)
 				.then(function(response) {
 					var newProjectId = response.result.id;
-					window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/project/'+newProjectId+'/edit?pid='+newProjectId+'&new=1';
+					window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/project/'+newProjectId+'?pid='+newProjectId+'&new=1';
 				})
 				.catch(function(err) {
 					console.error('could not create project', err);

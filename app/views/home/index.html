@@ -1,121 +1,48 @@
 {% extends "views/layouts/base.html" %}
 {% block yield %}
 
-    {% if !project %}
-    <div class="container">
-      <div class="app-launcher">
-        <div class="slds-grid slds-wrap slds-grid--pull-padded">
+<div class="container">
+  <div class="app-launcher">
+    <div class="slds-grid slds-wrap slds-grid--pull-padded">
 
-          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
-            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
-              <a class="slds-button slds-icon_container slds-icon-standard-quotes" href="/app/settings">
-                <svg aria-hidden="true" class="slds-icon slds-icon--large">
-                  <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#settings"></use>
-                </svg>
-                <span class="slds-assistive-text"></span>
-              </a>
-              <div class="slds-text-heading--label slds-p-top--medium">Settings</div>
-            </div>
-          </div>
-
-          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
-            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
-              <a class="slds-button slds-icon_container slds-icon-standard-folder" href="/app/project/new">
-                <svg aria-hidden="true" class="slds-icon slds-icon--large">
-                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#folder"></use>
-                </svg>
-                <span class="slds-assistive-text"></span>
-              </a>
-              <div class="slds-text-heading--label slds-p-top--medium">New Project</div>
-            </div>
-          </div>
-
-          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
-            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
-              <a class="slds-button slds-icon_container slds-icon-standard-folder" href="javascript:void(0);" onclick="openProjectModal();">
-                <svg aria-hidden="true" class="slds-icon slds-icon--large">
-                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#folder"></use>
-                </svg>
-                <span class="slds-assistive-text"></span>
-              </a>
-              <div class="slds-text-heading--label slds-p-top--medium">Open Project</div>
-            </div>
-          </div>
-
+      <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+        <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
+          <a class="slds-button slds-icon_container slds-icon-standard-folder" href="javascript:void(0);" onclick="openProjectModal();">
+            <svg aria-hidden="true" class="slds-icon slds-icon--large">
+              <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#folder"></use>
+            </svg>
+            <span class="slds-assistive-text"></span>
+          </a>
+          <div class="slds-text-heading--label slds-p-top--medium">Open Project</div>
         </div>
       </div>
+
+      <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+        <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
+          <a class="slds-button slds-icon_container slds-icon-standard-quotes" href="/app/settings">
+            <svg aria-hidden="true" class="slds-icon slds-icon--large">
+              <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#settings"></use>
+            </svg>
+            <span class="slds-assistive-text"></span>
+          </a>
+          <div class="slds-text-heading--label slds-p-top--medium">Settings</div>
+        </div>
+      </div>
+
+      <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+        <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
+          <a class="slds-button slds-icon_container slds-icon-standard-folder" href="/app/project/new">
+            <svg aria-hidden="true" class="slds-icon slds-icon--large">
+              <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#folder"></use>
+            </svg>
+            <span class="slds-assistive-text"></span>
+          </a>
+          <div class="slds-text-heading--label slds-p-top--medium">New Project</div>
+        </div>
+      </div>
+
     </div>
-    {% else %}
-      <div class="app-launcher">
-        <div class="slds-grid slds-wrap slds-grid--pull-padded">
-          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
-            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
-              <a class="slds-button slds-icon_container slds-icon-standard-account" href="/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}">
-                <svg aria-hidden="true" class="slds-icon slds-icon--large">
-                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#folder"></use>
-                </svg>
-                <span class="slds-assistive-text"></span>
-              </a>
-              <div class="slds-text-heading--label slds-p-top--medium">Edit Project</div>
-            </div>
-          </div>
-          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
-            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
-              <a class="slds-button slds-icon_container slds-icon-standard-dashboard" href="/app/test/new?pid={{project.settings.id}}">
-                <svg aria-hidden="true" class="slds-icon slds-icon--large">
-                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#dashboard"></use>
-                </svg>
-                <span class="slds-assistive-text"></span>
-              </a>
-              <div class="slds-text-heading--label slds-p-top--medium">Run Apex Unit Tests</div>
-            </div>
-          </div>
-          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
-            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
-              <a class="slds-button slds-icon_container slds-icon-standard-avatar" href="/app/project/{{project.settings.id}}/auth?pid={{project.settings.id}}">
-                <svg aria-hidden="true" class="slds-icon slds-icon--large">
-                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#avatar"></use>
-                </svg>
-                <span class="slds-assistive-text"></span>
-              </a>
-              <div class="slds-text-heading--label slds-p-top--medium">Authentication</div>
-            </div>
-          </div>
-          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
-            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
-              <a class="slds-button slds-icon_container slds-icon-standard-environment-hub" href="/app/deploy/new?pid={{project.settings.id}}">
-                <svg aria-hidden="true" class="slds-icon slds-icon--large">
-                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#environment_hub"></use>
-                </svg>
-                <span class="slds-assistive-text"></span>
-              </a>
-              <div class="slds-text-heading--label slds-p-top--medium">Deploy to Server</div>
-            </div>
-          </div>
-          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
-            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
-              <a class="slds-button slds-icon_container slds-icon-standard-document" href="/app/metadata/ApexClass/new?pid={{project.settings.id}}">
-                <svg aria-hidden="true" class="slds-icon slds-icon--large">
-                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#document"></use>
-                </svg>
-                <span class="slds-assistive-text"></span>
-              </a>
-              <div class="slds-text-heading--label slds-p-top--medium">New Apex Class</div>
-            </div>
-          </div>
-          <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
-            <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
-              <a class="slds-button slds-icon_container slds-icon-standard-connected-apps" href="/app/lightning/app/new?pid={{project.settings.id}}">
-                <svg aria-hidden="true" class="slds-icon slds-icon--large">
-                  <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#connected_apps"></use>
-                </svg>
-                <span class="slds-assistive-text"></span>
-              </a>
-              <div class="slds-text-heading--label slds-p-top--medium">New Lightning App</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    {% endif %}
+  </div>
+</div>
 
 {% endblock %}
