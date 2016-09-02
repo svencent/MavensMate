@@ -78,8 +78,6 @@ module.exports.start = function(opts) {
     app.set('projects', []); // managed in project middleware (todo: move to proper cache)
     app.set('mode', opts.mode);
 
-    server = app.listen(opts.port);
-
     server = app.listen(opts.port, function() {
       process.env.MAVENSMATE_SERVER_PORT = opts.port;
       process.env.MAVENSMATE_CONTEXT = 'server';
