@@ -18,7 +18,7 @@ describe('app/project', function(){
   beforeEach(function(done) {
     sandbox = sinon.sandbox.create();
     localServer.start()
-      .then(function() {
+      .then(function(serverStartResult) {
         app = serverStartResult.app;
         server = serverStartResult.server;
         sandbox.stub(Project.prototype, 'updateCredentials').resolves({});

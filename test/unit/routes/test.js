@@ -17,7 +17,7 @@ describe('app/test', function(){
   beforeEach(function(done) {
     sandbox = sinon.sandbox.create();
     localServer.start()
-      .then(function() {
+      .then(function(serverStartResult) {
         app = serverStartResult.app;
         server = serverStartResult.server;
         commandExecutorStub = sandbox.stub(app.get('commandExecutor'), 'execute');
