@@ -19,12 +19,16 @@ server.start({
   port: port,
   verbose: verbose,
   isDesktop: args.desktop
+})
+.then(function() {
+  if (args.window) {
+    var spawn = require('child_process').spawn
+    spawn('open', ['http://localhost:'+port]);
+  }
+  process.env.MAVENSMATE_SERVER_PORT = port;
+  console.log('MavensMate server running on port: '+port);
+})
+.catch(function(e) {
+  console.error('Could not start MavensMate server', e);
+  process.exit(1);
 });
-
-if (args.window) {
-  var spawn = require('child_process').spawn
-  spawn('open', ['http://localhost:'+port]);
-}
-
-process.env.MAVENSMATE_SERVER_PORT = port;
-console.log('MavensMate server running on port: '+port);

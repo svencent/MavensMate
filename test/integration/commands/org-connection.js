@@ -17,9 +17,9 @@ describe('mavensmate org-connections', function(){
 
   before(function(done) {
     this.timeout(120000);
-    helper.boostrapEnvironment();
+    helper.bootstrapEnvironment();
     commandExecutor = helper.getCommandExecutor();
-    helper.boostrapEnvironment();
+    helper.bootstrapEnvironment();
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace('org-connections');
     helper.addProject('org-connections')

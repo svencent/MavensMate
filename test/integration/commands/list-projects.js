@@ -13,7 +13,7 @@ describe('mavensmate list-projects', function() {
   before(function(done) {
     this.timeout(120000);
     helper.putTestProjectInTestWorkspace('list-projects-test');
-    helper.boostrapEnvironment();
+    helper.bootstrapEnvironment();
     commandExecutor = helper.getCommandExecutor();
     done();
   });

@@ -21,17 +21,19 @@ describe('app/settings', function(){
   beforeEach(function(done) {
     config.set('mm_workspace', path.join(helper.baseTestDirectory(),'workspace'));
     sandbox = sinon.sandbox.create();
-    var serverStartResult = localServer.start();
-    app = serverStartResult.app;
-    server = serverStartResult.server;
-    commandExecutorStub = sandbox.stub(app.get('commandExecutor'), 'execute');
-    commandExecutorStub.resolves({ success: true });
-    configSetStub = sandbox.stub(config, 'set', function(foo){ logger.debug('fake config set', foo) });
-    configSaveStub = sandbox.stub(config, 'save', function(foo){ logger.debug('fake config save!', foo) });
-    helper.stubSalesforceClient(sandbox);
-    helper.boostrapEnvironment();
-    helper.putTestProjectInTestWorkspace('settings-route-test');
-    helper.addProject('settings-route-test')
+    localServer.start()
+      .then(function(serverStartResult) {
+        app = serverStartResult.app;
+        server = serverStartResult.server;
+        commandExecutorStub = sandbox.stub(app.get('commandExecutor'), 'execute');
+        commandExecutorStub.resolves({ success: true });
+        configSetStub = sandbox.stub(config, 'set', function(foo){ logger.debug('fake config set', foo) });
+        configSaveStub = sandbox.stub(config, 'save', function(foo){ logger.debug('fake config save!', foo) });
+        helper.stubSalesforceClient(sandbox);
+        helper.bootstrapEnvironment();
+        helper.putTestProjectInTestWorkspace('settings-route-test');
+        return helper.addProject('settings-route-test');
+      })
       .then(function(proj) {
         logger.warn(config.get('mm_workspace'))
         project = proj;

@@ -13,7 +13,7 @@ describe('mavensmate compile-metadata', function(){
   var commandExecutor;
 
   before(function(done) {
-    helper.boostrapEnvironment();
+    helper.bootstrapEnvironment();
     this.timeout(120000);
     /*jshint camelcase: false */
     process.env.mm_compile_check_conflicts = false;

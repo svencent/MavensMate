@@ -16,15 +16,17 @@ describe('app/auth', function(){
 
   beforeEach(function(done) {
     sandbox = sinon.sandbox.create();
-    var serverStartResult = localServer.start();
-    app = serverStartResult.app;
-    server = serverStartResult.server;
-    commandExecutorStub = sandbox.stub(app.get('commandExecutor'), 'execute');
-    commandExecutorStub.resolves({ success: true });
-    helper.stubSalesforceClient(sandbox);
-    helper.boostrapEnvironment();
-    helper.putTestProjectInTestWorkspace('apex-route-test');
-    helper.addProject('apex-route-test')
+    localServer.start()
+      .then(function() {
+        app = serverStartResult.app;
+        server = serverStartResult.server;
+        commandExecutorStub = sandbox.stub(app.get('commandExecutor'), 'execute');
+        commandExecutorStub.resolves({ success: true });
+        helper.stubSalesforceClient(sandbox);
+        helper.bootstrapEnvironment();
+        helper.putTestProjectInTestWorkspace('auth-route-test');
+        return helper.addProject('auth-route-test');
+      })
       .then(function(proj) {
         project = proj;
         done();
@@ -37,7 +39,7 @@ describe('app/auth', function(){
 
   afterEach(function(done) {
     sandbox.restore();
-    helper.cleanUpProject('apex-route-test');
+    helper.cleanUpProject('auth-route-test');
     server.close(done);
   });
 

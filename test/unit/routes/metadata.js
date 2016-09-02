@@ -16,15 +16,17 @@ describe('app/metadata', function(){
 
   beforeEach(function(done) {
     sandbox = sinon.sandbox.create();
-    var serverStartResult = localServer.start();
-    app = serverStartResult.app;
-    server = serverStartResult.server;
-    commandExecutorStub = sandbox.stub(app.get('commandExecutor'), 'execute');
-    commandExecutorStub.resolves({ success: true });
-    helper.stubSalesforceClient(sandbox);
-    helper.boostrapEnvironment();
-    helper.putTestProjectInTestWorkspace('metadata-route-test');
-    helper.addProject('metadata-route-test')
+    localServer.start()
+      .then(function() {
+        app = serverStartResult.app;
+        server = serverStartResult.server;
+        commandExecutorStub = sandbox.stub(app.get('commandExecutor'), 'execute');
+        commandExecutorStub.resolves({ success: true });
+        helper.stubSalesforceClient(sandbox);
+        helper.bootstrapEnvironment();
+        helper.putTestProjectInTestWorkspace('metadata-route-test');
+        return helper.addProject('metadata-route-test');
+      })
       .then(function(proj) {
         project = proj;
         done();

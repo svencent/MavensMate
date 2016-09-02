@@ -21,7 +21,7 @@ describe('mavensmate new-project-from-existing-directory', function(){
   before(function(done) {
     sandbox = sinon.sandbox.create();
     helper.stubSalesforceClient(sandbox);
-    helper.boostrapEnvironment();
+    helper.bootstrapEnvironment();
     commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
     done();

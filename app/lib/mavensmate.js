@@ -18,16 +18,22 @@ mavensmate.startServer = function(opts) {
     try {
       var port = opts.port || '56248';
       var verbose = opts.verbose || false;
-      var res = server.start({
+      server.start({
         port: port,
         verbose: opts.verbose,
         openWindowFn: opts.openWindowFn,
         mode: opts.mode
+      })
+      .then(function(res) {
+        console.log('MavensMate server running on port: '+port);
+        res.config = require('../config');
+        res.logger = require('winston');
+        resolve(res);
+      })
+      .catch(function(e) {
+        console.error('Could not run MavensMate server', e);
+        reject(e);
       });
-      console.log('MavensMate server running on port: '+port);
-      res.config = require('../config');
-      res.logger = require('winston');
-      resolve(res);
     } catch(e) {
       console.error('MavensMate server failed to start: '+e.message);
       reject(e);

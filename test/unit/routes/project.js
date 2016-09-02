@@ -17,16 +17,18 @@ describe('app/project', function(){
 
   beforeEach(function(done) {
     sandbox = sinon.sandbox.create();
-    var serverStartResult = localServer.start();
-    app = serverStartResult.app;
-    server = serverStartResult.server;
-    sandbox.stub(Project.prototype, 'updateCredentials').resolves({});
-    commandExecutorStub = sandbox.stub(app.get('commandExecutor'), 'execute');
-    commandExecutorStub.resolves({ success: true });
-    helper.stubSalesforceClient(sandbox);
-    helper.boostrapEnvironment();
-    helper.putTestProjectInTestWorkspace('project-route-test');
-    helper.addProject('project-route-test')
+    localServer.start()
+      .then(function() {
+        app = serverStartResult.app;
+        server = serverStartResult.server;
+        sandbox.stub(Project.prototype, 'updateCredentials').resolves({});
+        commandExecutorStub = sandbox.stub(app.get('commandExecutor'), 'execute');
+        commandExecutorStub.resolves({ success: true });
+        helper.stubSalesforceClient(sandbox);
+        helper.bootstrapEnvironment();
+        helper.putTestProjectInTestWorkspace('project-route-test');
+        return helper.addProject('project-route-test');
+      })
       .then(function(proj) {
         project = proj;
         done();

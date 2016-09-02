@@ -16,19 +16,19 @@ describe('project-middleware', function(){
   var commandExecutorStub;
 
   beforeEach(function(done) {
-    logger.debug('before each')
     sandbox = sinon.sandbox.create();
-    var serverStartResult = localServer.start();
-    app = serverStartResult.app;
-    server = serverStartResult.server;
-    commandExecutorStub = sandbox.stub(app.get('commandExecutor'), 'execute');
-    commandExecutorStub.resolves({ success: true });
-    helper.stubSalesforceClient(sandbox);
-    helper.boostrapEnvironment();
-    helper.putTestProjectInTestWorkspace('project-middleware-test');
-    helper.addProject('project-middleware-test')
+    localServer.start()
+      .then(function() {
+        app = serverStartResult.app;
+        server = serverStartResult.server;
+        commandExecutorStub = sandbox.stub(app.get('commandExecutor'), 'execute');
+        commandExecutorStub.resolves({ success: true });
+        helper.stubSalesforceClient(sandbox);
+        helper.bootstrapEnvironment();
+        helper.putTestProjectInTestWorkspace('project-middleware-test');
+        return helper.addProject('project-middleware-test');
+      })
       .then(function(proj) {
-        logger.debug('whatt');
         project = proj;
         done();
       })

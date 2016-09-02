@@ -18,7 +18,7 @@ describe('mavensmate new-project', function(){
 
   before(function(done) {
     this.timeout(120000);
-    helper.boostrapEnvironment();
+    helper.bootstrapEnvironment();
     commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
     helper.putTestProjectInTestWorkspace('new-project-existing');

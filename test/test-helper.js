@@ -61,7 +61,7 @@ exports.putTestProjectInTestWorkspace = function(name) {
   }
 };
 
-exports.boostrapEnvironment = function() {
+exports.bootstrapEnvironment = function() {
   logger.info('Bootstrapping test environment');
   if (process.env.PARALLELISM_INDEX)
     logger.info('CI parallelism index is: '+process.env.PARALLELISM_INDEX);

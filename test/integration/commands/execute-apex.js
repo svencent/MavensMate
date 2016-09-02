@@ -11,7 +11,7 @@ describe('mavensmate execute-apex', function() {
 
   before(function(done) {
     this.timeout(120000);
-    helper.boostrapEnvironment();
+    helper.bootstrapEnvironment();
     helper.unlinkEditor();
     commandExecutor = helper.getCommandExecutor();
     helper.putTestProjectInTestWorkspace('execute-apex');
