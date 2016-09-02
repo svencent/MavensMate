@@ -50,7 +50,7 @@ EditorService.prototype._getSupportedEditors = function() {
   try { pathSublLocation = which.sync('subl'); } catch(e){}
   var atomPath = fs.existsSync(atomLocationConfig) ? atomLocationConfig : pathAtomLocation;
   var sublPath = fs.existsSync(sublLocationConfig) ? sublLocationConfig : pathSublLocation;
-  var vsCodePath = fs.existsSync(atomLocationConfig) ? sublLocationConfig : pathVsCodeLocation;
+  var vsCodePath = fs.existsSync(vsCodeLocationConfig) ? vsCodeLocationConfig : pathVsCodeLocation;
   if (atomPath) {
     editors.atom = atomPath;
   }
