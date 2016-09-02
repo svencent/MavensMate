@@ -56,7 +56,8 @@ logger.debug(JSON.stringify(process.argv));
 var projectExemptCommands = [
   'new-project',
   'session',
-  'get-setting'
+  'get-setting',
+  'list-projects'
 ];
 
 var commandName = program.args[0];
