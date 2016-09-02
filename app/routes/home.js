@@ -8,7 +8,7 @@ router.get('/', function(req, res) {
     res.redirect('/app/project/'+req.project.settings.id+'?pid='+req.project.settings.id); //todo: deal with param vs query goofiness
   } else {
     res.render('home/index.html', {
-      title: 'Happy coding :)'
+      title: 'MavensMate Home'
     });
   }
 });
