@@ -18,7 +18,7 @@ process.title = 'mavensmate server';
 server.start({
   port: port,
   verbose: verbose,
-  isDesktop: args.desktop
+  mode: args.desktop ? 'desktop' : null
 })
 .then(function() {
   if (args.window) {
