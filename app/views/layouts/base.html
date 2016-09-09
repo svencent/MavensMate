@@ -263,16 +263,17 @@
         function showPageHeaderLoading() {
           $('#page-header-buttons .slds-button-group').hide();
           $('#page-header-loading-indicator').show();
+          {% if isDesktop %}
+            ipc.sendToHost('operation:running');
+          {% endif %}
         }
 
         function hidePageHeaderLoading() {
           $('#page-header-loading-indicator').hide();
           $('#page-header-buttons .slds-button-group').show();
-        }
-
-        function toggleRunningIndicator() {
-          $('#page-header-loading-indicator').toggle();
-          $('#page-header-buttons .slds-button-group').toggle();
+          {% if isDesktop %}
+            ipc.sendToHost('operation:stopped');
+          {% endif %}
         }
 
         function metadataTypeSort(a, b) {
@@ -336,7 +337,7 @@
                   });
                 });
               </script>
-              <a class="slds-button slds-button--icon slds-align-middle" onClick="ipc.send('open-app-launcher');">
+              <a class="slds-button slds-button--icon slds-align-middle" onClick="ipc.send('show-view-manager');">
                 <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
                   <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#apps"></use>
                 </svg>
