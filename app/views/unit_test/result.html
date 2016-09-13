@@ -104,7 +104,7 @@
 			<tbody>
 				{% for res in coverageResults.triggers -%}
 					{% set apexTriggerName = loop.key %}
-					<tr id="tr-result-wrapper-ApexClass-{{apexTriggerName}}">
+					<tr id="tr-result-wrapper-ApexTrigger-{{apexTriggerName}}">
 						<td>{{ apexTriggerName }}.trigger</td>
 						<td>
 							<span class="coverage slds-align-middle">{{ res.percentCovered }}%</span>
@@ -114,13 +114,13 @@
 								</div>
 							</div>
 							{% if mavensmate.ui.doesClassOrTriggerExist(project, apexTriggerName, 'ApexTrigger') -%}
-								<a class="slds-button slds-align-middle a-show-hide-coverage" data-name="{{apexTriggerName}}" data-metadata-type-xml-name="ApexClass"
-									onclick="showCoverage(this, '{{ apexTriggerName }}', 'ApexClass', [{{ res.uncoveredLines }}]);">Show Coverage</a>
+								<a class="slds-button slds-align-middle a-show-hide-coverage" data-name="{{apexTriggerName}}" data-metadata-type-xml-name="ApexTrigger"
+									onclick="showCoverage(this, '{{ apexTriggerName }}', 'ApexTrigger', [{{ res.uncoveredLines }}]);">Show Coverage</a>
 							{% endif %}
 						</td>
 					</tr>
-					{% if mavensmate.ui.doesClassOrTriggerExist(project, apexTriggerName, 'ApexClass') -%}
-					<tr id="tr-coverage-wrapper-ApexClass-{{apexTriggerName}}" class="tr-coverage-wrapper">
+					{% if mavensmate.ui.doesClassOrTriggerExist(project, apexTriggerName, 'ApexTrigger') -%}
+					<tr id="tr-coverage-wrapper-ApexTrigger-{{apexTriggerName}}" class="tr-coverage-wrapper">
 						<td colspan="2">
 							<div class="coverage-wrapper slds-scrollable">
 
