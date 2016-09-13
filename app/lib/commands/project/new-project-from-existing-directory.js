@@ -82,7 +82,7 @@ exports.addSubCommand = function(program) {
       if (this.ui) {
         program.commandExecutor.execute({
           name: this._name,
-          body: { args: { ui: true, directory: this.directory } }
+          body: { args: { ui: true, origin: this.directory } }
         });
       } else {
         var self = this;
