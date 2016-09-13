@@ -1,9 +1,14 @@
 {% extends "views/layouts/base.html" %}
 {% block yield %}
 
-<div class="content">
-  <div class="alert alert-error">
-    <p>{{ error }}</p>
+<div class="slds-box slds-theme--error" role="alert">
+  <div class="slds-notify__content slds-grid">
+    <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
+      <use xlink:href="/app/static/lds/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+    </svg>
+    <div class="slds-col slds-align-middle">
+      <h2 class="slds-text-heading--small ">{{ error }}</h2>
+    </div>
   </div>
 </div>
 

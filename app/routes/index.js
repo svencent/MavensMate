@@ -4,7 +4,11 @@ var router = express.Router();
 // important: this route is configured in the connected app,
 // so we have to handle that URL here and redirect to a proper route
 router.get('/sfdc/auth/callback', function(req, res) {
-  res.redirect('/app/auth/callback');
+  if (req.query.error) {
+    res.render('error', { error: req.query.error + ', '+ req.query.error_description });
+  } else {
+    res.redirect('/app/auth/callback');
+  }
 });
 
 router.get('/', function(req, res) {
