@@ -268,6 +268,13 @@
                   <p class="slds-truncate">Open Salesforce</p>
                 </a>
               </li>
+              {% if project.sfdcClient && project.sfdcClient.conn && project.sfdcClient.conn.limitInfo && project.sfdcClient.conn.limitInfo.apiUsage %}
+              <li class="slds-dropdown__item">
+                <a href="javascript:void(0)" onclick="mavensmate.executeCommand('open-sfdc');" role="menuitem">
+                  <p class="slds-truncate">API Usage: {{ project.sfdcClient.conn.limitInfo.apiUsage.used }} / {{ project.sfdcClient.conn.limitInfo.apiUsage.limit }}</p>
+                </a>
+              </li>
+              {% endif %}
             </ul>
           </div>
         </div>
