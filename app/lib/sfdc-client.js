@@ -485,11 +485,14 @@ SalesforceClient.prototype._createContainerAsyncRequest = function(containerId) 
  * @param {Number} interval - Polling interval in milliseconds
  * @param {Number} timeout - Polling timeout in milliseconds
  */
-SalesforceClient.prototype._pollAsyncContainer = function(containerId, requestId, resolve, reject, interval, timeout) {
+SalesforceClient.prototype._pollAsyncContainer = function(containerId, requestId, resolve, reject) {
   logger.debug('_pollAsyncContainer for requestId: '+requestId);
   var self = this;
+  var interval = config.get('mm_polling_interval') || 2000;
+  var timeout = (config.get('mm_timeout') || 600) * 1000;
   var startTime = new Date().getTime();
-  var poll = function() {
+  var pollForAsyncContainerResult = function() {
+    logger.debug('polling for async container completion...');
     var now = new Date().getTime();
     if (startTime + timeout < now) {
       self.emit('error', new Error('MavensMate timed out while polling Salesforce.com servers. To increase polling timeout, set mm_timeout to number of seconds.'));
@@ -498,17 +501,15 @@ SalesforceClient.prototype._pollAsyncContainer = function(containerId, requestId
     self._getAsyncRequest(requestId).then(function(results) {
       var done = results[0].State !== 'Queued';
       if (done) {
-        // self.emit('asynccontainer-complete', results);
         self._asyncContainerRequestCompleteHandler(containerId, results, resolve, reject);
       } else {
-        setTimeout(poll, interval);
+        setTimeout(pollForAsyncContainerResult, interval);
       }
     }, function(err) {
-      // self.emit('asynccontainer-error', err);
       self._asyncContainerRequestErrorHandler(containerId, err, resolve, reject);
     });
   };
-  setTimeout(poll, interval);
+  pollForAsyncContainerResult();
 };
 
 /**
@@ -641,8 +642,8 @@ SalesforceClient.prototype.runTests = function(classIdsOrTestsPayload) {
   var self = this;
   return new Promise(function(resolve, reject) {
     var numberOfTests = classIdsOrTestsPayload.length;
-    var pollInterval = numberOfTests > 10 ? 5000 : 1000;
-
+    var pollInterval = numberOfTests >= 5 ? (config.get('mm_polling_interval') || 2000) * 5 : config.get('mm_polling_interval') || 2000;
+    logger.debug('runTests polling interval is: ', pollInterval);
     var postBody;
     if (_.isString(classIdsOrTestsPayload[0])) {
       postBody = { classids: classIdsOrTestsPayload.join(',') }
@@ -669,7 +670,8 @@ SalesforceClient.prototype.runTests = function(classIdsOrTestsPayload) {
 
         // poll for the test results
         var startTime = new Date().getTime();
-        var poll = function() {
+        var pollForTestResult = function() {
+          logger.debug('polling for test results...');
           var now = new Date().getTime();
           if (startTime + self.conn.metadata.pollTimeout < now) {
             reject(new Error('Apex test request timed out. Timeout can be configured via mm_timeout setting.'));
@@ -688,7 +690,7 @@ SalesforceClient.prototype.runTests = function(classIdsOrTestsPayload) {
                 })
                 .done();
             } else {
-              setTimeout(poll, pollInterval);
+              setTimeout(pollForTestResult, pollInterval);
             }
           })
           .catch(function(err) {
@@ -696,7 +698,7 @@ SalesforceClient.prototype.runTests = function(classIdsOrTestsPayload) {
           })
           .done();
         };
-        setTimeout(poll, pollInterval);
+        pollForTestResult();
       }
     });
   });

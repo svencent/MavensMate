@@ -35,6 +35,13 @@ module.exports = {
     default: 600,
     order: 40
   },
+  mm_polling_interval: {
+    title: 'Polling interval, in milliseconds',
+    description: 'Set to a higher number if you are consistently hitting Salesforce API limits (note: a higher polling interval means you will wait longer for compilation, deploy, and test results).',
+    type: 'integer',
+    default: 2000,
+    order: 45
+  },
   mm_default_subscription: {
     title: 'Default metadata subscription',
     description: 'Array of metadata types that should be included in every new MavensMate project, e.g. ApexClass, ApexPage, CustomObject, StaticResource',
