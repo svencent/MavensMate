@@ -423,7 +423,7 @@ Deploy.prototype._deployToTarget = function(target, deployPath, deployOptions) {
         return deployClient.initialize();
       })
       .then(function() {
-        deployClient.setPollingTimeout(300000); // TODO: make configurable from UI
+        deployClient.setPollingTimeout((config.get('mm_timeout') || 600) * 6);
         deployStream = fs.createReadStream(path.join(deployPath, 'unpackaged.zip'));
         return deployClient.deploy(deployStream, deployOptions);
       })
