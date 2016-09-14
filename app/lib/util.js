@@ -360,10 +360,11 @@ exports.writeStream = function(readableStream, destination) {
   return new Promise(function(resolve, reject) {
     var tmpZipLocation = path.join(destination, 'tmp.zip');
     try {
-      logger.debug('writing stream');
+      logger.debug('writing zip stream to', tmpZipLocation);
       readableStream
         .pipe(fstream.Writer(tmpZipLocation))
           .on('error', function (error) {
+            logger.error('error writing zip to disk', error);
             if (fs.existsSync(tmpZipLocation)) {
               fs.removeAsync(tmpZipLocation)
                 .then(function() {
@@ -397,8 +398,10 @@ exports.writeStream = function(readableStream, destination) {
               unzipCommand = spawn(cscriptExe, [path.join(__dirname, '..', '..', 'bin', 'unzip.vbs'), tmpZipLocation, destination ], { stdio: [ 'ignore', 'ignore', 'pipe' ] });
             }
 
+            logger.debug('unzipCommand', unzipCommand);
+
             unzipCommand.on('error', function(err) {
-              logger.debug('error spawning unzip process', err);
+              logger.error('error spawning unzip process', err);
               if (err.message.indexOf('ENOENT') !== -1) {
                 return reject(new Error('Could not unzip response from Salesforce. It is likely unzip (OSX/Linux) or cscript (Windows) is not available on your system PATH. Check your local machine settings.'));
               } else {
@@ -421,6 +424,7 @@ exports.writeStream = function(readableStream, destination) {
             });
 
             unzipCommand.on('close', function (code) {
+              logger.debug('unzip command close', tmpZipLocation, code);
               if (fs.existsSync(tmpZipLocation)) {
                 fs.removeAsync(tmpZipLocation)
                   .then(function() {
@@ -437,6 +441,7 @@ exports.writeStream = function(readableStream, destination) {
             });
           });
     } catch(e) {
+      logger.error('error writing stream', e);
       if (fs.existsSync(tmpZipLocation)) {
         fs.removeAsync(tmpZipLocation)
           .then(function() {
