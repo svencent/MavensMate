@@ -423,7 +423,7 @@ Deploy.prototype._deployToTarget = function(target, deployPath, deployOptions) {
         return deployClient.initialize();
       })
       .then(function() {
-        deployClient.setPollingTimeout((config.get('mm_timeout') || 600) * 6);
+        deployClient.setPollingTimeout((config.get('mm_timeout') || 600) * 10000); //todo: this merely sets an obnoxiously long deploy timeout...should we create a separate setting for deploy timeout?
         deployStream = fs.createReadStream(path.join(deployPath, 'unpackaged.zip'));
         return deployClient.deploy(deployStream, deployOptions);
       })
