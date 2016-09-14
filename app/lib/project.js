@@ -275,6 +275,13 @@ Project.prototype._initExisting = function() {
         return self.sfdcClient.startSystemStreamingListener();
       })
       .then(function() {
+        if (!self.getDebugSettingsSync().debugLevelName) {
+          return self._writeDebug();
+        } else {
+          return Promise.resolve();
+        }
+      })
+      .then(function() {
         self.requiresAuthentication = false;
         resolve();
       })
