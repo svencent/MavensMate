@@ -936,7 +936,7 @@ SalesforceClient.prototype.startSystemStreamingListener = function() {
     } catch(e) {
       logger.error('Could not start system streaming listener', e);
       if (config.get('mm_http_proxy') || config.get('mm_https_proxy')) {
-        logger.debug('user has proxy configured but streaming listener not functional.');
+        logger.error('user has proxy configured but streaming listener not functional.');
         resolve();
       } else {
         reject(new Error('Could not start system streaming listener: '+e.message));
