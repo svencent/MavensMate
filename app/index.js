@@ -22,7 +22,8 @@ var app, server;
  * Starts the MavensMate HTTP server
  * @param  {Object} opts - server options
  * @param  {Integer} opts.port - server port
- * @param  {String} opts.mode - when running in MavensMate-Desktop, this value is "desktop"
+ * @param  {String}  opts.mode - when running in MavensMate-Desktop, this value is "desktop"
+ * @param  {String}  opts.desktopVersion - when running in MavensMate-Desktop, this value is the current version of Desktop
  * @param  {Function} opts.openWindowFn - function used to open windows (optional)
  * @return {Object} - express app
  */
@@ -41,6 +42,7 @@ module.exports.start = function(opts) {
     app.use(bodyParser.json({ limit: '100mb' }));
 
     app.use(require('./middleware/cors'));
+    app.use(require('./middleware/version'));
     app.use(require('./middleware/logging'));
     app.use(require('./middleware/editor'));
     app.use(require('./middleware/project'));
@@ -77,6 +79,7 @@ module.exports.start = function(opts) {
     app.set('requestStore', requestStore); // todo: move to proper cache
     app.set('projects', []); // managed in project middleware (todo: move to proper cache)
     app.set('mode', opts.mode);
+    app.set('desktopVersion', opts.desktopVersion);
 
     server = app.listen(opts.port, function() {
       process.env.MAVENSMATE_SERVER_PORT = opts.port;
