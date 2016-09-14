@@ -624,6 +624,9 @@ Project.prototype.edit = function(pkg) {
         return self._writeLocalStore(retrieveResult.fileProperties);
       })
       .then(function() {
+        // todo: in conversation with sean he noted that it would be nice to not obliterate working
+        // copies of server metadata on edit-project, which this does
+        // in that case, we may give the user an option of overwriting all local files or only new ones
         util.emptyDirectoryRecursiveSync(path.join(self.path, 'src'));
         return self.replaceLocalFiles(path.join(retrievePath, 'unpackaged'), true);
       })
