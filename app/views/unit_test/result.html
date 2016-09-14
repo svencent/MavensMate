@@ -10,7 +10,7 @@
 			<a class="slds-tabs--default__link" href="#" role="tab" tabindex="2" aria-selected="false" aria-controls="trigger-coverage" data-aljs-show="trigger-coverage">Trigger Coverage</a>
 		</li>
 	</ul>
-	<div id="test-results" class="slds-tabs--default__content slds-hide" role="tabpanel">
+	<div id="test-results" class="slds-tabs--default__content slds-scrollable slds-hide" role="tabpanel">
 
 		{% for res in testResults -%}
     	<h3 class="slds-section-title--divider h3-test-class-name"><span>{{ loop.key }}.cls</span>&nbsp;&nbsp;{{ res.ExtendedStatus }}&nbsp;tests passed</h3>
