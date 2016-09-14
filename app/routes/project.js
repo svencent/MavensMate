@@ -183,6 +183,19 @@ router.post('/:id/subscription', function(req, res) {
   });
 });
 
+// removes project reference from server
+router.post('/:id/close', function(req, res) {
+  try {
+    var projects = req.app.get('projects').filter(function(p) {
+      return p.settings.id !== req.params.id;
+    });
+    req.app.set('projects', projects);
+    res.status(200).send({ success: true });
+  } catch(err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
 // indexes metadata
 router.post('/:id/index', function(req, res) {
   var commandExecutor = req.app.get('commandExecutor');

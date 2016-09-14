@@ -187,6 +187,28 @@ describe('app/project', function(){
         });
     });
   });
+
+  describe('app/project/:id/close', function() {
+    it('should close project', function(done) {
+      request(app)
+        .get('/app/project/'+project.settings.id+'/edit')
+        .query({ pid: project.settings.id })
+        .expect('Content-Type', /html/)
+        .expect(200)
+        .expect(app.get('projects').length, 1)
+        .end(function(err, res) {
+          request(app)
+            .post('/app/project/'+project.settings.id+'/close')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end(function(err, res) {
+              app.get('projects').length.should.equal(0);
+              if (err) throw err;
+              done();
+            });
+        });
+    });
+  });
 });
 
 

@@ -335,6 +335,26 @@
                     sldsSprite: '{{sldsSprite}}',
                     {% endif %}
                   });
+
+                  ipcRenderer.on('close-project', function(evt, pid) {
+                    var opts = {
+                      async: false,
+                      ajax: {
+                        type: 'POST',
+                        url: baseLocalServerURL+'/project/'+pid+'/close',
+                        data: {
+                          pid: '{{project.settings.id}}'
+                        }
+                      }
+                    };
+                    mavensmate.request(opts)
+                      .then(function(res) {
+                        console.log('project closed', res);
+                      })
+                      .catch(function(err) {
+                        console.error('could not close project', err);
+                      });
+                  });
                 });
               </script>
               <a class="slds-button slds-button--icon slds-align-middle" onClick="ipc.send('show-view-manager');">
