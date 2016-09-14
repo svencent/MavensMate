@@ -183,7 +183,7 @@
 					type: 'POST',
 					url: '{{ mavensmate.ui.getBaseUrl() }}/app/project{% if origin %}/existing{% endif %}',
 					data: JSON.stringify({
-						name: $('#pn').val(),
+						name: $('#pn').val().trim(),
 						accessToken: $('#accessToken').val(),
 						refreshToken: $('#refreshToken').val(),
 						instanceUrl: $('#instanceUrl').val(),
