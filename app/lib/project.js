@@ -1145,7 +1145,7 @@ Project.prototype._writeDebug = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     var debug = {
-      users: [self.sfdcClient.conn.userInfo.user_id],
+      users: [self.sfdcClient.getUserId()],
       logType: 'USER_DEBUG',
       debugLevelName: 'MAVENSMATE',
       levels: {

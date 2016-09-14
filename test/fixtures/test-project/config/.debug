@@ -2,12 +2,15 @@
     "users": [
         "005d0000000xxzsAAA"
     ],
+    "logType": "USER_DEBUG",
+    "debugLevelName": "MAVENSMATE",
     "levels": {
         "Workflow": "INFO",
         "Callout": "INFO",
         "System": "DEBUG",
         "Database": "INFO",
         "ApexCode": "DEBUG",
+        "ApexProfiling": "INFO",
         "Validation": "INFO",
         "Visualforce": "DEBUG"
     },
