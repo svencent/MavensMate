@@ -13,6 +13,7 @@ var mavensMateFile  = require('../file');
 var util            = require('../util');
 var logger          = require('winston');
 var Deploy          = require('./deploy');
+var config          = require('../../config');
 
 var ResourceBundleService = function(project) {
   this.project = project;
@@ -69,7 +70,7 @@ ResourceBundleService.prototype.create = function(staticResourcePaths) {
 ResourceBundleService.prototype._write = function(staticResourcePath, destination) {
   return new Promise(function(resolve, reject) {
     var readStream = fs.createReadStream(staticResourcePath);
-    util.writeStream(readStream, destination)
+    util.writeStream(readStream, destination, config.get('mm_legacy_unzip'))
       .then(function() {
         resolve(destination);
       })

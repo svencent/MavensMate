@@ -350,9 +350,10 @@ exports.zipDirectory = function(directoryToZip, zipFileDestination, dest, ext, f
 };
 
 exports.unzipLegacy = function(tmpZipLocation, destination) {
+  logger.debug('unzipping response via unzipLegacy');
+  var self = this;
   return new Promise(function(resolve, reject) {
     var unzipCommand;
-
     if (self.isMac() || self.isLinux()) {
       unzipCommand = spawn('unzip', [ tmpZipLocation, '-d', destination ], { stdio: [ 'ignore', 'ignore', 'pipe' ] });
     } else if (self.isWindows()) {
@@ -370,8 +371,6 @@ exports.unzipLegacy = function(tmpZipLocation, destination) {
       logger.debug('cscriptExe is: ', cscriptExe);
       unzipCommand = spawn(cscriptExe, [path.join(__dirname, '..', '..', 'bin', 'unzip.vbs'), tmpZipLocation, destination ], { stdio: [ 'ignore', 'ignore', 'pipe' ] });
     }
-
-    logger.debug('unzipCommand', unzipCommand);
 
     unzipCommand.on('error', function(err) {
       logger.error('error spawning unzip process', err);
@@ -416,6 +415,7 @@ exports.unzipLegacy = function(tmpZipLocation, destination) {
 }
 
 exports.unzip = function(tmpZipLocation, destination) {
+  logger.debug('unzipping response via yauzl');
   return new Promise(function(resolve, reject) {
     yauzl.open(tmpZipLocation, {lazyEntries: true}, function(err, zipfile) {
       if (err) return reject(err);
@@ -449,11 +449,11 @@ exports.unzip = function(tmpZipLocation, destination) {
         reject(err);
       });
       zipfile.on('end', function() {
-        logger.debug('File unzipped successfully via yauzl');
+        logger.debug('File unzipped successfully');
         if (fs.existsSync(tmpZipLocation)) {
           fs.removeAsync(tmpZipLocation)
             .then(function() {
-              resolve();
+              resolve(destination);
             })
             .catch(function(err) {
               reject(err);
@@ -473,9 +473,11 @@ exports.unzip = function(tmpZipLocation, destination) {
  * @param  {String} destination
  * @return {Promise}
  */
-exports.writeStream = function(readableStream, destination) {
+exports.writeStream = function(readableStream, destination, isLegacyUnzip) {
   var self = this;
   return new Promise(function(resolve, reject) {
+    if (isLegacyUnzip === undefined)
+      isLegacyUnzip = false;
     var tmpZipLocation = path.join(destination, 'tmp.zip');
     try {
       logger.debug('writing zip stream to', tmpZipLocation);
@@ -495,19 +497,14 @@ exports.writeStream = function(readableStream, destination) {
           })
           .on('close', function() {
             logger.debug('closed write stream, unzipping now');
-            self.unzip(tmpZipLocation, destination)
+            var unzipPromise = isLegacyUnzip ? self.unzipLegacy.bind(self) : self.unzip.bind(self);
+            unzipPromise(tmpZipLocation, destination)
               .then(function() {
                 resolve(destination);
               })
               .catch(function(err) {
-                self.unzipLegacy(tmpZipLocation, destination)
-                  .then(function() {
-                    resolve(destination);
-                  })
-                  .catch(function(err) {
-                    reject(err);
-                  });
-              })
+                reject(err);
+              });
           });
     } catch(e) {
       logger.error('error writing stream', e);

@@ -70,6 +70,13 @@ module.exports = {
     default: true,
     order: 30
   },
+  mm_legacy_unzip: {
+    title: '(Advanced) Use your machine\'s "unzip" cli to unzip responses from Salesforce.com Metadata API',
+    description: 'Set to true *ONLY* if MavensMate is having difficulty unzipping responses from the Salesforce.com Metadata API (you will have seen ENOENT/EPERM errors referencing a missing "unpackaged" directory).',
+    type: 'boolean',
+    default: false,
+    order: 35
+  },
   mm_subl_location : {
     title: 'Sublime Text location',
     description: 'The full path of your Sublime Text executable (Sublime Text users only).',
