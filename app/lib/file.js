@@ -214,6 +214,8 @@ Object.defineProperty(MavensMateFile.prototype, 'lightningType', {
  */
 Object.defineProperty(MavensMateFile.prototype, 'classification', {
   get: function() {
+    if (!this.type)
+      throw new Error('Unrecognized metadata type: '+this.path);
     if (this.type.inFolder) {
       var inFolderTypeDirectoryNames = this.metadataHelper.inFolderDirectoryNames;
       if (this.isDirectory) {
@@ -340,19 +342,19 @@ Object.defineProperty(MavensMateFile.prototype, 'serverCopy', {
           var soql = 'Select LastModifiedById, LastModifiedDate, LastModifiedBy.Name, '+bodyField+' From '+self.type.xmlName+' Where Name = \''+self.name+'\'';
           self.project.sfdcClient.conn.query(soql, function(err, result) {
             if (err) {
-              logger.debug('could not get server contents: '+err.message);
+              logger.error('SOQL for server copy failed', err.message);
               return reject(err);
-            } else if (result.records.length == 0) {
-              var err = new Error('Server copy query returned no results: ' + soql);
-              logger.debug(err.message);
+            } else if (result.records.length === 0) {
+              var err = new Error(self.name+' ('+self.type.xmlName+') was not found on the server.');
+              logger.error(err.message, soql);
               return reject(err);
             }
             result.records[0].Body = result.records[0][bodyField];
             resolve(result.records[0]);
           });
         }
-      } catch(e){
-        logger.debug('Could not determine local store entry: '+e.message);
+      } catch(e) {
+        logger.error('Could not determine local store entry: '+e.message);
         reject(e);
       }
     });
