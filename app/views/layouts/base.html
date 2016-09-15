@@ -336,7 +336,7 @@
                     {% endif %}
                   });
 
-                  ipcRenderer.on('close-project', function(evt, pid) {
+                  ipc.on('close-project', function(evt, pid) {
                     var opts = {
                       async: false,
                       ajax: {
