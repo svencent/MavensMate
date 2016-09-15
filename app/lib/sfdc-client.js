@@ -820,7 +820,7 @@ SalesforceClient.prototype.retrieveUnpackaged = function(metadataTypesOrPackage,
         }
       } else {
         if (writeToDisk) {
-          var writePromise = util.writeStream(zipStream, destination);
+          var writePromise = util.writeStream(zipStream, destination, config.get('mm_legacy_unzip'));
           zipStream.emit('data', new Buffer(result.zipFile, 'base64'));
           zipStream.emit('end');
           writePromise

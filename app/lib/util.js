@@ -17,6 +17,7 @@ var archiver    = require('archiver');
 var logger      = require('winston');
 var which       = require('which');
 var camelize    = require('./utilities/camelize');
+var yauzl       = require("yauzl");
 
 var platformHash = {
   darwin: 'osx',
@@ -348,6 +349,123 @@ exports.zipDirectory = function(directoryToZip, zipFileDestination, dest, ext, f
   });
 };
 
+exports.unzipLegacy = function(tmpZipLocation, destination) {
+  logger.debug('unzipping response via unzipLegacy');
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    var unzipCommand;
+    if (self.isMac() || self.isLinux()) {
+      unzipCommand = spawn('unzip', [ tmpZipLocation, '-d', destination ], { stdio: [ 'ignore', 'ignore', 'pipe' ] });
+    } else if (self.isWindows()) {
+      var cscriptExe = 'cscript';
+      try {
+        which.sync('cscript');
+      } catch(e) {
+        logger.debug('Could not find cscript...');
+        if (os.arch() === 'ia32') {
+          cscriptExe = 'c:\\windows\\system32\\cscript.exe';
+        } else {
+          cscriptExe = 'c:\\windows\\SysWOW64\\cscript.exe';
+        }
+      }
+      logger.debug('cscriptExe is: ', cscriptExe);
+      unzipCommand = spawn(cscriptExe, [path.join(__dirname, '..', '..', 'bin', 'unzip.vbs'), tmpZipLocation, destination ], { stdio: [ 'ignore', 'ignore', 'pipe' ] });
+    }
+
+    unzipCommand.on('error', function(err) {
+      logger.error('error spawning unzip process', err);
+      if (err.message.indexOf('ENOENT') !== -1) {
+        return reject(new Error('Could not unzip response from Salesforce. It is likely unzip (OSX/Linux) or cscript (Windows) is not available on your system PATH. Check your local machine settings.'));
+      } else {
+        return reject(err);
+      }
+    });
+
+    unzipCommand.stderr.on('data', function (data) {
+      logger.error('ERR unzipping:');
+      logger.error(data);
+      if (fs.existsSync(tmpZipLocation)) {
+        fs.removeAsync(tmpZipLocation)
+          .then(function() {
+            return reject(new Error('Could not extract and write stream to file system.'));
+          })
+          .catch(function(err) {
+            return reject(err);
+          });
+      }
+    });
+
+    unzipCommand.on('close', function (code) {
+      logger.debug('unzip command close', tmpZipLocation, code);
+      if (fs.existsSync(tmpZipLocation)) {
+        fs.removeAsync(tmpZipLocation)
+          .then(function() {
+            if (code !== 0) {
+              return reject(new Error('Could not extract and write stream to file system. [Exit Code '+code+']'));
+            } else {
+              return resolve();
+            }
+          })
+          .catch(function(err) {
+            reject(err);
+          });
+      }
+    });
+  });
+}
+
+exports.unzip = function(tmpZipLocation, destination) {
+  logger.debug('unzipping response via yauzl');
+  return new Promise(function(resolve, reject) {
+    yauzl.open(tmpZipLocation, {lazyEntries: true}, function(err, zipfile) {
+      if (err) return reject(err);
+      zipfile.readEntry();
+      zipfile.on('entry', function(entry) {
+        if (/\/$/.test(entry.fileName)) {
+          logger.silly('zipfile directory entry:', entry);
+          // directory file names end with '/'
+          fs.mkdirs(path.join(destination, entry.fileName), function(err) {
+            if (err) return reject(err);
+            zipfile.readEntry();
+          });
+        } else {
+          // file entry
+          zipfile.openReadStream(entry, function(err, readStream) {
+            logger.silly('zipfile file entry:', entry);
+            if (err) return reject(err);
+            // ensure parent directory exists
+            fs.mkdirs(path.join(destination, path.dirname(entry.fileName)), function(err) {
+              if (err) return reject(err);
+              readStream.pipe(fs.createWriteStream(path.join(destination, entry.fileName)));
+              readStream.on('end', function() {
+                zipfile.readEntry();
+              });
+            });
+          });
+        }
+      });
+      zipfile.on('error', function(err) {
+        logger.error('Could not unzip file via yauzl', err);
+        reject(err);
+      });
+      zipfile.on('end', function() {
+        logger.debug('File unzipped successfully');
+        if (fs.existsSync(tmpZipLocation)) {
+          fs.removeAsync(tmpZipLocation)
+            .then(function() {
+              resolve(destination);
+            })
+            .catch(function(err) {
+              reject(err);
+            });
+        } else {
+          resolve(destination);
+        }
+      });
+    });
+  });
+};
+
 /**
  * Writes a readable stream to disk (assumes zip)
  * We have to write the stream to the disk THEN unzip because of issues with npm's unzip
@@ -355,9 +473,11 @@ exports.zipDirectory = function(directoryToZip, zipFileDestination, dest, ext, f
  * @param  {String} destination
  * @return {Promise}
  */
-exports.writeStream = function(readableStream, destination) {
+exports.writeStream = function(readableStream, destination, isLegacyUnzip) {
   var self = this;
   return new Promise(function(resolve, reject) {
+    if (isLegacyUnzip === undefined)
+      isLegacyUnzip = false;
     var tmpZipLocation = path.join(destination, 'tmp.zip');
     try {
       logger.debug('writing zip stream to', tmpZipLocation);
@@ -377,68 +497,14 @@ exports.writeStream = function(readableStream, destination) {
           })
           .on('close', function() {
             logger.debug('closed write stream, unzipping now');
-
-            var unzipCommand;
-
-            if (self.isMac() || self.isLinux()) {
-              unzipCommand = spawn('unzip', [ tmpZipLocation, '-d', destination ], { stdio: [ 'ignore', 'ignore', 'pipe' ] });
-            } else if (self.isWindows()) {
-              var cscriptExe = 'cscript';
-              try {
-                which.sync('cscript');
-              } catch(e) {
-                logger.debug('Could not find cscript...');
-                if (os.arch() === 'ia32') {
-                  cscriptExe = 'c:\\windows\\system32\\cscript.exe';
-                } else {
-                  cscriptExe = 'c:\\windows\\SysWOW64\\cscript.exe';
-                }
-              }
-              logger.debug('cscriptExe is: ', cscriptExe);
-              unzipCommand = spawn(cscriptExe, [path.join(__dirname, '..', '..', 'bin', 'unzip.vbs'), tmpZipLocation, destination ], { stdio: [ 'ignore', 'ignore', 'pipe' ] });
-            }
-
-            logger.debug('unzipCommand', unzipCommand);
-
-            unzipCommand.on('error', function(err) {
-              logger.error('error spawning unzip process', err);
-              if (err.message.indexOf('ENOENT') !== -1) {
-                return reject(new Error('Could not unzip response from Salesforce. It is likely unzip (OSX/Linux) or cscript (Windows) is not available on your system PATH. Check your local machine settings.'));
-              } else {
-                return reject(err);
-              }
-            });
-
-            unzipCommand.stderr.on('data', function (data) {
-              logger.error('ERR unzipping:');
-              logger.error(data);
-              if (fs.existsSync(tmpZipLocation)) {
-                fs.removeAsync(tmpZipLocation)
-                  .then(function() {
-                    return reject(new Error('Could not extract and write stream to file system.'));
-                  })
-                  .catch(function(err) {
-                    return reject(err);
-                  });
-              }
-            });
-
-            unzipCommand.on('close', function (code) {
-              logger.debug('unzip command close', tmpZipLocation, code);
-              if (fs.existsSync(tmpZipLocation)) {
-                fs.removeAsync(tmpZipLocation)
-                  .then(function() {
-                    if (code !== 0) {
-                      return reject(new Error('Could not extract and write stream to file system. [Exit Code '+code+']'));
-                    } else {
-                      return resolve(destination);
-                    }
-                  })
-                  .catch(function(err) {
-                    reject(err);
-                  });
-              }
-            });
+            var unzipPromise = isLegacyUnzip ? self.unzipLegacy.bind(self) : self.unzip.bind(self);
+            unzipPromise(tmpZipLocation, destination)
+              .then(function() {
+                resolve(destination);
+              })
+              .catch(function(err) {
+                reject(err);
+              });
           });
     } catch(e) {
       logger.error('error writing stream', e);
