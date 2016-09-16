@@ -91,6 +91,10 @@ DeleteDelegate.prototype._performDelete = function() {
     var lightningBundleItemFiles = mavensMateFile.getLightningBundleItemFiles(files);
     var deleteSubscription = mavensMateFile.createPackageSubscription(files, self.project.packageXml);
 
+    logger.silly('files to delete', files);
+    logger.silly('lightningBundleItemFiles to delete', lightningBundleItemFiles);
+    logger.silly('deleteSubscription', deleteSubscription);
+
     var result = {};
     var deployOptions = {
       purgeOnDelete: config.get('mm_purge_on_delete') || false
@@ -112,10 +116,17 @@ DeleteDelegate.prototype._performDelete = function() {
         }
         if (!result.details.componentSuccesses) {
           result.details.componentSuccesses = [];
+        } else if (!_.isArray(result.details.componentSuccesses)) {
+          result.details.componentSuccesses = [result.details.componentSuccesses];
         }
         if (!result.details.componentFailures) {
           result.details.componentFailures = [];
+        } else if (!_.isArray(result.details.componentFailures)) {
+          result.details.componentFailures = [result.details.componentFailures];
         }
+
+        logger.warn('---->', result);
+
         return self._deleteLightningBundleItemFiles(lightningBundleItemFiles);
       })
       .then(function(res) {
@@ -123,10 +134,10 @@ DeleteDelegate.prototype._performDelete = function() {
           _.each(res, function(r) {
             if (!r.success) {
               result.numberComponentErrors++;
-              result.componentFailures.push(r);
+              result.details.componentFailures.push(r);
             } else {
               result.numberComponentsDeployed++;
-              result.componentSuccesses.push(r);
+              result.details.componentSuccesses.push(r);
             }
             result.numberComponentsTotal++;
           });
