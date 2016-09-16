@@ -1,1 +1,5 @@
-<button class="slds-button slds-button--neutral" onclick="closeWindow();">Cancel</button>
+{% if project %}
+<a class="slds-button slds-button--neutral" href="/app/project/{{project.settings.id}}?pid={{project.settings.id}}">Cancel</a>
+{% else %}
+<a class="slds-button slds-button--neutral" href="/app/home">Cancel</a>
+{% endif %}

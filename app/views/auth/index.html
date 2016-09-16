@@ -76,7 +76,7 @@
 
 {% block buttons %}
   <button class="slds-button slds-button--brand" onclick="$('#auth-form').submit();">Connect</button>
-  <button class="slds-button slds-button--neutral" onclick="closeWindow();">Cancel</button>
+  {% include 'views/partials/cancel_button.html' %}
 {% endblock %}
 
 {% block body_js %}
