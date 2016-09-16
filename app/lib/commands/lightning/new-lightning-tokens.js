@@ -1,7 +1,8 @@
 /**
- * @file Creates a new lightning component/opens the new lightning component ui
+ * @file Creates a new lightning event/opens the new lightning event ui
  * @author Joseph Ferraro <@joeferraro>
  */
+
 
 'use strict';
 
@@ -12,9 +13,9 @@ var inherits          = require('inherits');
 var BaseCommand       = require('../../command');
 var EditorService     = require('../../services/editor');
 var LightningService  = require('../../services/lightning');
-var RefreshDelegate   = require('../../refresh');
-var path              = require('path');
 var MavensMateFile    = require('../../file').MavensMateFile;
+var path              = require('path');
+var RefreshDelegate   = require('../../refresh');
 
 function Command() {
   Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
@@ -26,7 +27,8 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      self.editorService.launchUI('lightning/component/new', { pid: self.getProject().settings.id })
+
+      self.editorService.launchUI('lightning/tokens/new', { pid: self.getProject().settings.id })
         .then(function() {
           resolve('Success');
         })
@@ -43,28 +45,7 @@ Command.prototype.execute = function() {
         .then(function(result) {
           newBundleId = result.id;
           var createPromises = [];
-          createPromises.push(lightningService.createComponent(newBundleId));
-          if (self.payload.createController) {
-            createPromises.push(lightningService.createController(newBundleId));
-          }
-          if (self.payload.createHelper) {
-            createPromises.push(lightningService.createHelper(newBundleId));
-          }
-          if (self.payload.createStyle) {
-            createPromises.push(lightningService.createStyle(newBundleId));
-          }
-          if (self.payload.createDocumentation) {
-            createPromises.push(lightningService.createDocumentation(newBundleId));
-          }
-          if (self.payload.createRenderer) {
-            createPromises.push(lightningService.createRenderer(newBundleId));
-          }
-          if (self.payload.createDesign) {
-            createPromises.push(lightningService.createDesign(newBundleId));
-          }
-          if (self.payload.createSvg) {
-            createPromises.push(lightningService.createSvg(newBundleId));
-          }
+          createPromises.push(lightningService.createEvent(newBundleId));
           return Promise.all(createPromises);
         })
         .then(function(result) {
@@ -89,7 +70,7 @@ Command.prototype.execute = function() {
           return project.indexLightning();
         })
         .then(function() {
-          resolve('Lightning component created successfully');
+          resolve('Lightning event created successfully');
         })
         .catch(function(error) {
           reject(error);
@@ -102,9 +83,9 @@ Command.prototype.execute = function() {
 exports.command = Command;
 exports.addSubCommand = function(program) {
   program
-    .command('new-lightning-component')
+    .command('new-lightning-tokens')
     .option('--ui', 'Launches the default UI for the selected command.')
-    .description('Creates new lightning component')
+    .description('Creates new lightning tokens')
     .action(function() {
       if (this.ui) {
         program.commandExecutor.execute({

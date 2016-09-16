@@ -36,7 +36,10 @@ var lightningTypes = {
     INTERFACE: 'INTERFACE',
     CONTROLLER: 'CONTROLLER',
     HELPER: 'HELPER',
-    RENDERER: 'RENDERER'
+    RENDERER: 'RENDERER',
+    TOKENS: 'TOKENS',
+    DESIGN: 'DESIGN',
+    SVG: 'SVG'
 };
 Object.freeze(lightningTypes);
 
@@ -197,6 +200,12 @@ Object.defineProperty(MavensMateFile.prototype, 'lightningType', {
       return 'EVENT';
     } else if (this.extension === 'intf') {
       return 'INTERFACE';
+    } else if (this.extension === 'tokens') {
+      return 'TOKENS';
+    } else if (this.extension === 'design') {
+      return 'DESIGN';
+    } else if (this.extension === 'svg') {
+      return 'SVG';
     } else if (this.extension === 'js') {
       if (util.endsWith(this.name, 'Controller')) {
         return 'CONTROLLER';

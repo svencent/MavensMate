@@ -48,6 +48,17 @@ router.get('/interface/new', function(req, res) {
   }
 });
 
+router.get('/tokens/new', function(req, res) {
+  if (!req.project) {
+    res.render('error', { error: 'Error: No project attached to this request.' });
+  } else {
+    res.render('lightning/new.html', {
+      title: 'Create Lightning Tokens',
+      lightningType: 'tokens'
+    });
+  }
+});
+
 router.post('/app', function(req, res) {
   var commandExecutor = req.app.get('commandExecutor');
   var request = commandExecutor.execute({
@@ -98,6 +109,21 @@ router.post('/interface', function(req, res) {
   var request = commandExecutor.execute({
     project: req.project,
     name: 'new-lightning-interface',
+    body: req.body,
+    editor: req.editor
+  });
+  var requestId = requestStore.add(request);
+  return res.send({
+    status: 'pending',
+    id: requestId
+  });
+});
+
+router.post('/tokens', function(req, res) {
+  var commandExecutor = req.app.get('commandExecutor');
+  var request = commandExecutor.execute({
+    project: req.project,
+    name: 'new-lightning-tokens',
     body: req.body,
     editor: req.editor
   });

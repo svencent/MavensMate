@@ -60,6 +60,12 @@ Command.prototype.execute = function() {
           if (self.payload.createRenderer) {
             createPromises.push(lightningService.createRenderer(newBundleId));
           }
+          if (self.payload.createDesign) {
+            createPromises.push(lightningService.createDesign(newBundleId));
+          }
+          if (self.payload.createSvg) {
+            createPromises.push(lightningService.createSvg(newBundleId));
+          }
           return Promise.all(createPromises);
         })
         .then(function(result) {

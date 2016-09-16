@@ -351,6 +351,43 @@ LightningService.prototype.createStyle = function(bundleId) {
   });
 };
 
+LightningService.prototype.createDesign = function(bundleId) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    logger.warn('creating design', bundleId);
+    self.project.sfdcClient.conn.tooling.sobject('AuraDefinition').create({
+      AuraDefinitionBundleId: bundleId,
+      DefType: 'DESIGN',
+      Format: 'XML',
+      Source: '<design:component>\n\n</design:component>'
+    }, function(err, res) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
+
+LightningService.prototype.createSvg = function(bundleId) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    self.project.sfdcClient.conn.tooling.sobject('AuraDefinition').create({
+      AuraDefinitionBundleId: bundleId,
+      DefType: 'SVG',
+      Format: 'SVG',
+      Source: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<svg width="120px" height="120px" viewBox="0 0 120 120" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n</svg>'
+    }, function(err, res) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
+
 LightningService.prototype.createEvent = function(bundleId) {
   var self = this;
   return new Promise(function(resolve, reject) {

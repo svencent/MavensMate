@@ -51,6 +51,22 @@
           Create Renderer
         </label>
       </div>
+
+      {% if lightningType === 'component' %}
+      <div class="slds-form-element">
+        <label class="checkbox" for="design">
+          <input type="checkbox" checked="checked" value="" id="design" data-toggle="checkbox">
+          Create Design
+        </label>
+      </div>
+      {% endif %}
+
+      <div class="slds-form-element">
+        <label class="checkbox" for="svg">
+          <input type="checkbox" checked="checked" value="" id="svg" data-toggle="checkbox">
+          Create SVG
+        </label>
+      </div>
     {% endif %}
   </fieldset>
 </form>
@@ -78,7 +94,9 @@
             createHelper: $("#helper").is(":checked"),
             createStyle: $("#style").is(":checked"),
             createDocumentation: $("#documentation").is(":checked"),
-            createRenderer: $("#renderer").is(":checked")
+            createRenderer: $("#renderer").is(":checked"),
+            createDesign: $("#design").is(":checked"),
+            createSvg: $("#svg").is(":checked"),
             {% endif %}
           }),
         },
