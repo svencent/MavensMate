@@ -21,7 +21,10 @@ Command.prototype.execute = function() {
     var project = self.getProject();
     project.sfdcClient.executeSoql(self.payload.soql)
       .then(function(res) {
-        resolve(res);
+        var soqlResultFilePath = project.writeSoqlResult(res);
+        resolve({
+          path: soqlResultFilePath
+        });
       })
       .catch(function(error) {
         reject(error);

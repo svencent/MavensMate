@@ -14,6 +14,7 @@ var util              = require('./util');
 var uuid              = require('node-uuid');
 var inherits          = require('inherits');
 var events            = require('events');
+var moment            = require('moment');
 var SalesforceClient  = require('./sfdc-client');
 var MetadataHelper    = require('./metadata').MetadataHelper;
 var config            = require('../config');
@@ -1373,6 +1374,17 @@ Project.prototype._readCredentials = function() {
     logger.error('Error reading credentials -->', err);
     throw new Error('Could not read credentials for project '+this.name+': '+err.message);
   }
+};
+
+/**
+ * Writes result of a SOQL query to the project's soql/ directory
+ * @return {None}
+ */
+Project.prototype.writeSoqlResult = function(res) {
+  var soqlFileName = [moment().format('YYYY-MM-DD HH-mm-ss'), 'json'].join('.');
+  var filePath = path.join(this.path, 'soql', soqlFileName);
+  fs.outputFileSync(filePath, JSON.stringify(res, null, 4));
+  return filePath;
 };
 
 module.exports = Project;
