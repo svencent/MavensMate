@@ -47,7 +47,9 @@ module.exports = function(opts) {
       winston.add(winston.transports.File, {
         filename: path.join(config.get('mm_log_location'), 'mavensmate.log'),
         level: logLevel,
-        json: false
+        json: false,
+        maxsize: 104857600,
+        maxFiles: 2
       });
     } catch(e) {
       if (e.message.indexOf('Transport already attached') === -1) {
