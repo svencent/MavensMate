@@ -8,6 +8,7 @@ var Promise           = require('bluebird');
 var temp              = require('temp');
 var _                 = require('lodash');
 var fs                = require('fs-extra-promise');
+var gracefulFs        = require('graceful-fs');
 var path              = require('path');
 var find              = require('findit');
 var util              = require('./util');
@@ -430,10 +431,14 @@ Project.prototype.retrieveAndWriteToDisk = function() {
         .then(function(retrieveResult) {
           fileProperties = retrieveResult.fileProperties;
           if (fs.existsSync(path.join(self.path, 'unpackaged'))) {
-            fs.renameSync(path.join(self.path, 'unpackaged'), path.join(self.path, 'src'));
+            gracefulFs.rename(path.join(self.path, 'unpackaged'), path.join(self.path, 'src'), function(err, res) {
+              if (err) {
+                return reject(err);
+              } else {
+                return self._initConfig();
+              }
+            });
           }
-          // TODO: ensure packages write properly
-          return self._initConfig();
         })
         .then(function() {
           logger.debug('initiating local store');
