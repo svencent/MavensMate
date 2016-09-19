@@ -40,9 +40,7 @@ describe('mavensmate execute-soql', function(){
         project: project
       })
       .then(function(res) {
-        res.should.have.property('records');
-        res.should.have.property('done');
-        res.should.have.property('totalSize');
+        res.should.have.property('path');
         done();
       })
       .catch(function(err) {
