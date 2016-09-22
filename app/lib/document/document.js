@@ -32,9 +32,9 @@ var Document = function(project, documentPath) {
 
 Document.prototype.toString = function() {
   return {
-    uri: this._path,
-    basename: this._basename,
-    extension: this._extension
+    uri: this.getPath(),
+    basename: this.getBaseName(),
+    extension: this.getExtension()
   }
 };
 
@@ -56,6 +56,20 @@ Document.prototype.getExtension = function() {
   return this._extension;
 };
 
+Document.prototype.getMetaXmlPath = function() {
+  return [this.getPath(),'-meta.xml'].join();
+};
+
+Document.prototype.isMetaXmlFile = function() {
+  return util.endsWith(this.getPath(), '-meta.xml');
+};
+
+Document.prototype.getAssociatedDocument = function() {
+  if (this.isMetaXmlFile()) {
+    return new Document(this._project, this.getPath().replace('-meta.xml', ''));
+  }
+};
+
 Document.prototype.getBaseName = function() {
   return this._basename;
 };
@@ -65,7 +79,7 @@ Document.prototype.getPath = function() {
 };
 
 Document.prototype._getLocalStoreKey = function() {
-  return this._path.split(this._project.name+'/')[1];
+  return this.getPath().split(this._project.name+'/')[1];
 };
 
 Document.prototype.getRelativePath = function() {
@@ -97,7 +111,7 @@ Document.prototype.getServerProperties = function() {
  * @return {String}
  */
 Document.prototype.getBodySync = function() {
-  return fs.readFileSync(this._path, 'utf8');
+  return fs.readFileSync(this.getPath(), 'utf8');
 };
 
 /**
@@ -106,7 +120,7 @@ Document.prototype.getBodySync = function() {
  */
 Document.prototype.getBody = function() {
   return new Promise(function(resolve, reject) {
-    return fs.readFile(this._path, 'utf8')
+    return fs.readFile(this.getPath(), 'utf8')
       .then(function(res) {
         resolve(res);
       })
@@ -117,19 +131,19 @@ Document.prototype.getBody = function() {
 };
 
 Document.prototype.existsOnFileSystem = function() {
-  return fs.existsSync(this._path);
+  return fs.existsSync(this.getPath());
 };
 
 Document.prototype.isDirectory = function() {
-  return fs.statSync(this._path).isDirectory();
+  return fs.statSync(this.getPath()).isDirectory();
 };
 
 Document.prototype.isFile = function() {
-  return fs.statSync(this._path).isFile();
+  return fs.statSync(this.getPath()).isFile();
 };
 
 Document.prototype.deleteFromFileSystem = function() {
-  fs.removeSync(this._path);
+  fs.removeSync(this.getPath());
 };
 
 module.exports = Document;

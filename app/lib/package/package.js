@@ -5,15 +5,16 @@
 
 'use strict';
 
-var Promise = require('bluebird');
-var _       = require('lodash');
-var swig    = require('swig');
-var fs      = require('fs-extra');
-var path    = require('path');
-var logger  = require('winston');
-var config  = require('../../config');
-var xmldoc  = require('xmldoc');
-var sax     = require('sax');
+var Promise     = require('bluebird');
+var _           = require('lodash');
+var swig        = require('swig');
+var fs          = require('fs-extra');
+var path        = require('path');
+var logger      = require('winston');
+var config      = require('../../config');
+var xmldoc      = require('xmldoc');
+var sax         = require('sax');
+var exceptions  = require('./exceptions');
 
 function Package(project) {
   this.apiVersion = project ? project.config.get('mm_api_version') : config.get('mm_api_version');
@@ -28,6 +29,7 @@ function Package(project) {
 Package.prototype.initializeFromDocuments = function(documents) {
   var self = this;
   _.each(documents, function(d) {
+    if (d.isMetaXmlFile()) d = d.getAssociatedDocument();
     var type = d.getServerProperties().type;
     var name = d.getServerProperties().fullName;
     if (!_.has(self.contents, type)) {
@@ -84,6 +86,9 @@ Package.prototype._serialize = function() {
 Package.prototype._deserialize = function(packagePath) {
   var self = this;
   return new Promise(function(resolve, reject) {
+    if (!fs.existsSync(packagePath)) {
+      return reject(new exceptions.PackageXmlDoesNotExist('Package XML does not exist.'));
+    }
     var pkg = {};
     logger.debug('deserializing', packagePath);
     fs.readFile(packagePath, function(err, data) {
@@ -99,22 +104,23 @@ Package.prototype._deserialize = function(packagePath) {
         };
 
         parser.onend = function () {
-          if (!isValidPackage) return reject(new Error('Could not parse package.xml, invalid XML'));
+          if (!isValidPackage) return reject(new exceptions.PackageXmlInvalidFormat('Package.xml contains invalid XML.'));
 
           var doc = new xmldoc.XmlDocument(data);
+
           _.each(doc.children, function(type) {
             var metadataType;
             var val = [];
 
-            if (type.name !== 'types') {
-              return;
-            }
+            if (type.name !== 'types') return;
+
             _.each(type.children, function(node) {
               if (node.name === 'name' && node.val !== undefined) {
                 metadataType = node.val;
                 return false;
               }
             });
+
             _.each(type.children, function(node) {
               if (node.name === 'members') {
                 if (node.val === '*') {
@@ -125,7 +131,9 @@ Package.prototype._deserialize = function(packagePath) {
                 }
               }
             });
+
             pkg[metadataType] = val;
+
           });
 
           logger.debug('parsed package.xml to -->'+JSON.stringify(pkg));

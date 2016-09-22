@@ -44,15 +44,33 @@ Deploy.prototype.stage = function() {
       packageXml.initializeFromDocuments(self._documents);
       packageXml.writeToDisk(unpackagedPath);
 
+      /*
+        here we copy project documents to the tmp path for deployment
+       */
       _.each(self._documents, function(d) {
-        var tmpDocumentPath = path.join(tmpPath, d.getServerProperties().fileName);
-        fs.ensureDirSync(path.dirname(tmpDocumentPath));
-        fs.copySync(d.getPath(), tmpDocumentPath);
-        if (d.getDescribe().metaFile) {
-          fs.copySync([d.getPath(),'-meta.xml'].join(''), [tmpDocumentPath,'-meta.xml'].join(''));
+        if (d.isMetaXmlFile()) {
+          /*
+            it's possible that a document is a meta-xml file (e.g., user has compiled a single meta-xml file)
+            in those cases, we need to copy both the meta-xml and associated document to the deploy folder
+           */
+          var associatedDocument = d.getAssociatedDocument();
+          var tmpAssociatedDocumentPath = path.join(tmpPath, associatedDocument.getServerProperties().fileName);
+          fs.ensureDirSync(path.dirname(tmpAssociatedDocumentPath));
+          fs.copySync(associatedDocument.getPath(), tmpAssociatedDocumentPath); // copy associated document to tmp path
+          fs.copySync(d.getPath(), [tmpAssociatedDocumentPath,'-meta.xml'].join('')); // copy meta-xml file as well
+        } else {
+          var tmpDocumentPath = path.join(tmpPath, d.getServerProperties().fileName);
+          fs.ensureDirSync(path.dirname(tmpDocumentPath));
+          fs.copySync(d.getPath(), tmpDocumentPath);
+          if (d.getDescribe().metaFile) {
+            fs.copySync([d.getPath(),'-meta.xml'].join(''), [tmpDocumentPath,'-meta.xml'].join(''));
+          }
         }
       });
 
+      /*
+        zip the directory up so that it can be submitted to the metadata api for deployment
+       */
       util.zipDirectory(unpackagedPath, tmpPath)
         .then(function(res) {
           var zipStream = fs.createReadStream(path.join(tmpPath, 'unpackaged.zip'));

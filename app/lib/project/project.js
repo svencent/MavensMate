@@ -4,6 +4,8 @@ var path              = require('path');
 var fs                = require('fs-extra-promise');
 var uuid              = require('uuid');
 var util              = require('../util');
+var temp              = require('temp');
+var projectUtil       = require('./util');
 var logger            = require('winston');
 var ProjectJson       = require('./project-json');
 var config            = require('../../config');
@@ -14,6 +16,7 @@ var LocalStore        = require('./local-store');
 var ServerStore       = require('./server-store');
 var SalesforceClient  = require('../sfdc-client');
 var Package           = require('../package');
+var packageExceptions = require('../package/exceptions');
 
 // TODOS
 // 1. watch package.xml, offer to refresh from server?
@@ -53,7 +56,7 @@ Project.prototype.initialize = function() {
       resolve(self);
     })
     .catch(function(err) {
-      logger.error('Could not initialize SalesforceClient', err);
+      logger.error('Failed to initialize project', err);
       reject(err);
     });
   });
@@ -118,7 +121,7 @@ Project.prototype.update = function() {
 
 /**
  * Removes from the local file system
- * @return {Promise}
+ * @return {void}
  */
 Project.prototype.delete = function() {
   fs.removeSync(this.path);
@@ -126,28 +129,34 @@ Project.prototype.delete = function() {
 
 /**
  * 1. Wipe project clean locally, restore from server based on package.xml
- * 2. Rewrite config
+ * 2. Rewrite server.json and local.json
  * @return {Promise}
  */
 Project.prototype.clean = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    self.sfdcClient.retrieveUnpackaged(pkg, true, projectPath)
+    var tmpPath = temp.mkdirSync({ prefix: 'mm_' });
+    var tmpUnpackagedPath = path.join(tmpPath, 'unpackaged');
+    var serverProperties;
+    self.sfdcClient.retrieveUnpackaged(self.packageXml.contents, true, tmpPath)
       .then(function(retrieveResult) {
-        fileProperties = retrieveResult.fileProperties;
-        var unpackagedPath = path.join(projectPath, 'unpackaged');
-        var srcPath = path.join(projectPath, 'src');
-        if (fs.existsSync(unpackagedPath)) {
-          // IMPORTANT: we must use graceful-fs.rename here to avoid windows antivirus EPERM issues
-          return gracefulRename(unpackagedPath, srcPath);
-        } else {
-          // can be an empty project
-          Promise.resolve();
-        }
+        serverProperties = retrieveResult.fileProperties;
+        var srcPath = path.join(self.path, 'src');
+        util.emptyDirectoryRecursiveSync(srcPath);
+        return projectUtil.copy(tmpUnpackagedPath, srcPath, true);
       })
       .then(function() {
-        return LocalStore.create(projectPath, fileProperties);
+        Promise.all([
+          self.localStore.clean(serverProperties),
+          self.serverStore.refresh(self.sfdcClient, self.projectJson.get('subscription'))
+        ]);
       })
+      .then(function() {
+        resolve();
+      })
+      .catch(function(err) {
+        reject(err);
+      });
   });
 };
 

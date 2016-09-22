@@ -1,4 +1,4 @@
-module.exports.childTypes = [
+module.exports = [
   {
       xmlName: 'ActionOverride',
       tagName: 'actionOverrides',

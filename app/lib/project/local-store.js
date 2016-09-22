@@ -72,13 +72,38 @@ LocalStore.prototype.update = function(serverProperties) {
       localStoryEntry.localState = 'clean';
     });
   } else {
-    // from metadata api
-    // _.each(serverProperties, function(p) {
-    //   self.set(p);
-    // });
-    // todo
+    _.each(serverProperties, function(sp) {
+      if (sp.fullName.indexOf('package.xml') === -1) {
+        var key = sp.fileName.replace(/^unpackaged\//, 'src/'); // our root code directory is "src" to align with Force.com IDE
+        var value = sp;
+        value.localState = 'clean';
+        self._state[key] = value;
+      }
+    });
   }
   this._save();
+};
+
+LocalStore.prototype.clean = function(serverProperties) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    try {
+      self._state = {};
+      serverProperties = util.ensureArrayType(serverProperties);
+      _.each(serverProperties, function(sp) {
+        if (sp.fullName.indexOf('package.xml') === -1) {
+          var key = sp.fileName.replace(/^unpackaged\//, 'src/'); // our root code directory is "src" to align with Force.com IDE
+          var value = sp;
+          value.localState = 'clean';
+          self._state[key] = value;
+        }
+      });
+      self._save();
+      resolve();
+    } catch(e) {
+      reject(e);
+    }
+  });
 };
 
 /**
@@ -87,21 +112,21 @@ LocalStore.prototype.update = function(serverProperties) {
  * @param  {Object} settings
  * @return {LocalStore}
  */
-LocalStore.create = function(projectPath, fileProperties) {
+LocalStore.create = function(projectPath, serverProperties) {
   return new Promise(function(resolve, reject) {
     var projectStorePath = path.join(projectPath, '.mavensmate', 'local.json');
     var store = {};
     var metadataHelper = new MetadataHelper();
-    _.each(fileProperties, function(fp) {
-      if (fp.fullName.indexOf('package.xml') === -1) {
-        var key = fp.fileName.replace(/^unpackaged\//, 'src/'); // our root code directory is "src" to align with Force.com IDE
-        var value = fp;
+    _.each(serverProperties, function(sp) {
+      if (sp.fullName.indexOf('package.xml') === -1) {
+        var key = sp.fileName.replace(/^unpackaged\//, 'src/'); // our root code directory is "src" to align with Force.com IDE
+        var value = sp;
         value.localState = 'clean';
         store[key] = value;
       }
-      var metadataType = metadataHelper.getTypeByPath(fp.fileName); // todo: deprecate metadatahelper
+      var metadataType = metadataHelper.getTypeByPath(sp.fileName); // todo: deprecate metadatahelper
       if (!metadataType) {
-        logger.warn('Could not determine metadata type for: '+JSON.stringify(fp));
+        logger.warn('Could not determine metadata type for: '+JSON.stringify(sp));
       }
     });
     fs.outputFileSync(projectStorePath, JSON.stringify(store || {}, null, 4));

@@ -28,7 +28,7 @@ ProjectJson.create = function(projectPath, sfdcClient, settings) {
 ProjectJson.prototype._watch = function() {
   var self = this;
   fs.watchFile(self._path, function() {
-    self._state = util.getFileBodySync(this._path, true);
+    self._state = util.getFileBodySync(self._path, true);
   });
 };
 

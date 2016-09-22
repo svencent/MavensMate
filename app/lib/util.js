@@ -320,18 +320,24 @@ exports.getFileBodySync = function(filePath, parseJSON) {
 
 exports.getFileBody = function(filePath, parseJSON) {
   return new Promise(function(resolve, reject) {
-    fs.readFile(filePath, 'utf8', function(err, fileBody) {
-      if (err) {
-        reject(err);
-      } else {
-        if (parseJSON) {
-          fileBody = stripJson(fileBody);
-          resolve(JSON.parse(fileBody));
+    try {
+      fs.readFile(filePath, 'utf8', function(err, fileBody) {
+        if (err) {
+          throw err;
         } else {
-          resolve(fileBody);
+          if (fileBody === '' && parseJSON) {
+            resolve({});
+          } else if (parseJSON) {
+            fileBody = stripJson(fileBody);
+            resolve(JSON.parse(fileBody));
+          } else {
+            resolve(fileBody);
+          }
         }
-      }
-    });
+      });
+    } catch(e) {
+      reject(e);
+    }
   });
 };
 

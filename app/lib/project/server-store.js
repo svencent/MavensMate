@@ -21,7 +21,12 @@ ServerStore.prototype.initialize = function() {
         resolve();
       })
       .catch(function(err) {
-        reject(err);
+        if (err.message.indexOf('Unexpected end of input') > 0) {
+          self._state = [];
+          resolve();
+        } else {
+          reject(err);
+        }
       });
   });
 };

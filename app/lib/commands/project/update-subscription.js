@@ -20,8 +20,9 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
-      var project = self.getProject();
-      project.writeSettings({ subscription: self.payload.subscription });
+      self.getProject().projectJson.set({
+        subscription: self.payload.subscription
+      });
       resolve('Subscription updated successfully!');
     } catch(err) {
       reject(err);

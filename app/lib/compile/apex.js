@@ -14,7 +14,6 @@ ApexCompiler.prototype.compile = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     logger.debug('Compiling ApexDocuments', self.documents);
-
     var compileResult;
     conflict.check(self.project, self.documents, self.force)
       .then(function(res) {
