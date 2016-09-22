@@ -308,14 +308,31 @@ exports.applyProperties = function(instance, opts) {
   });
 };
 
-exports.getFileBody = function(path, parseJSON) {
-  var fileBody = fs.readFileSync(path, 'utf8');
+exports.getFileBodySync = function(filePath, parseJSON) {
+  var fileBody = fs.readFileSync(filePath, 'utf8');
   if (parseJSON) {
     fileBody = stripJson(fileBody);
     return JSON.parse(fileBody);
   } else {
     return fileBody;
   }
+};
+
+exports.getFileBody = function(filePath, parseJSON) {
+  return new Promise(function(resolve, reject) {
+    fs.readFile(filePath, 'utf8', function(err, fileBody) {
+      if (err) {
+        reject(err);
+      } else {
+        if (parseJSON) {
+          fileBody = stripJson(fileBody);
+          resolve(JSON.parse(fileBody));
+        } else {
+          resolve(fileBody);
+        }
+      }
+    });
+  });
 };
 
 exports.joinForQuery = function(strings) {

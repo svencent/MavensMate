@@ -19,7 +19,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     var project = self.getProject();
-    project.indexMetadata()
+    project.serverStore.refresh(project.sfdcClient, project.projectJson.get('subscription'))
       .then(function() {
         resolve('Metadata successfully indexed');
       })

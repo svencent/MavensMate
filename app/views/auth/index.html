@@ -33,13 +33,13 @@
 
 <form class="slds-form--stacked" action="/app/auth" method="POST" id="auth-form">
 
-  {% if project && project.settings && project.id %}
+  {% if project && project.id %}
   <input type="hidden" name="pid" value="{{project.id}}" />
   {% endif %}
   <input type="hidden" name="callback" value="{{callback}}" />
   <input type="hidden" name="param1" value="{{param1}}" />
 
-  {% if project && project.settings && project.settings.username %}
+  {% if project && project.projectJson %}
   <div class="slds-form-element">
     <label class="slds-form-element__label" for="select-01">Salesforce Username</label>
     <div class="slds-form-element__control">

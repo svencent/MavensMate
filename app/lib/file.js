@@ -260,7 +260,7 @@ Object.defineProperty(MavensMateFile.prototype, 'body', {
     if (this.isDirectory) {
       throw new Error('Can not get body of directory');
     }
-    return util.getFileBody(this.path);
+    return util.getFileBodySync(this.path);
   }
 });
 

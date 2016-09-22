@@ -119,13 +119,13 @@ function _findProjectPathById(id) {
       // todo: remove settingsPath (deprecated)
       var settingsPath = path.join(projectPath, 'config', '.settings');
       if (fs.existsSync(settingsPath)) {
-        var settings = util.getFileBody(settingsPath, true);
+        var settings = util.getFileBodySync(settingsPath, true);
         if (settings.id === id) {
           projectPathToReturn = projectPath;
           return false;
         }
       } else if (fs.existsSync(path.join(projectPath, '.mavensmate', 'project.json'))) {
-        var projectJson = util.getFileBody(path.join(projectPath, '.mavensmate', 'project.json'), true);
+        var projectJson = util.getFileBodySync(path.join(projectPath, '.mavensmate', 'project.json'), true);
         if (projectJson.id === id) {
           projectPathToReturn = projectPath;
           return false;

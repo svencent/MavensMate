@@ -54,7 +54,7 @@ ApexScriptService.prototype.execute = function(scriptPaths) {
   return new Promise(function(resolve, reject) {
     var scriptPromises = [];
     _.each(scriptPaths, function(sp) {
-      var scriptBody = util.getFileBody(sp);
+      var scriptBody = util.getFileBodySync(sp);
       var payload = {
         body: scriptBody
       };

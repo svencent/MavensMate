@@ -14,23 +14,217 @@ var find            = require('findit');
 var logger          = require('winston');
 var parseXml        = require('xml2js').parseString;
 var MetadataHelper  = require('../metadata').MetadataHelper;
-var pkg             = require('../package');
+var Package         = require('../package');
 var MavensMateFile  = require('../file').MavensMateFile;
+var helper          = require('./helper');
 
 /**
  * Service to get an index of an org's metadata
  * @param {Object} project - project instance (optional)
  * @param {Object} sfdcClient - client instance (optional)
  */
-function IndexService(opts) {
-  util.applyProperties(this, opts);
-  if (this.project) {
-    this.metadataHelper = new MetadataHelper({ sfdcClient : this.project.sfdcClient });
-    this.sfdcClient = this.project.sfdcClient;
-  } else if (this.sfdcClient) {
-    this.metadataHelper = new MetadataHelper({ sfdcClient : this.sfdcClient });
-  }
+function Indexer(sfdcClient, subscription) {
+  this.sfdcClient = sfdcClient;
+  this.subscription = subscription;
 }
+
+/**
+ * Indexes Salesforce.com org (writes to .org_metadata) based on project subscription
+ * @return {Promise}
+ */
+Indexer.prototype.index = function() {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    logger.debug('indexing subscription: ');
+    logger.debug(self.subscription);
+
+    var typeMap = {};
+
+    var listRequests = [];
+
+    _.each(self.subscription, function(subscriptionXmlName) {
+      logger.debug('adding type to map ', subscriptionXmlName);
+
+      // todo: convenience method
+      var mType = _.find(self.sfdcClient.describe.metadataObjects, function(d) {
+        return subscriptionXmlName === d.xmlName;
+      });
+
+      logger.debug(mType);
+
+      if (!mType) {
+        throw new Error('Unknown metadata type: '+subscriptionXmlName);
+      }
+
+      typeMap[subscriptionXmlName] = mType;
+
+      var typeRequestName; // name to submit to list query
+      // prepare folder-based metadata for query
+      var isFolderMetadata = typeMap[subscriptionXmlName].inFolder;
+      if (isFolderMetadata) {
+        typeRequestName = self._transformFolderNameForListRequest(subscriptionXmlName);
+      } else {
+        typeRequestName = subscriptionXmlName;
+      }
+
+      logger.debug(typeRequestName);
+
+      // TODO: reimplement list providers
+      // if (_.has(pkg, subscriptionXmlName+'ListProvider')) {
+      //   var listProvider = new pkg[subscriptionXmlName+'ListProvider'](self.sfdcClient);
+      //   listRequests.push(listProvider.getList());
+      // } else {
+      //   listRequests.push(self.sfdcClient.list(typeRequestName));
+      // }
+      listRequests.push(self.sfdcClient.list(typeRequestName));
+    });
+
+    logger.debug(listRequests);
+
+    Promise.all(listRequests)
+      .then(function(results) {
+        var typePromises = [];
+        _.each(results, function(metadataListResult) {
+          logger.debug('indexing type promise: ');
+          logger.debug(metadataListResult);
+          logger.debug(JSON.stringify(typeMap));
+          typePromises.push(self._indexType(metadataListResult, typeMap));
+        });
+        return Promise.all(typePromises);
+      })
+      .then(function(results) {
+        resolve(results);
+      })
+      .catch(function(error) {
+        logger.error('An error occurred indexing server properties');
+        logger.error(error.message);
+        logger.error(error.stack);
+        reject(error);
+      });
+    });
+};
+
+Indexer.prototype.setChecked = function(src, ids, dpth, key) {
+  // Recursively find checked item
+  var self = this;
+
+  if (!key) key = '';
+  if (!ids) ids = [];
+  if (!dpth) dpth = 0;
+
+  if (_.isArray(src)) {
+    _.each(src, function(litem) {
+      if (_.isObject(litem)) {
+        if (_.has(litem, 'id') && ids.indexOf(litem.id) >= 0) {
+          litem.checked = true;
+          litem.select = true;
+        }
+      }
+      self.setChecked(litem, ids, dpth + 2);
+    });
+  } else if (_.isObject(src)) {
+    _.forOwn(src, function(value, key) {
+      self.setChecked(value, ids, dpth + 1, key);
+    });
+  }
+};
+
+Indexer.prototype.setVisibility = function(jsonData, query) {
+  this._crawl(jsonData, 0, query.toLowerCase(), 0);
+};
+
+Indexer.prototype.ensureParentsAreCheckedIfNecessary = function(orgMetadata) {
+  _.each(orgMetadata, function(metadataType) {
+    if (metadataType.children && _.isArray(metadataType.children)) {
+      var numberOfChildrenSelected = 0;
+      _.each(metadataType.children, function(c) {
+        if (c.select) {
+          numberOfChildrenSelected++;
+        }
+      });
+      if (metadataType.children.length === numberOfChildrenSelected && metadataType.children > 0) {
+        metadataType.checked = true;
+        metadataType.select = true;
+      }
+    }
+  });
+};
+
+// Indexer.prototype.getIndexWithLocalSubscription = function() {
+//   var promise;
+//   var customPackage;
+//   if (packageXmlPath) {
+//     customPackage = new Package({ path: packageXmlPath });
+//     promise = customPackage.init();
+//   } else {
+//     promise = Promise.resolve();
+//   }
+
+//   promise
+//     .then(function() {
+//       if (!ids) {
+//         ids = [];
+//         var pkg = packageXmlPath ? customPackage : self.packageXml;
+//         _.forOwn(pkg.subscription, function(packageMembers, metadataTypeXmlName) {
+//           var metadataType = self.metadataHelper.getTypeByXmlName(metadataTypeXmlName); //inFolder, childXmlNames
+//           if (!metadataType) {
+//             return reject(new Error('Unrecognized package.xml metadata type: '+metadataTypeXmlName));
+//           }
+//           if (_.has(metadataType, 'parentXmlName')) {
+//             var parentMetadataType = self.metadataHelper.getTypeByXmlName(metadataType.parentXmlName);
+//           }
+//           if (packageMembers === '*') {
+//             ids.push(metadataTypeXmlName);
+//             var indexedType = _.find(orgMetadata, { 'xmlName': metadataTypeXmlName });
+//             if (_.has(indexedType, 'children')) {
+//               _.each(indexedType.children, function(child) {
+//                 child.select = true;
+//               });
+//             }
+//           } else {
+//             _.each(packageMembers, function(member) {
+//               if (metadataType.inFolder) {
+//                 // id : Document.FolderName.FileName.txt
+//                 ids.push([metadataTypeXmlName, member.replace(/\//, '.')].join('.'));
+//               } else if (parentMetadataType) {
+//                 // id : CustomObject.Object_Name__c.fields.Field_Name__c
+//                 var id = [ parentMetadataType.xmlName, member.split('.')[0], metadataType.tagName, member.split('.')[1] ].join('.');
+//                 ids.push(id);
+//               } else if (_.has(metadataType, 'childXmlNames')) {
+//                 var indexedType = _.find(orgMetadata, { 'xmlName': metadataTypeXmlName });
+//                 if (indexedType) {
+//                   var indexedNode = _.find(indexedType.children, { 'id': [metadataTypeXmlName, member].join('.')});
+//                   if (_.has(indexedNode, 'children')) {
+//                     _.each(indexedNode.children, function(child) {
+//                       child.select = true;
+//                       if (_.has(child, 'children')) {
+//                         _.each(child.children, function(grandChild) {
+//                           grandChild.select = true;
+//                         });
+//                       }
+//                     });
+//                   }
+//                   ids.push([metadataTypeXmlName, member].join('.'));
+//                 }
+//               } else {
+//                 // id: ApexClass.MyClassName
+//                 ids.push([metadataTypeXmlName, member].join('.'));
+//               }
+//             });
+//           }
+//         });
+//       }
+//       if (!self.indexService) {
+//         self.indexService = new IndexService({ project: self });
+//       }
+//       self.indexService.setChecked(orgMetadata, ids);
+//       self.indexService.ensureParentsAreCheckedIfNecessary(orgMetadata);
+//       if (keyword) {
+//         self.indexService.setVisibility(orgMetadata, keyword);
+//       }
+//       resolve(orgMetadata);
+//     });
+// };
 
 /**
  * Indexes children Metadata by preparing and submitting retrieve requests
@@ -40,7 +234,7 @@ function IndexService(opts) {
  * @param  {Array} childNames
  * @return {Promise}
  */
-IndexService.prototype._indexChildren = function(indexedType, typeMap, xmlName, childNames) {
+Indexer.prototype._indexChildren = function(indexedType, typeMap, xmlName, childNames) {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
@@ -72,16 +266,15 @@ IndexService.prototype._indexChildren = function(indexedType, typeMap, xmlName, 
 
             var indexedChildType = _.find(indexedType.children, { 'id': [xmlName,fileBasenameNoExtension].join('.') });
 
-            logger.silly('indexedChildType -->');
-            logger.silly(indexedChildType);
-            logger.silly('\n\n');
+            logger.debug('indexedChildType -->', indexedChildType);
 
             parseXml(fileBody, function (err, xmlObject) {
 
               _.forOwn(xmlObject[xmlName], function(value, tagName) {
 
                 // we're tracking this child type, now we need to add as a level 3 child
-                var matchingChildType = _.find(self.metadataHelper.childTypes, { 'tagName': tagName });
+                // var matchingChildType = _.find(self.metadataHelper.childTypes, { 'tagName': tagName }); // todo: reimplement
+                var matchingChildType = _.find(helper.childTypes, { tagName: tagName });
                 if (matchingChildType) {
 
                   var leaves = [];
@@ -159,7 +352,7 @@ IndexService.prototype._indexChildren = function(indexedType, typeMap, xmlName, 
  * @param  {String} xmlName
  * @return {Promise}
  */
-IndexService.prototype._indexFolders = function(indexedType, typeMap, xmlName) {
+Indexer.prototype._indexFolders = function(indexedType, typeMap, xmlName) {
   var self = this;
   return new Promise(function(resolve, reject) {
     var listFolderRequests = [];
@@ -213,7 +406,7 @@ IndexService.prototype._indexFolders = function(indexedType, typeMap, xmlName) {
  * @param  {Object} typeMap
  * @return {Promise}
  */
-IndexService.prototype._indexType = function(typeListResult, typeMap) {
+Indexer.prototype._indexType = function(typeListResult, typeMap) {
   var self = this;
   return new Promise(function(resolve, reject) {
     // typeListResult will be an object with an xmlName key, array of results
@@ -310,83 +503,11 @@ IndexService.prototype._indexType = function(typeListResult, typeMap) {
 };
 
 /**
- * Indexes Salesforce.com org (writes to .org_metadata) based on project subscription
- * @return {Promise}
- */
-IndexService.prototype.indexServerProperties = function(typeXmlNames) {
-  var self = this;
-  return new Promise(function(resolve, reject) {
-    if (!typeXmlNames) {
-      typeXmlNames = config.get('mm_default_subscription');
-    }
-
-    logger.debug('indexing typeXmlNames: ');
-    logger.debug(typeXmlNames);
-
-    var typeMap = {};
-
-    var listRequests = [];
-
-    _.each(typeXmlNames, function(typeXmlName) {
-      logger.debug('adding type to map: ');
-      logger.debug(typeXmlName);
-
-      var mType = self.metadataHelper.getTypeByXmlName(typeXmlName);
-
-      if (!mType) {
-        throw new Error('Unknown metadata type: '+typeXmlName);
-      }
-
-      typeMap[typeXmlName] = mType;
-
-      var typeRequestName; // name to submit to list query
-
-      // prepare folder-based metadata for query
-      var isFolderMetadata = typeMap[typeXmlName].inFolder;
-      if (isFolderMetadata) {
-        typeRequestName = self._transformFolderNameForListRequest(typeXmlName);
-      } else {
-        typeRequestName = typeXmlName;
-      }
-
-      logger.silly(pkg);
-      if (_.has(pkg, typeXmlName+'ListProvider')) {
-        var listProvider = new pkg[typeXmlName+'ListProvider'](self.sfdcClient);
-        listRequests.push(listProvider.getList());
-      } else {
-        listRequests.push(self.sfdcClient.list(typeRequestName));
-      }
-    });
-
-    Promise.all(listRequests)
-      .then(function(results) {
-        var typePromises = [];
-        _.each(results, function(metadataListResult) {
-          logger.silly('indexing type promise: ');
-          logger.silly(metadataListResult);
-          logger.silly(JSON.stringify(typeMap));
-          typePromises.push(self._indexType(metadataListResult, typeMap));
-        });
-        return Promise.all(typePromises);
-      })
-      .then(function(results) {
-        resolve(results);
-      })
-      .catch(function(error) {
-        logger.error('An error occurred indexing server properties');
-        logger.error(error.message);
-        logger.error(error.stack);
-        reject(error);
-      });
-    });
-};
-
-/**
  * The Salesforce.com metadata api can be wonky, this transforms a folder type name to a list-friendly name
  * @param  {String} typeName
  * @return {String}
  */
-IndexService.prototype._transformFolderNameForListRequest = function(typeName) {
+Indexer.prototype._transformFolderNameForListRequest = function(typeName) {
   var metadataRequestType = typeName+'Folder';
   if (metadataRequestType === 'EmailTemplateFolder') {
     metadataRequestType = 'EmailFolder';
@@ -394,7 +515,7 @@ IndexService.prototype._transformFolderNameForListRequest = function(typeName) {
   return metadataRequestType;
 };
 
-IndexService.prototype._transformFolderNameToBaseName = function(typeName) {
+Indexer.prototype._transformFolderNameToBaseName = function(typeName) {
   if (typeName === 'EmailFolder') {
     return 'EmailTemplate';
   } else {
@@ -405,7 +526,7 @@ IndexService.prototype._transformFolderNameToBaseName = function(typeName) {
 /**
  * a number of protoype methods to crawl the org metadata index and select/deselect nodes
  */
-IndexService.prototype.crawlDict = function(jsonData, depth, query, parentVisiblity) {
+Indexer.prototype._crawlDict = function(jsonData, depth, query, parentVisiblity) {
   var self = this;
   depth += 1;
   var visibility = 0;
@@ -431,7 +552,7 @@ IndexService.prototype.crawlDict = function(jsonData, depth, query, parentVisibl
   });
 
   _.forOwn(jsonData, function(value, key) {
-    if (self.crawl(value, depth, query, visibility) > 0) {
+    if (self._crawl(value, depth, query, visibility) > 0) {
       childVisibility = 1;
     }
     if (visibility > childVisibility) {
@@ -451,7 +572,7 @@ IndexService.prototype.crawlDict = function(jsonData, depth, query, parentVisibl
   return visibility;
 };
 
-IndexService.prototype.crawlArray = function(jsonData, depth, query, parentVisiblity) {
+Indexer.prototype._crawlArray = function(jsonData, depth, query, parentVisiblity) {
   var self = this;
   depth += 1;
   var elementsToRemove = [];
@@ -462,7 +583,7 @@ IndexService.prototype.crawlArray = function(jsonData, depth, query, parentVisib
     if (_.isString(value)) {
       childVisibility = value.toLowerCase().indexOf(query) >= 0;
     } else if (_.isObject(value)) {
-      childVisibility = self.crawl(value, depth, query, parentVisiblity);
+      childVisibility = self._crawl(value, depth, query, parentVisiblity);
       value.index = index;
     } else {
       childVisibility = value.toLowerCase().indexOf(query) >= 0;
@@ -482,10 +603,10 @@ IndexService.prototype.crawlArray = function(jsonData, depth, query, parentVisib
   });
 };
 
-IndexService.prototype.crawl = function(jsonData, depth, query, parentVisiblity) {
+Indexer.prototype._crawl = function(jsonData, depth, query, parentVisiblity) {
   var self = this;
   if (_.isArray(jsonData)) {
-    self.crawlArray(jsonData, depth, query, parentVisiblity);
+    self._crawlArray(jsonData, depth, query, parentVisiblity);
     var hv = false;
     _.each(jsonData, function(jd) {
       if (_.has(jd, 'visibility') && jd.visibility === 1) {
@@ -495,80 +616,26 @@ IndexService.prototype.crawl = function(jsonData, depth, query, parentVisiblity)
     });
     return hv;
   } else if (_.isObject(jsonData)) {
-    return self.crawlDict(jsonData, depth, query, parentVisiblity);
+    return self._crawlDict(jsonData, depth, query, parentVisiblity);
   } else {
     return 0;
   }
 };
 
-IndexService.prototype.setVisibility = function(jsonData, query) {
-  this.crawl(jsonData, 0, query.toLowerCase(), 0);
-};
-
-IndexService.prototype.ensureParentsAreCheckedIfNecessary = function(orgMetadata) {
-  _.each(orgMetadata, function(metadataType) {
-    if (metadataType.children && _.isArray(metadataType.children)) {
-      var numberOfChildrenSelected = 0;
-      _.each(metadataType.children, function(c) {
-        if (c.select) {
-          numberOfChildrenSelected++;
-        }
-      });
-      if (metadataType.children.length === numberOfChildrenSelected && metadataType.children > 0) {
-        metadataType.checked = true;
-        metadataType.select = true;
-      }
-    }
-  });
-};
-
-IndexService.prototype.setChecked = function(src, ids, dpth, key) {
-  // Recursively find checked item
-  if (!key) {
-    key = '';
-  }
-  if (!ids) {
-    ids = [];
-  }
-  if (!dpth) {
-    dpth = 0;
-  }
-  var self = this;
-  if (_.isArray(src)) {
-    _.each(src, function(litem) {
-      if (_.isObject(litem)) {
-        if (_.has(litem, 'id') && ids.indexOf(litem.id) >= 0) {
-          litem.checked = true;
-          litem.select = true;
-        }
-      }
-      self.setChecked(litem, ids, dpth + 2);
-    });
-  } else if (_.isObject(src)) {
-    _.forOwn(src, function(value, key) {
-      self.setChecked(value, ids, dpth + 1, key);
-    });
-  }
-};
-
-IndexService.prototype.setThirdStateChecked = function(src, ids, dpth, key) {
+Indexer.prototype._setThirdStateChecked = function(src, ids, dpth, key) {
   // Recursively find checked item
   var self = this;
-  if (!key) {
-    key = '';
-  }
-  if (!ids) {
-    ids = [];
-  }
-  if (!dpth) {
-    dpth = 0;
-  }
+
+  if (!key) key = '';
+  if (!ids) ids = [];
+  if (!dpth) dpth = 0;
+
   if (_.isArray(src)) {
     _.each(src, function(litem) {
       if (_.isObject(litem)) {
         return false;
       }
-      self.setThirdStateChecked(litem, ids, dpth + 2);
+      self._setThirdStateChecked(litem, ids, dpth + 2);
     });
   } else if (_.isObject(src)) {
     if (_.has(src, 'children') && _.isArray(src.children) && src.children.length > 0) {
@@ -588,9 +655,9 @@ IndexService.prototype.setThirdStateChecked = function(src, ids, dpth, key) {
     }
 
     _.forOwn(src, function(value, key) {
-      self.setThirdStateChecked(value, ids, dpth + 1, key);
+      self._setThirdStateChecked(value, ids, dpth + 1, key);
     });
   }
 };
 
-module.exports = IndexService;
+module.exports = Indexer;

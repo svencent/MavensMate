@@ -50,20 +50,20 @@ TemplateService.prototype.getTemplateBody = function(metadataTypeXmlName, templa
           if (!error && response.statusCode === 200) {
             templateBody = body;
           } else {
-            templateBody = util.getFileBody(path.join(templateSource,metadataTypeXmlName,templateFileName));
+            templateBody = util.getFileBodySync(path.join(templateSource,metadataTypeXmlName,templateFileName));
           }
           resolve(templateBody);
         });
       } else if (templateLocation === 'local') {
-        templateBody = util.getFileBody(path.join(templateSource,metadataTypeXmlName,templateFileName));
+        templateBody = util.getFileBodySync(path.join(templateSource,metadataTypeXmlName,templateFileName));
         resolve(templateBody);
       } else {
-        templateBody = util.getFileBody(path.join(__dirname,'templates','github',metadataTypeXmlName,templateFileName));
+        templateBody = util.getFileBodySync(path.join(__dirname,'templates','github',metadataTypeXmlName,templateFileName));
         resolve(templateBody);
       }
     } catch(e) {
       logger.error('Could not retrieve template body', e);
-      templateBody = util.getFileBody(path.join(__dirname,'templates','github',metadataTypeXmlName,templateFileName));
+      templateBody = util.getFileBodySync(path.join(__dirname,'templates','github',metadataTypeXmlName,templateFileName));
       resolve(templateBody);
     }
   });
@@ -88,15 +88,15 @@ TemplateService.prototype._getPackage = function() {
           if (!error && response.statusCode === 200) {
             templatePackage = JSON.parse(body);
           } else {
-            templatePackage = util.getFileBody(path.join(__dirname,'templates','github','package.json'), true);
+            templatePackage = util.getFileBodySync(path.join(__dirname,'templates','github','package.json'), true);
           }
           resolve(templatePackage);
         });
       } else if (templateLocation === 'local') {
-        templatePackage = JSON.parse(util.getFileBody(path.join(templateSource,'package.json')));
+        templatePackage = JSON.parse(util.getFileBodySync(path.join(templateSource,'package.json')));
         resolve(templatePackage);
       } else {
-        templatePackage = util.getFileBody(path.join(__dirname,'templates','github','package.json'), true);
+        templatePackage = util.getFileBodySync(path.join(__dirname,'templates','github','package.json'), true);
         resolve(templatePackage);
       }
     } catch(e) {

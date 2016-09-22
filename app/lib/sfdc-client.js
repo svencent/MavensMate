@@ -851,6 +851,11 @@ SalesforceClient.prototype.describeMetadata = function() {
         reject(err);
       } else {
         self.describe = res;
+        self.metadataObjects = self.describe.metadataObjects;
+        self.childMetadataObjects = [];
+        _.each(self.describe.metadataObjects, function(obj) {
+          if (obj.childXmlNames) self.childMetadataObjects.concat(obj.childXmlNames);
+        });
         resolve(res);
       }
     });

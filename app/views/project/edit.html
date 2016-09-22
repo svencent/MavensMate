@@ -106,7 +106,7 @@
 	    	updateSubscription();
 	    });
 
-	    if ({{ project.hasIndexedMetadata() }}) {
+	    if ({{ project.serverStore.hasIndex() }}) {
 	    	metadataTree = new mavensmate.MetadataTree();
 	    	metadataTree.render();
 	    } else {

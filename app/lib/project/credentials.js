@@ -82,7 +82,7 @@ Credentials.prototype.get = function() {
     }
     return creds;
   } else {
-    return util.getFileBody(this._credsJsonPath, true);
+    return util.getFileBodySync(this._credsJsonPath, true);
   }
 };
 
@@ -100,7 +100,7 @@ Credentials.getForProject = function(project) {
       refreshToken: keychain.getPassword(project.id, 'refreshToken', true),
     }
   } else {
-    return util.getFileBody(credsPath, true);
+    return util.getFileBodySync(credsPath, true);
   }
 };
 

@@ -77,7 +77,7 @@ ViewHelper.prototype.listProjects = function() {
       _.each(projectPaths, function(projectPath) {
         var settingsPath = path.join(projectPath, 'config', '.settings');
         if (fs.existsSync(settingsPath)) {
-          var settings = util.getFileBody(settingsPath, true);
+          var settings = util.getFileBodySync(settingsPath, true);
           projects.push({
             id: settings.id,
             path: projectPath
@@ -112,7 +112,7 @@ ViewHelper.prototype.getWorkspaces = function() {
 };
 
 ViewHelper.prototype.getMetadataObjects = function(project) {
-  return _.sortBy(project.getDescribe().metadataObjects, 'xmlName');
+  return _.sortBy(project.sfdcClient.metadataObjects, 'xmlName');
 };
 
 ViewHelper.prototype.doesClassOrTriggerExist = function(project, classOrTriggerName, type) {

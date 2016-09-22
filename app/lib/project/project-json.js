@@ -5,7 +5,7 @@ var util    = require('../util');
 
 var ProjectJson = function(project) {
   this._path = path.join(project.path, '.mavensmate', 'project.json');
-  this._state = util.getFileBody(this._path, true);
+  this._state = util.getFileBodySync(this._path, true);
   this._watch();
 };
 
@@ -13,7 +13,7 @@ ProjectJson.create = function(projectPath, sfdcClient, settings) {
   var projectJsonPath = path.join(projectPath, '.mavensmate', 'project.json');
   var body = {
     projectName: settings.projectName,
-    username: sfdcClient.username,
+    username: sfdcClient.getUsername(),
     id: settings.id,
     namespace: sfdcClient.getNamespace(),
     orgType: sfdcClient.getOrgType(),
@@ -28,7 +28,7 @@ ProjectJson.create = function(projectPath, sfdcClient, settings) {
 ProjectJson.prototype._watch = function() {
   var self = this;
   fs.watchFile(self._path, function() {
-    self._state = util.getFileBody(this._path, true);
+    self._state = util.getFileBodySync(this._path, true);
   });
 };
 

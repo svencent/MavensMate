@@ -7,7 +7,7 @@ var util    = require('../util');
 
 var Debug = function(project) {
   this._path = path.join(project.path, '.mavensmate', 'debug.json');
-  this._state = util.getFileBody(this._path, true);
+  this._state = util.getFileBodySync(this._path, true);
   this._watch();
 };
 
@@ -35,7 +35,7 @@ Debug.create = function(projectPath, sfdcClient) {
 Debug.prototype._watch = function() {
   var self = this;
   fs.watchFile(self._path, function() {
-    self._state = util.getFileBody(this._path, true);
+    self._state = util.getFileBodySync(this._path, true);
   });
 };
 

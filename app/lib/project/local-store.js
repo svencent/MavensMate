@@ -1,3 +1,4 @@
+var Promise         = require('bluebird');
 var path            = require('path');
 var fs              = require('fs-extra-promise');
 var config          = require('../../config');
@@ -7,8 +8,8 @@ var _               = require('lodash');
 var MetadataHelper  = require('../metadata').MetadataHelper;
 
 var LocalStore = function(project) {
-  this._path = path.join(project.path, '.mavensmate', 'store.json');
-  this._state = util.getFileBody(this._path, true);
+  this._path = path.join(project.path, '.mavensmate', 'local.json');
+  this._state = util.getFileBodySync(this._path, true);
 };
 
 /**
@@ -81,14 +82,14 @@ LocalStore.prototype.update = function(serverProperties) {
 };
 
 /**
- * Creates localStore.json for the project
+ * Creates local.json for the project
  * @param  {Project} project
  * @param  {Object} settings
  * @return {LocalStore}
  */
 LocalStore.create = function(projectPath, fileProperties) {
   return new Promise(function(resolve, reject) {
-    var projectStorePath = path.join(projectPath, '.mavensmate', 'store.json');
+    var projectStorePath = path.join(projectPath, '.mavensmate', 'local.json');
     var store = {};
     var metadataHelper = new MetadataHelper();
     _.each(fileProperties, function(fp) {
@@ -98,7 +99,7 @@ LocalStore.create = function(projectPath, fileProperties) {
         value.localState = 'clean';
         store[key] = value;
       }
-      var metadataType = metadataHelper.getTypeByPath(fp.fileName);
+      var metadataType = metadataHelper.getTypeByPath(fp.fileName); // todo: deprecate metadatahelper
       if (!metadataType) {
         logger.warn('Could not determine metadata type for: '+JSON.stringify(fp));
       }

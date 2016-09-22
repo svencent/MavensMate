@@ -169,7 +169,7 @@
         }
 
         var headers = { 'MavensMate-Editor-Agent': '{{ editor }}' };
-        {% if project && project.settings && project.id %}
+        {% if project && project.id %}
           headers['MavensMate-pid'] = '{{ project.id }}';
         {% endif %}
 

@@ -5,7 +5,7 @@ var util    = require('../util');
 
 var Config = function(project) {
   this._path = path.join(project.path, '.mavensmate', 'config.json');
-  this._state = util.getFileBody(this._path, true);
+  this._state = util.getFileBodySync(this._path, true);
   this._watch();
 };
 
@@ -27,7 +27,7 @@ Config.create = function(projectPath, settings) {
 Config.prototype._watch = function() {
   var self = this;
   fs.watchFile(self._path, function() {
-    self._state = util.getFileBody(self._path, true);
+    self._state = util.getFileBodySync(self._path, true);
   });
 };
 

@@ -11,6 +11,7 @@ var Config            = require('./config');
 var Credentials       = require('./credentials');
 var Debug             = require('./debug');
 var LocalStore        = require('./local-store');
+var ServerStore       = require('./server-store');
 var SalesforceClient  = require('../sfdc-client');
 var Package           = require('../package');
 
@@ -29,7 +30,6 @@ var Project = function(path) {
 
 Project.prototype.hasInvalidSalesforceConnection;
 Project.prototype.sfdcClient;
-Project.prototype._documents = []; // [ Document, Document, Document ]
 Project.prototype._connections = []; // array of deployment connections
 
 Project.prototype.initialize = function() {
@@ -39,21 +39,23 @@ Project.prototype.initialize = function() {
     self.projectJson = new ProjectJson(self);
     self.config = new Config(self);
     self.debug = new Debug(self);
+    self.packageXml = new Package(self);
     self.localStore = new LocalStore(self);
+    self.serverStore = new ServerStore(self);
     self.name = self.projectJson.get('projectName');
     self.id = self.projectJson.get('id');
-    self.initializeSalesforceClient()
-      .then(function() {
-        self.packageXml = new Package(self);
-        return self.packageXml.initializeFromPath(path.join(self.path,'src','package.xml'));
-      })
-      .then(function() {
-        resolve(self);
-      })
-      .catch(function(err) {
-        logger.error('Could not initialize SalesforceClient', err);
-        reject(err);
-      })
+    Promise.all([
+      self.initializeSalesforceClient(),
+      self.serverStore.initialize(),
+      self.packageXml.initializeFromPath(path.join(self.path,'src','package.xml')),
+    ])
+    .then(function() {
+      resolve(self);
+    })
+    .catch(function(err) {
+      logger.error('Could not initialize SalesforceClient', err);
+      reject(err);
+    });
   });
 };
 

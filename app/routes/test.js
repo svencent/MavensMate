@@ -69,7 +69,7 @@ function _getTestClasses(project) {
     fs.readdirSync(classPath).forEach(function(filename) {
       var fileNameParts = path.basename(filename).split('.');
       var fn = fileNameParts[0];
-      var fileBody = util.getFileBody(path.join(classPath, filename));
+      var fileBody = util.getFileBodySync(path.join(classPath, filename));
       if (isTestRegEx.test(fileBody) || testMethodRegex.test(fileBody)) {
         classes.push(fn);
       }

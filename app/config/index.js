@@ -50,7 +50,7 @@ function _init() {
 
   // ensure valid JSON configuration
   try {
-    util.getFileBody(userSettingsPath, true);
+    util.getFileBodySync(userSettingsPath, true);
   } catch(e) {
     logger.error('could not parse user JSON configuration, reverting to default');
     fs.outputJsonSync(userSettingsPath, defaultSettings, { spaces: 2 });
