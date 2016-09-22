@@ -136,7 +136,7 @@
 				async: false,
 				ajax: {
 					type: 'POST',
-					url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/subscription?pid={{project.settings.id}}",
+					url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.id}}/subscription?pid={{project.id}}",
 					data: JSON.stringify({
 			    	subscription: selectedMetadataTypes
 					})
@@ -163,7 +163,7 @@
 			var opts = {
 				ajax: {
 					type: 'POST',
-					url: '{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}?pid={{project.settings.id}}',
+					url: '{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.id}}?pid={{project.id}}',
 					data: JSON.stringify({
 						package: metadataTree.getPackage()
 					})
@@ -189,7 +189,7 @@
 			var opts = {
 				ajax: {
 					type: 'POST',
-					url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.settings.id}}/index"
+					url: "{{ mavensmate.ui.getBaseUrl() }}/app/project/{{project.id}}/index"
 				},
 				message: {
 					label: 'Updating metadata index...',

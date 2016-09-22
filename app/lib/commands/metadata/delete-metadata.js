@@ -9,11 +9,11 @@ var Promise         = require('bluebird');
 var util            = require('../../util');
 var inherits        = require('inherits');
 var BaseCommand     = require('../../command');
-var DeleteDelegate  = require('../../services/delete');
+var DeleteDelegate  = require('../../delete/delegate');
 var mavensMateFile  = require('../../file');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -21,29 +21,13 @@ inherits(Command, BaseCommand);
 Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var project = self.getProject();
-    var payload = self.payload;
-    payload.project = project;
-    var deleteDelegate = new DeleteDelegate(project, payload.paths);
-    var deleteResult;
+    var deleteDelegate = new DeleteDelegate(self.getProject(), self.payload.paths);
     deleteDelegate.execute()
       .then(function(result) {
-        deleteResult = result;
-        if (result.success) {
-          var files = mavensMateFile.createFileInstances(payload.paths);
-          project.packageXml.unsubscribe(files);
-          return project.packageXml.writeFile();
-        } else {
-          return new Promise(function(res) {
-            res();
-          });
-        }
+        resolve(result);
       })
-      .then(function() {
-        resolve(deleteResult);
-      })
-      .catch(function(error) {
-        reject(error);
+      .catch(function(err) {
+        reject(err);
       })
       .done();
   });

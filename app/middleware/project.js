@@ -25,14 +25,13 @@ module.exports = function(req, res, next) {
       // it's possible that:
       //   1. the pid is invalid
       //   2. the project structure is corrupt
-      //   3. we are unable to initialize authentication (missing/bad tokens) --> project.requiresAuthentication
+      //   3. we are unable to initialize authentication (missing/bad tokens) --> project.hasInvalidSalesforceConnection
       logger.debug('Attempting to attach project to request', req.pid);
       _addProjectById(req.app, req.pid)
-        .then(function() {
-          project = util.getProjectById(req.app, req.pid);
+        .then(function(project) {
           req.project = project;
           res.locals.project = project;
-          if (project.requiresAuthentication) {
+          if (project.hasInvalidSalesforceConnection) {
             logger.info('Project added to client, but it requires authentication, redirecting to auth endpoint');
             if (req.url.indexOf('/app/') >= 0 && req.url.indexOf('/auth') === -1 && req.url.indexOf('/settings') === -1) {
               // we can redirect to re-auth
@@ -54,7 +53,7 @@ module.exports = function(req, res, next) {
           logger.error('Failed to add project to client', err);
           res.status(500).send('Error initializing project: '+err.message);
         });
-    } else if (project.requiresAuthentication) {
+    } else if (project.hasInvalidSalesforceConnection) {
       req.project = project;
       if (req.url.indexOf('/app/') >= 0 && req.url.indexOf('/auth') === -1 && req.url.indexOf('/settings') === -1) {
         // we can redirect to re-auth
@@ -67,7 +66,7 @@ module.exports = function(req, res, next) {
         next();
       }
     } else {
-      logger.debug('found project in cache', project.name);
+      logger.info('Project is known to the server -->', project.name);
       req.project = project;
       res.locals.project = project;
       next();
@@ -83,25 +82,20 @@ function _addProjectById(app, projectId) {
     if (!projectPath) {
       return reject(new Error('MavensMate could not find project with the id: '+projectId+'. This is likely because you are trying to open a project that does not reside in a valid mm_workspace. Please go to MavensMate Desktop global settings and ensure this project is located in a valid mm_workspace.'));
     }
-    logger.info('adding project by id ----> ', projectId);
-    logger.info('path: ', projectPath);
-    var project = new Project({ path: projectPath });
-    project.initialize(false)
+    logger.info('adding project by id ---->', projectId, 'path -->', projectPath);
+    var project = new Project(projectPath);
+    project.initialize()
       .then(function(response) {
+        if (project.hasInvalidSalesforceConnection) {
+          logger.warn('Project requiring reauthentication added to server');
+        }
         app.get('projects').push(project);
-        resolve(response);
+        resolve(project);
       })
       .catch(function(err) {
-        if (util.isCredentialsError(err)) {
-          logger.warn('Project requiring re-auth added to client');
-          app.get('projects').push(project);
-          resolve();
-        } else {
-          logger.error('Error initializing project: '+err.message+ ' -> '+err.stack);
-          reject(err);
-        }
-      })
-      .done();
+        logger.error('Could not add project', err);
+        reject(err);
+      });
   });
 }
 
@@ -111,25 +105,28 @@ function _addProjectById(app, projectId) {
  * @return {String}    project path
  */
 function _findProjectPathById(id) {
-  logger.debug('_findProjectPathById');
-  logger.debug(id);
+  logger.debug('_findProjectPathById', id);
   var projectPathToReturn;
   var workspaces = config.get('mm_workspace');
   if (!_.isArray(workspaces)) {
     workspaces = [workspaces];
   }
-  logger.silly(workspaces);
+  logger.silly('workspaces', workspaces);
   _.each(workspaces, function(workspacePath) {
-    // /foo/bar/project
-    // /foo/bar/project/config/.settings
     logger.silly(workspacePath);
     var projectPaths = util.listDirectories(workspacePath);
-    logger.silly(projectPaths);
     _.each(projectPaths, function(projectPath) {
+      // todo: remove settingsPath (deprecated)
       var settingsPath = path.join(projectPath, 'config', '.settings');
       if (fs.existsSync(settingsPath)) {
         var settings = util.getFileBody(settingsPath, true);
         if (settings.id === id) {
+          projectPathToReturn = projectPath;
+          return false;
+        }
+      } else if (fs.existsSync(path.join(projectPath, '.mavensmate', 'project.json'))) {
+        var projectJson = util.getFileBody(path.join(projectPath, '.mavensmate', 'project.json'), true);
+        if (projectJson.id === id) {
           projectPathToReturn = projectPath;
           return false;
         }

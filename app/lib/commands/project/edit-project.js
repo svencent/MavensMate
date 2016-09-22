@@ -13,7 +13,7 @@ var EditorService     = require('../../services/editor');
 var logger            = require('winston');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -22,7 +22,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      self.editorService.launchUI('project/'+self.getProject().settings.id+'/edit', { pid: self.getProject().settings.id })
+      self.editorService.launchUI('project/'+self.getProject().id+'/edit', { pid: self.getProject().id })
         .then(function() {
           resolve('Success');
         })

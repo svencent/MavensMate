@@ -156,7 +156,7 @@ CompileDelegate.prototype._performCompile = function() {
     logger.debug('compiling paths: ');
     logger.debug(self.paths);
 
-    var compileWithToolingApi = config.get('mm_compile_with_tooling_api');
+    var compileWithToolingApi = self.project.config.get('mm_compile_with_tooling_api');
     var files = mavensMateFile.createFileInstances(self.paths, self.project);
     var lightningBundleItemFiles = mavensMateFile.getLightningBundleItemFiles(files);
     var toolingFiles = mavensMateFile.getToolingFiles(files, !compileWithToolingApi);
@@ -170,7 +170,7 @@ CompileDelegate.prototype._performCompile = function() {
     }
 
     if (toolingFiles.length > 0) {
-      if (config.get('mm_legacy_compile')) {
+      if (self.project.config.get('mm_legacy_compile')) {
         compilePromises.push(self._compileToolingFilesLegacy(toolingFiles));
       } else {
         compilePromises.push(self._compileToolingFiles(toolingFiles));
@@ -225,7 +225,7 @@ CompileDelegate.prototype._compileToolingFilesLegacy = function(toolingFiles) {
               return self.project.sfdcClient.retrieveUnpackaged(retrievePackage.subscription);
             })
             .then(function(retrieveResult) {
-              return self.project.updateLocalStore(retrieveResult.fileProperties);
+              return self.project.localStore.set(retrieveResult.fileProperties);
             })
             .then(function() {
               resolve(compileResult);
@@ -269,7 +269,7 @@ CompileDelegate.prototype._compileToolingFiles = function(toolingFiles) {
               logger.debug('compile via tooling api result: ');
               logger.debug(result);
               compileResult = result;
-              return self.project.sfdcClient.getServerProperties(toolingFiles);
+              return self.project.sfdcClient.getApexServerProperties(toolingFiles);
             })
             .then(function(serverPropertiesResult) {
               logger.silly(serverPropertiesResult);
@@ -368,7 +368,7 @@ CompileDelegate.prototype._checkConflicts = function(files) {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
-      if (!config.get('mm_compile_check_conflicts') || self.force) {
+      if (!self.project.config.get('mm_compile_check_conflicts') || self.force) {
         return resolve({ hasConflict: false });
       }
 

@@ -3,13 +3,13 @@
 var fs                = require('fs-extra');
 var path              = require('path');
 var helper            = require('../test-helper');
-var ProjectPath       = require('../../app/lib/path');
+var Document          = require('../../app/lib/document').Document;
 var chai              = require('chai');
 var should            = chai.should();
 var logger            = require('winston');
 var sinon             = require('sinon');
 
-describe('mavensmate project-path', function(){
+describe('mavensmate document', function(){
 
   var project;
   var sandbox;
@@ -41,11 +41,11 @@ describe('mavensmate project-path', function(){
   it('should be an ApexClass', function(done) {
     var apexClassPath = path.join(helper.baseTestDirectory(), 'workspace', 'path-test', 'src', 'classes', 'foo.cls');
     fs.outputFileSync(apexClassPath, '');
-    var myPath = new ProjectPath({
-      project:project,
-      path:apexClassPath
+    var myPath = new Document({
+      project: project,
+      path: apexClassPath
     });
-    logger.debug(myPath);
+    logger.debug(myPath.print());
     done();
   });
 

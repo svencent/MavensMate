@@ -102,13 +102,13 @@ router.post('/', function(req, res) {
   });
 });
 
-// creates a new project from an existing directory
-router.post('/existing', function(req, res) {
+// converts an existing directory to a MavensMate project
+router.post('/convert', function(req, res) {
   logger.debug('received request to create new project frome existing directory: ');
   logger.debug(req.body);
   var commandExecutor = req.app.get('commandExecutor');
   var request = commandExecutor.execute({
-    name: 'new-project-from-existing-directory',
+    name: 'convert-project',
     body: req.body,
     editor: req.editor
   });
@@ -132,8 +132,8 @@ router.get('/:id/auth', function(req, res) {
   var params = {
     title: 'Update Project Credentials',
     callback: '/app/project/auth/finish',
-    pid: req.project.settings.id,
-    forced: req.project.requiresAuthentication ? '1' : '0'
+    pid: req.project.id,
+    forced: req.project.hasInvalidSalesforceConnection ? '1' : '0'
   };
   res.redirect('/app/auth/new?'+querystring.stringify(params));
 });

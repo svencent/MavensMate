@@ -11,7 +11,7 @@ var BaseCommand       = require('../../command');
 var config            = require('../../../config');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);

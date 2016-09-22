@@ -9,7 +9,6 @@ var fs                = require('fs-extra-promise');
 var path              = require('path');
 var Promise           = require('bluebird');
 var logger            = require('winston');
-var MetadataHelper    = require('./metadata').MetadataHelper;
 var LightningService  = require('./services/lightning');
 var Package           = require('./package').Package;
 var util              = require('./util');
@@ -22,12 +21,8 @@ var mavensMateFile    = require('./file');
  * @param {Array} paths - array of path strings [ 'foo/bar/src/classes', 'foo/bar/src/pages/foo.page' ]
  */
 var RefreshDelegate = function(project, paths) {
-  if (!project || !paths) {
-    throw new Error('RefreshDelegate requires a valid project instance and an array of paths to refresh.');
-  }
   this.project = project;
   this.paths = paths;
-  this.metadataHelper = new MetadataHelper({ sfdcClient : this.project.sfdcClient });
 };
 
 /**

@@ -56,7 +56,7 @@
           <ul class="dropdown__list" role="menu">
             {% if project %}
             <li class="slds-dropdown__item">
-              <a href="/app/project/{{project.settings.id}}?pid={{project.settings.id}}" role="menuitem">
+              <a href="/app/project/{{project.id}}?pid={{project.id}}" role="menuitem">
                 <p class="slds-truncate">Project Home</p>
               </a>
             </li>
@@ -73,12 +73,12 @@
             </li>
             {% if project %}
               <li class="slds-dropdown__item">
-                <a href="/app/project/{{project.settings.id}}/edit?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/project/{{project.id}}/edit?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">Edit Project</p>
                 </a>
               </li>
               <li class="slds-dropdown__item">
-                <a href="/app/project/{{project.settings.id}}/auth?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/project/{{project.id}}/auth?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">Authentication</p>
                 </a>
               </li>
@@ -103,22 +103,22 @@
             </div>
             <ul class="dropdown__list" role="menu">
               <li class="slds-dropdown__item">
-                <a href="/app/metadata/ApexClass/new?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/metadata/ApexClass/new?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">New Apex Class</p>
                 </a>
               </li>
               <li class="slds-dropdown__item">
-                <a href="/app/metadata/ApexTrigger/new?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/metadata/ApexTrigger/new?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">New Apex Trigger</p>
                 </a>
               </li>
               <li class="slds-dropdown__item">
-                <a href="/app/metadata/ApexComponent/new?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/metadata/ApexComponent/new?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">New Visualforce Component</p>
                 </a>
               </li>
               <li class="slds-dropdown__item">
-                <a href="/app/metadata/ApexPage/new?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/metadata/ApexPage/new?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">New Visualforce Page</p>
                 </a>
               </li>
@@ -140,22 +140,22 @@
             </div>
             <ul class="dropdown__list" role="menu">
               <li class="slds-dropdown__item">
-                <a href="/app/lightning/app/new?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/lightning/app/new?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">New Lightning App</p>
                 </a>
               </li>
               <li class="slds-dropdown__item">
-                <a href="/app/lightning/component/new?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/lightning/component/new?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">New Lightning Component</p>
                 </a>
               </li>
               <li class="slds-dropdown__item">
-                <a href="/app/lightning/event/new?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/lightning/event/new?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">New Lightning Event</p>
                 </a>
               </li>
               <li class="slds-dropdown__item">
-                <a href="/app/lightning/interface/new?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/lightning/interface/new?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">New Lightning Interface</p>
                 </a>
               </li>
@@ -178,12 +178,12 @@
             </div>
             <ul class="dropdown__list" role="menu">
               <li class="slds-dropdown__item">
-                <a href="/app/connections/new?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/connections/new?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">Deployment Connections</p>
                 </a>
               </li>
               <li class="slds-dropdown__item">
-                <a href="/app/deploy/new?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/deploy/new?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">Deploy to Server</p>
                 </a>
               </li>
@@ -206,17 +206,17 @@
             </div>
             <ul class="dropdown__list" role="menu">
               <li class="slds-dropdown__item">
-                <a href="/app/test/new?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/test/new?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">Run Apex Unit Tests</p>
                 </a>
               </li>
               <li class="slds-dropdown__item">
-                <a href="/app/apex/new?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/apex/new?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">Execute Apex</p>
                 </a>
               </li>
               <li class="slds-dropdown__item">
-                <a href="/app/logs?pid={{project.settings.id}}" role="menuitem">
+                <a href="/app/logs?pid={{project.id}}" role="menuitem">
                   <p class="slds-truncate">Debug Logs</p>
                 </a>
               </li>

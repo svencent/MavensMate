@@ -46,12 +46,12 @@ describe('project-middleware', function(){
 
   describe('project unknown to the server', function() {
 
-    describe('project with requiresAuthentication flag', function() {
+    describe('project with hasInvalidSalesforceConnection flag', function() {
 
       it('should redirect to re-auth endpoint when requesting an /app path', function(done) {
         var getProjectByIdStub = sandbox.stub(util, 'getProjectById');
         getProjectByIdStub.onFirstCall().returns(null);
-        project.requiresAuthentication = true;
+        project.hasInvalidSalesforceConnection = true;
         getProjectByIdStub.onSecondCall().returns(project);
         request(app)
           .get('/app/home')
@@ -67,7 +67,7 @@ describe('project-middleware', function(){
       it('should throw a 500 when running /execute', function(done) {
         var getProjectByIdStub = sandbox.stub(util, 'getProjectById');
         getProjectByIdStub.onFirstCall().returns(null);
-        project.requiresAuthentication = true;
+        project.hasInvalidSalesforceConnection = true;
         getProjectByIdStub.onSecondCall().returns(project);
         request(app)
           .get('/execute')
@@ -82,8 +82,8 @@ describe('project-middleware', function(){
 
       it('allow request if command is oauth-project', function(done) {
         sandbox.stub(util, 'getProjectById').returns(project);
-        project.requiresAuthentication = true;
-        logger.warn('project', project.requiresAuthentication);
+        project.hasInvalidSalesforceConnection = true;
+        logger.warn('project', project.hasInvalidSalesforceConnection);
         request(app)
           .get('/execute')
           .query({ command: 'oauth-project', pid: project.settings.id, ui: true })
@@ -103,7 +103,7 @@ describe('project-middleware', function(){
     describe('valid project', function() {
       it('should return valid HTML page', function(done) {
         var getProjectByIdStub = sandbox.stub(util, 'getProjectById');
-        project.requiresAuthentication = false;
+        project.hasInvalidSalesforceConnection = false;
         getProjectByIdStub.onFirstCall().returns(project);
         request(app)
           .get('/app/project/edit')
@@ -117,11 +117,11 @@ describe('project-middleware', function(){
       });
     });
 
-    describe('project with requiresAuthentication flag', function() {
+    describe('project with hasInvalidSalesforceConnection flag', function() {
 
       it('should redirect to re-auth endpoint when requesting an /app path', function(done) {
         var getProjectByIdStub = sandbox.stub(util, 'getProjectById');
-        project.requiresAuthentication = true;
+        project.hasInvalidSalesforceConnection = true;
         getProjectByIdStub.onFirstCall().returns(project);
         request(app)
           .get('/app/home')
@@ -136,7 +136,7 @@ describe('project-middleware', function(){
 
       it('should throw a 500 when running /execute', function(done) {
         var getProjectByIdStub = sandbox.stub(util, 'getProjectById');
-        project.requiresAuthentication = true;
+        project.hasInvalidSalesforceConnection = true;
         getProjectByIdStub.onFirstCall().returns(project);
         request(app)
           .get('/execute')
@@ -151,7 +151,7 @@ describe('project-middleware', function(){
 
       it('allow request if command is oauth-project', function(done) {
         var getProjectByIdStub = sandbox.stub(util, 'getProjectById');
-        project.requiresAuthentication = true;
+        project.hasInvalidSalesforceConnection = true;
         getProjectByIdStub.onFirstCall().returns(project);
         request(app)
           .get('/execute')

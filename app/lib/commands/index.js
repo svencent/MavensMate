@@ -6,6 +6,10 @@ var capitalize      = require('../utilities/capitalize');
 var camelize        = require('../utilities/camelize');
 var EditorService   = require('../services/editor');
 
+/**
+ * For each command module in lib/commands, create a dictionary of SomeCoolThingCommand => its Command module
+ * @type {Object}
+ */
 var commands = {};
 var cmdPath = path.join(__dirname);
 var commandFiles = util.walkSync(cmdPath);
@@ -62,6 +66,39 @@ function _handleCommandResult(result) {
 };
 
 /**
+ * Takes a command request and returns an instance of a Command
+ * @param  {String} name         [description]
+ * @param  {Project]} project      [description]
+ * @param  {Object} body         [description]
+ * @param  {EditorService} editor       [description]
+ * @param  {Function} openWindowFn [description]
+ * @return {Command}              [description]
+ */
+function _getCommandInstance(name, project, body, editor, openWindowFn) {
+  // if we're in cli mode and our project has expired creds, we intercept the requested command and replace it with oauth-project, which will prompt them to re-authenticate
+  if (process.env.MAVENSMATE_CONTEXT === 'cli' && project && project.hasInvalidSalesforceConnection) {
+    name = 'oauth-project';
+  }
+
+  var commandClassName = capitalize(camelize(name))+'Command'; // => new-project -> NewProjectCommand
+  if (!commands[commandClassName]) {
+    return null;
+  }
+
+  var editorService = new EditorService(editor, openWindowFn);
+  var command = new commands[commandClassName](project, body, editorService);
+
+  logger.info('name: ', name);
+  logger.info('project: ', project && project.name ? project.name : 'none');
+  logger.info('body: ', JSON.stringify(body));
+  logger.info('editor: ', editor || 'none');
+  logger.debug('mavensmate command class name: '+commandClassName);
+  logger.silly('mavensmate command instance: ', command);
+
+  return command;
+}
+
+/**
  * Command executor
  * @param  {Object} opts
  * @param  {Function} opts.openWindowFn - js function used to open a UI
@@ -96,50 +133,33 @@ module.exports = function(opts) {
           project = payload.project || opts.project;
           openWindowFn = payload.openWindowFn || opts.openWindowFn;
 
-          // if we're in cli mode and our project has expired creds, we intercept the command and send them to authenticate
-          if (process.env.MAVENSMATE_CONTEXT === 'cli' && project && project.requiresAuthentication) {
-            name = 'oauth-project';
-          }
+          var command = _getCommandInstance(name, project, body, editor, openWindowFn);
 
-          commandClassName = capitalize(camelize(name))+'Command'; // => new-project -> NewProjectCommand
-
-          var editorService = new EditorService(editor, openWindowFn);
-
-          var command = new commands[commandClassName](project, body, editorService);
-
-          logger.info('name: ', name);
-          logger.info('project: ', project && project.name ? project.name : 'none');
-          logger.info('body: ', JSON.stringify(body));
-          logger.info('editor: ', editor || 'none');
-          logger.debug('mavensmate command class name: '+commandClassName);
-          logger.silly('mavensmate command instance: ', command);
-
-          if (!commands[commandClassName]) {
+          if (!command) {
             _handleCommandResult({
-              error: new Error('Command not supported: '+name),
+              error: new Error('Unrecognized command: '+name),
               resolve: resolve,
               reject: reject
             });
-            return;
+          } else {
+            command.execute()
+              .then(function(result) {
+                _handleCommandResult({
+                  result: result,
+                  resolve: resolve,
+                  reject: reject
+                });
+              })
+              .catch(function(error) {
+                _handleCommandResult({
+                  error: error,
+                  resolve: resolve,
+                  reject: reject
+                });
+              });
           }
-
-          command.execute()
-            .then(function(result) {
-              _handleCommandResult({
-                result: result,
-                resolve: resolve,
-                reject: reject
-              });
-            })
-            .catch(function(error) {
-              _handleCommandResult({
-                error: error,
-                resolve: resolve,
-                reject: reject
-              });
-            });
         } catch(e) {
-          logger.error(e);
+          logger.error('error executing command', e);
           _handleCommandResult(e);
         }
       });

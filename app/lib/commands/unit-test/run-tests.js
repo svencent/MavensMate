@@ -14,7 +14,7 @@ var ApexTest        = require('../../services/test');
 var EditorService   = require('../../services/editor');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -23,7 +23,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      var urlParams = { pid: self.getProject().settings.id };
+      var urlParams = { pid: self.getProject().id };
       if (self.payload && self.payload.classes && _.isArray(self.payload.classes)) {
         urlParams.className = [ self.payload.classes[0] ];
       }

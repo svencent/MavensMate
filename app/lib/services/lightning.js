@@ -64,45 +64,27 @@ LightningService.prototype.deleteBundle = function(bundleId) {
   });
 };
 
-LightningService.prototype.deleteBundleItems = function(mavensmateFiles) {
+LightningService.prototype.deleteBundleItems = function(documents) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    if (mavensmateFiles.length === 0) {
-      return resolve();
-    } else {
-      self.project.getLightningIndex()
-        .then(function(lightningIndex) {
-          logger.debug(lightningIndex);
-          var deleteIds = [];
-          _.each(mavensmateFiles, function(mmf) {
-            var lightningBundleName = mmf.folderName; //mybundle
-            var lightningType = mmf.lightningType;
-            logger.debug('deleting lightning type: '+lightningType);
-            logger.debug('deleting lightningBundleName: '+lightningBundleName);
-            deleteIds.push(_.find(lightningIndex, { AuraDefinitionBundle : { DeveloperName: lightningBundleName }, DefType: lightningType }).Id);
-          });
-          logger.debug('deleting lightning components!!');
-          logger.debug(mavensmateFiles);
-          logger.debug(deleteIds);
-          self.project.sfdcClient.conn.tooling.sobject('AuraDefinition').delete(deleteIds, function(err, res) {
-            if (err) {
-              reject(new Error('Could not delete AuraBundle item: '+err.message));
-            } else {
-              resolve(res);
-            }
-          });
-        })
-        .catch(function(err) {
-          reject(new Error('Could not get delete bundle items: '+err.message));
-        });
-    }
+    var deleteIds = [];
+    _.each(documents, function(d) {
+      deleteIds.push(d.getServerProperties().id);
+    });
+    self.project.sfdcClient.conn.tooling.sobject('AuraDefinition').delete(deleteIds)
+      .then(function(res) {
+        resolve(res);
+      })
+      .catch(function(err) {
+        reject(err);
+      });
   });
 };
 
 LightningService.prototype.getBundle = function(bundleId) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    self.project.sfdcClient.conn.tooling.query('Select Id, AuraDefinitionBundleId,AuraDefinitionBundle.DeveloperName,DefType,Format FROM AuraDefinition WHERE AuraDefinitionBundleId = \''+bundleId+'\'', function(err, res) {
+    self.project.sfdcClient.conn.tooling.query('Select Id,AuraDefinitionBundleId,AuraDefinitionBundle.DeveloperName,DefType,Format FROM AuraDefinition WHERE AuraDefinitionBundleId = \''+bundleId+'\'', function(err, res) {
       if (err) {
         reject(err);
       } else {
@@ -150,60 +132,27 @@ LightningService.prototype.getBundleItems = function(mavensmateFiles) {
 
 /**
  * Updates one or more lightning components
- * @param  {Array} - array of File instances
+ * @param  {Array} - array of Document instances
  * @return {Promise}
  */
-LightningService.prototype.update = function(files) {
+LightningService.prototype.update = function(documents) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    if (files.length === 0) {
-      resolve();
-    } else {
-      self.project.getLightningIndex()
-        .then(function(lightningIndex) {
-          logger.debug(lightningIndex);
-          var updatePayload = [];
-          _.each(files, function(f) {
-            var lightningBundleName = path.basename(path.dirname(f.path)); //mybundle
-            var lightningType = f.lightningType;
-            logger.debug('lightning type: '+lightningType);
-            logger.debug('lightningBundleName: '+lightningBundleName);
-            var payloadItem = {
-              Source: f.body,
-              Id: _.find(lightningIndex, { AuraDefinitionBundle : { DeveloperName: lightningBundleName }, DefType: lightningType }).Id
-            };
-            updatePayload.push(payloadItem);
-          });
-          logger.debug('updating lightning components!!');
-          logger.debug(updatePayload);
-          self.project.sfdcClient.conn.tooling.sobject('AuraDefinition').update(updatePayload, function(err, res) {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(res);
-            }
-          });
-        })
-        .catch(function(err) {
-          reject(new Error('Could not update lightning components: '+err.message));
-        });
-    }
-  });
-};
-
-LightningService.prototype.updateComponent = function(id, source) {
-  var self = this;
-  return new Promise(function(resolve, reject) {
-    self.project.sfdcClient.conn.tooling.sobject('AuraDefinition').update({
-      Id : id,
-      Source : source
-    }, function(err, res) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(res);
-      }
+    var updatePayload = [];
+    _.each(documents, function(d) {
+      updatePayload.push({
+        Source: d.getBodySync(),
+        Id: d.getServerProperties().id
+      });
     });
+    logger.debug('updating lightning components', updatePayload);
+    self.project.sfdcClient.conn.tooling.sobject('AuraDefinition').update(updatePayload)
+      .then(function(res) {
+        resolve(res);
+      })
+      .catch(function(err) {
+        reject(err);
+      });
   });
 };
 

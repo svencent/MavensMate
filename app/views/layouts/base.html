@@ -115,7 +115,7 @@
           });
         };
         mavensmate.openProjectInEditor = function(editor, pid) {
-          pid = pid || '{{project.settings.id}}';
+          pid = pid || '{{project.id}}';
           var opts = {
             async: false,
             ajax: {
@@ -169,8 +169,8 @@
         }
 
         var headers = { 'MavensMate-Editor-Agent': '{{ editor }}' };
-        {% if project && project.settings && project.settings.id %}
-          headers['MavensMate-pid'] = '{{ project.settings.id }}';
+        {% if project && project.settings && project.id %}
+          headers['MavensMate-pid'] = '{{ project.id }}';
         {% endif %}
 
         $.ajaxSetup({
@@ -303,7 +303,7 @@
               <div class="slds-media slds-media--center slds-no-space slds-grow">
                 <div class="slds-media__figure">
                   {% if project %}
-                      <a href="/app/project/{{project.settings.id}}?pid={{project.settings.id}}">
+                      <a href="/app/project/{{project.id}}?pid={{project.id}}">
                         <img src="{{ mavensmate.ui.getStaticResourcePath() }}/images/logo2.png" id="mmlogo"/>
                       </a>
                   {% else %}
@@ -326,7 +326,7 @@
                   ipc.sendToHost('on-load', {
                     title: '{{title|addslashes}}',
                     {% if project %}
-                    pid: '{{project.settings.id}}',
+                    pid: '{{project.id}}',
                     projectName: '{{project.name|addslashes}}',
                     {% endif %}
                     {% if sldsIconClassName %}
@@ -343,7 +343,7 @@
                         type: 'POST',
                         url: baseLocalServerURL+'/project/'+pid+'/close',
                         data: {
-                          pid: '{{project.settings.id}}'
+                          pid: '{{project.id}}'
                         }
                       }
                     };
@@ -365,7 +365,7 @@
               </a>
               {% endif %}
 
-              <a class="slds-button slds-button--icon slds-align-middle" href="/app/settings{% if project %}?pid={{project.settings.id}}{% endif %}">
+              <a class="slds-button slds-button--icon slds-align-middle" href="/app/settings{% if project %}?pid={{project.id}}{% endif %}">
                 <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
                   <use xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#settings"></use>
                 </svg>

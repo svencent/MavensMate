@@ -11,7 +11,6 @@ var swig                  = require('swig');
 var fs                    = require('fs-extra');
 var path                  = require('path');
 var util                  = require('../util');
-var events                = require('events');
 var inherits              = require('inherits');
 var SalesforceClient      = require('../sfdc-client');
 var OrgConnectionService  = require('./org-connection');
@@ -20,9 +19,6 @@ var MetadataHelper        = require('../metadata').MetadataHelper;
 var logger                = require('winston');
 var config                = require('../../config');
 var mavensMateFile        = require('../file');
-
-// TODO: create tmp directory on instantiation, set as property
-// TODO: refactor execute... methods
 
 /**
  * Represents a deployment to one or more Salesforce.com servers
@@ -42,8 +38,6 @@ function Deploy(opts) {
   this.sfdcClient = this.project ? this.project.sfdcClient : this.sfdcClient;
   this.metadataHelper = new MetadataHelper({ sfdcClient: this.sfdcClient });
 }
-
-inherits(Deploy, events.EventEmitter);
 
 Deploy.prototype.getResultHtml = function(targets, deployOptions, deployResult) {
   var resultHtml = swig.renderFile('views/deploy/result.html', {
@@ -106,7 +100,7 @@ Deploy.prototype.compileWithMetadataApi = function(files, subscription) {
         if (deployResult.details.retrieveResult) {
           return self.project.updateLocalStore(deployResult.details.retrieveResult.fileProperties);
         } else {
-          return new Promise(function(resolve) {
+          return new Promise(function(resolve, reject) {
             resolve();
           });
         }
@@ -292,8 +286,6 @@ Deploy.prototype.executeStream = function(zipStream, opts) {
       .done();
   });
 };
-
-// TODO: CHANGE METADATA TO FILE!!!
 
 /**
  * Deploys file instance to server, creating a server copy, places in self.project

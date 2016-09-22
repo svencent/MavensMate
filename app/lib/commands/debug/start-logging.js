@@ -11,7 +11,7 @@ var BaseCommand = require('../../command');
 var moment      = require('moment');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -21,9 +21,8 @@ Command.prototype.execute = function() {
   return new Promise(function(resolve, reject) {
     var project = self.getProject();
     var sfdcClient = project.sfdcClient;
-    var projectDebugSettings = project.getDebugSettingsSync();
-    var expirationDate = moment().add(projectDebugSettings.expiration, 'minutes');
-    sfdcClient.startLogging(projectDebugSettings, expirationDate)
+    var expirationDate = moment().add(project.debug.get('expiration'), 'minutes');
+    sfdcClient.startLogging(project.debug, expirationDate)
       .then(function() {
         resolve('Started logging for debug users');
       })

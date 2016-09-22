@@ -10,12 +10,12 @@ var path                  = require('path');
 var util                  = require('../../util');
 var inherits              = require('inherits');
 var BaseCommand           = require('../../command');
-var RefreshDelegate       = require('../../refresh');
+var RefreshDelegate       = require('../../refresh/delegate');
 var EditorService         = require('../../services/editor');
 var logger                = require('winston');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -36,17 +36,9 @@ Command.prototype.execute = function() {
     }
     refreshPromise
       .then(function(result) {
-        logger.debug('refresh command result: ');
-        logger.debug(result);
+        logger.debug('refresh command result', result);
         if (self.editorService && self.editorService.editor === 'sublime') {
-          self.editorService.runCommand('refresh_folder_list')
-            .then(function() {
-              resolve();
-            })
-            .catch(function(err) {
-              logger.error(err);
-              resolve();
-            });
+          return self.editorService.runCommand('refresh_folder_list');
         } else {
           return Promise.resolve();
         }

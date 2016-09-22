@@ -9,10 +9,10 @@ var Promise         = require('bluebird');
 var util            = require('../../util');
 var inherits        = require('inherits');
 var BaseCommand     = require('../../command');
-var CompileDelegate = require('../../services/compile');
+var CompileDelegate = require('../../compile/delegate');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);

@@ -302,7 +302,7 @@
         type: 'GET',
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
-        url: '/app/project/{{project.settings.id}}/index?pid={{project.settings.id}}&pkg='+encodeURI(self.packageLocation)
+        url: '/app/project/{{project.id}}/index?pid={{project.id}}&pkg='+encodeURI(self.packageLocation)
       },
       checkbox: true,
       selectMode: 3,

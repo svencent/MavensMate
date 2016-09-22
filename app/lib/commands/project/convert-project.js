@@ -7,7 +7,7 @@
 
 var Promise           = require('bluebird');
 var util              = require('../../util');
-var Project           = require('../../project');
+var project           = require('../../project');
 var BaseCommand       = require('../../command');
 var SalesforceClient  = require('../../sfdc-client');
 var inherits          = require('inherits');
@@ -15,7 +15,7 @@ var logger            = require('winston');
 var EditorService     = require('../../services/editor');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -37,7 +37,7 @@ Command.prototype.execute = function() {
       var sfdcClient = new SalesforceClient(self.payload);
       sfdcClient.initialize()
         .then(function() {
-          newProject = new Project(self.payload);
+          newProject = project.convert(self.payload);
           newProject.sfdcClient = sfdcClient;
           return newProject.initialize(true, true);
         })

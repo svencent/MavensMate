@@ -15,10 +15,10 @@ var EditorService     = require('../../services/editor');
 var LightningService  = require('../../services/lightning');
 var MavensMateFile    = require('../../file').MavensMateFile;
 var path              = require('path');
-var RefreshDelegate   = require('../../refresh');
+var RefreshDelegate   = require('../../refresh/delegate');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -28,7 +28,7 @@ Command.prototype.execute = function() {
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
 
-      self.editorService.launchUI('lightning/event/new', { pid: self.getProject().settings.id })
+      self.editorService.launchUI('lightning/event/new', { pid: self.getProject().id })
         .then(function() {
           resolve('Success');
         })

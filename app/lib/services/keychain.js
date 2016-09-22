@@ -5,11 +5,11 @@
 
 'use strict';
 
-var systemKeychainSupported = true;
+var _isAvailable = true;
 try {
   var keychain = require('keytar');
 } catch (e) {
-  systemKeychainSupported = false;
+  _isAvailable = false;
 }
 var config = require('../../config');
 var os = require('os');
@@ -22,15 +22,23 @@ var KeychainService = function() { };
  * @return {Boolean}
  */
 KeychainService.prototype.useSystemKeychain = function() {
-  return config.get('mm_use_keyring') && systemKeychainSupported;
+  return config.get('mm_use_keyring') && _isAvailable;
 };
 
 /**
- * Whether node-keychain is installed properly
+ * Whether keytar is installed
  * @return {Boolean}
  */
 KeychainService.prototype.isSystemKeychainSupported = function() {
-  return systemKeychainSupported;
+  return _isAvailable;
+};
+
+/**
+ * Whether keytar is installed
+ * @return {Boolean}
+ */
+KeychainService.prototype.isAvailable = function() {
+  return _isAvailable;
 };
 
 /**
@@ -91,4 +99,4 @@ KeychainService.prototype.getPassword = function(id, type, canFailSilently) {
   }
 };
 
-module.exports = KeychainService;
+module.exports = new KeychainService();

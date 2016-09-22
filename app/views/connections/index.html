@@ -51,7 +51,7 @@
               <h2 class="slds-text-heading--medium">New Deployment Connection</h2>
           </div>
           <div class="slds-modal__content slds-p-around--medium">
-            <input type="hidden" name="pid" value="{{project.settings.id}}"/>
+            <input type="hidden" name="pid" value="{{project.id}}"/>
             <div class="slds-form--stacked">
               <fieldset>
                 <div class="slds-form-element">
@@ -75,7 +75,7 @@
 
 {% block buttons %}
   <button class="slds-button slds-button--brand" onclick="openConnectionModal()">New Deployment Connection</button>
-  <a class="slds-button slds-button--neutral" href="/app/deploy/new?pid={{project.settings.id}}">Go to Deploy to Server</a>
+  <a class="slds-button slds-button--neutral" href="/app/deploy/new?pid={{project.id}}">Go to Deploy to Server</a>
   {% include 'views/partials/cancel_button.html' %}
 {% endblock %}
 

@@ -15,7 +15,7 @@ var config                = require('../../../config');
 var _                     = require('lodash');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -31,7 +31,7 @@ Command.prototype.execute = function() {
           urls: sfdcClient.conn.userInfo.urls,
           instanceUrl: sfdcClient.conn.instanceUrl,
           username: sfdcClient.conn.userInfo.username,
-          metadataTypes: _.sortBy(sfdcClient.describeCache.metadataObjects, 'xmlName')
+          metadataTypes: _.sortBy(sfdcClient.describe.metadataObjects, 'xmlName')
         };
         if (process.title === 'mavensmate cli') {
           config.set('mm_cli_salesforce_session_id', response.sid);

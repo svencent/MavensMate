@@ -53,7 +53,7 @@ var Project = function(opts) {
   this.package = opts.package;
   this.orgType = opts.orgType;
   this.sfdcClient = opts.sfdcClient;
-  this.requiresAuthentication = true;
+  this.hasInvalidSalesforceConnection = true;
   this.settings = {};
   this.packageXml = null;
   this.orgMetadata = null;
@@ -284,14 +284,14 @@ Project.prototype._initExisting = function() {
         }
       })
       .then(function() {
-        self.requiresAuthentication = false;
+        self.hasInvalidSalesforceConnection = false;
         resolve();
       })
       .catch(function(error) {
         logger.error(error);
         if (util.isCredentialsError(error)) {
           logger.debug('project has expired access/refresh token, marking as invalid');
-          self.requiresAuthentication = true;
+          self.hasInvalidSalesforceConnection = true;
         }
         reject(error);
       })
@@ -1299,7 +1299,7 @@ Project.prototype.updateCredentials = function(creds) {
         return self._updateDebug('users', [self.sfdcClient.getUserId()])
       })
       .then(function() {
-        if (self.requiresAuthentication) {
+        if (self.hasInvalidSalesforceConnection) {
           logger.debug('project required authentication, running init again');
           return self._initExisting();
         } else {

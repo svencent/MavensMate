@@ -19,7 +19,7 @@ var fs              = require('fs-extra');
 var logger          = require('winston');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -28,7 +28,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      self.editorService.launchUI('metadata/'+self.payload.args.type+'/new', { pid: self.getProject().settings.id, type: self.payload.args.type })
+      self.editorService.launchUI('metadata/'+self.payload.args.type+'/new', { pid: self.getProject().id, type: self.payload.args.type })
         .then(function() {
           resolve('Success');
         })

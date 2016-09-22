@@ -8,3 +8,5 @@ coverage.html
 .env
 /coverage
 *.DS_Store
+
+.vscode/launch.json

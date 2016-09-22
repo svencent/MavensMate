@@ -14,7 +14,7 @@ var logger          = require('winston');
 var EditorService   = require('../../services/editor');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -24,7 +24,7 @@ Command.prototype.execute = function() {
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
 
-      self.editorService.launchUI('deploy/new', { pid: self.getProject().settings.id })
+      self.editorService.launchUI('deploy/new', { pid: self.getProject().id })
         .then(function() {
           resolve('Success');
         })

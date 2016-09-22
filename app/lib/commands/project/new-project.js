@@ -17,16 +17,8 @@ var logger            = require('winston');
 var EditorService     = require('../../services/editor');
 var config            = require('../../../config');
 
-var _getSobjectList = function(describeResult) {
-  var sobjects = [];
-  _.each(describeResult.sobjects, function(so) {
-    sobjects.push(so.name);
-  });
-  return sobjects;
-};
-
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -46,32 +38,28 @@ Command.prototype.execute = function() {
       if (!self.payload.name) {
         return reject(new Error('Please specify project name'));
       }
-      var newProject;
+      var project;
       var sfdcClient = new SalesforceClient(self.payload);
       sfdcClient.initialize()
         .then(function() {
-          newProject = new Project(self.payload);
-          newProject.sfdcClient = sfdcClient;
-          return newProject.initialize(true);
+          self.payload.sfdcClient = sfdcClient;
+          return Project.create(self.payload);
         })
-        .then(function() {
-          logger.debug('Initiated new project, prepping to write to disk');
-          return newProject.retrieveAndWriteToDisk();
-        })
-        .then(function() {
+        .then(function(res) {
+          project = res;
           if (self.editorService && self.editorService.editor) {
-            return self.editorService.open(newProject.path);
+            return self.editorService.open(project.path);
           } else {
             return resolve({
               message: 'Project created successfully',
-              id: newProject.id
+              id: project.id
             });
           }
         })
         .then(function() {
           resolve({
             message: 'Project created successfully',
-            id: newProject.id
+            id: project.id
           });
         })
         .catch(function(error) {

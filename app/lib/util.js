@@ -32,14 +32,17 @@ exports.getAppRoot = function() {
 };
 
 exports.isCredentialsError = function(err) {
-  return err.message.indexOf('expired access/refresh token') >= 0 || err.message.indexOf('Could not retrieve credentials') >= 0 || err.message.indexOf('INVALID_SESSION_ID') >= 0;
+  return err.message.indexOf('expired access/refresh token') >= 0
+      || err.message.indexOf('Could not retrieve credentials') >= 0
+      || err.message.indexOf('INVALID_SESSION_ID') >= 0
+      || err.message.indexOf('INVALID_LOGIN') >= 0;
 };
 
 exports.getProjectById = function(app, id) {
   var projects = app.get('projects');
   if (id) {
     return _.find(projects, function(p) {
-      return p.settings.id === id;
+      return p.projectJson.get('id') === id;
     });
   }
   return null;
@@ -63,6 +66,16 @@ exports.endsWith = function(string, suffix) {
   string = string.toLowerCase();
   suffix = suffix.toLowerCase();
   return string.indexOf(suffix, string.length - suffix.length) !== -1;
+};
+
+exports.ensureArrayType = function(t) {
+  if (_.isObject(t) && !_.isArray(t)) {
+    return [t];
+  } else if (_.isArray(t)) {
+    return t;
+  } else {
+    throw new Error('Unrecognized type');
+  }
 };
 
 exports.startsWith = function(string, prefix) {

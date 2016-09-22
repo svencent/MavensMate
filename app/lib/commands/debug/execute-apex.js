@@ -12,7 +12,7 @@ var inherits          = require('inherits');
 var EditorService     = require('../../services/editor');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -21,7 +21,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      self.editorService.launchUI('apex/new', { pid: self.getProject().settings.id });
+      self.editorService.launchUI('apex/new', { pid: self.getProject().id });
       resolve('Success');
     } else {
       self.getProject().sfdcClient.executeApex(self.payload)

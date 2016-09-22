@@ -308,7 +308,7 @@ Object.defineProperty(MavensMateFile.prototype, 'id', {
           var lightningIndex = this.project.getLightningIndexSync();
           return _.find(lightningIndex, { AuraDefinitionBundle : { DeveloperName: this.lightningBaseName }, DefType: this.lightningType }).Id;
         } else if (this.project) {
-          return this.project.getLocalStore()[this.basename].id;
+          return this.project.localStore.get(this.basename).id;
         }
       }
     } catch(e){
@@ -323,7 +323,7 @@ Object.defineProperty(MavensMateFile.prototype, 'localStoreEntry', {
       if (this.isDirectory || this.isLightningType) {
         throw new Error('Cannot get local store entry for directories or lightning types currently.');
       } else {
-        return this.project.getLocalStore()[this.basename];
+        return this.project.localStore.get(this.basename);
       }
     } catch(e){
       logger.debug('Could not determine local store entry: '+e.message);

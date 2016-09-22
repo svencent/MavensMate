@@ -13,7 +13,7 @@ var EditorService     = require('../../services/editor');
 var logger            = require('winston');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);
@@ -21,7 +21,7 @@ inherits(Command, BaseCommand);
 Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    self.editorService.launchUI('project/'+self.getProject().settings.id+'/auth', { pid: self.getProject().settings.id })
+    self.editorService.launchUI('project/'+self.getProject().id+'/auth', { pid: self.getProject().id })
       .then(function() {
         resolve('Please authenticate with Salesforce');
       })

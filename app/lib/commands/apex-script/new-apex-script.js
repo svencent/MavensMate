@@ -11,7 +11,7 @@ var inherits          = require('inherits');
 var ApexScriptService = require('../../services/apex-script');
 
 function Command() {
-  Command.super_.call(this, Array.prototype.slice.call(arguments, 0));
+  BaseCommand.call(this, arguments);
 }
 
 inherits(Command, BaseCommand);

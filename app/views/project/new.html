@@ -4,9 +4,8 @@
 <div class="slds-tabs--scoped" data-aljs="tabs">
   <ul class="slds-tabs--scoped__nav" role="tablist">
       <li class="slds-tabs--scoped__item slds-text-heading--label" title="Project Details" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" data-aljs-show="tab-default-1">Project Details</a></li>
-      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Advanced" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" data-aljs-show="tab-default-2">Advanced</a></li>
       {% if !origin %}
-      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Metadata" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" data-aljs-show="tab-default-3">Metadata</a></li>
+      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Metadata" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" data-aljs-show="tab-default-2">Metadata</a></li>
       {% endif %}
   </ul>
   <div id="tab-default-1" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
@@ -47,51 +46,6 @@
   	</form>
   </div>
   <div id="tab-default-2" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
-  	<div class="slds-form--stacked">
-			<div class="slds-box slds-theme--info slds-m-bottom--medium">
-        <p>
-  			 Select only those metadata types you need for your project. The default list of metadata types is controlled by the "mm_default_subscription" setting. You can update your project's metadata subscription at any time in the "Edit Project" screen.
-        </p>
-			</div>
-
-      <fieldset>
-        <div class="slds-form-element">
-          <div class="slds-form-element slds-m-bottom--medium" >
-            <div class="slds-picklist--draggable slds-grid" data-aljs="multi-select" id="project-subscription">
-              <div class="slds-form-element">
-                  <span class="slds-form-element__label" aria-label="select-1">Org Metadata</span>
-                  <div class="slds-picklist slds-picklist--multi" data-aljs-multi-select="unselected">
-                      <ul class="slds-picklist__options slds-picklist__options--multi shown" id="ul-org-metadata"></ul>
-                  </div>
-              </div>
-              <div class="slds-grid slds-grid--vertical">
-                  <button class="slds-button slds-button--icon-container" data-aljs-multi-select="unselect">
-                      <svg aria-hidden="true" class="slds-button__icon">
-                          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#left"></use>
-                      </svg>
-                      <span class="slds-assistive-text">Pick list</span>
-                  </button>
-                  <button class="slds-button slds-button--icon-container" data-aljs-multi-select="select">
-                      <svg aria-hidden="true" class="slds-button__icon">
-                          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/icons/utility-sprite/svg/symbols.svg#right"></use>
-                      </svg>
-                      <span class="slds-assistive-text">Pick list</span>
-                  </button>
-              </div>
-              <div class="slds-form-element">
-                  <span class="slds-form-element__label" aria-label="select-2">Project Metadata Subscription</span>
-                  <div class="slds-picklist slds-picklist--multi" data-aljs-multi-select="selected">
-                      <ul class="slds-picklist__options slds-picklist__options--multi shown" id="ul-project-metadata"></ul>
-                  </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </fieldset>
-  	</div>
-  </div>
-  <div id="tab-default-3" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
     {% include 'views/partials/metadata_tree.html' %}
   </div>
 </div>
@@ -169,14 +123,6 @@
       $projectMetadataLi.detach().appendTo($('#ul-project-metadata'));
     }
 
-    function getSubscription() {
-      var selectedMetadataTypes = [];
-      _.each($('#project-subscription').multiSelect('getSelectedItems'), function(item) {
-        selectedMetadataTypes.push(item.id);
-      });
-      return selectedMetadataTypes.sort();
-    }
-
 		function newProject() {
 			var opts = {
 				ajax: {
@@ -191,7 +137,6 @@
             package: metadataTree.getPackage(),
             {% endif %}
 						workspace: $('#workspace').val(),
-						subscription: getSubscription(),
 						origin: $('#origin').val()
 					})
 				},

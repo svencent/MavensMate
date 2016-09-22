@@ -33,7 +33,7 @@ var config        = require('../config');
  */
 function SalesforceClient(opts) {
   util.applyProperties(this, opts);
-  this.apiVersion = config.get('mm_api_version') || '36.0';
+  this.apiVersion = opts.apiVersion || config.get('mm_api_version') || '36.0';
   this.clientId = process.env.SFDC_OAUTH_CLIENT_ID || '3MVG9uudbyLbNPZP7kLgoRiWVRqiN8gFcKwdAlztVnjgbj9shSk1vMXJNmV7W0ciFbeYiaP9D4tLfBBD06l_7'
   this.callbackUrl = process.env.SFDC_OAUTH_CALLBACK_URL || 'https://localhost:56248/sfdc/auth/callback'
   logger.debug('initiating SalesforceClient: ');
@@ -148,7 +148,7 @@ SalesforceClient.prototype.initialize = function() {
         accessToken: self.accessToken
       });
       self._configureJsForce();
-      self.describe()
+      self.describeMetadata()
         .then(function() {
           self.initialized = true;
           resolve();
@@ -176,7 +176,7 @@ SalesforceClient.prototype.initialize = function() {
         .then(function(res) {
           self.conn.userInfo = merge(self.conn.userInfo, res);
           self._configureJsForce();
-          return self.describe();
+          return self.describeMetadata();
         })
         .then(function(res) {
           self.initialized = true;
@@ -205,14 +205,13 @@ SalesforceClient.prototype.initialize = function() {
         .then(function(res) {
           self.conn.userInfo = merge(self.conn.userInfo, res);
           self._configureJsForce();
-          return self.describe();
+          return self.describeMetadata();
         })
         .then(function(res) {
           self.initialized = true;
           resolve(self.conn);
         })
         .catch(function(err) {
-          logger.error(err);
           reject(err);
         });
     } else {
@@ -270,7 +269,7 @@ SalesforceClient.prototype.getUsername = function() {
  * @return {String}
  */
 SalesforceClient.prototype.getNamespace = function() {
-  return this.describeCache.organizationNamespace;
+  return this.describe.organizationNamespace;
 };
 
 /**
@@ -365,15 +364,10 @@ SalesforceClient.prototype.createApexMetadata = function(mavensMateFile) {
  * @param  {Array of Metadata} metadata - metadata to be compiled (must already exist in salesforce)
  * @return {Promise}
  */
-SalesforceClient.prototype.compileWithToolingApi = function(files) {
+SalesforceClient.prototype.compileWithToolingApi = function(documents) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    // logger.debug('compiling sfdcPaths via tooling api: '+JSON.stringify(sfdcPaths));
-
-    if ( _.filter( files, function(f) { return !f.isToolingType; } ).length > 0 ) {
-      return reject('Invalid extension for tooling API compilation');
-    }
-
+    logger.debug('Comping documents via Tooling API', documents);
     // new container
     // add member for each type
     var containerId;
@@ -383,8 +377,8 @@ SalesforceClient.prototype.compileWithToolingApi = function(files) {
         containerId = result.id;
         logger.debug('new container id is: '+containerId);
         var memberPromises = [];
-        _.each(files, function(f) {
-          memberPromises.push(self._createMember(f, containerId));
+        _.each(documents, function(d) {
+          memberPromises.push(self._createMember(d, containerId));
         });
         return Promise.all(memberPromises);
       })
@@ -402,8 +396,7 @@ SalesforceClient.prototype.compileWithToolingApi = function(files) {
       })
       .catch(function(error) {
         reject(error);
-      })
-      .done();
+      });
   });
 };
 
@@ -566,18 +559,15 @@ SalesforceClient.prototype._createContainer = function() {
  * @param  {String} containerId - Tooling container ID
  * @return {Promise}
  */
-SalesforceClient.prototype._createMember = function(file, containerId) {
+SalesforceClient.prototype._createMember = function(document, containerId) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var memberName = file.type.xmlName+'Member';
-    logger.debug('Creating tooling member:');
-    logger.silly(file.body);
-    logger.debug(containerId);
-    logger.debug(file.id);
+    var memberName = document.getServerProperties().type+'Member';
+    logger.silly('Creating tooling member for document', document, memberName, containerId);
     self.conn.tooling.sobject(memberName).create({
-      Body: file.body,
+      Body: document.getBodySync(),
       MetadataContainerId: containerId,
-      ContentEntityId: file.id
+      ContentEntityId: document.getServerProperties().id
     }, function(err, res) {
       if (err) {
         reject(err);
@@ -853,14 +843,14 @@ SalesforceClient.prototype.describeGlobal = function() {
   });
 };
 
-SalesforceClient.prototype.describe = function() {
+SalesforceClient.prototype.describeMetadata = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     self.conn.metadata.describe(self.apiVersion, function(err, res) {
       if (err) {
         reject(err);
       } else {
-        self.describeCache = res;
+        self.describe = res;
         resolve(res);
       }
     });
@@ -1082,59 +1072,100 @@ SalesforceClient.prototype.stopLogging = function(userIds) {
   });
 };
 
-SalesforceClient.prototype.getServerProperties = function(mavensMateFiles) {
+SalesforceClient.prototype.getLightingServerProperties = function(documents, retrieveSource) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    logger.debug('getting server properties ...');
-    logger.silly(mavensMateFiles);
+    if (retrieveSource === undefined) retrieveSource = false;
+    logger.debug('getting lightning server properties ...');
+    logger.silly(documents);
 
-    var baseSoql = 'Select Id, Name, CreatedDate, CreatedById, NamespacePrefix, CreatedBy.Name, LastModifiedById, LastModifiedDate, LastModifiedBy.Name From ';
+    var fields = ['Id', 'CreatedDate', 'CreatedById', 'CreatedBy.Name', 'LastModifiedById', 'LastModifiedDate', 'LastModifiedBy.Name'];
+    if (retrieveSource) fields.push('Source');
+
+    var baseSoql = 'Select '+fields.join(',')+' From AuraDefinition';
     var baseSoqlFilter = ' WHERE ID IN (';
 
-    var classes = [];
-    var classIds = [];
-    var triggers = [];
-    var triggerIds = [];
-    var pages = [];
-    var pageIds = [];
-    var components = [];
-    var componentIds = [];
+    var serverIds = [];
+    _.each(documents, function(d) {
+      serverIds.push(d.getServerProperties().id);
+    });
 
-    _.each(mavensMateFiles, function(mmf) {
-      if (mmf.type.xmlName === 'ApexPage') {
-        pageIds.push(mmf.id);
-        pages.push(mmf);
-      } else if (mmf.type.xmlName === 'ApexTrigger') {
-        triggerIds.push(mmf.id);
-        triggers.push(mmf);
-      } else if (mmf.type.xmlName === 'ApexClass') {
-        classIds.push(mmf.id);
-        classes.push(mmf);
-      } else if (mmf.type.xmlName === 'ApexComponent') {
-        componentIds.push(mmf.id);
-        components.push(mmf);
+    self.conn.query(baseSoql + baseSoqlFilter + util.joinForQuery(serverIds)+')')
+      .then(function(res) {
+        resolve(res.records);
+      })
+      .catch(function(err) {
+        logger.error('could not get server properties for lightning metadata', err);
+        reject(err);
+      });
+  });
+};
+
+SalesforceClient.prototype.getApexServerProperties = function(documents, retrieveBody) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    if (retrieveBody === undefined) retrieveBody = false;
+    logger.debug('getting server properties ...');
+    logger.silly(documents);
+
+    var classes = [];
+    var triggers = [];
+    var pages = [];
+    var components = [];
+
+    var serverIds = [];
+
+    _.each(documents, function(d) {
+      var type = d.getServerProperties().type;
+      serverIds.push( d.getServerProperties().id );
+      if (type === 'ApexPage') {
+        pages.push(d);
+      } else if (type === 'ApexTrigger') {
+        triggers.push(d);
+      } else if (type === 'ApexClass') {
+        classes.push(d);
+      } else if (type === 'ApexComponent') {
+        components.push(d);
       }
     });
 
+    var fields = ['Id', 'Name', 'CreatedDate', 'CreatedById', 'NamespacePrefix',
+                  'CreatedBy.Name', 'LastModifiedById', 'LastModifiedDate',
+                  'LastModifiedBy.Name'];
+
+    var baseSoqlFilter = ' WHERE ID IN (';
+
     var queries = [];
     if (classes.length > 0) {
+      var queryFields = fields.slice(0);
+      if (retrieveBody) queryFields.push('Body');
+      var baseSoql = 'SELECT '+queryFields.join(',')+' FROM ';
       queries.push(
-        self.conn.query(baseSoql + 'ApexClass' + baseSoqlFilter + util.joinForQuery(classIds)+')')
+        self.conn.query(baseSoql + 'ApexClass' + baseSoqlFilter + util.joinForQuery(serverIds)+')')
       );
     }
     if (components.length > 0) {
+      var queryFields = fields.slice(0);
+      if (retrieveBody) queryFields.push('Markup');
+      var baseSoql = 'SELECT '+queryFields.join(',')+' FROM ';
       queries.push(
-        self.conn.query(baseSoql + 'ApexComponent' + baseSoqlFilter + util.joinForQuery(componentIds)+')')
+        self.conn.query(baseSoql + 'ApexComponent' + baseSoqlFilter + util.joinForQuery(serverIds)+')')
       );
     }
     if (triggers.length > 0) {
+      var queryFields = fields.slice(0);
+      if (retrieveBody) queryFields.push('Body');
+      var baseSoql = 'SELECT '+queryFields.join(',')+' FROM ';
       queries.push(
-        self.conn.query(baseSoql + 'ApexTrigger' + baseSoqlFilter + util.joinForQuery(triggerIds)+')')
+        self.conn.query(baseSoql + 'ApexTrigger' + baseSoqlFilter + util.joinForQuery(serverIds)+')')
       );
     }
     if (pages.length > 0) {
+      var queryFields = fields.slice(0);
+      if (retrieveBody) queryFields.push('Markup');
+      var baseSoql = 'SELECT '+queryFields.join(',')+' FROM ';
       queries.push(
-        self.conn.query(baseSoql + 'ApexPage' + baseSoqlFilter + util.joinForQuery(pageIds)+')')
+        self.conn.query(baseSoql + 'ApexPage' + baseSoqlFilter + util.joinForQuery(serverIds)+')')
       );
     }
 
