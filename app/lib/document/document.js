@@ -27,6 +27,7 @@ var Document = function(project, documentPath) {
   this._basename = path.basename(this._path);
   this._extension = path.extname(this._path).replace(/./, '');
   this._serverProperties = null;
+  this._localProperties = null;
   this._describe = null;
 }
 
@@ -38,12 +39,16 @@ Document.prototype.toString = function() {
   }
 };
 
+Document.prototype.getName = function() {
+  return path.basename(this.getPath(), path.extname(this.getPath()));
+}
+
 Document.prototype.getDescribe = function() {
   var self = this;
   if (!this._describe) {
     this._describe = _.find(this._sfdcClient.describe.metadataObjects, function(o) {
-      if (self.getServerProperties()) {
-        return o.xmlName === self.getServerProperties().type;
+      if (self.getLocalStoreProperties()) {
+        return o.xmlName === self.getLocalStoreProperties().type;
       } else {
         return o.suffix === self.getExtension();
       }
@@ -74,12 +79,19 @@ Document.prototype.getBaseName = function() {
   return this._basename;
 };
 
+/**
+ * Returns the full file system path of the document
+ */
 Document.prototype.getPath = function() {
   return this._path;
 };
 
 Document.prototype._getLocalStoreKey = function() {
-  return this.getPath().split(this._project.name+'/')[1];
+  return this.getPath().split(this._project.name+path.sep)[1];
+};
+
+Document.prototype._getServerStoreKey = function() {
+  return this.getPath().split(this._project.name+path.sep+'src'+path.sep)[1]; // todo: "src" could be any package name
 };
 
 Document.prototype.getRelativePath = function() {
@@ -87,10 +99,38 @@ Document.prototype.getRelativePath = function() {
 };
 
 Document.prototype.addUnknownLocalStoreEntry = function() {
-  var entry = {}
+  var entry = {};
   entry[this._getLocalStoreKey()] = {
-    // type: this.getDescribe().xmlName,
+    type: this.getDescribe().xmlName,
     localState: 'unknown'
+  };
+  this._project.localStore.set(entry);
+};
+
+Document.prototype.updateLocalStoryEntry = function(obj) {
+  var existingEntryValue = this.getLocalStoreProperties();
+  for (var key in obj) {
+    existingEntryValue[key] = obj[key];
+  }
+  var entry = {};
+  entry[this._getLocalStoreKey()] = existingEntryValue;
+  this._project.localStore.set(entry);
+};
+
+Document.prototype.addServerStoreEntryToLocalStore = function(serverStoreEntry) {
+  var entry = {};
+  entry[this._getLocalStoreKey()] = {
+    id: serverStoreEntry.id,
+    fullName: serverStoreEntry.fullName,
+    type: serverStoreEntry.type,
+    lastModifiedById: serverStoreEntry.lastModifiedById,
+    lastModifiedDate: serverStoreEntry.lastModifiedDate,
+    lastModifiedByName: serverStoreEntry.lastModifiedByName,
+    createdDate: serverStoreEntry.createdDate,
+    createdById: serverStoreEntry.createdById,
+    createdByName: serverStoreEntry.createdByName,
+    fileName: path.join('unpackaged', serverStoreEntry.fileName), // todo
+    localState: 'dirty'
   };
   this._project.localStore.set(entry);
 };
@@ -99,11 +139,24 @@ Document.prototype.addUnknownLocalStoreEntry = function() {
  * Returns local store entry
  * @return {Object}
  */
-Document.prototype.getServerProperties = function() {
-  if (!this._serverProperties) {
-    this._serverProperties = this._project.localStore.get(this._getLocalStoreKey());
-  }
-  return this._serverProperties;
+Document.prototype.getLocalStoreProperties = function() {
+  // if (!this._localProperties) {
+  //   this._localProperties = this._project.localStore.get(this._getLocalStoreKey());
+  // }
+  // return this._localProperties;
+  return this._project.localStore.get(this._getLocalStoreKey());
+};
+
+/**
+ * Returns server store entry if it exists
+ * @return {Object}
+ */
+Document.prototype.getServerStoreProperties = function() {
+  // if (!this._serverProperties) {
+  //   this._serverProperties = this._project.serverStore.find('fileName', this._getServerStoreKey());
+  // }
+  // return this._serverProperties;
+  return this._project.serverStore.find('fileName', this._getServerStoreKey());
 };
 
 /**
@@ -128,6 +181,19 @@ Document.prototype.getBody = function() {
         reject(err);
       });
   });
+};
+
+Document.prototype.getType = function() {
+  if (this.getLocalStoreProperties() && this.getLocalStoreProperties().type) {
+    return this.getLocalStoreProperties().type;
+  } else {
+    var self = this;
+    var metadataDescribe = _.find(this.project.sfdcClient.describe.metadataObjects, function(d) {
+      return self.getExtension() === d.suffix;
+    });
+    if (metadataDescribe) return metadataDescribe.xmlName;
+  }
+  return null;
 };
 
 Document.prototype.existsOnFileSystem = function() {

@@ -30,7 +30,7 @@ TemplateService.prototype.getTemplatesForType = function(metadataTypeXmlName) {
 TemplateService.prototype.getTemplateBody = function(metadataTypeXmlName, templateOrTemplateFileName) {
   return new Promise(function(resolve, reject) {
     /*jshint camelcase: false */
-    var templateFileName = templateOrTemplateFileName.file_name ? template.file_name : templateOrTemplateFileName; // TODO: standardize format
+    var templateFileName = templateOrTemplateFileName.file_name ? templateOrTemplateFileName.file_name : templateOrTemplateFileName; // TODO: standardize format
     var templateSource = config.get('mm_template_source');
     if (templateSource === undefined || templateSource === '') {
       templateSource = 'joeferraro/MavensMate-Templates/master';
@@ -73,11 +73,11 @@ TemplateService.prototype._getPackage = function() {
   return new Promise(function(resolve, reject) {
     /*jshint camelcase: false */
     try {
-      var templateSource = config.get('mm_template_source');
+      var templateSource = config.get('mm_template_source'); // todo: make project specific?
       if (!templateSource) {
         templateSource = 'joeferraro/MavensMate-Templates/master';
       }
-      var templateLocation = config.get('mm_template_location');
+      var templateLocation = config.get('mm_template_location'); // todo: make project specific?
       if (!templateLocation) {
         templateLocation = 'remote';
       }
@@ -88,7 +88,7 @@ TemplateService.prototype._getPackage = function() {
           if (!error && response.statusCode === 200) {
             templatePackage = JSON.parse(body);
           } else {
-            templatePackage = util.getFileBodySync(path.join(__dirname,'templates','github','package.json'), true);
+            templatePackage = util.getFileBodySync(path.join(__dirname,'create','templates','apex','github','package.json'), true);
           }
           resolve(templatePackage);
         });
@@ -96,7 +96,7 @@ TemplateService.prototype._getPackage = function() {
         templatePackage = JSON.parse(util.getFileBodySync(path.join(templateSource,'package.json')));
         resolve(templatePackage);
       } else {
-        templatePackage = util.getFileBodySync(path.join(__dirname,'templates','github','package.json'), true);
+        templatePackage = util.getFileBodySync(path.join(__dirname,'create','templates','apex','github','package.json'), true);
         resolve(templatePackage);
       }
     } catch(e) {

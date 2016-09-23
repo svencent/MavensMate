@@ -30,7 +30,7 @@ MetadataRefresher.prototype.refresh = function() {
       .then(function() {
         _.each(self.documents, function(d) {
           var serverCopyDefinition = _.find(serverProperties, function(sp) {
-            return sp.id === d.getServerProperties().id;
+            return sp.id === d.getLocalStoreProperties().id;
           });
           logger.debug(serverCopyDefinition);
           var serverCopyRetrievePath = path.join(tmpPath, serverCopyDefinition.fileName);
@@ -56,10 +56,10 @@ MetadataRefresher.prototype.replaceLocalCopies = function(serverProperties) {
     try {
       _.each(self.documents, function(d) {
         var serverCopy = _.find(serverProperties, function(sp) {
-          return sp.Id === d.getServerProperties().id;
+          return sp.Id === d.getLocalStoreProperties().id;
         });
         logger.debug('replacing local copy with server copy', serverCopy);
-        if (d.getServerProperties().type === 'ApexClass' || d.getServerProperties().type === 'ApexTrigger') {
+        if (d.getLocalStoreProperties().type === 'ApexClass' || d.getLocalStoreProperties().type === 'ApexTrigger') {
           fs.writeFileSync(d.getPath(), serverCopy.Body);
         } else {
           fs.writeFileSync(d.getPath(), serverCopy.Markup);

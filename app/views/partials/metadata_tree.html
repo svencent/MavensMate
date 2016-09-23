@@ -248,7 +248,8 @@
       value.isLazy = true;
       value.isFolder = true;
       value.level = 1;
-      value.id = value.xmlName;
+      value.clientId = value.xmlName;
+      value.id = value.id;
     });
 
     $('#metadataTree').dynatree({
@@ -312,7 +313,7 @@
       onSelect: function(check, node) {
         var selectedNodes = this.getSelectedNodes();
         var ids = $.map(selectedNodes, function(node) {
-          return node.data.id;
+          return node.data.clientId;
         });
         this.selectedIds = ids;
       },
@@ -321,8 +322,8 @@
           this.selectedIds = [];
           var selected = this.getSelectedNodes();
           var ids = $.map(selected, function(node){
-                    return node.data.id;
-                });
+            return node.data.clientId;
+          });
           this.selectedIds = ids;
         }
         var filter = $("#txt-metadata-tree-search").val();

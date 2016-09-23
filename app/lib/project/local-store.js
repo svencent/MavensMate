@@ -18,11 +18,7 @@ var LocalStore = function(project) {
  * @return {Object}     config value
  */
 LocalStore.prototype.get = function(key) {
-  if (key in this._state) {
-    return this._state[key];
-  } else {
-    return config.get(key);
-  }
+  return this._state[key];
 };
 
 LocalStore.prototype.getById = function(id) {
@@ -63,6 +59,7 @@ LocalStore.prototype.update = function(serverProperties) {
   if (self._isRestApiProperty(serverProperties[0])) {
     _.each(serverProperties, function(p) {
       var localStoryEntry = self.getById(p.Id);
+      localStoryEntry.fullName = p.Name;
       localStoryEntry.lastModifiedById = p.LastModifiedById;
       localStoryEntry.lastModifiedDate = p.LastModifiedDate;
       localStoryEntry.lastModifiedByName = p.LastModifiedBy.Name;

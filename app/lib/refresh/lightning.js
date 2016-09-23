@@ -34,7 +34,7 @@ LightningRefresher.prototype.replaceLocalCopies = function(serverProperties) {
     try {
       _.each(self.documents, function(d) {
         var serverCopy = _.find(serverProperties, function(sp) {
-          return sp.Id === d.getServerProperties().id;
+          return sp.Id === d.getLocalStoreProperties().id;
         });
         logger.debug('replacing local copy with server copy', serverCopy);
         fs.writeFileSync(d.getPath(), serverCopy.Source);

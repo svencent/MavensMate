@@ -31,6 +31,18 @@ ServerStore.prototype.initialize = function() {
   });
 };
 
+
+/**
+ * Watches for store.json updates, updates _state accordingly
+ * @return {Nothing}
+ */
+ServerStore.prototype._watch = function() {
+  var self = this;
+  fs.watchFile(self._path, function() {
+    self._state = util.getFileBodySync(self._path, true);
+  });
+};
+
 ServerStore.prototype.hasIndex = function() {
   return this._state !== undefined;
 };
@@ -41,6 +53,29 @@ ServerStore.prototype.getIndexWithLocalSubscription = function(sfdcClient, subsc
     // var indexer = new Indexer(sfdcClient, subscription);
     resolve(self._state);
   });
+};
+
+/**
+ * Traverses the serverStore tree looking for an object with a property with a key value that matches the provided value
+ * @param  {String} key - object key to look for "fileName"
+ * @param  {String} value - object key value to find "classes/ChangePasswordController.cls"
+ * @return {Object}
+ */
+ServerStore.prototype.find = function(key, value) {
+  function f(value, items) {
+    var i = 0, found;
+    for (; i < items.length; i++) {
+      if (items[i][key] === value) {
+        return items[i];
+      } else if (_.isArray(items[i].children)) {
+        found = f(value, items[i].children);
+        if (found) {
+          return found;
+        }
+      }
+    }
+  }
+  return f(value, this._state);
 };
 
 /**

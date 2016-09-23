@@ -15,10 +15,13 @@ var config      = require('../../config');
 var xmldoc      = require('xmldoc');
 var sax         = require('sax');
 var exceptions  = require('./exceptions');
+var util        = require('../util');
+var packageUtil = require('./util');
 
 function Package(project) {
   this.apiVersion = project ? project.config.get('mm_api_version') : config.get('mm_api_version');
   this.contents = {};
+  this.path = null;
 }
 
 /**
@@ -30,8 +33,8 @@ Package.prototype.initializeFromDocuments = function(documents) {
   var self = this;
   _.each(documents, function(d) {
     if (d.isMetaXmlFile()) d = d.getAssociatedDocument();
-    var type = d.getServerProperties().type;
-    var name = d.getServerProperties().fullName;
+    var type = d.getLocalStoreProperties().type;
+    var name = d.getLocalStoreProperties().fullName;
     if (!_.has(self.contents, type)) {
       self.contents[type] = [name];
     } else {
@@ -51,6 +54,7 @@ Package.prototype.initializeFromPath = function(packagePath) {
   return new Promise(function(resolve, reject) {
     self._deserialize(packagePath)
       .then(function(pkg) {
+        self.path = packagePath;
         self.contents = pkg;
         resolve();
       })
@@ -65,6 +69,10 @@ Package.prototype.writeToDisk = function(location, fileName) {
   fs.outputFileSync(path.join(location,fileName), this._serialize());
 };
 
+Package.prototype.save = function() {
+  if (this.path) fs.outputFileSync(this.path, this._serialize());
+};
+
 /**
  * Take JS object representation of package.xml, serializes to XML
  * @param  {Object} packageXmlObject
@@ -76,6 +84,62 @@ Package.prototype._serialize = function() {
     apiVersion: this.apiVersion
   });
   return serialized;
+};
+
+
+/**
+ * Inserts metadata to package subscription
+ * @param  {Array of type Metadata} metadata
+ * @return {None}
+ */
+Package.prototype.add = function(documents) {
+  var self = this;
+  documents = util.ensureArrayType(documents);
+  _.each(documents, function(d) {
+    var metadataTypeXmlName = d.getType();
+    var packageXmlName = packageUtil.getDocumentPackageXmlName(d);
+    if (_.has(self.contents, metadataTypeXmlName)) {
+      if (self.contents[metadataTypeXmlName] === '*') {
+        return false; // nothing to do here
+      } else {
+        if (self.contents[metadataTypeXmlName].indexOf(packageXmlName) === -1) {
+          self.contents[metadataTypeXmlName].push(packageXmlName);
+        }
+      }
+    } else {
+      self.contents[metadataTypeXmlName] = [packageXmlName];
+    }
+  });
+};
+
+/**
+ * Removes metadata from package subscription
+ * @param  {Array of type Metadata} metadata
+ * @return {[type]}
+ */
+Package.prototype.remove = function(documents) {
+  var self = this;
+  documents = util.ensureArrayType(documents);
+  _.each(documents, function(d) {
+    var metadataTypeXmlName = d.getType();
+    var packageXmlName = packageUtil.getDocumentPackageXmlName(d);
+    if (_.has(self.contents, metadataTypeXmlName)) {
+      if (self.contents[metadataTypeXmlName] === '*') {
+        return false; // nothing to do here
+      } else {
+        var members = self.contents[metadataTypeXmlName];
+        var newMembers = [];
+        _.each(members, function(member) {
+          if (member !== packageXmlName) {
+            newMembers.push(member);
+          }
+        });
+        self.contents[metadataTypeXmlName] = newMembers;
+      }
+    } else {
+      self.contents[metadataTypeXmlName] = packageXmlName;
+    }
+  });
 };
 
 /**

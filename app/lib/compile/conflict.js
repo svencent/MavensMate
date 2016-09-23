@@ -23,7 +23,7 @@ module.exports.check = function(project, documents, force) {
 
       var serverCopyPromises = [];
       _.each(documents, function(d) {
-        var type = d.getServerProperties().type;
+        var type = d.getLocalStoreProperties().type;
         if (type === 'AuraDefinitionBundle' || util.startsWith(type, 'Apex')) {
           serverCopyPromises.push( f.serverCopy );
         }

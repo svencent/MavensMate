@@ -32,14 +32,21 @@ module.exports.getDocuments = function(project, paths) {
       var d = new Document(project, p);
     }
 
-    if (!d.getServerProperties()) {
-      // this is a file that MAY be on the server, but it's not in our local store yet
-      d.addUnknownLocalStoreEntry();
+    if (!d.getLocalStoreProperties()) {
+      /*
+        look in server store, as this is a file that MAY be on the server, but it's not in our local store yet
+      */
+      var serverStoreEntry = d.getServerStoreProperties();
+      if (serverStoreEntry) {
+        d.addServerStoreEntryToLocalStore(serverStoreEntry);
+      } else {
+        d.addUnknownLocalStoreEntry();
+      }
     }
 
-    if (apexTypes.indexOf(d.getServerProperties().type) >= 0) {
+    if (apexTypes.indexOf(d.getType()) >= 0) {
       result.apex.push(d);
-    } else if (d.getServerProperties().type === 'AuraDefinitionBundle') {
+    } else if (d.getType() === 'AuraDefinitionBundle') {
       result.lightning.push(d);
     } else {
       result.metadata.push(d);

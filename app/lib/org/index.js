@@ -140,7 +140,8 @@ Indexer.prototype._indexType = function(typeListResult) {
 
       // children (2)
       _.each(children, function(childNode) {
-        childNode.id = [key, childNode.fullName].join('.');
+        childNode.id = childNode.id;
+        childNode.clientId = [key, childNode.fullName].join('.');
         childNode.title = childNode.fullName;
         childNode.text = childNode.fullName;
         childNode.level = 2;
@@ -159,6 +160,7 @@ Indexer.prototype._indexType = function(typeListResult) {
 
       // top level (1)
       parentNode.id = key;
+      parentNode.clientId = key;
       parentNode.title = key;
       parentNode.xmlName = key;
       parentNode.text = key;
@@ -229,7 +231,7 @@ Indexer.prototype._indexChildren = function(parentNode, xmlName, childNames) {
             var fileBasenameNoExtension = fileBasename.split('.')[0];
             var fileBody = util.getFileBodySync(file);
 
-            var indexedChildType = _.find(parentNode.children, { 'id': [xmlName,fileBasenameNoExtension].join('.') });
+            var indexedChildType = _.find(parentNode.children, { 'clientId': [xmlName,fileBasenameNoExtension].join('.') });
 
             logger.debug('indexedChildType -->', indexedChildType);
 
@@ -331,7 +333,8 @@ Indexer.prototype._indexFolders = function(parentNode, xmlName) {
 
           _.each(folderContents, function(item) {
             folderNode.children.push({
-              id: [xmlName, item.fullName.split('/')[0], item.fullName.split('/')[1]].join('.'),
+              id: item.id,
+              clientId: [xmlName, item.fullName.split('/')[0], item.fullName.split('/')[1]].join('.'),
               text: item.fullName.split('/')[1],
               title: item.fullName.split('/')[1],
               leaf: true,

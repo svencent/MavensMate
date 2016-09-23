@@ -84,6 +84,7 @@
     "chai": "1.10.0",
     "chai-fs": "0.1.0",
     "coveralls": "^2.11.12",
+    "eslint": "^3.5.0",
     "grunt-nodemon": "latest",
     "istanbul": "^0.4.5",
     "jslint": "^0.10.3",

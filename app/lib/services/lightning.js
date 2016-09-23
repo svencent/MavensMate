@@ -69,7 +69,7 @@ LightningService.prototype.deleteBundleItems = function(documents) {
   return new Promise(function(resolve, reject) {
     var deleteIds = [];
     _.each(documents, function(d) {
-      deleteIds.push(d.getServerProperties().id);
+      deleteIds.push(d.getLocalStoreProperties().id);
     });
     self.project.sfdcClient.conn.tooling.sobject('AuraDefinition').delete(deleteIds)
       .then(function(res) {
@@ -142,7 +142,7 @@ LightningService.prototype.update = function(documents) {
     _.each(documents, function(d) {
       updatePayload.push({
         Source: d.getBodySync(),
-        Id: d.getServerProperties().id
+        Id: d.getLocalStoreProperties().id
       });
     });
     logger.debug('updating lightning components', updatePayload);

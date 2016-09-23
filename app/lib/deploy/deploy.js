@@ -54,12 +54,12 @@ Deploy.prototype.stage = function() {
             in those cases, we need to copy both the meta-xml and associated document to the deploy folder
            */
           var associatedDocument = d.getAssociatedDocument();
-          var tmpAssociatedDocumentPath = path.join(tmpPath, associatedDocument.getServerProperties().fileName);
+          var tmpAssociatedDocumentPath = path.join(tmpPath, associatedDocument.getLocalStoreProperties().fileName);
           fs.ensureDirSync(path.dirname(tmpAssociatedDocumentPath));
           fs.copySync(associatedDocument.getPath(), tmpAssociatedDocumentPath); // copy associated document to tmp path
           fs.copySync(d.getPath(), [tmpAssociatedDocumentPath,'-meta.xml'].join('')); // copy meta-xml file as well
         } else {
-          var tmpDocumentPath = path.join(tmpPath, d.getServerProperties().fileName);
+          var tmpDocumentPath = path.join(tmpPath, d.getLocalStoreProperties().fileName);
           fs.ensureDirSync(path.dirname(tmpDocumentPath));
           fs.copySync(d.getPath(), tmpDocumentPath);
           if (d.getDescribe().metaFile) {

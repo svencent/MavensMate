@@ -325,37 +325,33 @@ SalesforceClient.prototype.setPollingTimeout = function(timeout) {
   this.conn.bulk.pollTimeout = timeout || 20000;
 };
 
-SalesforceClient.prototype.createApexMetadata = function(mavensMateFile) {
-  logger.info('createApexMetadata');
-  logger.info(mavensMateFile.type);
+SalesforceClient.prototype.createApexMetadata = function(d) {
+  logger.info('createApexMetadata', d);
   var self = this;
   return new Promise(function(resolve, reject) {
-    mavensMateFile.mergeTemplate()
-      .then(function(body) {
-        logger.info(body);
-        var payload = {};
-        if (mavensMateFile.type.xmlName === 'ApexPage' || mavensMateFile.type.xmlName === 'ApexComponent') {
-          payload.markup = body;
+    try {
+      var documentType = d.getType();
+      var documentBody = d.getBodySync();
+      var payload = {};
+      payload[documentType === 'ApexPage' || documentType === 'ApexComponent' ? 'markup' : 'body'] = documentBody;
+      if (documentType === 'ApexTrigger') {
+        var re = /(?:trigger)(?:\s*)(?:[A-Za-z0-9]*)(?:\s*)(?:on)(?:\s*)([A-Za-z]*)/
+        var matchingTokens = re.exec(documentBody);
+        payload.TableEnumOrId = matchingTokens[1];
+      } else if (documentType !== 'ApexClass') {
+        payload.name = d.getName();
+        payload.MasterLabel = d.getName();
+      }
+      self.conn.tooling.sobject(documentType).create(payload, function(err, res) {
+        if (err) {
+          reject(err);
         } else {
-          payload.body = body;
+          resolve(res);
         }
-        if (mavensMateFile.type.xmlName === 'ApexTrigger') {
-          payload.TableEnumOrId = mavensMateFile.apexTriggerObjectName;
-        } else if (mavensMateFile.type.xmlName !== 'ApexClass') {
-          payload.name = mavensMateFile.name;
-          payload.MasterLabel = mavensMateFile.name;
-        }
-        self.conn.tooling.sobject(mavensMateFile.type.xmlName).create(payload, function(err, res) {
-          if (err && err.message.indexOf('duplicates value on record with id') === -1) {
-            reject(err);
-          } else {
-            resolve(res);
-          }
-        });
-      })
-      .catch(function(err) {
-        reject(err);
       });
+    } catch(e) {
+      reject(e);
+    }
   });
 };
 
@@ -562,12 +558,12 @@ SalesforceClient.prototype._createContainer = function() {
 SalesforceClient.prototype._createMember = function(document, containerId) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var memberName = document.getServerProperties().type+'Member';
+    var memberName = document.getLocalStoreProperties().type+'Member';
     logger.silly('Creating tooling member for document', document, memberName, containerId);
     self.conn.tooling.sobject(memberName).create({
       Body: document.getBodySync(),
       MetadataContainerId: containerId,
-      ContentEntityId: document.getServerProperties().id
+      ContentEntityId: document.getLocalStoreProperties().id
     }, function(err, res) {
       if (err) {
         reject(err);
@@ -1092,7 +1088,7 @@ SalesforceClient.prototype.getLightingServerProperties = function(documents, ret
 
     var serverIds = [];
     _.each(documents, function(d) {
-      serverIds.push(d.getServerProperties().id);
+      serverIds.push(d.getLocalStoreProperties().id);
     });
 
     self.conn.query(baseSoql + baseSoqlFilter + util.joinForQuery(serverIds)+')')
@@ -1121,8 +1117,8 @@ SalesforceClient.prototype.getApexServerProperties = function(documents, retriev
     var serverIds = [];
 
     _.each(documents, function(d) {
-      var type = d.getServerProperties().type;
-      serverIds.push( d.getServerProperties().id );
+      var type = d.getLocalStoreProperties().type;
+      serverIds.push( d.getLocalStoreProperties().id );
       if (type === 'ApexPage') {
         pages.push(d);
       } else if (type === 'ApexTrigger') {
