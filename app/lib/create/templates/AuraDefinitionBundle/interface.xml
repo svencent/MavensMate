@@ -1,0 +1,1 @@
+<aura:interface description="Interface template">\n\t<aura:attribute name="example" type="String" default="" description="An example attribute."/>\n</aura:interface>

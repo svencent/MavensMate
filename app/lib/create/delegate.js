@@ -2,7 +2,7 @@
 
 var Promise             = require('bluebird');
 var _                   = require('lodash');
-var documentUtil        = require('../document').util;
+var componentUtil       = require('../component').util;
 var createUtil          = require('./util');
 var ApexCreator         = require('./apex');
 // var MetadataCreator     = require('./metadata');
@@ -12,11 +12,11 @@ var logger              = require('winston');
 function CreateDelegate(project, paths) {
   this.project = project;
   this.paths = paths;
-  this.documents = documentUtil.getDocuments(this.project, this.paths);
+  this.components = componentUtil.getComponentsFromFilePaths(this.project, this.paths);
 }
 
 /**
- * Takes an array of documents and creates them on the server
+ * Takes an array of components and creates them on the server
  * @return {Promise}
  */
 CreateDelegate.prototype.execute = function() {
@@ -24,12 +24,12 @@ CreateDelegate.prototype.execute = function() {
   return new Promise(function(resolve, reject) {
     try {
       var createPromises = [];
-      if (self.documents.apex.length > 0)
-        createPromises.push(ApexCreator.createAll(self.project, self.documents.apex));
-      // if (self.documents.metadata.length > 0)
-      //   createPromises.push(MetadataCreator.createAll(self.project, self.documents.metadata));
-      // if (self.documents.lightning.length > 0)
-      //   createPromises.push(LightningCreator.createAll(self.project, self.documents.lightning));
+      if (self.components.apex.length > 0)
+        createPromises.push(ApexCreator.createAll(self.project, self.components.apex));
+      // if (self.components.metadata.length > 0)
+      //   createPromises.push(MetadataCreator.createAll(self.project, self.components.metadata));
+      // if (self.components.lightning.length > 0)
+      //   createPromises.push(LightningCreator.createAll(self.project, self.components.lightning));
       Promise.all(createPromises)
         .then(function(results) {
           logger.debug('Create results', results);

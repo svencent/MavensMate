@@ -41,15 +41,7 @@ Command.prototype.execute = function() {
           });
         });
     } else {
-      var paths = self.payload.paths;
-      var promise;
-      if (!paths) {
-        // need to merge templates, get the paths first
-        promise = createUtil.mergeTemplatesAndWriteToDisk(self.getProject(), self.payload);
-      } else {
-        promise = Promise.resolve();
-      }
-
+      var promise = self.payload.paths ? Promise.resolve(self.payload.paths) : createUtil.mergeTemplatesAndWriteToDisk(self.getProject(), self.payload);
       promise
         .then(function(paths) {
           var createDelegate = new CreateDelegate(self.getProject(), paths);
@@ -61,57 +53,6 @@ Command.prototype.execute = function() {
         .catch(function(err) {
           reject(err);
         });
-      // var retrievePackage;
-      // var project = self.getProject();
-      // var newFile = new mavensMateFile.MavensMateFile({ project: project });
-      // newFile.setTypeByXmlName(self.payload.metadataTypeXmlName);
-      // newFile.template = self.payload.template;
-      // newFile.templateValues = self.payload.templateValues;
-      // newFile.apexTriggerObjectName = self.payload.templateValues.object_name || self.payload.templateValues.objectName;
-      // newFile.name = self.payload.templateValues.api_name || self.payload.templateValues.apiName;
-      // if (!newFile.name) {
-      //   return reject(new Error('You must provide an API name'));
-      // }
-      // newFile.setAbstractPath();
-      // var tempRetrievePath = temp.mkdirSync({ prefix: 'mm_' });
-      // var unpackagedRetrievePath = path.join(tempRetrievePath, 'unpackaged');
-      // fs.mkdirsSync(unpackagedRetrievePath);
-      // project.sfdcClient.createApexMetadata(newFile)
-      //   .then(function(createResult) {
-      //     retrievePackage = new Package({ subscription: mavensMateFile.createPackageSubscription([newFile]) });
-      //     return retrievePackage.init();
-      //   })
-      //   .then(function() {
-      //     return project.sfdcClient.retrieveUnpackaged(retrievePackage.subscription, true, tempRetrievePath);
-      //   })
-      //   .then(function(retrieveResult) {
-      //     return project.updateLocalStore(retrieveResult.fileProperties);
-      //   })
-      //   .then(function() {
-      //     return project.replaceLocalFiles(unpackagedRetrievePath);
-      //   })
-      //   .then(function() {
-      //     project.packageXml.subscribe(newFile);
-      //     return project.packageXml.writeFile();
-      //   })
-      //   .then(function() {
-      //     logger.debug('attempting to open metadata ...');
-      //     var newMetadataPath = path.join(project.path, 'src', newFile.type.directoryName, [newFile.name, newFile.type.suffix].join('.'));
-      //     logger.debug(newMetadataPath);
-      //     logger.debug(self.editorService.editor);
-      //     if (self.editorService && self.editorService.editor) {
-      //       return self.editorService.open(newMetadataPath);
-      //     } else {
-      //       return resolve('New metadata successfully created');
-      //     }
-      //   })
-      //   .then(function() {
-      //     resolve('New metadata successfully created');
-      //   })
-      //   .catch(function(error) {
-      //     reject(error);
-      //   })
-      //   .done();
     }
   });
 };

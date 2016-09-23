@@ -6,17 +6,17 @@ var path          = require('path');
 var util          = require('../util');
 var Destructive   = require('../deploy/destructive');
 
-function MetadataDeleter(project, documents) {
+function MetadataDeleter(project, components) {
   this.project = project;
-  this.documents = documents;
+  this.components = components;
 }
 
 MetadataDeleter.prototype.delete = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    logger.debug('Deleting Metadata', self.documents);
+    logger.debug('Deleting Metadata', self.components);
     var deleteResult;
-    var destructive = new Destructive(self.project, self.documents);
+    var destructive = new Destructive(self.project, self.components);
     destructive.execute()
       .then(function(result) {
         deleteResult = result;
@@ -41,11 +41,11 @@ MetadataDeleter.prototype.onSuccess = function(deleteResult) {
   return new Promise(function(resolve, reject) {
     try {
       var successes = util.ensureArrayType(deleteResult.details.componentSuccesses);
-      _.each(documents, function(d) {
+      _.each(components, function(c) {
         var deleteResult = _.find(successes, function(s) {
-          return s.fileName.replace(/^unpackaged\//, 'src/') === d.getRelativePath();
+          return s.fileName.replace(/^unpackaged\//, 'src/') === c.getRelativePath();
         });
-        if (deleteResult) d.deleteFromFileSystem();
+        if (deleteResult) c.deleteFromFileSystem();
       });
       resolve();
     } catch(e) {
@@ -54,9 +54,9 @@ MetadataDeleter.prototype.onSuccess = function(deleteResult) {
   });
 };
 
-MetadataDeleter.deleteAll = function(project, documents) {
+MetadataDeleter.deleteAll = function(project, components) {
   return new Promise(function(resolve, reject) {
-    var metadataDeleter = new MetadataDeleter(project, documents);
+    var metadataDeleter = new MetadataDeleter(project, components);
     metadataDeleter.delete()
       .then(function(res) {
         resolve(res);

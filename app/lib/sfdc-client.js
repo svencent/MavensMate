@@ -325,13 +325,13 @@ SalesforceClient.prototype.setPollingTimeout = function(timeout) {
   this.conn.bulk.pollTimeout = timeout || 20000;
 };
 
-SalesforceClient.prototype.createApexMetadata = function(d) {
-  logger.info('createApexMetadata', d);
+SalesforceClient.prototype.createApexMetadata = function(component) {
+  logger.info('createApexMetadata', component);
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
-      var documentType = d.getType();
-      var documentBody = d.getBodySync();
+      var documentType = component.getType();
+      var documentBody = component.getBodySync();
       var payload = {};
       payload[documentType === 'ApexPage' || documentType === 'ApexComponent' ? 'markup' : 'body'] = documentBody;
       if (documentType === 'ApexTrigger') {
@@ -339,8 +339,8 @@ SalesforceClient.prototype.createApexMetadata = function(d) {
         var matchingTokens = re.exec(documentBody);
         payload.TableEnumOrId = matchingTokens[1];
       } else if (documentType !== 'ApexClass') {
-        payload.name = d.getName();
-        payload.MasterLabel = d.getName();
+        payload.name = component.getName();
+        payload.MasterLabel = component.getName();
       }
       self.conn.tooling.sobject(documentType).create(payload, function(err, res) {
         if (err) {
@@ -360,10 +360,10 @@ SalesforceClient.prototype.createApexMetadata = function(d) {
  * @param  {Array of Metadata} metadata - metadata to be compiled (must already exist in salesforce)
  * @return {Promise}
  */
-SalesforceClient.prototype.compileWithToolingApi = function(documents) {
+SalesforceClient.prototype.compileWithToolingApi = function(components) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    logger.debug('Comping documents via Tooling API', documents);
+    logger.debug('Comping components via Tooling API', components);
     // new container
     // add member for each type
     var containerId;
@@ -373,8 +373,8 @@ SalesforceClient.prototype.compileWithToolingApi = function(documents) {
         containerId = result.id;
         logger.debug('new container id is: '+containerId);
         var memberPromises = [];
-        _.each(documents, function(d) {
-          memberPromises.push(self._createMember(d, containerId));
+        _.each(components, function(c) {
+          memberPromises.push(self._createMember(c, containerId));
         });
         return Promise.all(memberPromises);
       })
@@ -555,15 +555,15 @@ SalesforceClient.prototype._createContainer = function() {
  * @param  {String} containerId - Tooling container ID
  * @return {Promise}
  */
-SalesforceClient.prototype._createMember = function(document, containerId) {
+SalesforceClient.prototype._createMember = function(component, containerId) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var memberName = document.getLocalStoreProperties().type+'Member';
-    logger.silly('Creating tooling member for document', document, memberName, containerId);
+    var memberName = component.getLocalStoreProperties().type+'Member';
+    logger.silly('Creating tooling member for component', component, memberName, containerId);
     self.conn.tooling.sobject(memberName).create({
-      Body: document.getBodySync(),
+      Body: component.getBodySync(),
       MetadataContainerId: containerId,
-      ContentEntityId: document.getLocalStoreProperties().id
+      ContentEntityId: component.getLocalStoreProperties().id
     }, function(err, res) {
       if (err) {
         reject(err);
@@ -1073,12 +1073,12 @@ SalesforceClient.prototype.stopLogging = function(userIds) {
   });
 };
 
-SalesforceClient.prototype.getLightingServerProperties = function(documents, retrieveSource) {
+SalesforceClient.prototype.getLightingServerProperties = function(components, retrieveSource) {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (retrieveSource === undefined) retrieveSource = false;
     logger.debug('getting lightning server properties ...');
-    logger.silly(documents);
+    logger.silly(components);
 
     var fields = ['Id', 'CreatedDate', 'CreatedById', 'CreatedBy.Name', 'LastModifiedById', 'LastModifiedDate', 'LastModifiedBy.Name'];
     if (retrieveSource) fields.push('Source');
@@ -1087,8 +1087,8 @@ SalesforceClient.prototype.getLightingServerProperties = function(documents, ret
     var baseSoqlFilter = ' WHERE ID IN (';
 
     var serverIds = [];
-    _.each(documents, function(d) {
-      serverIds.push(d.getLocalStoreProperties().id);
+    _.each(components, function(c) {
+      serverIds.push(c.getLocalStoreProperties().id);
     });
 
     self.conn.query(baseSoql + baseSoqlFilter + util.joinForQuery(serverIds)+')')
@@ -1102,12 +1102,12 @@ SalesforceClient.prototype.getLightingServerProperties = function(documents, ret
   });
 };
 
-SalesforceClient.prototype.getApexServerProperties = function(documents, retrieveBody) {
+SalesforceClient.prototype.getApexServerProperties = function(components, retrieveBody) {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (retrieveBody === undefined) retrieveBody = false;
     logger.debug('getting server properties ...');
-    logger.silly(documents);
+    logger.silly(components);
 
     var classes = [];
     var triggers = [];
@@ -1116,17 +1116,17 @@ SalesforceClient.prototype.getApexServerProperties = function(documents, retriev
 
     var serverIds = [];
 
-    _.each(documents, function(d) {
-      var type = d.getLocalStoreProperties().type;
-      serverIds.push( d.getLocalStoreProperties().id );
+    _.each(components, function(c) {
+      var type = c.getLocalStoreProperties().type;
+      serverIds.push( c.getLocalStoreProperties().id );
       if (type === 'ApexPage') {
-        pages.push(d);
+        pages.push(c);
       } else if (type === 'ApexTrigger') {
-        triggers.push(d);
+        triggers.push(c);
       } else if (type === 'ApexClass') {
-        classes.push(d);
+        classes.push(c);
       } else if (type === 'ApexComponent') {
-        components.push(d);
+        components.push(c);
       }
     });
 

@@ -1,15 +1,16 @@
 'use strict';
 
-var _           = require('lodash');
-var logger      = require('winston');
-var Component   = require('../component').Component;
+var _                 = require('lodash');
+var logger            = require('winston');
+var Component         = require('../component').Component;
+var LightningService  = require('../services/lightning');
 
-function ApexCreator(project, components) {
+function LightningCreator(project, components) {
   this.project = project;
   this.components = components;
 }
 
-ApexCreator.prototype.create = function() {
+LightningCreator.prototype.create = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
@@ -39,7 +40,7 @@ ApexCreator.prototype.create = function() {
   });
 };
 
-ApexCreator.prototype._updateStores = function(results) {
+LightningCreator.prototype._updateStores = function(results) {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
@@ -66,10 +67,10 @@ ApexCreator.prototype._updateStores = function(results) {
   });
 };
 
-ApexCreator.createAll = function(project, components) {
+LightningCreator.createAll = function(project, components) {
   return new Promise(function(resolve, reject) {
-    var apexCreator = new ApexCreator(project, components);
-    apexCreator.create()
+    var lightningCreator = new LightningCreator(project, components);
+    lightningCreator.create()
       .then(function(res) {
         resolve(res);
       })

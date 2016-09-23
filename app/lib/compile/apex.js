@@ -4,28 +4,28 @@ var _         = require('lodash');
 var logger    = require('winston');
 var conflict  = require('./conflict');
 
-function ApexCompiler(project, documents, force) {
+function ApexCompiler(project, components, force) {
   this.project = project;
-  this.documents = documents;
+  this.components = components;
   this.force = force;
 }
 
 ApexCompiler.prototype.compile = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    logger.debug('Compiling ApexDocuments', self.documents);
+    logger.debug('Compiling ApexDocuments', self.components);
     var compileResult;
-    conflict.check(self.project, self.documents, self.force)
+    conflict.check(self.project, self.components, self.force)
       .then(function(res) {
         if (res.hasConflict)
           return resolve(res);
         else
-          return self.project.sfdcClient.compileWithToolingApi(self.documents, self.project);
+          return self.project.sfdcClient.compileWithToolingApi(self.components, self.project);
       })
       .then(function(result) {
         logger.debug('Compile result for ApexDocuments', result);
         compileResult = result;
-        return self.project.sfdcClient.getApexServerProperties(self.documents);
+        return self.project.sfdcClient.getApexServerProperties(self.components);
       })
       .then(function(serverProperties) {
         self.project.localStore.update(serverProperties);
@@ -37,9 +37,9 @@ ApexCompiler.prototype.compile = function() {
   });
 };
 
-ApexCompiler.compileAll = function(project, documents, force) {
+ApexCompiler.compileAll = function(project, components, force) {
   return new Promise(function(resolve, reject) {
-    var apexCompiler = new ApexCompiler(project, documents, force);
+    var apexCompiler = new ApexCompiler(project, components, force);
     apexCompiler.compile()
       .then(function(res) {
         resolve(res);

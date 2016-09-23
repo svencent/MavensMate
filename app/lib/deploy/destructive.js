@@ -6,9 +6,9 @@ var _ = require('lodash');
 var logger = require('winston');
 var util = require('../util');
 
-function Destructive(project, documents) {
+function Destructive(project, components) {
   this._project = project;
-  this._documents = documents;
+  this._components = components;
 }
 
 Destructive.prototype.execute = function() {
@@ -45,7 +45,7 @@ Destructive.prototype.stage = function() {
       fs.mkdirpSync(unpackagedPath);
 
       var destructivePackageXml = new Package();
-      destructivePackageXml.initializeFromDocuments(self._documents);
+      destructivePackageXml.initializeFromDocuments(self._components);
       destructivePackageXml.writeToDisk(unpackagedPath, 'destructiveChanges.xml');
 
       var emptyPkgXml = new Package();

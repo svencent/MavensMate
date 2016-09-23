@@ -5,19 +5,19 @@ var path = require('path');
  * Currently, salesforce does not support folders nested deeper than 1 level
  * @return {String}
  */
-module.exports.getDocumentFolderBaseName = function(d) {
-  var folderPath = path.dirname(d.getPath());
+module.exports.getComponentFolderBaseName = function(c) {
+  var folderPath = path.dirname(c.getPath());
   return path.basename(folderPath);
 };
 
-module.exports.getDocumentPackageXmlName = function(d) {
-  if (d.getDescribe().inFolder) {
-    if (d.getType() === 'Document') {
-      return this.getDocumentFolderBaseName() + '/' + d.getName() + '.' + d.getExtension();
+module.exports.getComponentPackageXmlName = function(c) {
+  if (c.getDescribe().inFolder) {
+    if (c.getType() === 'Document') {
+      return this.getComponentFolderBaseName() + '/' + c.getName() + '.' + c.getExtension();
     } else {
-      return this.getDocumentFolderBaseName() + '/' + d.getName();
+      return this.getComponentFolderBaseName() + '/' + c.getName();
     }
   } else {
-    return d.getName();
+    return c.getName();
   }
 };

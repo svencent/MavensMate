@@ -13,14 +13,14 @@ var logger          = require('winston');
 var TemplateService = require('../services/template');
 
 /**
- * MavensMate Document
+ * MavensMate Component
  *
  * @constructor
  * @param {Object} [opts] - Options
  * @param {String} [opts.path] - file path
  * @param {String} [opts.project] - project instance
  */
-var Document = function(project, documentPath) {
+var Component = function(project, documentPath) {
   this._project = project;
   this._sfdcClient = project.sfdcClient;
   this._path = path.normalize(documentPath);
@@ -31,7 +31,7 @@ var Document = function(project, documentPath) {
   this._describe = null;
 }
 
-Document.prototype.toString = function() {
+Component.prototype.toString = function() {
   return {
     uri: this.getPath(),
     basename: this.getBaseName(),
@@ -39,11 +39,11 @@ Document.prototype.toString = function() {
   }
 };
 
-Document.prototype.getName = function() {
+Component.prototype.getName = function() {
   return path.basename(this.getPath(), path.extname(this.getPath()));
 }
 
-Document.prototype.getDescribe = function() {
+Component.prototype.getDescribe = function() {
   var self = this;
   if (!this._describe) {
     this._describe = _.find(this._sfdcClient.describe.metadataObjects, function(o) {
@@ -57,48 +57,48 @@ Document.prototype.getDescribe = function() {
   return this._describe;
 };
 
-Document.prototype.getExtension = function() {
+Component.prototype.getExtension = function() {
   return this._extension;
 };
 
-Document.prototype.getMetaXmlPath = function() {
+Component.prototype.getMetaXmlPath = function() {
   return [this.getPath(),'-meta.xml'].join();
 };
 
-Document.prototype.isMetaXmlFile = function() {
+Component.prototype.isMetaXmlFile = function() {
   return util.endsWith(this.getPath(), '-meta.xml');
 };
 
-Document.prototype.getAssociatedDocument = function() {
+Component.prototype.getAssociatedDocument = function() {
   if (this.isMetaXmlFile()) {
-    return new Document(this._project, this.getPath().replace('-meta.xml', ''));
+    return new Component(this._project, this.getPath().replace('-meta.xml', ''));
   }
 };
 
-Document.prototype.getBaseName = function() {
+Component.prototype.getBaseName = function() {
   return this._basename;
 };
 
 /**
- * Returns the full file system path of the document
+ * Returns the full file system path of the component
  */
-Document.prototype.getPath = function() {
+Component.prototype.getPath = function() {
   return this._path;
 };
 
-Document.prototype._getLocalStoreKey = function() {
+Component.prototype._getLocalStoreKey = function() {
   return this.getPath().split(this._project.name+path.sep)[1];
 };
 
-Document.prototype._getServerStoreKey = function() {
+Component.prototype._getServerStoreKey = function() {
   return this.getPath().split(this._project.name+path.sep+'src'+path.sep)[1]; // todo: "src" could be any package name
 };
 
-Document.prototype.getRelativePath = function() {
+Component.prototype.getRelativePath = function() {
   return this._getLocalStoreKey();
 };
 
-Document.prototype.addUnknownLocalStoreEntry = function() {
+Component.prototype.addUnknownLocalStoreEntry = function() {
   var entry = {};
   entry[this._getLocalStoreKey()] = {
     type: this.getDescribe().xmlName,
@@ -107,7 +107,7 @@ Document.prototype.addUnknownLocalStoreEntry = function() {
   this._project.localStore.set(entry);
 };
 
-Document.prototype.updateLocalStoryEntry = function(obj) {
+Component.prototype.updateLocalStoryEntry = function(obj) {
   var existingEntryValue = this.getLocalStoreProperties();
   for (var key in obj) {
     existingEntryValue[key] = obj[key];
@@ -117,7 +117,7 @@ Document.prototype.updateLocalStoryEntry = function(obj) {
   this._project.localStore.set(entry);
 };
 
-Document.prototype.addServerStoreEntryToLocalStore = function(serverStoreEntry) {
+Component.prototype.addServerStoreEntryToLocalStore = function(serverStoreEntry) {
   var entry = {};
   entry[this._getLocalStoreKey()] = {
     id: serverStoreEntry.id,
@@ -139,7 +139,7 @@ Document.prototype.addServerStoreEntryToLocalStore = function(serverStoreEntry) 
  * Returns local store entry
  * @return {Object}
  */
-Document.prototype.getLocalStoreProperties = function() {
+Component.prototype.getLocalStoreProperties = function() {
   // if (!this._localProperties) {
   //   this._localProperties = this._project.localStore.get(this._getLocalStoreKey());
   // }
@@ -151,7 +151,7 @@ Document.prototype.getLocalStoreProperties = function() {
  * Returns server store entry if it exists
  * @return {Object}
  */
-Document.prototype.getServerStoreProperties = function() {
+Component.prototype.getServerStoreProperties = function() {
   // if (!this._serverProperties) {
   //   this._serverProperties = this._project.serverStore.find('fileName', this._getServerStoreKey());
   // }
@@ -163,7 +163,7 @@ Document.prototype.getServerStoreProperties = function() {
  * Returns file body as a string
  * @return {String}
  */
-Document.prototype.getBodySync = function() {
+Component.prototype.getBodySync = function() {
   return fs.readFileSync(this.getPath(), 'utf8');
 };
 
@@ -171,7 +171,7 @@ Document.prototype.getBodySync = function() {
  * Returns file body as a string (async)
  * @return {Promise}
  */
-Document.prototype.getBody = function() {
+Component.prototype.getBody = function() {
   return new Promise(function(resolve, reject) {
     return fs.readFile(this.getPath(), 'utf8')
       .then(function(res) {
@@ -183,7 +183,7 @@ Document.prototype.getBody = function() {
   });
 };
 
-Document.prototype.getType = function() {
+Component.prototype.getType = function() {
   if (this.getLocalStoreProperties() && this.getLocalStoreProperties().type) {
     return this.getLocalStoreProperties().type;
   } else {
@@ -196,28 +196,28 @@ Document.prototype.getType = function() {
   return null;
 };
 
-Document.prototype.existsOnFileSystem = function() {
+Component.prototype.existsOnFileSystem = function() {
   return fs.existsSync(this.getPath());
 };
 
-Document.prototype.isDirectory = function() {
+Component.prototype.isDirectory = function() {
   return fs.statSync(this.getPath()).isDirectory();
 };
 
-Document.prototype.isFile = function() {
+Component.prototype.isFile = function() {
   return fs.statSync(this.getPath()).isFile();
 };
 
-Document.prototype.deleteFromFileSystem = function() {
+Component.prototype.deleteFromFileSystem = function() {
   fs.removeSync(this.getPath());
 };
 
-Document.getTypes = function(documents) {
+Component.getTypes = function(components) {
   var types = [];
-  _.each(documents, function(d) {
-    if (types.indexOf(d.getType()) === -1) types.push(d.getType());
+  _.each(components, function(c) {
+    if (types.indexOf(c.getType()) === -1) types.push(c.getType());
   });
   return types;
 };
 
-module.exports = Document;
+module.exports = Component;

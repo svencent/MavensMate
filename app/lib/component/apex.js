@@ -1,11 +1,11 @@
-var Document  = require('./document');
+var Component  = require('./component');
 var inherits  = require('inherits');
 
 var ApexDocument = function(opts) {
 
 }
 
-inherits(ApexDocument, Document);
+inherits(ApexDocument, Component);
 
 ApexDocument.types = [
   'ApexClass', 'ApexPage', 'ApexTrigger', 'ApexComponent'
@@ -23,4 +23,4 @@ ApexDocument.delete = function(apexDocuments) {
 
 };
 
-module.exports.Document = ApexDocument;
+module.exports = ApexDocument;

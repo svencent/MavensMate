@@ -85,8 +85,10 @@
       var opts = {
         ajax: {
           type: 'POST',
-          url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning/{{lightningType}}",
+          url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning",
           data: JSON.stringify({
+            metadataTypeXmlName: 'AuraDefinitionBundle',
+            lightningType: '{{lightningType}}',
             apiName : $("#apiName").val(),
             description : $("#description").val(),
             {% if lightningType === 'app' || lightningType === 'component' %}

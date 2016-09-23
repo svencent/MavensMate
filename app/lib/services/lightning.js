@@ -64,12 +64,12 @@ LightningService.prototype.deleteBundle = function(bundleId) {
   });
 };
 
-LightningService.prototype.deleteBundleItems = function(documents) {
+LightningService.prototype.deleteBundleItems = function(components) {
   var self = this;
   return new Promise(function(resolve, reject) {
     var deleteIds = [];
-    _.each(documents, function(d) {
-      deleteIds.push(d.getLocalStoreProperties().id);
+    _.each(components, function(c) {
+      deleteIds.push(c.getLocalStoreProperties().id);
     });
     self.project.sfdcClient.conn.tooling.sobject('AuraDefinition').delete(deleteIds)
       .then(function(res) {
@@ -135,14 +135,14 @@ LightningService.prototype.getBundleItems = function(mavensmateFiles) {
  * @param  {Array} - array of Document instances
  * @return {Promise}
  */
-LightningService.prototype.update = function(documents) {
+LightningService.prototype.update = function(components) {
   var self = this;
   return new Promise(function(resolve, reject) {
     var updatePayload = [];
-    _.each(documents, function(d) {
+    _.each(components, function(c) {
       updatePayload.push({
-        Source: d.getBodySync(),
-        Id: d.getLocalStoreProperties().id
+        Source: c.getBodySync(),
+        Id: c.getLocalStoreProperties().id
       });
     });
     logger.debug('updating lightning components', updatePayload);

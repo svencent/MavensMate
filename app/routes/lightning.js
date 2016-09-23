@@ -59,11 +59,11 @@ router.get('/tokens/new', function(req, res) {
   }
 });
 
-router.post('/app', function(req, res) {
+router.post('/', function(req, res) {
   var commandExecutor = req.app.get('commandExecutor');
   var request = commandExecutor.execute({
     project: req.project,
-    name: 'new-lightning-app',
+    name: 'new-lightning',
     body: req.body,
     editor: req.editor
   });
@@ -74,64 +74,79 @@ router.post('/app', function(req, res) {
   });
 });
 
-router.post('/component', function(req, res) {
-  var commandExecutor = req.app.get('commandExecutor');
-  var request = commandExecutor.execute({
-    project: req.project,
-    name: 'new-lightning-component',
-    body: req.body,
-    editor: req.editor
-  });
-  var requestId = requestStore.add(request);
-  return res.send({
-    status: 'pending',
-    id: requestId
-  });
-});
+// router.post('/app', function(req, res) {
+//   var commandExecutor = req.app.get('commandExecutor');
+//   var request = commandExecutor.execute({
+//     project: req.project,
+//     name: 'new-lightning-app',
+//     body: req.body,
+//     editor: req.editor
+//   });
+//   var requestId = requestStore.add(request);
+//   return res.send({
+//     status: 'pending',
+//     id: requestId
+//   });
+// });
 
-router.post('/event', function(req, res) {
-  var commandExecutor = req.app.get('commandExecutor');
-  var request = commandExecutor.execute({
-    project: req.project,
-    name: 'new-lightning-event',
-    body: req.body,
-    editor: req.editor
-  });
-  var requestId = requestStore.add(request);
-  return res.send({
-    status: 'pending',
-    id: requestId
-  });
-});
+// router.post('/component', function(req, res) {
+//   var commandExecutor = req.app.get('commandExecutor');
+//   var request = commandExecutor.execute({
+//     project: req.project,
+//     name: 'new-lightning-component',
+//     body: req.body,
+//     editor: req.editor
+//   });
+//   var requestId = requestStore.add(request);
+//   return res.send({
+//     status: 'pending',
+//     id: requestId
+//   });
+// });
 
-router.post('/interface', function(req, res) {
-  var commandExecutor = req.app.get('commandExecutor');
-  var request = commandExecutor.execute({
-    project: req.project,
-    name: 'new-lightning-interface',
-    body: req.body,
-    editor: req.editor
-  });
-  var requestId = requestStore.add(request);
-  return res.send({
-    status: 'pending',
-    id: requestId
-  });
-});
+// router.post('/event', function(req, res) {
+//   var commandExecutor = req.app.get('commandExecutor');
+//   var request = commandExecutor.execute({
+//     project: req.project,
+//     name: 'new-lightning-event',
+//     body: req.body,
+//     editor: req.editor
+//   });
+//   var requestId = requestStore.add(request);
+//   return res.send({
+//     status: 'pending',
+//     id: requestId
+//   });
+// });
 
-router.post('/tokens', function(req, res) {
-  var commandExecutor = req.app.get('commandExecutor');
-  var request = commandExecutor.execute({
-    project: req.project,
-    name: 'new-lightning-tokens',
-    body: req.body,
-    editor: req.editor
-  });
-  var requestId = requestStore.add(request);
-  return res.send({
-    status: 'pending',
-    id: requestId
-  });
-});
+// router.post('/interface', function(req, res) {
+//   var commandExecutor = req.app.get('commandExecutor');
+//   var request = commandExecutor.execute({
+//     project: req.project,
+//     name: 'new-lightning-interface',
+//     body: req.body,
+//     editor: req.editor
+//   });
+//   var requestId = requestStore.add(request);
+//   return res.send({
+//     status: 'pending',
+//     id: requestId
+//   });
+// });
+
+// router.post('/tokens', function(req, res) {
+//   var commandExecutor = req.app.get('commandExecutor');
+//   var request = commandExecutor.execute({
+//     project: req.project,
+//     name: 'new-lightning-tokens',
+//     body: req.body,
+//     editor: req.editor
+//   });
+//   var requestId = requestStore.add(request);
+//   return res.send({
+//     status: 'pending',
+//     id: requestId
+//   });
+// });
 
 module.exports = router;
