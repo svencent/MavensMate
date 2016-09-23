@@ -7,6 +7,7 @@ var logger          = require('winston');
 var querystring     = require('querystring');
 var path            = require('path');
 var util            = require('../lib/util');
+var _               = require('lodash');
 
 router.get('/new', function(req, res) {
   var project;
@@ -15,9 +16,25 @@ router.get('/new', function(req, res) {
   } else if (req.query.pid) {
     project = util.getProjectById(req.app, req.query.pid);
   }
+  
+  var envOptions = {
+    production : { name:'Production'},
+    sandbox : { name:'Sandbox'},
+    developer : { name:'Developer'},
+    prerelease : { name:'Prerelease'},
+    custom : { name:'Custom URL'}
+  };
+  
+  var instanceUrl;
+  if(project && project.settings && project.settings.instanceUrl){
+    envOptions.custom.selected = true;
+    instanceUrl = project.settings.instanceUrl;
+  }
 
   res.render('auth/index.html', {
     project: project,
+    envOptions: envOptions,
+    instanceUrl: instanceUrl,
     title: req.query.title,
     callback: req.query.callback,
     param1: req.query.param1,

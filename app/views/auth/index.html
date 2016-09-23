@@ -52,12 +52,10 @@
     <label class="slds-form-element__label" for="select-01">Salesforce Environment Type</label>
     <div class="slds-form-element__control">
       <div class="slds-select_container">
-        <select id="orgType" class="slds-select" name="orgType">
-          <option value="production">Production</option>
-          <option value="developer">Developer</option>
-          <option value="sandbox">Sandbox</option>
-          <option value="prerelease">Prerelease</option>
-          <option value="custom">Custom URL</option>
+        <select id="orgType" class="slds-select" name="orgType" >
+        {%for field, opt in envOptions%}
+            <option value="{{field}}" {%if opt.selected %}selected{% endif %}>{{opt.name}}</option>
+        {% endfor %}
         </select>
       </div>
     </div>
@@ -66,7 +64,7 @@
   <div class="slds-form-element" style="display:none;" id="instanceUrlWrapper">
     <label class="slds-form-element__label" for="inputSample2">Salesforce Custom URL</label>
     <div class="slds-form-element__control">
-      <input id="instanceUrl" name="instanceUrl" class="slds-input" type="text" placeholder="Example: https://na1-blitz01.salesforce.com">
+      <input id="instanceUrl" name="instanceUrl" class="slds-input" type="text" value="{{instanceUrl}}" placeholder="Example: https://na1-blitz01.salesforce.com">
     </div>
   </div>
 </form>
@@ -91,6 +89,8 @@
           $('#instanceUrlWrapper').val('');
         }
       });
+
+      $('#orgType').trigger('change');
     });
   </script>
 {% endblock %}
