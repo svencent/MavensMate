@@ -2,6 +2,7 @@
 
 var _         = require('lodash');
 var logger    = require('winston');
+var Document  = require('../document').Document;
 
 function ApexCreator(project, documents, force) {
   this.project = project;
@@ -22,7 +23,7 @@ ApexCreator.prototype.create = function() {
         .then(function(results) {
           return Promise.all([
             self._updateStores(results),
-            self.project.packageXml.add(self.documents),
+            self.project.packageXml.add(self.documents)
           ]);
         })
         .then(function() {
@@ -30,6 +31,7 @@ ApexCreator.prototype.create = function() {
           resolve();
         })
         .catch(function(err) {
+          // todo: delete local members
           reject(err);
         });
     } catch(e) {
@@ -48,9 +50,13 @@ ApexCreator.prototype._updateStores = function(results) {
       });
       self.project.sfdcClient.getApexServerProperties(self.documents)
         .then(function(serverProperties) {
-          self.project.localStore.update(serverProperties);
+          return Promise.all([
+            self.project.localStore.update(serverProperties),
+            self.project.serverStore.refreshTypes(self.project.sfdcClient, Document.getTypes(self.documents))
+          ]);
+        })
+        .then(function() {
           resolve(_.flatten(results));
-          // todo: refresh serverstore for type
         })
         .catch(function(err) {
           reject(err);

@@ -21,22 +21,22 @@ var childTypes      = require('./helpers/child-types');
 
 /**
  * Service to get an index of an org's metadata
- * @param {Object} project - project instance (optional)
- * @param {Object} sfdcClient - client instance (optional)
+ * @param {SalesforceClient} sfdcClient - client instance
+ * @param {Array} metadataTypes - array of xml name for metadata types to index [ "ApexClass", "ApexComponent", etc ]
  */
-function Indexer(sfdcClient, subscription) {
+function Indexer(sfdcClient, metadataTypes) {
   this.sfdcClient = sfdcClient;
-  this.subscription = subscription;
+  this.metadataTypes = metadataTypes;
   this.typeMap = {};
 }
 
-Indexer.prototype.listMetadataForSubscription = function() {
+Indexer.prototype.listMetadataForTypes = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
       var listMetadataPromises = [];
 
-      _.each(self.subscription, function(metadataTypeXmlName) {
+      _.each(self.metadataTypes, function(metadataTypeXmlName) {
         logger.debug('adding type to map ', metadataTypeXmlName); // "ApexClass"
 
         // todo: convenience method
@@ -81,14 +81,14 @@ Indexer.prototype.listMetadataForSubscription = function() {
 };
 
 /**
- * Indexes Salesforce.com org based on project subscription
+ * Indexes Salesforce.com org based on project metadataTypes
  * @return {Promise}
  */
 Indexer.prototype.index = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    logger.debug('indexing subscription', self.subscription);
-    self.listMetadataForSubscription()
+    logger.debug('indexing metadataTypes', self.metadataTypes);
+    self.listMetadataForTypes()
       .then(function(listMetadataResponses) {
         var indexTypePromises = [];
         _.each(listMetadataResponses, function(listMetadataResponse) {

@@ -212,4 +212,12 @@ Document.prototype.deleteFromFileSystem = function() {
   fs.removeSync(this.getPath());
 };
 
+Document.getTypes = function(documents) {
+  var types = [];
+  _.each(documents, function(d) {
+    if (types.indexOf(d.getType()) === -1) types.push(d.getType());
+  });
+  return types;
+};
+
 module.exports = Document;
