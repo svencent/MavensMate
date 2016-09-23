@@ -43,7 +43,7 @@
   <div class="slds-form-element">
     <label class="slds-form-element__label" for="select-01">Salesforce Username</label>
     <div class="slds-form-element__control">
-      <input name="username" class="slds-input" type="text" value="{{project.settings.username}}">
+      <input name="username" class="slds-input" type="text" value="{{project.projectJson.get('username')}}">
     </div>
   </div>
   {% endif %}

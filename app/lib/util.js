@@ -101,7 +101,7 @@ exports.isMac = function() {
 };
 
 exports.isValidProjectPath = function(projectPath) {
-  return fs.existsSync(path.join(projectPath, 'config', '.settings'));
+  return fs.existsSync(path.join(projectPath, 'config', '.settings')) || fs.existsSync(path.join(projectPath, '.mavensmate'))
 };
 
 exports.getHomeDirectory = function() {

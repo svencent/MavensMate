@@ -72,9 +72,11 @@
 	    	defaultTabId: 'tab-default-2'
 	    });
 
+	    {% set subscription = mavensmate.ui.getSubscription(project) %}
+
 	    var selectedItems = [
 	       {% for m in mavensmate.ui.getMetadataObjects(project) %}
-	       	{% if project.settings.subscription.indexOf(m.xmlName) >= 0 %}
+	       	{% if subscription.indexOf(m.xmlName) >= 0 %}
 	       		{
 	       			id: '{{ m.xmlName }}',
 	       			label: '{{ m.xmlName }}'
@@ -85,7 +87,7 @@
 
 	    var unselectedItems = [
 	    	{% for m in mavensmate.ui.getMetadataObjects(project) %}
-	    		{% if project.settings.subscription.indexOf(m.xmlName) === -1 %}
+	    		{% if subscription.indexOf(m.xmlName) === -1 %}
 	    			{
 	    				id: '{{ m.xmlName }}',
 	    				label: '{{ m.xmlName }}'

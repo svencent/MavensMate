@@ -75,13 +75,20 @@ ViewHelper.prototype.listProjects = function() {
     try {
       var projectPaths = util.listDirectories(workspacePath);
       _.each(projectPaths, function(projectPath) {
-        var settingsPath = path.join(projectPath, 'config', '.settings');
-        if (fs.existsSync(settingsPath)) {
-          var settings = util.getFileBodySync(settingsPath, true);
-          projects.push({
-            id: settings.id,
-            path: projectPath
-          });
+        if (util.isValidProjectPath(projectPath)) {
+          if (fs.existsSync(path.join(projectPath, 'config'))) {
+            var settings = util.getFileBodySync(path.join(projectPath, 'config', '.settings'), true);
+            projects.push({
+              id: settings.id,
+              path: projectPath
+            });
+          } else {
+            var settings = util.getFileBodySync(path.join(projectPath, '.mavensmate', 'project.json'), true);
+            projects.push({
+              id: settings.id,
+              path: projectPath
+            });
+          }
         }
       });
     } catch(e) {
@@ -113,6 +120,10 @@ ViewHelper.prototype.getWorkspaces = function() {
 
 ViewHelper.prototype.getMetadataObjects = function(project) {
   return _.sortBy(project.sfdcClient.metadataObjects, 'xmlName');
+};
+
+ViewHelper.prototype.getSubscription = function(project) {
+  return project.projectJson.get('subscription');
 };
 
 ViewHelper.prototype.doesClassOrTriggerExist = function(project, classOrTriggerName, type) {
