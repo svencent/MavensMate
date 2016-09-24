@@ -10,7 +10,7 @@ var config          = require('../../config');
 var request         = require('request');
 var swig            = require('swig');
 var logger          = require('winston');
-var TemplateService = require('../services/template');
+var TemplateService = require('../create/template');
 
 /**
  * MavensMate Component

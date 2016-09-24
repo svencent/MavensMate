@@ -5,12 +5,13 @@
 
 'use strict';
 
+var path            = require('path');
 var express         = require('express');
 var router          = express.Router();
 var Promise         = require('bluebird');
 var requestStore    = require('../lib/request-store');
 var logger          = require('winston');
-var TemplateService = require('../lib/services/template');
+var TemplateService = require('../lib/create/template');
 
 router.get('/:type/new', function(req, res) {
   if (!req.project) {
@@ -38,7 +39,7 @@ router.get('/:type/new', function(req, res) {
 
 router.get('/:type/templates/:fileName', function(req, res) {
   var templateService = new TemplateService();
-  templateService.getTemplateBody(req.params.type, req.params.fileName)
+  templateService.getTemplateBody(path.join(req.params.type, req.params.fileName))
     .then(function(body) {
       res.send(body);
     })
@@ -53,7 +54,11 @@ router.post('/', function(req, res) {
   var request = commandExecutor.execute({
     project: req.project,
     name: 'new-metadata',
-    body: req.body,
+    body: {
+      metadataTypeXmlName: req.body.metadataTypeXmlName,
+      templateValues: req.body.templateValues,
+      templatePath: path.join(req.body.metadataTypeXmlName, req.body.template.file_name)
+    },
     editor: req.editor
   });
   var requestId = requestStore.add(request);

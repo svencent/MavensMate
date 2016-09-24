@@ -30,7 +30,9 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-      self.editorService.launchUI('metadata/'+self.payload.args.type+'/new', { pid: self.getProject().id, type: self.payload.args.type })
+      var type = self.payload.args.type;
+      var projectId = self.getProject().id;
+      self.editorService.launchUI('metadata/'+type+'/new', { pid: projectId, type: type })
         .then(function() {
           resolve('Success');
         })

@@ -3,7 +3,7 @@ var fs              = require('fs-extra-promise');
 var Promise         = require('bluebird');
 var swig            = require('swig');
 var logger          = require('winston');
-var TemplateService = require('../services/template');
+var TemplateService = require('../create/template');
 var path            = require('path');
 var util            = require('../util');
 
@@ -22,7 +22,7 @@ module.exports.mergeTemplatesAndWriteToDisk = function(project, newMetadataTempl
 
     var templatePromises = [];
     _.each(newMetadataTemplates, function(newMetadataTemplate) {
-      templatePromises.push(templateService.getTemplateBody(newMetadataTemplate.metadataTypeXmlName, newMetadataTemplate.template));
+      templatePromises.push(templateService.getTemplateBody(newMetadataTemplate.templatePath));
     });
 
     var paths = [];
