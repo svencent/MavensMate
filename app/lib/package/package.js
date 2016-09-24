@@ -32,7 +32,7 @@ function Package(project) {
 Package.prototype.initializeFromDocuments = function(components) {
   var self = this;
   _.each(components, function(c) {
-    if (c.isMetaXmlFile()) c = c.getAssociatedDocument(); // we ignore -meta.xml files when creating package.xml
+    if (c.isMetaXmlFile()) c = c.getAssociatedComponent(); // we ignore -meta.xml files when creating package.xml
     var type = c.getLocalStoreProperties().type;
     var name = c.getLocalStoreProperties().fullName;
     if (!_.has(self.contents, type)) {
@@ -97,7 +97,7 @@ Package.prototype.add = function(components) {
   components = util.ensureArrayType(components);
   _.each(components, function(c) {
     var metadataTypeXmlName = c.getType();
-    var packageXmlName = packageUtil.getComponentPackageXmlName(d);
+    var packageXmlName = packageUtil.getComponentPackageXmlName(c);
     if (_.has(self.contents, metadataTypeXmlName)) {
       if (self.contents[metadataTypeXmlName] === '*') {
         return false; // nothing to do here
@@ -122,7 +122,7 @@ Package.prototype.remove = function(components) {
   components = util.ensureArrayType(components);
   _.each(components, function(c) {
     var metadataTypeXmlName = c.getType();
-    var packageXmlName = packageUtil.getComponentPackageXmlName(d);
+    var packageXmlName = packageUtil.getComponentPackageXmlName(c);
     if (_.has(self.contents, metadataTypeXmlName)) {
       if (self.contents[metadataTypeXmlName] === '*') {
         return false; // nothing to do here

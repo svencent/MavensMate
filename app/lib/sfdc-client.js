@@ -330,19 +330,19 @@ SalesforceClient.prototype.createApexMetadata = function(component) {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
-      var documentType = component.getType();
-      var documentBody = component.getBodySync();
+      var componentType = component.getType();
+      var componentBody = component.getBodySync();
       var payload = {};
-      payload[documentType === 'ApexPage' || documentType === 'ApexComponent' ? 'markup' : 'body'] = documentBody;
-      if (documentType === 'ApexTrigger') {
+      payload[componentType === 'ApexPage' || componentType === 'ApexComponent' ? 'markup' : 'body'] = componentBody;
+      if (componentType === 'ApexTrigger') {
         var re = /(?:trigger)(?:\s*)(?:[A-Za-z0-9]*)(?:\s*)(?:on)(?:\s*)([A-Za-z]*)/
-        var matchingTokens = re.exec(documentBody);
+        var matchingTokens = re.exec(componentBody);
         payload.TableEnumOrId = matchingTokens[1];
-      } else if (documentType !== 'ApexClass') {
+      } else if (componentType !== 'ApexClass') {
         payload.name = component.getName();
         payload.MasterLabel = component.getName();
       }
-      self.conn.tooling.sobject(documentType).create(payload, function(err, res) {
+      self.conn.tooling.sobject(componentType).create(payload, function(err, res) {
         if (err) {
           reject(err);
         } else {
@@ -1107,12 +1107,11 @@ SalesforceClient.prototype.getApexServerProperties = function(components, retrie
   return new Promise(function(resolve, reject) {
     if (retrieveBody === undefined) retrieveBody = false;
     logger.debug('getting server properties ...');
-    logger.silly(components);
 
     var classes = [];
     var triggers = [];
-    var pages = [];
-    var components = [];
+    var vfPages = [];
+    var vfComponents = [];
 
     var serverIds = [];
 
@@ -1120,13 +1119,13 @@ SalesforceClient.prototype.getApexServerProperties = function(components, retrie
       var type = c.getLocalStoreProperties().type;
       serverIds.push( c.getLocalStoreProperties().id );
       if (type === 'ApexPage') {
-        pages.push(c);
+        vfPages.push(c);
       } else if (type === 'ApexTrigger') {
         triggers.push(c);
       } else if (type === 'ApexClass') {
         classes.push(c);
       } else if (type === 'ApexComponent') {
-        components.push(c);
+        vfComponents.push(c);
       }
     });
 
@@ -1145,7 +1144,7 @@ SalesforceClient.prototype.getApexServerProperties = function(components, retrie
         self.conn.query(baseSoql + 'ApexClass' + baseSoqlFilter + util.joinForQuery(serverIds)+')')
       );
     }
-    if (components.length > 0) {
+    if (vfComponents.length > 0) {
       var queryFields = fields.slice(0);
       if (retrieveBody) queryFields.push('Markup');
       var baseSoql = 'SELECT '+queryFields.join(',')+' FROM ';
@@ -1161,7 +1160,7 @@ SalesforceClient.prototype.getApexServerProperties = function(components, retrie
         self.conn.query(baseSoql + 'ApexTrigger' + baseSoqlFilter + util.joinForQuery(serverIds)+')')
       );
     }
-    if (pages.length > 0) {
+    if (vfPages.length > 0) {
       var queryFields = fields.slice(0);
       if (retrieveBody) queryFields.push('Markup');
       var baseSoql = 'SELECT '+queryFields.join(',')+' FROM ';

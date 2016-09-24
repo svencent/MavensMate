@@ -20,12 +20,12 @@ var TemplateService = require('../services/template');
  * @param {String} [opts.path] - file path
  * @param {String} [opts.project] - project instance
  */
-var Component = function(project, documentPath) {
+var Component = function(project, filePath) {
   this._project = project;
   this._sfdcClient = project.sfdcClient;
-  this._path = path.normalize(documentPath);
+  this._path = path.normalize(filePath);
   this._basename = path.basename(this._path);
-  this._extension = path.extname(this._path).replace(/./, '');
+  this._extension = path.extname(this._path).replace(/./, ''); // ext NOT .ext
   this._serverProperties = null;
   this._localProperties = null;
   this._describe = null;
@@ -69,7 +69,7 @@ Component.prototype.isMetaXmlFile = function() {
   return util.endsWith(this.getPath(), '-meta.xml');
 };
 
-Component.prototype.getAssociatedDocument = function() {
+Component.prototype.getAssociatedComponent = function() {
   if (this.isMetaXmlFile()) {
     return new Component(this._project, this.getPath().replace('-meta.xml', ''));
   }

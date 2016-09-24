@@ -53,17 +53,17 @@ Deploy.prototype.stage = function() {
             it's possible that a component is a meta-xml file (e.g., user has compiled a single meta-xml file)
             in those cases, we need to copy both the meta-xml and associated component to the deploy folder
            */
-          var associatedDocument = c.getAssociatedDocument();
-          var tmpAssociatedDocumentPath = path.join(tmpPath, associatedDocument.getLocalStoreProperties().fileName);
-          fs.ensureDirSync(path.dirname(tmpAssociatedDocumentPath));
-          fs.copySync(associatedDocument.getPath(), tmpAssociatedDocumentPath); // copy associated component to tmp path
-          fs.copySync(c.getPath(), [tmpAssociatedDocumentPath,'-meta.xml'].join('')); // copy meta-xml file as well
+          var associatedComponent = c.getAssociatedComponent();
+          var tmpAssociatedComponentPath = path.join(tmpPath, associatedComponent.getLocalStoreProperties().fileName);
+          fs.ensureDirSync(path.dirname(tmpAssociatedComponentPath));
+          fs.copySync(associatedComponent.getPath(), tmpAssociatedComponentPath); // copy associated component to tmp path
+          fs.copySync(c.getPath(), [tmpAssociatedComponentPath,'-meta.xml'].join('')); // copy meta-xml file as well
         } else {
-          var tmpDocumentPath = path.join(tmpPath, c.getLocalStoreProperties().fileName);
-          fs.ensureDirSync(path.dirname(tmpDocumentPath));
-          fs.copySync(c.getPath(), tmpDocumentPath);
+          var tmpComponentPath = path.join(tmpPath, c.getLocalStoreProperties().fileName);
+          fs.ensureDirSync(path.dirname(tmpComponentPath));
+          fs.copySync(c.getPath(), tmpComponentPath);
           if (c.getDescribe().metaFile) {
-            fs.copySync([c.getPath(),'-meta.xml'].join(''), [tmpDocumentPath,'-meta.xml'].join(''));
+            fs.copySync([c.getPath(),'-meta.xml'].join(''), [tmpComponentPath,'-meta.xml'].join(''));
           }
         }
       });

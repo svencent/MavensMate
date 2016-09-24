@@ -13,7 +13,7 @@ function ApexCompiler(project, components, force) {
 ApexCompiler.prototype.compile = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    logger.debug('Compiling ApexDocuments', self.components);
+    logger.debug('Compiling ApexComponents', self.components);
     var compileResult;
     conflict.check(self.project, self.components, self.force)
       .then(function(res) {
@@ -23,7 +23,7 @@ ApexCompiler.prototype.compile = function() {
           return self.project.sfdcClient.compileWithToolingApi(self.components, self.project);
       })
       .then(function(result) {
-        logger.debug('Compile result for ApexDocuments', result);
+        logger.debug('Compile result for ApexComponents', result);
         compileResult = result;
         return self.project.sfdcClient.getApexServerProperties(self.components);
       })

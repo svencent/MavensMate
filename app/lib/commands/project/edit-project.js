@@ -30,7 +30,7 @@ Command.prototype.execute = function() {
           reject(error);
         })
     } else {
-      self.getProject().edit(self.payload.package)
+      self.getProject().update(self.payload.package)
         .then(function() {
           if (self.editorService && self.editorService.editor === 'sublime') {
             self.editorService.runCommand('refresh_folder_list')

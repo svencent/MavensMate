@@ -2,7 +2,7 @@
 
 var Promise             = require('bluebird');
 var _                   = require('lodash');
-var componentUtil       = require('../component').util;
+var componentUtil       = require('../components').util;
 var compileUtil         = require('./util');
 var ApexCompiler        = require('./apex');
 var MetadataCompiler    = require('./metadata');

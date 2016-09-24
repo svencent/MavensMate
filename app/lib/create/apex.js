@@ -2,7 +2,7 @@
 
 var _           = require('lodash');
 var logger      = require('winston');
-var Component   = require('../component').Component;
+var Component   = require('../components').Component;
 
 function ApexCreator(project, components) {
   this.project = project;
@@ -13,10 +13,9 @@ ApexCreator.prototype.create = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
-      // logger.debug('Creating ApexDocuments', self.components);
       var createPromises = [];
       _.each(self.components, function(c) {
-        createPromises.push(self.project.sfdcClient.createApexMetadata(d));
+        createPromises.push(self.project.sfdcClient.createApexMetadata(c));
       });
       Promise.all(createPromises)
         .then(function(results) {

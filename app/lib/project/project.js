@@ -112,11 +112,37 @@ Project.prototype._isMavensMateProject = function() {
 }
 
 /**
- * Updates package.xml, should refresh that package.xml from server
+ * Updates project with new package.xml contents
+ * @param  {Object} pkg - salesforce package in JSON format
  * @return {Promise}
  */
-Project.prototype.update = function() {
-
+Project.prototype.update = function(pkg) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    var tmpPath = temp.mkdirSync({ prefix: 'mm_' });
+    var tmpUnpackagedPath = path.join(tmpPath, 'unpackaged');
+    var serverProperties;
+    self.sfdcClient.retrieveUnpackaged(pkg, true, tmpPath)
+      .then(function(retrieveResult) {
+        serverProperties = retrieveResult.fileProperties;
+        var srcPath = path.join(self.path, 'src');
+        util.emptyDirectoryRecursiveSync(srcPath);
+        util.removeEmptyDirectoriesRecursiveSync(srcPath);
+        return projectUtil.copy(tmpUnpackagedPath, srcPath, true);
+      })
+      .then(function() {
+        Promise.all([
+          self.localStore.clean(serverProperties),
+          self.serverStore.refresh(self.sfdcClient, self.projectJson.get('subscription'))
+        ]);
+      })
+      .then(function() {
+        resolve();
+      })
+      .catch(function(err) {
+        reject(err);
+      });
+  });
 };
 
 /**
@@ -135,22 +161,7 @@ Project.prototype.delete = function() {
 Project.prototype.clean = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var tmpPath = temp.mkdirSync({ prefix: 'mm_' });
-    var tmpUnpackagedPath = path.join(tmpPath, 'unpackaged');
-    var serverProperties;
-    self.sfdcClient.retrieveUnpackaged(self.packageXml.contents, true, tmpPath)
-      .then(function(retrieveResult) {
-        serverProperties = retrieveResult.fileProperties;
-        var srcPath = path.join(self.path, 'src');
-        util.emptyDirectoryRecursiveSync(srcPath);
-        return projectUtil.copy(tmpUnpackagedPath, srcPath, true);
-      })
-      .then(function() {
-        Promise.all([
-          self.localStore.clean(serverProperties),
-          self.serverStore.refresh(self.sfdcClient, self.projectJson.get('subscription'))
-        ]);
-      })
+    self.update(self.packageXml.contents)
       .then(function() {
         resolve();
       })

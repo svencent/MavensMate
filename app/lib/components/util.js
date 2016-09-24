@@ -1,9 +1,12 @@
-var fs          = require('fs');
-var path        = require('path');
-var _           = require('lodash');
-var logger      = require('winston');
-var Component   = require('./component');
-var util        = require('../util');
+var fs                  = require('fs');
+var path                = require('path');
+var _                   = require('lodash');
+var logger              = require('winston');
+var Component           = require('./component');
+var LightningComponent  = require('./lightning');
+var ApexComponent       = require('./apex');
+var MetadataComponent   = require('./metadata');
+var util                = require('../util');
 
 var apexTypes = [ 'ApexClass', 'ApexPage', 'ApexComponent', 'ApexTrigger' ];
 
@@ -11,7 +14,7 @@ var _isMetaXmlFile = function(filePath) {
   return util.endsWith(filePath, '-meta.xml');
 };
 
-var _getAssociatedDocumentPath = function(metaXmlFilePath) {
+var _getAssociatedComponentPath = function(metaXmlFilePath) {
   return metaXmlFilePath.replace('-meta.xml', '');
 };
 
@@ -26,7 +29,7 @@ module.exports.getComponentsFromFilePaths = function(project, paths) {
       // todo: get contents
     }
     // } else if (_isMetaXmlFile(p)) {
-    //   var c = new Component(project, _getAssociatedDocumentPath(p));
+    //   var c = new Component(project, _getAssociatedComponentPath(p));
     // }
     else {
       var c = new Component(project, p);
@@ -44,12 +47,12 @@ module.exports.getComponentsFromFilePaths = function(project, paths) {
       }
     }
 
-    if (apexTypes.indexOf(c.getType()) >= 0) {
-      result.apex.push(c);
+    if (ApexComponent.isApexType(c.getType())) {
+      result.apex.push(new ApexComponent(project, p));
     } else if (c.getType() === 'AuraDefinitionBundle') {
-      result.lightning.push(c);
+      result.lightning.push(new LightningComponent(project, p));
     } else {
-      result.metadata.push(c);
+      result.metadata.push(new MetadataComponent(project, p));
     }
   });
   return result;
