@@ -56,7 +56,7 @@
     "graceful-fs": "^4.1.6",
     "inherits": "2.0.1",
     "jsforce": "1.7.0",
-    "lodash": "3.10.1",
+    "lodash": "4.0.0",
     "merge": "1.2.0",
     "minimist": "1.1.0",
     "moment": "2.8.3",

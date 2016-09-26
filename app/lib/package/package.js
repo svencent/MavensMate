@@ -29,18 +29,37 @@ function Package(project) {
  * @param  {Array} components
  * @return {void}
  */
-Package.prototype.initializeFromDocuments = function(components) {
+Package.prototype.initializeFromDocuments = function(documents) {
   var self = this;
-  _.each(components, function(c) {
-    if (c.isMetaXmlFile()) c = c.getAssociatedComponent(); // we ignore -meta.xml files when creating package.xml
-    var type = c.getLocalStoreProperties().type;
-    var name = c.getLocalStoreProperties().fullName;
+  _.each(documents, function(d) {
+    if (d.isMetaXmlFile()) d = d.getAssociatedDocument(); // we ignore -meta.xml files when creating package.xml
+    var type = d.getLocalStoreProperties().type;
+    var name = d.getLocalStoreProperties().fullName;
     if (!_.has(self.contents, type)) {
       self.contents[type] = [name];
     } else {
       var value = self.contents[type];
       value.push(name);
     }
+  });
+};
+
+/**
+ * Refreshes package contents from the disk
+ * TODO: should we watch the file instead and update project.packageXml accordingly?
+ * @return {Promise} - resolves with void
+ */
+Package.prototype.refreshContentsFromDisk = function() {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    self._deserialize(self.path)
+      .then(function(pkg) {
+        self.contents = pkg;
+        resolve();
+      })
+      .catch(function(err) {
+        reject(err);
+      });
   });
 };
 
@@ -92,12 +111,12 @@ Package.prototype._serialize = function() {
  * @param  {Array of type Metadata} metadata
  * @return {None}
  */
-Package.prototype.add = function(components) {
+Package.prototype.add = function(documents) {
   var self = this;
-  components = util.ensureArrayType(components);
-  _.each(components, function(c) {
-    var metadataTypeXmlName = c.getType();
-    var packageXmlName = packageUtil.getComponentPackageXmlName(c);
+  documents = util.ensureArrayType(documents);
+  _.each(documents, function(d) {
+    var metadataTypeXmlName = d.getType();
+    var packageXmlName = packageUtil.getDocumentPackageXmlName(d);
     if (_.has(self.contents, metadataTypeXmlName)) {
       if (self.contents[metadataTypeXmlName] === '*') {
         return false; // nothing to do here
@@ -117,12 +136,12 @@ Package.prototype.add = function(components) {
  * @param  {Array of type Metadata} metadata
  * @return {[type]}
  */
-Package.prototype.remove = function(components) {
+Package.prototype.remove = function(documents) {
   var self = this;
-  components = util.ensureArrayType(components);
-  _.each(components, function(c) {
-    var metadataTypeXmlName = c.getType();
-    var packageXmlName = packageUtil.getComponentPackageXmlName(c);
+  documents = util.ensureArrayType(documents);
+  _.each(documents, function(d) {
+    var metadataTypeXmlName = d.getType();
+    var packageXmlName = packageUtil.getDocumentPackageXmlName(d);
     if (_.has(self.contents, metadataTypeXmlName)) {
       if (self.contents[metadataTypeXmlName] === '*') {
         return false; // nothing to do here

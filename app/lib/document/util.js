@@ -2,10 +2,10 @@ var fs                  = require('fs');
 var path                = require('path');
 var _                   = require('lodash');
 var logger              = require('winston');
-var Component           = require('./component');
-var LightningComponent  = require('./lightning');
+var Document            = require('./document');
+var LightningDocument   = require('./lightning');
 var ApexComponent       = require('./apex');
-var MetadataComponent   = require('./metadata');
+var MetadataDocument    = require('./metadata');
 var util                = require('../util');
 
 var apexTypes = [ 'ApexClass', 'ApexPage', 'ApexComponent', 'ApexTrigger' ];
@@ -14,11 +14,11 @@ var _isMetaXmlFile = function(filePath) {
   return util.endsWith(filePath, '-meta.xml');
 };
 
-var _getAssociatedComponentPath = function(metaXmlFilePath) {
+var _getAssociatedDocumentPath = function(metaXmlFilePath) {
   return metaXmlFilePath.replace('-meta.xml', '');
 };
 
-module.exports.getComponentsFromFilePaths = function(project, paths) {
+module.exports.getDocumentsFromFilePaths = function(project, paths) {
   var result = {
     apex: [],
     metadata: [],
@@ -29,30 +29,30 @@ module.exports.getComponentsFromFilePaths = function(project, paths) {
       // todo: get contents
     }
     // } else if (_isMetaXmlFile(p)) {
-    //   var c = new Component(project, _getAssociatedComponentPath(p));
+    //   var c = new Document(project, _getAssociatedDocumentPath(p));
     // }
     else {
-      var c = new Component(project, p);
+      var d = new Document(project, p);
     }
 
-    if (!c.getLocalStoreProperties()) {
+    if (!d.getLocalStoreProperties()) {
       /*
         look in server store, as this is a file that MAY be on the server, but it's not in our local store yet
       */
-      var serverStoreEntry = c.getServerStoreProperties();
+      var serverStoreEntry = d.getServerStoreProperties();
       if (serverStoreEntry) {
-        c.addServerStoreEntryToLocalStore(serverStoreEntry);
+        d.addServerStoreEntryToLocalStore(serverStoreEntry);
       } else {
-        c.addUnknownLocalStoreEntry();
+        d.addUnknownLocalStoreEntry();
       }
     }
 
-    if (ApexComponent.isApexType(c.getType())) {
+    if (ApexComponent.isApexType(d.getType())) {
       result.apex.push(new ApexComponent(project, p));
-    } else if (c.getType() === 'AuraDefinitionBundle') {
-      result.lightning.push(new LightningComponent(project, p));
+    } else if (d.getType() === 'AuraDefinitionBundle') {
+      result.lightning.push(new LightningDocument(project, p));
     } else {
-      result.metadata.push(new MetadataComponent(project, p));
+      result.metadata.push(new MetadataDocument(project, p));
     }
   });
   return result;

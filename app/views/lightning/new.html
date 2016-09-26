@@ -15,59 +15,6 @@
         <input class="slds-input" placeholder="Description" type="text" id="description">
       </div>
     </div>
-
-    {% if lightningType === 'app' || lightningType === 'component' %}
-      <div class="slds-form-element">
-        <label class="checkbox" for="controller">
-          <input type="checkbox" checked="checked" value="" id="controller" data-toggle="checkbox">
-          Create Controller
-        </label>
-      </div>
-
-      <div class="slds-form-element">
-        <label class="checkbox" for="helper">
-          <input type="checkbox" checked="checked" value="" id="helper" data-toggle="checkbox">
-          Create Helper
-        </label>
-      </div>
-
-      <div class="slds-form-element">
-        <label class="checkbox" for="style">
-          <input type="checkbox" checked="checked" value="" id="style" data-toggle="checkbox">
-          Create Style
-        </label>
-      </div>
-
-      <div class="slds-form-element">
-        <label class="checkbox" for="documentation">
-          <input type="checkbox" checked="checked" value="" id="documentation" data-toggle="checkbox">
-          Create Documentation
-        </label>
-      </div>
-
-      <div class="slds-form-element">
-        <label class="checkbox" for="renderer">
-          <input type="checkbox" checked="checked" value="" id="renderer" data-toggle="checkbox">
-          Create Renderer
-        </label>
-      </div>
-
-      {% if lightningType === 'component' %}
-      <div class="slds-form-element">
-        <label class="checkbox" for="design">
-          <input type="checkbox" checked="checked" value="" id="design" data-toggle="checkbox">
-          Create Design
-        </label>
-      </div>
-      {% endif %}
-
-      <div class="slds-form-element">
-        <label class="checkbox" for="svg">
-          <input type="checkbox" checked="checked" value="" id="svg" data-toggle="checkbox">
-          Create SVG
-        </label>
-      </div>
-    {% endif %}
   </fieldset>
 </form>
 
@@ -75,7 +22,7 @@
 
 
 {% block buttons %}
-  <input type="button" id="btnSubmit" class="slds-button slds-button--brand" value="{{title}}"  onclick='create();'>
+  <input type="button" id="btnSubmit" class="slds-button slds-button--brand" value="{{title}}" onclick='create();'>
   {% include 'views/partials/cancel_button.html' %}
 {% endblock %}
 
@@ -85,22 +32,13 @@
       var opts = {
         ajax: {
           type: 'POST',
-          url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning",
+          url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning/bundle",
           data: JSON.stringify({
             metadataTypeXmlName: 'AuraDefinitionBundle',
-            lightningType: '{{lightningType}}',
+            lightningType: '{{lightningType|capitalize}}',
             apiName : $("#apiName").val(),
-            description : $("#description").val(),
-            {% if lightningType === 'app' || lightningType === 'component' %}
-            createController: $("#controller").is(":checked"),
-            createHelper: $("#helper").is(":checked"),
-            createStyle: $("#style").is(":checked"),
-            createDocumentation: $("#documentation").is(":checked"),
-            createRenderer: $("#renderer").is(":checked"),
-            createDesign: $("#design").is(":checked"),
-            createSvg: $("#svg").is(":checked"),
-            {% endif %}
-          }),
+            description : $("#description").val()
+          })
         },
         message: {
           label: 'Creating new Lighting {{lightningType|capitalize}}...'

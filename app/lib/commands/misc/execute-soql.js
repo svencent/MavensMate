@@ -19,7 +19,10 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     var project = self.getProject();
-    project.sfdcClient.executeSoql(self.payload.soql)
+    var queryPromise = self.payload.tooling ?
+                    project.sfdcClient.executeToolingSoql(self.payload.soql) :
+                    project.sfdcClient.executeSoql(self.payload.soql);
+    queryPromise
       .then(function(res) {
         var soqlResultFilePath = project.writeSoqlResult(res);
         resolve({
@@ -28,8 +31,7 @@ Command.prototype.execute = function() {
       })
       .catch(function(error) {
         reject(error);
-      })
-      .done();
+      });
   });
 };
 

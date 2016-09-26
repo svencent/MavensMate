@@ -38,13 +38,31 @@ LightningService.prototype.createBundle = function(apiName, description) {
       Description: description, // my description
       DeveloperName: apiName, // cool_bro
       MasterLabel: apiName, // cool bro
-      ApiVersion: self.project.sfdcClient.apiVersion || '32.0'
+      ApiVersion: self.project.config.get('mm_api_version')
     }, function(err, res) {
       if (err) {
         reject(err);
       } else {
         logger.debug('Lightning bundle creation result: ');
         logger.debug(res);
+        resolve(res);
+      }
+    });
+  });
+};
+
+LightningService.prototype.createBundleItem = function(bundleId, lightningType, sourceFormat, source) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    self.project.sfdcClient.conn.tooling.sobject('AuraDefinition').create({
+      AuraDefinitionBundleId: bundleId,
+      DefType: _.toUpper(lightningType),
+      Format: sourceFormat,
+      Source: source
+    }, function(err, res) {
+      if (err) {
+        reject(err);
+      } else {
         resolve(res);
       }
     });
@@ -64,12 +82,12 @@ LightningService.prototype.deleteBundle = function(bundleId) {
   });
 };
 
-LightningService.prototype.deleteBundleItems = function(components) {
+LightningService.prototype.deleteBundleItems = function(documents) {
   var self = this;
   return new Promise(function(resolve, reject) {
     var deleteIds = [];
-    _.each(components, function(c) {
-      deleteIds.push(c.getLocalStoreProperties().id);
+    _.each(documents, function(d) {
+      deleteIds.push(d.getLocalStoreProperties().id);
     });
     self.project.sfdcClient.conn.tooling.sobject('AuraDefinition').delete(deleteIds)
       .then(function(res) {
@@ -84,49 +102,39 @@ LightningService.prototype.deleteBundleItems = function(components) {
 LightningService.prototype.getBundle = function(bundleId) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    self.project.sfdcClient.conn.tooling.query('Select Id,AuraDefinitionBundleId,AuraDefinitionBundle.DeveloperName,DefType,Format FROM AuraDefinition WHERE AuraDefinitionBundleId = \''+bundleId+'\'', function(err, res) {
-      if (err) {
-        reject(err);
-      } else {
+    self.project.sfdcClient.conn.tooling.query('Select Id, ApiVersion, Description, DeveloperName, Language, MasterLabel, NamespacePrefix FROM AuraDefinitionBundle WHERE Id = \''+bundleId+'\'')
+      .then(function(res) {
         resolve(res);
-      }
-    });
+      })
+      .catch(function(err) {
+        reject(new Error('Could not get bundles: '+err.message));
+      });
   });
 };
 
-LightningService.prototype.getBundleItems = function(mavensmateFiles) {
+LightningService.prototype.getBundles = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    if (mavensmateFiles.length === 0) {
-      return resolve();
-    } else {
-      logger.debug('attempting to get index');
-      self.project.getLightningIndex()
-        .then(function(lightningIndex) {
-          logger.debug('got lightning index');
-          logger.debug(lightningIndex);
-          var itemIds = [];
-          _.each(mavensmateFiles, function(mmf) {
-            var lightningBundleName = mmf.folderName; //mybundle
-            var lightningType = mmf.lightningType;
-            logger.debug('getting lightning type: '+lightningType);
-            logger.debug('getting lightningBundleName: '+lightningBundleName);
-            itemIds.push(_.find(lightningIndex, { AuraDefinitionBundle : { DeveloperName: lightningBundleName }, DefType: lightningType }).Id);
-          });
-          logger.debug('getting lightning components!!');
-          logger.debug(itemIds);
-          self.project.sfdcClient.conn.tooling.query('Select Id,AuraDefinitionBundleId,AuraDefinitionBundle.DeveloperName,DefType,Format,Source FROM AuraDefinition WHERE Id IN ('+util.joinForQuery(itemIds)+')', function(err, res) {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(res);
-            }
-          });
-        })
-        .catch(function(err) {
-          reject(new Error('Could not get bundle items: '+err.message));
-        });
-    }
+    self.project.sfdcClient.conn.tooling.query('Select Id, ApiVersion, Description, DeveloperName, Language, MasterLabel, NamespacePrefix FROM AuraDefinitionBundle')
+      .then(function(res) {
+        resolve(res);
+      })
+      .catch(function(err) {
+        reject(new Error('Could not get bundles: '+err.message));
+      });
+  });
+};
+
+LightningService.prototype.getBundleItems = function(bundleId) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    self.project.sfdcClient.conn.tooling.query('Select Id, AuraDefinitionBundleId, AuraDefinitionBundle.DeveloperName, DefType, Format FROM AuraDefinition WHERE AuraDefinitionBundleId =\''+bundleId+'\'')
+      .then(function(res) {
+        resolve(res);
+      })
+      .catch(function(err) {
+        reject(new Error('Could not get bundle items: '+err.message));
+      });
   });
 };
 
@@ -135,14 +143,14 @@ LightningService.prototype.getBundleItems = function(mavensmateFiles) {
  * @param  {Array} - array of Document instances
  * @return {Promise}
  */
-LightningService.prototype.update = function(components) {
+LightningService.prototype.update = function(documents) {
   var self = this;
   return new Promise(function(resolve, reject) {
     var updatePayload = [];
-    _.each(components, function(c) {
+    _.each(documents, function(d) {
       updatePayload.push({
-        Source: c.getBodySync(),
-        Id: c.getLocalStoreProperties().id
+        Source: d.getBodySync(),
+        Id: d.getLocalStoreProperties().id
       });
     });
     logger.debug('updating lightning components', updatePayload);

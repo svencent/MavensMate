@@ -136,7 +136,7 @@ ApexTest.prototype.execute = function() {
         _.each(classResults.records, function(classResult) {
           var key = classResult.ApexClass.Name;
           testResults[key] = classResult;
-          testResults[key].results = _.where(methodResults.records, { ApexClassId : classResult.ApexClassId });
+          testResults[key].results = _.filter(methodResults.records, { ApexClassId : classResult.ApexClassId });
         });
 
         if (self.skipCoverage) {

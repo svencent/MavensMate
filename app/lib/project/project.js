@@ -161,7 +161,10 @@ Project.prototype.delete = function() {
 Project.prototype.clean = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    self.update(self.packageXml.contents)
+    self.packageXml.refreshContentsFromDisk()
+      .then(function() {
+        return self.update(self.packageXml.contents)
+      })
       .then(function() {
         resolve();
       })

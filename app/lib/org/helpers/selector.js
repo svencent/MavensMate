@@ -20,7 +20,7 @@ module.exports.setVisibility = function(jsonData, query) {
   this._crawl(jsonData, 0, query.toLowerCase(), 0);
 };
 
-module.exports.setChecked = function(src, ids, dpth, key) {
+module.exports.setChecked = function(sourceArray, ids, dpth, key) {
   // Recursively find checked item
   var self = this;
 
@@ -28,8 +28,8 @@ module.exports.setChecked = function(src, ids, dpth, key) {
   if (!ids) ids = [];
   if (!dpth) dpth = 0;
 
-  if (_.isArray(src)) {
-    _.each(src, function(litem) {
+  if (_.isArray(sourceArray)) {
+    _.each(sourceArray, function(litem) {
       if (_.isObject(litem)) {
         if (_.has(litem, 'id') && ids.indexOf(litem.id) >= 0) {
           litem.checked = true;
@@ -38,8 +38,8 @@ module.exports.setChecked = function(src, ids, dpth, key) {
       }
       self.setChecked(litem, ids, dpth + 2);
     });
-  } else if (_.isObject(src)) {
-    _.forOwn(src, function(value, key) {
+  } else if (_.isObject(sourceArray)) {
+    _.forOwn(sourceArray, function(value, key) {
       self.setChecked(value, ids, dpth + 1, key);
     });
   }

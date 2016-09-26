@@ -5,10 +5,10 @@ var util      = require('../util');
 
 /**
  * Checks for conflict between local copy and server copy
- * @param  {Array} components - array of Component
+ * @param  {Array} components - array of Document
  * @return {Promise}
  */
-module.exports.check = function(project, components, force) {
+module.exports.check = function(project, documents, force) {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
@@ -22,8 +22,8 @@ module.exports.check = function(project, components, force) {
       var conflicts = {};
 
       var serverCopyPromises = [];
-      _.each(components, function(c) {
-        var type = c.getLocalStoreProperties().type;
+      _.each(documents, function(d) {
+        var type = d.getLocalStoreProperties().type;
         if (type === 'AuraDefinitionBundle' || util.startsWith(type, 'Apex')) {
           serverCopyPromises.push( f.serverCopy );
         }

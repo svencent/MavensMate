@@ -39,6 +39,10 @@ LocalStore.prototype.set = function(contents, deferSave) {
   if (!deferSave) this._save();
 };
 
+/**
+ * Saves the current _state to the disk
+ * @return {void}
+ */
 LocalStore.prototype._save = function() {
   fs.outputFileSync(this._path, JSON.stringify(this._state, null, 4));
 };
@@ -52,21 +56,42 @@ LocalStore.prototype._isRestApiProperty = function(property) {
   return property.attributes && property.attributes.url;
 };
 
+/**
+ * Returns keys relative to the server vs package (src/classes/foo.cls => classes/foo.cls)
+ * @return {Array}
+ */
+LocalStore.prototype.getServerKeys = function() {
+  return _.map(this._state, function(value, prop) {
+    return prop.replace(/^src\//, '');
+  });
+};
+
+LocalStore.prototype.removeById = function(ids) {
+  var self = this;
+  self._state = _.pickBy(self._state, function(value, key) {
+    return ids.indexOf(value.id) === -1;
+  });
+  self._save();
+};
+
 LocalStore.prototype.update = function(serverProperties) {
   var self = this;
   serverProperties = util.ensureArrayType(serverProperties);
   logger.debug('mass updating localStore from server properties', serverProperties);
   if (self._isRestApiProperty(serverProperties[0])) {
     _.each(serverProperties, function(p) {
-      var localStoryEntry = self.getById(p.Id);
-      localStoryEntry.fullName = p.Name;
-      localStoryEntry.lastModifiedById = p.LastModifiedById;
-      localStoryEntry.lastModifiedDate = p.LastModifiedDate;
-      localStoryEntry.lastModifiedByName = p.LastModifiedBy.Name;
-      localStoryEntry.createdDate = p.CreatedDate;
-      localStoryEntry.createdById = p.CreatedById;
-      localStoryEntry.createdByName = p.CreatedBy.Name;
-      localStoryEntry.localState = 'clean';
+      var localStoreEntry = self.getById(p.Id);
+      if (!localStoreEntry) {
+        throw new Error('Could not locate local store entry for: '+p.Id);
+      }
+      localStoreEntry.fullName = p.Name;
+      localStoreEntry.lastModifiedById = p.LastModifiedById;
+      localStoreEntry.lastModifiedDate = p.LastModifiedDate;
+      localStoreEntry.lastModifiedByName = p.LastModifiedBy.Name;
+      localStoreEntry.createdDate = p.CreatedDate;
+      localStoreEntry.createdById = p.CreatedById;
+      localStoreEntry.createdByName = p.CreatedBy.Name;
+      localStoreEntry.localState = 'clean';
     });
   } else {
     _.each(serverProperties, function(sp) {

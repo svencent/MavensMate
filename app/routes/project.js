@@ -212,7 +212,7 @@ router.post('/:id/index', function(req, res) {
   });
 });
 
-// gets metadata index for a project
+// gets metadata index for a project (displayed in tree)
 router.get('/:id/index', function(req, res) {
   logger.warn(req.query);
   var commandName = req.query && req.query.pkg && req.query.pkg !== 'package.xml' ? 'get-metadata-index-for-package' : 'get-metadata-index';

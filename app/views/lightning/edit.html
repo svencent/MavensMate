@@ -1,0 +1,113 @@
+{% extends "views/layouts/base.html" %}
+{% block yield %}
+
+
+<div class="slds-panel slds-grid slds-grid--vertical slds-nowrap">
+  <div class="slds-form--stacked slds-grow slds-scrollable--y">
+    <div class="slds-panel__section">
+      <div class="slds-form-element slds-hint-parent slds-has-divider--bottom">
+        <span class="slds-form-element__label">API Name</span>
+        <div class="slds-form-element__control">
+          <span class="slds-form-element__static">{{bundle.DeveloperName}}</span>
+        </div>
+      </div>
+      <div class="slds-form-element slds-hint-parent slds-has-divider--bottom">
+        <span class="slds-form-element__label">Label</span>
+        <div class="slds-form-element__control">
+          <span class="slds-form-element__static">{{bundle.MasterLabel}}</span>
+        </div>
+      </div>
+      <div class="slds-form-element slds-hint-parent slds-has-divider--bottom">
+        <span class="slds-form-element__label">Description</span>
+        <div class="slds-form-element__control">
+          <span class="slds-form-element__static">{{bundle.Description}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<article class="slds-card">
+  <div class="slds-card__header slds-grid">
+    <header class="slds-media slds-media--center slds-has-flexi-truncate">
+      <div class="slds-media__body slds-truncate">
+        <h2>
+          <a href="javascript:void(0);" class="slds-text-link--reset">
+            <span class="slds-text-heading--small">Bundle Items</span>
+          </a>
+        </h2>
+      </div>
+    </header>
+    <div class="slds-no-flex">
+      <button class="slds-button slds-button--neutral">New</button>
+    </div>
+  </div>
+  <div class="slds-card__body">
+    <table class="slds-table slds-table--bordered slds-no-row-hover slds-table--cell-buffer">
+      <thead>
+        <tr class="slds-text-title--caps">
+          <th scope="col">
+            <div class="slds-truncate" title="Name">Developer Name</div>
+          </th>
+          <th scope="col">
+            <div class="slds-truncate" title="Company">Label</div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in bundleItems %}
+        <tr class="slds-hint-parent">
+          <th scope="row">
+            <div class="slds-truncate" title="Adam Choi"><a href="javascript:void(0);">{{b.DefType}}</a></div>
+          </th>
+          <td>
+            <div class="slds-truncate" title="Company One"></div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+
+{% endblock %}
+
+
+{% block buttons %}
+  <input type="button" id="btnSubmit" class="slds-button slds-button--brand" value="{{title}}" onclick='create();'>
+  {% include 'views/partials/cancel_button.html' %}
+{% endblock %}
+
+{% block body_js %}
+  <script type="text/javascript">
+    function create() {
+      var opts = {
+        ajax: {
+          type: 'POST',
+          url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning/bundle",
+          data: JSON.stringify({
+            metadataTypeXmlName: 'AuraDefinitionBundle',
+            lightningType: '{{lightningType|capitalize}}',
+            apiName : $("#apiName").val(),
+            description : $("#description").val()
+          })
+        },
+        message: {
+          label: 'Creating new Lighting {{lightningType|capitalize}}...'
+        }
+      };
+
+      mavensmate.request(opts)
+        .then(function(response) {
+          console.log(response);
+          showToast(response.result.message, 'success');
+        })
+        .catch(function(err) {
+          console.error('could not create lighting app', err);
+        })
+        .finally(function() {
+          hideLoading();
+        });
+    }
+  </script>
+{% endblock %}

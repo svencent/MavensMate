@@ -3,6 +3,7 @@ var path              = require('path');
 var keychain          = require('../services/keychain');
 var config            = require('../../config');
 var util              = require('../util');
+var logger            = require('winston');
 
 var Credentials = function(project) {
   this._projectId = project.id;
@@ -27,7 +28,7 @@ Credentials.prototype._observeCredentialsUpdates = function(sfdcClient) {
   sfdcClient.on('token-refresh', function() {
     logger.debug('project.sfdcClient emitted token-refresh, updating local credential store');
     try {
-      self.update();
+      self.update(sfdcClient);
     } catch(err) {
       logger.error('Could not update credentials', err);
       throw err;
@@ -41,7 +42,7 @@ Credentials.prototype._observeCredentialsUpdates = function(sfdcClient) {
  * 2. Otherwise, written to project config
  * @return {Nothing}
  */
-Credentials.prototype.update = function() {
+Credentials.prototype.update = function(sfdcClient) {
   if (keychain.isAvailable() && config.get('mm_use_keyring') && !this.hasCredentialsJson()) {
     if (sfdcClient.password) {
       keychain.storePassword(this._projectId, sfdcClient.password, 'password');

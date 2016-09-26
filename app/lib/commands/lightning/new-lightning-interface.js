@@ -48,7 +48,7 @@ Command.prototype.execute = function() {
           return Promise.all(createPromises);
         })
         .then(function(result) {
-          var failures = _.where(result, { 'success': false });
+          var failures = _.filter(result, { 'success': false });
           if (failures.length > 0) {
             lightningService.deleteBundle(newBundleId)
               .then(function() {

@@ -26,8 +26,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-
-      self.editorService.launchUI('lightning/app/new', { pid: self.getProject().id })
+      self.editorService.launchUI('lightning/application/new', { pid: self.getProject().id })
         .then(function() {
           resolve('Success');
         })
@@ -69,7 +68,7 @@ Command.prototype.execute = function() {
           return Promise.all(createPromises);
         })
         .then(function(result) {
-          var failures = _.where(result, { 'success': false });
+          var failures = _.filter(result, { 'success': false });
           if (failures.length > 0) {
             lightningService.deleteBundle(newBundleId)
               .then(function() {

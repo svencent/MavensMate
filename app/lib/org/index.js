@@ -16,7 +16,7 @@ var parseXml        = require('xml2js').parseString;
 var MetadataHelper  = require('../metadata').MetadataHelper;
 var Package         = require('../package');
 var MavensMateFile  = require('../file').MavensMateFile;
-var Document        = require('../components').Component;
+var Document        = require('../document').Document;
 var childTypes      = require('./helpers/child-types');
 
 /**

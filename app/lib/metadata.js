@@ -41,7 +41,7 @@ MetadataHelper.prototype.getTypeByPath = function(p) {
   } else if (path.basename(grandparentPath) === 'aura') {
     return this.getTypeByDirectoryName('aura');
   } else {
-    var folderBasedTypes = _.where(this.parentTypes, { 'inFolder': true });
+    var folderBasedTypes = _.filter(this.parentTypes, { 'inFolder': true });
 
     // directory handling
     if (!path.extname(p)) {

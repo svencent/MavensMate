@@ -12,7 +12,7 @@ var config    = require('../../config');
 var logger    = require('winston');
 
 function TemplateService() {
-  this.localPath = path.join(__dirname, 'create', 'templates');
+  this.localPath = path.join(__dirname, 'templates');
   this.templateSource = config.get('mm_template_source') || 'joeferraro/MavensMate-Templates/master';
   this.templateLocation = config.get('mm_template_location') || 'remote';
 }

@@ -76,6 +76,43 @@ ServerStore.prototype.find = function(key, value) {
   return f(value, this._state);
 };
 
+/**
+ * Given a key (e.g. "fileName") and an array of values ["src/classes/foo.cls"], check the appropriate items
+ * @param  {[type]} sourceArray [description]
+ * @param  {[type]} key         [description]
+ * @param  {[type]} values      [description]
+ * @return {[type]}             [description]
+ */
+ServerStore.prototype.getChecked = function(key, values) {
+  function s(srcArray) {
+    var i = 0, found;
+    for (; i < srcArray.length; i++) {
+      if (srcArray[i][key] && values.indexOf(srcArray[i][key]) >= 0) {
+        srcArray[i].state = {
+          checked: true,
+          selected: true,
+          opened: false
+        };
+        srcArray[i].select = true;
+        srcArray[i].checked = true;
+        logger.warn('checking', srcArray[i][key]);
+      }
+      if (_.isArray(srcArray[i].children)) {
+        s(srcArray[i].children);
+      }
+    }
+  }
+  var myState = _.cloneDeep(this._state);
+  s(myState);
+  return myState;
+};
+
+/**
+ * Given an array of metadataTypes [ApexClass, ApexPage, etc.], indexes them from the salesforce server and update self._state & serverStore.json
+ * @param  {SalesforceClient} sfdcClient
+ * @param  {Array} metadataTypes - array of metadata types
+ * @return {Promise}               - resolves to void
+ */
 ServerStore.prototype.refreshTypes = function(sfdcClient, metadataTypes) {
   var self = this;
   return new Promise(function(resolve, reject) {
@@ -103,6 +140,7 @@ ServerStore.prototype.refreshTypes = function(sfdcClient, metadataTypes) {
 
 /**
  * Creates server.json for the project
+ * TODO: combine with refreshTypes
  * @param  {Project} project
  * @param  {Object} settings
  * @return {LocalStore}

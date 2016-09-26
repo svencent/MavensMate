@@ -18,14 +18,8 @@ inherits(Command, BaseCommand);
 Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    self.getProject().serverStore.getIndexWithLocalSubscription()
-      .then(function(index) {
-        resolve(index);
-      })
-      .catch(function(error) {
-        reject(error);
-      })
-      .done();
+    var project = self.getProject();
+    resolve(project.serverStore.getChecked('fileName', project.localStore.getServerKeys()));
   });
 };
 

@@ -6,7 +6,7 @@ var _ = require('lodash');
 var logger = require('winston');
 var util = require('../util');
 
-function Deploy(project, components, targets) {
+function Deploy(project, documents, targets) {
   this._project = project;
   this._components = components;
   this._targets = targets;
@@ -47,23 +47,23 @@ Deploy.prototype.stage = function() {
       /*
         here we copy project components to the tmp path for deployment
        */
-      _.each(self._components, function(c) {
-        if (c.isMetaXmlFile()) {
+      _.each(self._documents, function(d) {
+        if (d.isMetaXmlFile()) {
           /*
             it's possible that a component is a meta-xml file (e.g., user has compiled a single meta-xml file)
             in those cases, we need to copy both the meta-xml and associated component to the deploy folder
            */
-          var associatedComponent = c.getAssociatedComponent();
-          var tmpAssociatedComponentPath = path.join(tmpPath, associatedComponent.getLocalStoreProperties().fileName);
-          fs.ensureDirSync(path.dirname(tmpAssociatedComponentPath));
-          fs.copySync(associatedComponent.getPath(), tmpAssociatedComponentPath); // copy associated component to tmp path
-          fs.copySync(c.getPath(), [tmpAssociatedComponentPath,'-meta.xml'].join('')); // copy meta-xml file as well
+          var associatedDocument = d.getAssociatedDocument();
+          var tmpAssociatedDocumentPath = path.join(tmpPath, associatedDocument.getLocalStoreProperties().fileName);
+          fs.ensureDirSync(path.dirname(tmpAssociatedDocumentPath));
+          fs.copySync(associatedDocument.getPath(), tmpAssociatedDocumentPath); // copy associated component to tmp path
+          fs.copySync(d.getPath(), [tmpAssociatedDocumentPath,'-meta.xml'].join('')); // copy meta-xml file as well
         } else {
-          var tmpComponentPath = path.join(tmpPath, c.getLocalStoreProperties().fileName);
+          var tmpComponentPath = path.join(tmpPath, d.getLocalStoreProperties().fileName);
           fs.ensureDirSync(path.dirname(tmpComponentPath));
-          fs.copySync(c.getPath(), tmpComponentPath);
-          if (c.getDescribe().metaFile) {
-            fs.copySync([c.getPath(),'-meta.xml'].join(''), [tmpComponentPath,'-meta.xml'].join(''));
+          fs.copySync(d.getPath(), tmpComponentPath);
+          if (d.getDescribe().metaFile) {
+            fs.copySync([d.getPath(),'-meta.xml'].join(''), [tmpComponentPath,'-meta.xml'].join(''));
           }
         }
       });

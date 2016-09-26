@@ -1,77 +1,81 @@
 'use strict';
 
+var Promise           = require('bluebird');
 var _                 = require('lodash');
 var logger            = require('winston');
-var Component         = require('../components').Component;
+var documentUtil      = require('../document/util');
+var Document          = require('../document').Document;
+var LightningDocument = require('../document').LightningDocument;
 var LightningService  = require('../services/lightning');
+var createUtil        = require('./util');
 
-function LightningCreator(project, components) {
+
+function LightningCreator(project, requestBody) {
   this.project = project;
-  this.components = components;
+  this.requestBody = requestBody;
+  this.lightningService = new LightningService(this.project);
 }
 
-LightningCreator.prototype.create = function() {
+LightningCreator.prototype.createBundle = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    try {
-      var createPromises = [];
-      _.each(self.components, function(c) {
-        createPromises.push(self.project.sfdcClient.createApexMetadata(c));
-      });
-      Promise.all(createPromises)
-        .then(function(results) {
-          return Promise.all([
-            self._updateStores(results),
-            self.project.packageXml.add(self.components)
-          ]);
-        })
-        .then(function() {
-          self.project.packageXml.save();
-          resolve();
-        })
-        .catch(function(err) {
-          // todo: delete local members
-          reject(err);
-        });
-    } catch(e) {
-      reject(e);
-    }
+    var newLightningDocument;
+    var newPath;
+    var newBundle;
+
+    Promise.all([
+      createUtil.mergeLightningTemplateAndWriteToDisk(self.project, self.requestBody),
+      self.lightningService.createBundle(self.requestBody.apiName, self.requestBody.description)
+    ])
+    .then(function(res) {
+      newPath = res[0];
+      newBundle = res[1];
+      var newLightningType = self.requestBody.lightningType;
+      newLightningDocument = documentUtil.getDocumentsFromFilePaths(self.project, [newPath]).lightning[0];
+      return self.lightningService.createBundleItem(
+                                        newBundle.id,
+                                        newLightningType,
+                                        LightningDocument.getSourceFormatForType(newLightningType),
+                                        newLightningDocument.getBodySync());
+
+    })
+    .then(function(newBundleItem) {
+      newLightningDocument.updateLocalStoryEntry({ id: newBundleItem.id });
+      self.project.packageXml.add([newLightningDocument]);
+      self.project.packageXml.save();
+      return self._updateStores(newLightningDocument);
+    })
+    .then(function() {
+      resolve();
+    })
+    .catch(function(err) {
+      reject(err);
+    });
   });
 };
 
-LightningCreator.prototype._updateStores = function(results) {
+LightningCreator.prototype.createBundleItem = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    try {
-      _.each(results, function(r, i) {
-        var doc = self.components[i];
-        doc.updateLocalStoryEntry({ id: r.id });
-      });
-      self.project.sfdcClient.getApexServerProperties(self.components)
-        .then(function(serverProperties) {
-          return Promise.all([
-            self.project.localStore.update(serverProperties),
-            self.project.serverStore.refreshTypes(self.project.sfdcClient, Component.getTypes(self.components)) // todo: this is basically 'AuraDefinitionBundle'
-          ]);
-        })
-        .then(function() {
-          resolve(_.flatten(results));
-        })
-        .catch(function(err) {
-          reject(err);
-        });
-    } catch(e) {
-      reject(e);
-    }
-  });
-};
+    var newLightningDocument;
 
-LightningCreator.createAll = function(project, components) {
-  return new Promise(function(resolve, reject) {
-    var lightningCreator = new LightningCreator(project, components);
-    lightningCreator.create()
-      .then(function(res) {
-        resolve(res);
+    createUtil.mergeLightningTemplateAndWriteToDisk(self.project, self.requestBody)
+      .then(function(newLightningPath) {
+        var newLightningType = self.requestBody.lightningType;
+        newLightningDocument = documentUtil.getDocumentsFromFilePaths(self.project, [newLightningPath]).lightning[0];
+        return self.lightningService.createBundleItem(
+                                          requestBody.bundleId,
+                                          newLightningType,
+                                          LightningDocument.getSourceFormatForType(newLightningType),
+                                          newLightningDocument.getBodySync());
+
+      })
+      .then(function(newBundleItem) {
+        newLightningDocument.updateLocalStoryEntry({ id: newBundleItem.id });
+        return self._updateStores(newLightningDocument);
+      })
+      .then(function() {
+        resolve();
       })
       .catch(function(err) {
         reject(err);
@@ -79,4 +83,27 @@ LightningCreator.createAll = function(project, components) {
   });
 };
 
-module.exports = ApexCreator;
+LightningCreator.prototype._updateStores = function(newLightningDocument) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    try {
+      self.project.sfdcClient.getLightningServerProperties([newLightningDocument])
+        .then(function(serverProperties) {
+          return Promise.all([
+            self.project.localStore.update(serverProperties),
+            self.project.serverStore.refreshTypes(self.project.sfdcClient, ['AuraDefinitionBundle'])
+          ]);
+        })
+        .then(function() {
+          resolve('Ok we are done');
+        })
+        .catch(function(err) {
+          reject(err);
+        });
+    } catch(e) {
+      reject(e);
+    }
+  });
+};
+
+module.exports = LightningCreator;

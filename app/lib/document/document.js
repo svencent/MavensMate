@@ -13,14 +13,14 @@ var logger          = require('winston');
 var TemplateService = require('../create/template');
 
 /**
- * MavensMate Component
+ * MavensMate Document
  *
  * @constructor
  * @param {Object} [opts] - Options
  * @param {String} [opts.path] - file path
  * @param {String} [opts.project] - project instance
  */
-var Component = function(project, filePath) {
+var Document = function(project, filePath) {
   this._project = project;
   this._sfdcClient = project.sfdcClient;
   this._path = path.normalize(filePath);
@@ -31,7 +31,7 @@ var Component = function(project, filePath) {
   this._describe = null;
 }
 
-Component.prototype.toString = function() {
+Document.prototype.toString = function() {
   return {
     uri: this.getPath(),
     basename: this.getBaseName(),
@@ -39,11 +39,11 @@ Component.prototype.toString = function() {
   }
 };
 
-Component.prototype.getName = function() {
+Document.prototype.getName = function() {
   return path.basename(this.getPath(), path.extname(this.getPath()));
 }
 
-Component.prototype.getDescribe = function() {
+Document.prototype.getDescribe = function() {
   var self = this;
   if (!this._describe) {
     this._describe = _.find(this._sfdcClient.describe.metadataObjects, function(o) {
@@ -57,57 +57,57 @@ Component.prototype.getDescribe = function() {
   return this._describe;
 };
 
-Component.prototype.getExtension = function() {
+Document.prototype.getExtension = function() {
   return this._extension;
 };
 
-Component.prototype.getMetaXmlPath = function() {
-  return [this.getPath(),'-meta.xml'].join();
+Document.prototype.getMetaXmlPath = function() {
+  return [this.getPath(),'-meta.xml'].join('');
 };
 
-Component.prototype.isMetaXmlFile = function() {
+Document.prototype.isMetaXmlFile = function() {
   return util.endsWith(this.getPath(), '-meta.xml');
 };
 
-Component.prototype.getAssociatedComponent = function() {
+Document.prototype.getAssociatedDocument = function() {
   if (this.isMetaXmlFile()) {
-    return new Component(this._project, this.getPath().replace('-meta.xml', ''));
+    return new Document(this._project, this.getPath().replace('-meta.xml', ''));
   }
 };
 
-Component.prototype.getBaseName = function() {
+Document.prototype.getBaseName = function() {
   return this._basename;
 };
 
 /**
  * Returns the full file system path of the component
  */
-Component.prototype.getPath = function() {
+Document.prototype.getPath = function() {
   return this._path;
 };
 
-Component.prototype._getLocalStoreKey = function() {
+Document.prototype._getLocalStoreKey = function() {
   return this.getPath().split(this._project.name+path.sep)[1];
 };
 
-Component.prototype._getServerStoreKey = function() {
+Document.prototype._getServerStoreKey = function() {
   return this.getPath().split(this._project.name+path.sep+'src'+path.sep)[1]; // todo: "src" could be any package name
 };
 
-Component.prototype.getRelativePath = function() {
+Document.prototype.getRelativePath = function() {
   return this._getLocalStoreKey();
 };
 
-Component.prototype.addUnknownLocalStoreEntry = function() {
+Document.prototype.addUnknownLocalStoreEntry = function() {
   var entry = {};
   entry[this._getLocalStoreKey()] = {
-    type: this.getDescribe().xmlName,
+    type: this.getType(),
     localState: 'unknown'
   };
   this._project.localStore.set(entry);
 };
 
-Component.prototype.updateLocalStoryEntry = function(obj) {
+Document.prototype.updateLocalStoryEntry = function(obj) {
   var existingEntryValue = this.getLocalStoreProperties();
   for (var key in obj) {
     existingEntryValue[key] = obj[key];
@@ -117,7 +117,7 @@ Component.prototype.updateLocalStoryEntry = function(obj) {
   this._project.localStore.set(entry);
 };
 
-Component.prototype.addServerStoreEntryToLocalStore = function(serverStoreEntry) {
+Document.prototype.addServerStoreEntryToLocalStore = function(serverStoreEntry) {
   var entry = {};
   entry[this._getLocalStoreKey()] = {
     id: serverStoreEntry.id,
@@ -139,7 +139,7 @@ Component.prototype.addServerStoreEntryToLocalStore = function(serverStoreEntry)
  * Returns local store entry
  * @return {Object}
  */
-Component.prototype.getLocalStoreProperties = function() {
+Document.prototype.getLocalStoreProperties = function() {
   // if (!this._localProperties) {
   //   this._localProperties = this._project.localStore.get(this._getLocalStoreKey());
   // }
@@ -151,7 +151,7 @@ Component.prototype.getLocalStoreProperties = function() {
  * Returns server store entry if it exists
  * @return {Object}
  */
-Component.prototype.getServerStoreProperties = function() {
+Document.prototype.getServerStoreProperties = function() {
   // if (!this._serverProperties) {
   //   this._serverProperties = this._project.serverStore.find('fileName', this._getServerStoreKey());
   // }
@@ -163,7 +163,7 @@ Component.prototype.getServerStoreProperties = function() {
  * Returns file body as a string
  * @return {String}
  */
-Component.prototype.getBodySync = function() {
+Document.prototype.getBodySync = function() {
   return fs.readFileSync(this.getPath(), 'utf8');
 };
 
@@ -171,7 +171,7 @@ Component.prototype.getBodySync = function() {
  * Returns file body as a string (async)
  * @return {Promise}
  */
-Component.prototype.getBody = function() {
+Document.prototype.getBody = function() {
   return new Promise(function(resolve, reject) {
     return fs.readFile(this.getPath(), 'utf8')
       .then(function(res) {
@@ -183,12 +183,14 @@ Component.prototype.getBody = function() {
   });
 };
 
-Component.prototype.getType = function() {
+Document.prototype.getType = function() {
   if (this.getLocalStoreProperties() && this.getLocalStoreProperties().type) {
     return this.getLocalStoreProperties().type;
+  } else if (this.isLightningBundleItem()) {
+    return 'AuraDefinitionBundle';
   } else {
     var self = this;
-    var metadataDescribe = _.find(this.project.sfdcClient.describe.metadataObjects, function(d) {
+    var metadataDescribe = _.find(self._project.sfdcClient.describe.metadataObjects, function(d) {
       return self.getExtension() === d.suffix;
     });
     if (metadataDescribe) return metadataDescribe.xmlName;
@@ -196,28 +198,36 @@ Component.prototype.getType = function() {
   return null;
 };
 
-Component.prototype.existsOnFileSystem = function() {
+Document.prototype.isLightningBundleItem = function() {
+  return path.basename(path.dirname(path.dirname(this.getPath()))) === 'aura';
+};
+
+Document.prototype.existsOnFileSystem = function() {
   return fs.existsSync(this.getPath());
 };
 
-Component.prototype.isDirectory = function() {
+Document.prototype.isDirectory = function() {
   return fs.statSync(this.getPath()).isDirectory();
 };
 
-Component.prototype.isFile = function() {
+Document.prototype.isFile = function() {
   return fs.statSync(this.getPath()).isFile();
 };
 
-Component.prototype.deleteFromFileSystem = function() {
+Document.prototype.deleteFromFileSystem = function() {
   fs.removeSync(this.getPath());
+  logger.warn('meta path is ', this.getMetaXmlPath());
+  if (fs.existsSync(this.getMetaXmlPath())) {
+    fs.removeSync(this.getMetaXmlPath());
+  }
 };
 
-Component.getTypes = function(components) {
+Document.getTypes = function(documents) {
   var types = [];
-  _.each(components, function(c) {
-    if (types.indexOf(c.getType()) === -1) types.push(c.getType());
+  _.each(documents, function(d) {
+    if (types.indexOf(d.getType()) === -1) types.push(d.getType());
   });
   return types;
 };
 
-module.exports = Component;
+module.exports = Document;

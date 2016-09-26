@@ -2,7 +2,7 @@
 
 var Promise             = require('bluebird');
 var _                   = require('lodash');
-var componentUtil       = require('../components').util;
+var documentUtil       = require('../document').util;
 var deleteUtil          = require('./util');
 var ApexDeleter         = require('./apex');
 var MetadataDeleter     = require('./metadata');
@@ -12,7 +12,7 @@ var logger              = require('winston');
 function DeleteDelegate(project, paths) {
   this.project = project;
   this.paths = paths;
-  this.components = componentUtil.getComponentsFromFilePaths(this.project, this.paths);
+  this.documents = documentUtil.getDocumentsFromFilePaths(this.project, this.paths);
 }
 
 DeleteDelegate.prototype.execute = function() {
@@ -20,12 +20,12 @@ DeleteDelegate.prototype.execute = function() {
   return new Promise(function(resolve, reject) {
     try {
       var deletePromises = [];
-      if (self.components.apex.length > 0)
-        deletePromises.push(ApexDeleter.deleteAll(self.project, self.components.apex));
-      if (self.components.metadata.length > 0)
-        deletePromises.push(MetadataDeleter.deleteAll(self.project, self.components.metadata));
-      if (self.components.lightning.length > 0)
-        deletePromises.push(LightningDeleter.deleteAll(self.project, self.components.lightning));
+      if (self.documents.apex.length > 0)
+        deletePromises.push(ApexDeleter.deleteAll(self.project, self.documents.apex));
+      if (self.documents.metadata.length > 0)
+        deletePromises.push(MetadataDeleter.deleteAll(self.project, self.documents.metadata));
+      if (self.documents.lightning.length > 0)
+        deletePromises.push(LightningDeleter.deleteAll(self.project, self.documents.lightning));
       Promise.all(deletePromises)
         .then(function(results) {
           logger.debug('Delete results', results);

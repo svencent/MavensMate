@@ -1,5 +1,10 @@
-<script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/dynatree.min.js" type="text/javascript"></script>
-<link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/css/dynatree.css"></link>
+<!-- <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/jquery.fancytree.min.js" type="text/javascript"></script>
+<link rel="stylesheet" href="{{ mavensmate.ui.getStaticResourcePath() }}/styles/skin-vista/ui.fancytree.min.css"></link>
+ -->
+
+<script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/jstree.js" type="text/javascript"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+
 
 {% if project %}
 <!-- TREE FILTER -->
@@ -170,8 +175,6 @@
                         if (!json[metadata_type]) {
                             json[metadata_type] = [];
                         }
-                        // console.log('---->>>>>');
-                        // console.log(rec.children);
                         $.each(rec.children, function(index, childNode) {
                             if (childNode.data.checked) {
                                 json[metadata_type].push(childNode.parent.parent.data.text+"."+childNode.data.text);
@@ -295,19 +298,31 @@
   mavensmate.MetadataTree.prototype.render = function() {
     var self = this;
     try {
-      $("#metadataTree").dynatree("destroy");
+      $("#metadataTree").jstree("destroy");
     } catch(e) {}
 
-    $('#metadataTree').dynatree({
-      initAjax: {
+    $('#metadataTree').jstree({
+      core: {
+        data: {
+          url: '/app/project/{{project.id}}/index?pid={{project.id}}&pkg='+encodeURI(self.packageLocation)
+        },
+        animation: false,
+        expand_selected_onload: false
+      },
+      checkbox: {
+        cascade: 'up',
+        three_state: true
+      },
+      plugins : [ 'checkbox'],
+      source: {
         type: 'GET',
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
         url: '/app/project/{{project.id}}/index?pid={{project.id}}&pkg='+encodeURI(self.packageLocation)
       },
-      checkbox: true,
+      // checkbox: true,
       selectMode: 3,
-      debugLevel: 0,
+      debugLevel: 1,
       persist: false,
       selectedIds: '',
       onSelect: function(check, node) {
@@ -334,7 +349,10 @@
         }
       }
     });
-    self.dynatree = $("#metadataTree").dynatree("getTree");
+    $("#metadataTree").on("loaded.jstree", function() {
+      $("#metadataTree").jstree("close_all");
+    });
+    // self.dynatree = $("#metadataTree").jstree("getTree");
   };
 
   /**

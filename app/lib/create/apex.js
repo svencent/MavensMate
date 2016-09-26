@@ -1,12 +1,13 @@
 'use strict';
 
-var _           = require('lodash');
-var logger      = require('winston');
-var Component   = require('../components').Component;
+var _             = require('lodash');
+var logger        = require('winston');
+var Document      = require('../document').Document;
+var documentUtil  = require('../document').util;
 
-function ApexCreator(project, components) {
+function ApexCreator(project, documents) {
   this.project = project;
-  this.components = components;
+  this.documents = documents;
 }
 
 ApexCreator.prototype.create = function() {
@@ -14,18 +15,16 @@ ApexCreator.prototype.create = function() {
   return new Promise(function(resolve, reject) {
     try {
       var createPromises = [];
-      _.each(self.components, function(c) {
-        createPromises.push(self.project.sfdcClient.createApexMetadata(c));
+      _.each(self.documents, function(d) {
+        createPromises.push(self.project.sfdcClient.createApexMetadata(d));
       });
       Promise.all(createPromises)
         .then(function(results) {
-          return Promise.all([
-            self._updateStores(results),
-            self.project.packageXml.add(self.components)
-          ]);
+          self.project.packageXml.add(self.documents);
+          self.project.packageXml.save();
+          return self._updateStores(results);
         })
         .then(function() {
-          self.project.packageXml.save();
           resolve();
         })
         .catch(function(err) {
@@ -43,14 +42,14 @@ ApexCreator.prototype._updateStores = function(results) {
   return new Promise(function(resolve, reject) {
     try {
       _.each(results, function(r, i) {
-        var doc = self.components[i];
+        var doc = self.documents[i];
         doc.updateLocalStoryEntry({ id: r.id });
       });
-      self.project.sfdcClient.getApexServerProperties(self.components)
+      self.project.sfdcClient.getApexServerProperties(self.documents)
         .then(function(serverProperties) {
           return Promise.all([
             self.project.localStore.update(serverProperties),
-            self.project.serverStore.refreshTypes(self.project.sfdcClient, Component.getTypes(self.components))
+            self.project.serverStore.refreshTypes(self.project.sfdcClient, Document.getTypes(self.documents))
           ]);
         })
         .then(function() {
@@ -65,9 +64,9 @@ ApexCreator.prototype._updateStores = function(results) {
   });
 };
 
-ApexCreator.createAll = function(project, components) {
+ApexCreator.createAll = function(project, documents) {
   return new Promise(function(resolve, reject) {
-    var apexCreator = new ApexCreator(project, components);
+    var apexCreator = new ApexCreator(project, documents);
     apexCreator.create()
       .then(function(res) {
         resolve(res);

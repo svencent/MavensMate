@@ -1,0 +1,47 @@
+{% extends "views/layouts/base.html" %}
+{% block yield %}
+
+<table class="slds-table slds-table--bordered slds-table--fixed-layout" role="grid">
+  <thead>
+    <tr class="slds-text-heading--label">
+      <th scope="col">
+        <div class="" title="Class Name">Bundle Name</div>
+      </th>
+      <th scope="col">
+        <div class="" title="Class Name">Action</div>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+      {% for b in bundles %}
+        <tr class="slds-hint-parent">
+          <th scope="row" data-label="{{b.MasterLabel}}">
+            <div class="" title="{{b.MasterLabel}}">
+              <a href="/app/lightning/bundles/{{b.Id}}?pid={{project.id}}">{{b.MasterLabel}}</a>
+            </div>
+          </th>
+          <td scope="row" data-label="{{b.Id}}">
+            <div class="" title="{{b.Id}}">
+              <a href="/app/lightning/bundles/{{b.Id}}?pid={{project.id}}">Manage</a>
+              &nbsp;|&nbsp;
+              <a href="/app/lightning/bundles/{{b.Id}}?pid={{project.id}}">Delete</a>
+            </div>
+          </td>
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
+
+
+{% block buttons %}
+  <input type="button" id="btnSubmit" class="slds-button slds-button--brand" value="{{title}}" onclick='create();'>
+  {% include 'views/partials/cancel_button.html' %}
+{% endblock %}
+
+{% block body_js %}
+  <script type="text/javascript">
+
+  </script>
+{% endblock %}

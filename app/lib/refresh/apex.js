@@ -5,16 +5,16 @@ var _         = require('lodash');
 var logger    = require('winston');
 var fs        = require('fs-extra-promise');
 
-function ApexRefresher(project, components) {
+function ApexRefresher(project, documents) {
   this.project = project;
-  this.components = components;
+  this.documents = documents;
 }
 
 ApexRefresher.prototype.refresh = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    logger.debug('Refreshing ApexDocuments', self.components);
-    self.project.sfdcClient.getApexServerProperties(self.components, true)
+    logger.debug('Refreshing ApexDocuments', self.documents);
+    self.project.sfdcClient.getApexServerProperties(self.documents, true)
       .then(function(serverProperties) {
         self.project.localStore.update(serverProperties);
         return self.replaceLocalCopies(serverProperties);
@@ -32,15 +32,15 @@ ApexRefresher.prototype.replaceLocalCopies = function(serverProperties) {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
-      _.each(self.components, function(c) {
+      _.each(self.documents, function(d) {
         var serverCopy = _.find(serverProperties, function(sp) {
-          return sp.Id === c.getLocalStoreProperties().id;
+          return sp.Id === d.getLocalStoreProperties().id;
         });
         logger.debug('replacing local copy with server copy', serverCopy);
-        if (c.getLocalStoreProperties().type === 'ApexClass' || c.getLocalStoreProperties().type === 'ApexTrigger') {
-          fs.writeFileSync(c.getPath(), serverCopy.Body);
+        if (d.getLocalStoreProperties().type === 'ApexClass' || d.getLocalStoreProperties().type === 'ApexTrigger') {
+          fs.writeFileSync(d.getPath(), serverCopy.Body);
         } else {
-          fs.writeFileSync(c.getPath(), serverCopy.Markup);
+          fs.writeFileSync(d.getPath(), serverCopy.Markup);
         }
       });
       resolve();
@@ -50,9 +50,9 @@ ApexRefresher.prototype.replaceLocalCopies = function(serverProperties) {
   });
 };
 
-ApexRefresher.refreshAll = function(project, components) {
+ApexRefresher.refreshAll = function(project, documents) {
   return new Promise(function(resolve, reject) {
-    var apexRefresher = new ApexRefresher(project, components);
+    var apexRefresher = new ApexRefresher(project, documents);
     apexRefresher.refresh()
       .then(function(res) {
         resolve(res);

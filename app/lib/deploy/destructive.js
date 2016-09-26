@@ -6,7 +6,7 @@ var _ = require('lodash');
 var logger = require('winston');
 var util = require('../util');
 
-function Destructive(project, components) {
+function Destructive(project, documents) {
   this._project = project;
   this._components = components;
 }

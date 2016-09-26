@@ -30,7 +30,7 @@ LightningCompiler.prototype.compile = function() {
       .then(function(res) {
         logger.debug('Compile result for Lightning', res);
         compileResult = res;
-        return self.project.sfdcClient.getLightingServerProperties(self.documents);
+        return self.project.sfdcClient.getLightningServerProperties(self.documents);
       })
       .then(function(serverProperties) {
         self.project.localStore.update(serverProperties);

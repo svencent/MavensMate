@@ -325,24 +325,24 @@ SalesforceClient.prototype.setPollingTimeout = function(timeout) {
   this.conn.bulk.pollTimeout = timeout || 20000;
 };
 
-SalesforceClient.prototype.createApexMetadata = function(component) {
-  logger.info('createApexMetadata', component);
+SalesforceClient.prototype.createApexMetadata = function(document) {
+  logger.info('createApexMetadata', document);
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
-      var componentType = component.getType();
-      var componentBody = component.getBodySync();
+      var documentType = document.getType();
+      var documentBody = document.getBodySync();
       var payload = {};
-      payload[componentType === 'ApexPage' || componentType === 'ApexComponent' ? 'markup' : 'body'] = componentBody;
-      if (componentType === 'ApexTrigger') {
+      payload[documentType === 'ApexPage' || documentType === 'ApexComponent' ? 'markup' : 'body'] = documentBody;
+      if (documentType === 'ApexTrigger') {
         var re = /(?:trigger)(?:\s*)(?:[A-Za-z0-9]*)(?:\s*)(?:on)(?:\s*)([A-Za-z]*)/
-        var matchingTokens = re.exec(componentBody);
+        var matchingTokens = re.exec(documentBody);
         payload.TableEnumOrId = matchingTokens[1];
-      } else if (componentType !== 'ApexClass') {
-        payload.name = component.getName();
-        payload.MasterLabel = component.getName();
+      } else if (documentType !== 'ApexClass') {
+        payload.name = document.getName();
+        payload.MasterLabel = document.getName();
       }
-      self.conn.tooling.sobject(componentType).create(payload, function(err, res) {
+      self.conn.tooling.sobject(documentType).create(payload, function(err, res) {
         if (err) {
           reject(err);
         } else {
@@ -360,10 +360,10 @@ SalesforceClient.prototype.createApexMetadata = function(component) {
  * @param  {Array of Metadata} metadata - metadata to be compiled (must already exist in salesforce)
  * @return {Promise}
  */
-SalesforceClient.prototype.compileWithToolingApi = function(components) {
+SalesforceClient.prototype.compileWithToolingApi = function(documents) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    logger.debug('Comping components via Tooling API', components);
+    logger.debug('Comping documents via Tooling API', documents);
     // new container
     // add member for each type
     var containerId;
@@ -373,13 +373,13 @@ SalesforceClient.prototype.compileWithToolingApi = function(components) {
         containerId = result.id;
         logger.debug('new container id is: '+containerId);
         var memberPromises = [];
-        _.each(components, function(c) {
-          memberPromises.push(self._createMember(c, containerId));
+        _.each(documents, function(d) {
+          memberPromises.push(self._createMember(d, containerId));
         });
         return Promise.all(memberPromises);
       })
       .then(function(memberResults) {
-        var isMemberSuccess = _.where(memberResults, { 'success': false }).length === 0;
+        var isMemberSuccess = _.filter(memberResults, { 'success': false }).length === 0;
 
         if (!isMemberSuccess) {
           return reject('Could not create tooling members: '+JSON.stringify(memberResults));
@@ -435,6 +435,19 @@ SalesforceClient.prototype._deleteContainer = function(containerId) {
   var self = this;
   return new Promise(function(resolve, reject) {
     self.conn.tooling.sobject('MetadataContainer').delete(containerId, function(err, res) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
+
+SalesforceClient.prototype.delete = function(type, id) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    self.conn.tooling.sobject(type).delete(id, function(err, res) {
       if (err) {
         reject(err);
       } else {
@@ -555,15 +568,15 @@ SalesforceClient.prototype._createContainer = function() {
  * @param  {String} containerId - Tooling container ID
  * @return {Promise}
  */
-SalesforceClient.prototype._createMember = function(component, containerId) {
+SalesforceClient.prototype._createMember = function(document, containerId) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var memberName = component.getLocalStoreProperties().type+'Member';
-    logger.silly('Creating tooling member for component', component, memberName, containerId);
+    var memberName = document.getLocalStoreProperties().type+'Member';
+    logger.silly('Creating tooling member for document', document, memberName, containerId);
     self.conn.tooling.sobject(memberName).create({
-      Body: component.getBodySync(),
+      Body: document.getBodySync(),
       MetadataContainerId: containerId,
-      ContentEntityId: component.getLocalStoreProperties().id
+      ContentEntityId: document.getLocalStoreProperties().id
     }, function(err, res) {
       if (err) {
         reject(err);
@@ -1025,6 +1038,19 @@ SalesforceClient.prototype.startLogging = function(debugSettings, expiration) {
   });
 };
 
+SalesforceClient.prototype.executeToolingSoql = function(soql) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    self.conn.tooling.query(soql, function(err, res) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
+
 SalesforceClient.prototype.executeSoql = function(soql) {
   var self = this;
   return new Promise(function(resolve, reject) {
@@ -1073,12 +1099,12 @@ SalesforceClient.prototype.stopLogging = function(userIds) {
   });
 };
 
-SalesforceClient.prototype.getLightingServerProperties = function(components, retrieveSource) {
+SalesforceClient.prototype.getLightningServerProperties = function(documents, retrieveSource) {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (retrieveSource === undefined) retrieveSource = false;
     logger.debug('getting lightning server properties ...');
-    logger.silly(components);
+    logger.silly(documents);
 
     var fields = ['Id', 'CreatedDate', 'CreatedById', 'CreatedBy.Name', 'LastModifiedById', 'LastModifiedDate', 'LastModifiedBy.Name'];
     if (retrieveSource) fields.push('Source');
@@ -1087,8 +1113,8 @@ SalesforceClient.prototype.getLightingServerProperties = function(components, re
     var baseSoqlFilter = ' WHERE ID IN (';
 
     var serverIds = [];
-    _.each(components, function(c) {
-      serverIds.push(c.getLocalStoreProperties().id);
+    _.each(documents, function(d) {
+      serverIds.push(d.getLocalStoreProperties().id);
     });
 
     self.conn.query(baseSoql + baseSoqlFilter + util.joinForQuery(serverIds)+')')
@@ -1102,7 +1128,7 @@ SalesforceClient.prototype.getLightingServerProperties = function(components, re
   });
 };
 
-SalesforceClient.prototype.getApexServerProperties = function(components, retrieveBody) {
+SalesforceClient.prototype.getApexServerProperties = function(documents, retrieveBody) {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (retrieveBody === undefined) retrieveBody = false;
@@ -1115,17 +1141,17 @@ SalesforceClient.prototype.getApexServerProperties = function(components, retrie
 
     var serverIds = [];
 
-    _.each(components, function(c) {
-      var type = c.getLocalStoreProperties().type;
-      serverIds.push( c.getLocalStoreProperties().id );
+    _.each(documents, function(d) {
+      var type = d.getLocalStoreProperties().type;
+      serverIds.push( d.getLocalStoreProperties().id );
       if (type === 'ApexPage') {
-        vfPages.push(c);
+        vfPages.push(d);
       } else if (type === 'ApexTrigger') {
-        triggers.push(c);
+        triggers.push(d);
       } else if (type === 'ApexClass') {
-        classes.push(c);
+        classes.push(d);
       } else if (type === 'ApexComponent') {
-        vfComponents.push(c);
+        vfComponents.push(d);
       }
     });
 
