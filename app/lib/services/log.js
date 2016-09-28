@@ -58,6 +58,10 @@ LogService.prototype.getLogs = function() {
         _.each(files, function(f) {
           logPaths.push(path.join(projectLogsPath, f));
         });
+        logPaths.sort(function(a, b){
+            return moment(b, 'YYYY-MM-DD HH:mm:ss').toDate().getTime() 
+                    - moment(a, 'YYYY-MM-DD HH:mm:ss').toDate().getTime();
+        });
         resolve(logPaths);
       });
     } catch(e) {
