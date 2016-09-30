@@ -59,7 +59,7 @@ ServerStore.prototype.getIndexWithLocalSubscription = function(sfdcClient, packa
  * @param  {String} value - object key value to find "classes/ChangePasswordController.cls"
  * @return {Object}
  */
-ServerStore.prototype.find = function(key, value) {
+ServerStore.prototype.find = function(key, value, srcArray) {
   function f(value, items) {
     var i = 0, found;
     for (; i < items.length; i++) {
@@ -73,37 +73,47 @@ ServerStore.prototype.find = function(key, value) {
       }
     }
   }
-  return f(value, this._state);
+  return f(value, srcArray || this._state);
 };
 
 /**
- * Given a key (e.g. "fileName") and an array of values ["src/classes/foo.cls"], check the appropriate items
- * @param  {[type]} sourceArray [description]
- * @param  {[type]} key         [description]
- * @param  {[type]} values      [description]
- * @return {[type]}             [description]
+ * Selects metadata from serverStore.json based on packagexml
+ * @param  {Object} packageXml - packageXml.contents
+ * @return {Array} - array of serverStore.json selected based on package.xml
  */
-ServerStore.prototype.getChecked = function(key, values) {
-  function s(srcArray) {
-    var i = 0, found;
-    for (; i < srcArray.length; i++) {
-      if (srcArray[i][key] && values.indexOf(srcArray[i][key]) >= 0) {
-        srcArray[i].state = {
-          checked: true,
-          selected: true,
-          opened: false
-        };
-        srcArray[i].select = true;
-        srcArray[i].checked = true;
-        logger.warn('checking', srcArray[i][key]);
-      }
-      if (_.isArray(srcArray[i].children)) {
-        s(srcArray[i].children);
+ServerStore.prototype.getSelected = function(packageXml) {
+  var self = this;
+  var myState = _.cloneDeep(this._state);
+
+  // selects all nodes below the given entry, because dynatree will not do this automatically
+  function selectAll(obj) {
+    if (_.isArray(obj)) {
+      _.each(obj, function(o) {
+        o.selected = true;
+        if (_.isArray(o.children)) {
+          selectAll(o.children);
+        }
+      });
+    } else if (_.isObject(obj)) {
+      obj.selected = true;
+      if (_.isArray(obj.children)) {
+        selectAll(obj.children);
       }
     }
   }
-  var myState = _.cloneDeep(this._state);
-  s(myState);
+
+  _.each(packageXml, function(members, typeXmlName) {
+    if (members === '*') {
+      var myEntry = self.find('packageId', typeXmlName, myState);
+      selectAll(myEntry);
+    } else {
+      _.each(members, function(m) {
+        var packageId = [typeXmlName, m.replace(/\//, '.')].join('.');
+        var myEntry = self.find('packageId', packageId, myState);
+        selectAll(myEntry);
+      });
+    }
+  });
   return myState;
 };
 

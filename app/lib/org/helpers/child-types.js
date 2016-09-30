@@ -30,6 +30,11 @@ module.exports = [
       parentXmlName: 'CustomObject'
   },
   {
+      xmlName: 'SearchLayouts',
+      tagName: 'searchLayouts',
+      parentXmlName: 'CustomObject'
+  },
+  {
       xmlName: 'NamedFilter',
       tagName: 'namedFilters',
       parentXmlName: 'CustomObject'

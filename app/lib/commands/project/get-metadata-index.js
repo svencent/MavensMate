@@ -19,7 +19,13 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     var project = self.getProject();
-    resolve(project.serverStore.getChecked('fileName', project.localStore.getServerKeys()));
+    project.packageXml.refreshContentsFromDisk()
+      .then(function() {
+        resolve(project.serverStore.getSelected(project.packageXml.contents));
+      })
+      .catch(function(err) {
+        reject(err);
+      });
   });
 };
 

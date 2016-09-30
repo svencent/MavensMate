@@ -32,17 +32,18 @@ module.exports.copy = function(fromPath, toPath, replacePackageXml) {
         }
       });
       fileFinder.on('end', function () {
-        if (fs.existsSync(fromPath)) {
-          fs.removeAsync(fromPath)
-            .then(function() {
-              resolve();
-            })
-            .catch(function(err) {
-              reject(err);
-            });
-        } else {
-          resolve();
-        }
+        // if (fs.existsSync(fromPath)) {
+        //   fs.removeAsync(fromPath)
+        //     .then(function() {
+        //       resolve();
+        //     })
+        //     .catch(function(err) {
+        //       reject(err);
+        //     });
+        // } else {
+        //   resolve();
+        // }
+        resolve();
       });
       fileFinder.on('error', function (err) {
         logger.debug('Could not process retrieved metadata: '+err.message);

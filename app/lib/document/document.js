@@ -152,10 +152,6 @@ Document.prototype.getLocalStoreProperties = function() {
  * @return {Object}
  */
 Document.prototype.getServerStoreProperties = function() {
-  // if (!this._serverProperties) {
-  //   this._serverProperties = this._project.serverStore.find('fileName', this._getServerStoreKey());
-  // }
-  // return this._serverProperties;
   return this._project.serverStore.find('fileName', this._getServerStoreKey());
 };
 

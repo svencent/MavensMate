@@ -10,7 +10,7 @@ var util                  = require('../../util');
 var inherits              = require('inherits');
 var BaseCommand           = require('../../command');
 var SalesforceClient      = require('../../sfdc-client');
-var IndexService          = require('../../services/index');
+var Indexer               = require('../../org/index');
 var _                     = require('lodash');
 var logger                = require('winston');
 
@@ -31,16 +31,15 @@ Command.prototype.execute = function() {
     });
     sfdcClient.initialize()
       .then(function() {
-        var indexService = new IndexService({ sfdcClient: sfdcClient });
-        return indexService.indexServerProperties(self.payload.metadataTypes);
+        var indexer = new Indexer(sfdcClient, self.payload.metadataTypes);
+        return indexer.index();
       })
       .then(function(index) {
         resolve(index);
       })
       .catch(function(error) {
         reject(error);
-      })
-      .done();
+      });
   });
 };
 

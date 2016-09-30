@@ -4,7 +4,7 @@ var inherits  = require('inherits');
 var Document = require('./document');
 
 var MetadataDocument = function(project, filePath) {
-  Document.call(this, arguments);
+  Document.call(this, project, filePath);
 }
 
 inherits(MetadataDocument, Document);

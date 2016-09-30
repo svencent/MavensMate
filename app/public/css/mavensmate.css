@@ -16,8 +16,16 @@ html, body {
 	padding-top: 2px;
 }
 
-ul.dynatree-container {
+ul.ui-fancytree.fancytree-container.fancytree-plain {
 	border: none !important;
+}
+
+ul.ui-fancytree.fancytree-container.fancytree-plain:focus {
+  outline: none;
+}
+
+.fancytree-plain span.fancytree-active span.fancytree-title, .fancytree-plain span.fancytree-selected span.fancytree-title {
+  outline: none;
 }
 
 #left-menu .slds-dropdown--actions a {
@@ -94,10 +102,6 @@ ul.dynatree-container {
   background-color: #f4f6f9;
 }
 
-.dynatree-hidden {
-  display: none;
-}
-
 div#div-metadata-tree-filter,
 div#div-test-classes-filter,
 div#div-project-list-filter {
@@ -156,7 +160,9 @@ table.code > tbody > tr:hover > td.uncovered {
 }
 
 table#table-apex-test-classes > tbody > tr,
-table#table-project-list > tbody > tr {
+table#table-project-list > tbody > tr,
+table#table-metadata-types > tbody > tr
+{
   cursor: pointer;
 }
 

@@ -3,13 +3,12 @@ module.exports.ensureParentsAreCheckedIfNecessary = function(orgMetadata) {
     if (metadataType.children && _.isArray(metadataType.children)) {
       var numberOfChildrenSelected = 0;
       _.each(metadataType.children, function(c) {
-        if (c.select) {
+        if (c.selected) {
           numberOfChildrenSelected++;
         }
       });
       if (metadataType.children.length === numberOfChildrenSelected && metadataType.children > 0) {
-        metadataType.checked = true;
-        metadataType.select = true;
+        metadataType.selected = true;
       }
     }
   });
@@ -21,7 +20,7 @@ module.exports.setVisibility = function(jsonData, query) {
 };
 
 module.exports.setChecked = function(sourceArray, ids, dpth, key) {
-  // Recursively find checked item
+  // Recursively find selected item
   var self = this;
 
   if (!key) key = '';
@@ -32,8 +31,7 @@ module.exports.setChecked = function(sourceArray, ids, dpth, key) {
     _.each(sourceArray, function(litem) {
       if (_.isObject(litem)) {
         if (_.has(litem, 'id') && ids.indexOf(litem.id) >= 0) {
-          litem.checked = true;
-          litem.select = true;
+          litem.selected = true;
         }
       }
       self.setChecked(litem, ids, dpth + 2);
@@ -145,7 +143,7 @@ module.exports._crawl = function(jsonData, depth, query, parentVisiblity) {
 };
 
 module.exports._setThirdStateChecked = function(src, ids, dpth, key) {
-  // Recursively find checked item
+  // Recursively find selected item
   var self = this;
 
   if (!key) key = '';
@@ -165,12 +163,12 @@ module.exports._setThirdStateChecked = function(src, ids, dpth, key) {
       var numberOfPossibleChecked = children.length;
       var numberOfChecked = 0;
       _.each(children, function(c) {
-        if (_.has(c, 'checked') && c.checked) {
+        if (_.has(c, 'selected') && c.selected) {
           numberOfChecked += 1;
         }
       });
       if (numberOfPossibleChecked === numberOfChecked) {
-        src.checked = true;
+        src.selected = true;
       } else if (numberOfChecked > 0) {
         src.cls = 'x-tree-checkbox-checked-disabled';
       }

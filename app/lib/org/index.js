@@ -138,40 +138,44 @@ Indexer.prototype._indexType = function(typeListResult) {
       parentHasChildTypes = _.has(self.typeMap[key], 'childXmlNames');
       parentIsFolderType = self.typeMap[key].inFolder;
 
+      var nodeType;
+      if (parentHasChildTypes)
+        nodeType = 'parent';
+      else if (parentIsFolderType)
+        nodeType = 'folder';
+      else
+        nodeType = 'item';
+
       // children (2)
       _.each(children, function(childNode) {
         childNode.id = childNode.id;
-        childNode.clientId = [key, childNode.fullName].join('.');
-        childNode.title = childNode.fullName;
+        childNode.packageId = [key, childNode.fullName].join('.');
+        childNode.parentType = key;
+        childNode.title = childNode.fullName; //fancytree property
         childNode.text = childNode.fullName;
+        childNode.fullName = childNode.fullName;
         childNode.level = 2;
         childNode.fullName = childNode.fullName || new MavensMateFile({ path : childNode.fileName }).name; // todo: MavensMateFile??
-        childNode.leaf = (parentHasChildTypes || parentIsFolderType) ? false : true;
-        childNode.checked = false;
-        childNode.cls = (parentHasChildTypes || parentIsFolderType) ? 'folder' : '';
-        childNode.isFolder = parentHasChildTypes || parentIsFolderType;
+        childNode.nodeType = nodeType;
+        childNode.folder = parentHasChildTypes || parentIsFolderType;
         childNode.children = [];
-        childNode.select = false;
         if (parentHasChildTypes) {
           childNames.push(childNode.fullName);
         }
       });
-      children = _.sortBy(children, 'title'); // for dynatree display purposes
+      children = _.sortBy(children, 'title'); // for fancytree display purposes
 
       // top level (1)
-      parentNode.id = key;
-      parentNode.clientId = key;
+      parentNode.packageId = key;
       parentNode.title = key;
       parentNode.xmlName = key;
-      parentNode.text = key;
-      parentNode.key = key; // dynatree property
-      parentNode.level = 1; // dynatree property
+      parentNode.fullName = key;
+      parentNode.key = key; // fancytree property
+      parentNode.level = 1; // fancytree property
       parentNode.type = self.typeMap[key];
-      parentNode.isFolder = true; // dynatree property
+      parentNode.nodeType = 'type';
+      parentNode.folder = true;
       parentNode.inFolder = parentIsFolderType; // e.g. EmailTemplate, Dashboard, Document
-      parentNode.cls = 'folder'; // dynatree property
-      parentNode.select = false; // dynatree property
-      parentNode.expanded = false; // dynatree property
       parentNode.hasChildTypes = parentHasChildTypes; // e.g. CustomObject
       parentNode.children = children;
     });
@@ -231,7 +235,7 @@ Indexer.prototype._indexChildren = function(parentNode, xmlName, childNames) {
             var fileBasenameNoExtension = fileBasename.split('.')[0];
             var fileBody = util.getFileBodySync(file);
 
-            var indexedChildType = _.find(parentNode.children, { 'clientId': [xmlName,fileBasenameNoExtension].join('.') });
+            var indexedChildType = _.find(parentNode.children, { 'packageId': [xmlName,fileBasenameNoExtension].join('.') });
 
             logger.debug('indexedChildType -->', indexedChildType);
 
@@ -260,28 +264,31 @@ Indexer.prototype._indexChildren = function(parentNode, xmlName, childNames) {
                     }
                     if (key) {
                       leaves.push({
-                        leaf: true,
-                        checked: false,
+                        packageId: [matchingChildType ? matchingChildType.xmlName : '', fileBasenameNoExtension, key].join('.'),
                         level: 4,
+                        nodeType: 'grandchild',
                         text: key,
                         title: key,
-                        isFolder: false,
-                        id: [xmlName, fileBasenameNoExtension, tagName, key].join('.'),
-                        select: false
+                        parentType: xmlName,
+                        objectName: fileBasenameNoExtension,
+                        fullName: [fileBasenameNoExtension, key].join('.'),
+                        folder: false,
+                        id: [xmlName, fileBasenameNoExtension, tagName, key].join('.')
                       });
                     }
                   });
 
                   if ( !_.find(indexedChildType, { 'text' : tagName }) ) {
                     indexedChildType.children.push({
-                      checked: false,
                       level: 3,
+                      xmlName: matchingChildType ? matchingChildType.xmlName : '',
+                      parentType: xmlName,
                       id: [xmlName, fileBasenameNoExtension, tagName].join('.'),
                       text: tagName,
+                      nodeType: 'child',
                       title: tagName,
-                      isFolder: true,
+                      folder: true,
                       children: leaves,
-                      select: false,
                       cls: 'folder'
                     });
                   }
@@ -332,16 +339,19 @@ Indexer.prototype._indexFolders = function(parentNode, xmlName) {
           var folderContents = r[folderName];
 
           _.each(folderContents, function(item) {
+            var itemPart0 = item.fullName.split('/')[0];
+            var itemPart1 = item.fullName.split('/')[1];
             folderNode.children.push({
               id: item.id,
-              clientId: [xmlName, item.fullName.split('/')[0], item.fullName.split('/')[1]].join('.'),
-              text: item.fullName.split('/')[1],
-              title: item.fullName.split('/')[1],
+              packageId: [xmlName, itemPart0, itemPart1].join('.'),
+              text: itemPart1,
+              title: itemPart1,
+              nodeType: 'folderItem',
               leaf: true,
-              checked: false,
+              parentType: xmlName,
+              fullName: item.fullName,
               level: 3, // dynatree property
-              isFolder: false, // dynatree property
-              select: false // dynatree property
+              folder: false // dynatree property
             });
           });
         });

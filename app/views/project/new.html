@@ -5,7 +5,7 @@
   <ul class="slds-tabs--scoped__nav" role="tablist">
       <li class="slds-tabs--scoped__item slds-text-heading--label" title="Project Details" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" data-aljs-show="tab-default-1">Project Details</a></li>
       {% if !origin %}
-      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Metadata" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" data-aljs-show="tab-default-2">Metadata</a></li>
+      <li class="slds-tabs--scoped__item slds-text-heading--label" title="Metadata" role="presentation"><a class="slds-tabs--scoped__link" href="#" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" data-aljs-show="tab-default-2">Project Metadata</a></li>
       {% endif %}
   </ul>
   <div id="tab-default-1" class="slds-tabs--scoped__content slds-hide" role="tabpanel">
@@ -68,60 +68,11 @@
 
 		$(function() {
 			$('[data-aljs="tabs"]').tabs();
-
       metadataTree = new mavensmate.MetadataTree({
         metadata: {{ session.metadataTypes|json|safe }}
       });
       metadataTree.renderBuffered();
-
-      var unselectedItems = [
-        {% for m in session.metadataTypes %}
-          {% if mavensmate.ui.getDefaultSubscription().indexOf(m.xmlName) === -1 %}
-            {
-              id: '{{ m.xmlName }}',
-              label: '{{ m.xmlName }}'
-            },
-          {% endif %}
-        {% endfor %}
-      ];
-
-      var selectedItems = [
-        {% for m in session.metadataTypes %}
-          {% if mavensmate.ui.getDefaultSubscription().indexOf(m.xmlName) >= 0 %}
-          {
-            id: '{{ m.xmlName }}',
-            label: '{{ m.xmlName }}'
-          },
-          {% endif %}
-        {% endfor %}
-      ];
-
-      $('#project-subscription').multiSelect({
-        unselectedItems: unselectedItems,
-        selectedItems: selectedItems
-      });
-
-      $('#project-subscription').find('[data-aljs-multi-select="unselect"]').on('click', function() {
-        sortSubscription();
-      });
-
-      $('#project-subscription').find('[data-aljs-multi-select="select"]').on('click', function() {
-        sortSubscription();
-      });
-
 		});
-
-    function sortSubscription() {
-      // sort the dom nodes
-      var $orgMetadataLi = $('#ul-org-metadata li');
-      var $projectMetadataLi = $('#ul-project-metadata li');
-
-      $orgMetadataLi.sort(metadataTypeSort);
-      $orgMetadataLi.detach().appendTo($('#ul-org-metadata'));
-
-      $projectMetadataLi.sort(metadataTypeSort);
-      $projectMetadataLi.detach().appendTo($('#ul-project-metadata'));
-    }
 
 		function newProject() {
 			var opts = {

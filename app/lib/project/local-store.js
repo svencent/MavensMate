@@ -136,6 +136,7 @@ LocalStore.prototype.clean = function(serverProperties) {
  */
 LocalStore.create = function(projectPath, serverProperties) {
   return new Promise(function(resolve, reject) {
+    serverProperties = util.ensureArrayType(serverProperties);
     var projectStorePath = path.join(projectPath, '.mavensmate', 'local.json');
     var store = {};
     var metadataHelper = new MetadataHelper();

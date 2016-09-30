@@ -5,12 +5,12 @@
 
 'use strict';
 
-var path    = require('path');
-var fs      = require('fs-extra');
-var util    = require('./lib/util');
-var _       = require('lodash');
-var config  = require('./config');
-var logger  = require('winston');
+var path        = require('path');
+var fs          = require('fs-extra');
+var util        = require('./lib/util');
+var _           = require('lodash');
+var config      = require('./config');
+var logger      = require('winston');
 var querystring = require('querystring');
 
 var ViewHelper = function(opts) {
@@ -48,18 +48,6 @@ ViewHelper.prototype.getPhotoUrl = function(project) {
 
 ViewHelper.prototype.getPathBaseName = function(p) {
   return path.basename(p);
-};
-
-ViewHelper.prototype.getRobotPath = function() {
-  return this.getBaseUrl() + '/app/static/images/robots/'+(Math.floor(Math.random() * 5) + 1).toString()+'.png';
-};
-
-ViewHelper.prototype.getRobotNoise = function() {
-  var noises = [
-    'blerg', 'bloop', 'beep boop boop', 'beep boop beep', 'morp', 'jonk', 'ping', 'zonk', 'xonx', 'morple', 'fwat', 'turple'
-  ];
-  var index = Math.floor(Math.random() * noises.length) + 0;
-  return noises[index];
 };
 
 ViewHelper.prototype.listProjects = function() {
@@ -104,6 +92,10 @@ ViewHelper.prototype.getStaticResourcePath = function() {
 
 ViewHelper.prototype.getBaseUrl = function() {
   return 'http://localhost:'+this.port;
+};
+
+ViewHelper.prototype.getChildTypes = function() {
+  return require('./lib/org/helpers/child-types');
 };
 
 ViewHelper.prototype.getDefaultSubscription = function() {

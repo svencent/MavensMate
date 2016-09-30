@@ -18,14 +18,14 @@ inherits(Command, BaseCommand);
 Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    self.getProject().getOrgMetadataIndexWithSelections(self.payload.keyword, self.payload.ids)
-      .then(function(metadataIndex) {
-        resolve(metadataIndex);
+    var project = self.getProject();
+    project.packageXml.refreshContentsFromDisk()
+      .then(function() {
+        resolve(project.serverStore.filter(self.payload.keyword, self.payload.ids));
       })
-      .catch(function(error) {
-        reject(error);
-      })
-      .done();
+      .catch(function(err) {
+        reject(err);
+      });
   });
 };
 
