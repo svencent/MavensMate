@@ -98,7 +98,7 @@ Package.prototype.save = function() {
  * @return {String}
  */
 Package.prototype._serialize = function() {
-  var serialized = swig.renderFile(path.join(__dirname, '..', 'templates', 'package.xml'), {
+  var serialized = swig.renderFile(path.join(__dirname, '..', 'create', 'templates', 'Other', 'package.xml'), {
     obj: this.contents,
     apiVersion: this.apiVersion
   });
