@@ -147,7 +147,6 @@
           }
         }
       });
-
     } catch(e) {
       console.error('Error getting tree package', e);
       return [];
@@ -179,12 +178,14 @@
       $('#metadataTree').fancytree('destroy');
     } catch(e) {}
 
+    var defaultSubcription = {{ mavensmate.ui.getDefaultSubscription()|json|safe }};
+
     $.each( self.metadata, function( key, value ) {
       value.text = value.xmlName;
       value.title = value.xmlName;
       value.key = value.xmlName;
       value.folder = true;
-      value.selected = false;
+      value.selected = defaultSubcription.indexOf(value.xmlName) >= 0 ? true : false;
       value.lazy = true;
       value.level = 1;
       value.packageId = value.xmlName;
