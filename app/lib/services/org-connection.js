@@ -4,13 +4,13 @@
  */
 
 'use strict';
-var Promise                 = require('bluebird');
+var Promise           = require('bluebird');
 var _                 = require('lodash');
 var fs                = require('fs-extra');
 var path              = require('path');
 var uuid              = require('node-uuid');
 var SalesforceClient  = require('../sfdc-client');
-var KeychainService   = require('../services/keychain');
+var keychain          = require('../services/keychain');
 var logger            = require('winston');
 
 /**
@@ -19,7 +19,7 @@ var logger            = require('winston');
  */
 function OrgConnectionService(project) {
   this.project = project;
-  this.keychainService = new KeychainService();
+  this.path = path.join(this.project.path, '.mavensmate', 'connections.json');
 }
 
 /**
@@ -29,7 +29,7 @@ function OrgConnectionService(project) {
 OrgConnectionService.prototype.listAll = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    fs.readJson(path.join(self.project.path, 'config', '.org_connections'), function(err, connections) {
+    fs.readJson(self.path, function(err, connections) {
       if (err) {
         if (err.message.indexOf('ENOENT') >= 0) {
           resolve([]);
@@ -38,10 +38,10 @@ OrgConnectionService.prototype.listAll = function() {
         }
       } else {
         _.each(connections, function(c) {
-          if (self.keychainService.useSystemKeychain()) {
-            c.accessToken = self.keychainService.getPassword(c.id, 'accessToken', true);
-            c.refreshToken = self.keychainService.getPassword(c.id, 'refreshToken', true);
-            c.password = self.keychainService.getPassword(c.id, 'password', true);
+          if (keychain.useSystemKeychain()) {
+            c.accessToken = keychain.getPassword(c.id, 'accessToken', true);
+            c.refreshToken = keychain.getPassword(c.id, 'refreshToken', true);
+            c.password = keychain.getPassword(c.id, 'password', true);
           }
         });
         logger.debug('returning all org connections', connections);
@@ -57,7 +57,7 @@ OrgConnectionService.prototype.listAll = function() {
  */
 OrgConnectionService.prototype.getById = function(id) {
   try {
-    var connections = fs.readJsonSync(path.join(this.project.path, 'config', '.org_connections'));
+    var connections = fs.readJsonSync(path.join(this.project.path, '.mavensmate', 'connections.json'));
     return _.find(connections, function(c) { return c.id === id; });
   } catch(e) {
     if (e.message.indexOf('ENOENT') >= 0) {
@@ -102,15 +102,15 @@ OrgConnectionService.prototype.add = function(opts) {
     }
 
     if (opts.username && opts.password) {
-      if (self.keychainService.useSystemKeychain()) {
-        self.keychainService.storePassword(connectionId, opts.password, 'password');
+      if (keychain.useSystemKeychain()) {
+        keychain.storePassword(connectionId, opts.password, 'password');
       } else {
         newConnection.password = opts.password;
       }
     } else {
-      if (self.keychainService.useSystemKeychain()) {
-        self.keychainService.storePassword(connectionId, opts.accessToken, 'accessToken');
-        self.keychainService.storePassword(connectionId, opts.refreshToken, 'refreshToken');
+      if (keychain.useSystemKeychain()) {
+        keychain.storePassword(connectionId, opts.accessToken, 'accessToken');
+        keychain.storePassword(connectionId, opts.refreshToken, 'refreshToken');
       } else {
         newConnection.accessToken = opts.accessToken;
         newConnection.refreshToken = opts.refreshToken;
@@ -134,8 +134,8 @@ OrgConnectionService.prototype.add = function(opts) {
     }
     orgConnectionClient.initialize()
       .then(function() {
-        if (!fs.existsSync(path.join(self.project.path, 'config', '.org_connections'))) {
-          fs.outputFile(path.join(self.project.path, 'config', '.org_connections'), JSON.stringify([newConnection], null, 4), function(err) {
+        if (!fs.existsSync(self.path)) {
+          fs.outputFile(self.path, JSON.stringify([newConnection], null, 4), function(err) {
             if (err) {
               reject(err);
             } else {
@@ -143,12 +143,12 @@ OrgConnectionService.prototype.add = function(opts) {
             }
           });
         } else {
-          fs.readJson(path.join(self.project.path, 'config', '.org_connections'), function(err, connections) {
+          fs.readJson(self.path, function(err, connections) {
             if (err) {
               reject(err);
             } else {
               connections.push(newConnection);
-              fs.outputFile(path.join(self.project.path, 'config', '.org_connections'), JSON.stringify(connections, null, 4), function(err) {
+              fs.outputFile(self.path, JSON.stringify(connections, null, 4), function(err) {
                 if (err) {
                   reject(err);
                 } else {
@@ -184,10 +184,10 @@ OrgConnectionService.prototype.add = function(opts) {
 OrgConnectionService.prototype.update = function(opts) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    if (!fs.existsSync(path.join(self.project.path, 'config', '.org_connections'))) {
-      fs.writeSync(path.join(self.project.path, 'config', '.org_connections'), []);
+    if (!fs.existsSync(self.path)) {
+      fs.writeSync(self.path, []);
     }
-    fs.readJson(path.join(self.project.path, 'config', '.org_connections'), function(err, connections) {
+    fs.readJson(self.path, function(err, connections) {
       if (err) {
         reject(new Error('Could not load org connections: '+err.message));
       } else {
@@ -198,17 +198,17 @@ OrgConnectionService.prototype.update = function(opts) {
               c.username = opts.username;
               c.orgType = opts.orgType.toLowerCase();
               c.loginUrl = opts.loginUrl;
-              if (self.keychainService.useSystemKeychain()) {
-                self.keychainService.replacePassword(c.id, opts.password, 'password');
+              if (keychain.useSystemKeychain()) {
+                keychain.replacePassword(c.id, opts.password, 'password');
               } else {
                 c.password = opts.password;
               }
             } else {
               c.name = opts.name;
               c.instanceUrl = opts.instanceUrl;
-              if (self.keychainService.useSystemKeychain()) {
-                self.keychainService.replacePassword(c.id, opts.accessToken, 'accessToken');
-                self.keychainService.replacePassword(c.id, opts.refreshToken, 'refreshToken');
+              if (keychain.useSystemKeychain()) {
+                keychain.replacePassword(c.id, opts.accessToken, 'accessToken');
+                keychain.replacePassword(c.id, opts.refreshToken, 'refreshToken');
               } else {
                 c.accessToken = opts.accessToken;
                 c.refreshToken = opts.refreshToken;
@@ -217,7 +217,7 @@ OrgConnectionService.prototype.update = function(opts) {
             return false;
           }
         });
-        fs.outputFile(path.join(self.project.path, 'config', '.org_connections'), JSON.stringify(connections, null, 4), function(err) {
+        fs.outputFile(self.path, JSON.stringify(connections, null, 4), function(err) {
           if (err) {
             reject(new Error('Could not update org connections: '+err.message));
           } else {
@@ -237,7 +237,7 @@ OrgConnectionService.prototype.update = function(opts) {
 OrgConnectionService.prototype.remove = function(id) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    fs.readJson(path.join(self.project.path, 'config', '.org_connections'), function(err, connections) {
+    fs.readJson(self.path, function(err, connections) {
       if (err) {
         reject(new Error('Could not load org connections: '+err.message));
       } else {
@@ -247,7 +247,7 @@ OrgConnectionService.prototype.remove = function(id) {
             newConnections.push(c);
           }
         });
-        fs.outputFile(path.join(self.project.path, 'config', '.org_connections'), JSON.stringify(newConnections, null, 4), function(err) {
+        fs.outputFile(self.path, JSON.stringify(newConnections, null, 4), function(err) {
           if (err) {
             reject(new Error('Could not write org connections: '+err.message));
           } else {

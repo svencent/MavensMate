@@ -29,7 +29,7 @@ router.get('/new', function(req, res) {
       res.render('deploy/index.html', {
         connections: response,
         namedDeployments: deployDelegate.getNamedDeployments(),
-        hasIndexedMetadata: req.project.hasIndexedMetadata(),
+        hasIndexedMetadata: req.project.serverStore.hasIndex(),
         title: 'Deploy'
       });
     })

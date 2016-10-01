@@ -55,7 +55,7 @@ Credentials.prototype.update = function(creds) {
       if (creds.instanceUrl) {
         self._project.projectJson.set('instanceUrl', creds.instanceUrl);
       }
-      if (keychain.isAvailable() && config.get('mm_use_keyring') && !self.hasCredentialsJson()) {
+      if (keychain.isAvailable() && self._project.config.get('mm_use_keyring') && !self.hasCredentialsJson()) {
         if (creds.password) {
           keychain.replacePassword(self._project.id, creds.password, 'password');
         } else {
@@ -91,7 +91,7 @@ Credentials.prototype.update = function(creds) {
  * @return {[type]} [description]
  */
 Credentials.prototype.get = function() {
-  if (keychain.isAvailable() && config.get('mm_use_keyring') && !this.hasCredentialsJson()) {
+  if (keychain.isAvailable() && this._project.config.get('mm_use_keyring') && !this.hasCredentialsJson()) {
     var creds = {};
     if (sfdcClient.password) {
       creds.password = keychain.getPassword(this._project.id, 'password');
@@ -112,7 +112,7 @@ Credentials.prototype.get = function() {
  */
 Credentials.getForProject = function(project) {
   var credsPath = path.join(project.path, '.mavensmate', 'credentials.json');
-  if (keychain.isAvailable() && config.get('mm_use_keyring') && !fs.existsSync(credsPath)) {
+  if (keychain.isAvailable() && project.config.get('mm_use_keyring') && !fs.existsSync(credsPath)) {
     return {
       password: keychain.getPassword(project.id, 'password', true),
       accessToken: keychain.getPassword(project.id, 'accessToken', true),
