@@ -28,6 +28,12 @@ ul.ui-fancytree.fancytree-container.fancytree-plain:focus {
   outline: none;
 }
 
+#left-menu {
+  position:fixed;
+  left:7px;
+  z-index:2000;
+}
+
 #left-menu .slds-dropdown--actions a {
   color: #0070d2;
   text-decoration: none;
