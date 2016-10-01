@@ -140,10 +140,6 @@ Document.prototype.addServerStoreEntryToLocalStore = function(serverStoreEntry) 
  * @return {Object}
  */
 Document.prototype.getLocalStoreProperties = function() {
-  // if (!this._localProperties) {
-  //   this._localProperties = this._project.localStore.get(this._getLocalStoreKey());
-  // }
-  // return this._localProperties;
   return this._project.localStore.get(this._getLocalStoreKey());
 };
 

@@ -38,13 +38,14 @@
 			    	<tr class="slds-hint-parent">
 			    		<td role="gridcell" class="slds-cell-shrink" data-label="Select row Cloudhub">
 				        <label class="slds-checkbox">
-				          <input type="checkbox" class="chk-run-test-class" data-class-name={{cls}} />
+				          <input type="checkbox" class="chk-run-test-class" />
+                  <input type="hidden" value="{{cls.path}}" />
 				          <span class="slds-checkbox--faux"></span>
-				          <span class="slds-assistive-text">Select row {{cls}}</span>
+				          <span class="slds-assistive-text">Select row {{cls.name}}</span>
 				        </label>
 				      </td>
-				      <th scope="row" data-label="{{cls}}">
-				      	<div class="" title="{{cls}}">{{cls}}</div>
+				      <th scope="row" data-label="{{cls.name}}">
+				      	<div class="" title="{{cls.name}}">{{cls.name}}</div>
 				      </th>
 			    	</tr>
 		    {% endfor %}
@@ -188,8 +189,7 @@
 		    type: 'POST',
 		    url: '/app/test',
 		    data: JSON.stringify({
-		    	ui: true,
-		    	classes: getTestsToRun(),
+		    	paths: getTestsToRun(),
 		    	html: true
 		    })
 		  }
@@ -218,9 +218,9 @@
 	function getTestsToRun() {
 		var testsToRun = [];
 		$('.chk-run-test-class').each(function() {
-			var $chkbox = $(this);
-			if ($chkbox.attr('checked') === 'checked') {
-				testsToRun.push($chkbox.data('class-name'));
+      var $chkbox = $(this);
+			if ($chkbox.prop('checked')) {
+				testsToRun.push($chkbox.next().val());
 			}
 		});
 		return testsToRun;

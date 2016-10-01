@@ -56,7 +56,30 @@ router.get('/bundles', function(req, res) {
 
 router.delete('/bundles/:bundleId', function(req, res) {
   var lightningService = new LightningService(req.project);
-  // lightningService.delete()
+  lightningService.deleteBundle(req.params.bundleId)
+    .then(function(deleteResult) {
+      if (deleteResult.success) {
+        // remove from file system
+      }
+      res.send(deleteResult);
+    })
+    .catch(function(err) {
+      res.status(500).send(err.message);
+    });
+});
+
+router.delete('/bundles/:bundleId/:bundleItemId', function(req, res) {
+  var lightningService = new LightningService(req.project);
+  lightningService.deleteBundleItem(req.params.bundleItemId)
+    .then(function(deleteResult) {
+      if (deleteResult.success) {
+        // remove from file system
+      }
+      res.send(deleteResult);
+    })
+    .catch(function(err) {
+      res.status(500).send(err.message);
+    });
 });
 
 router.get('/bundles/:bundleId', function(req, res) {

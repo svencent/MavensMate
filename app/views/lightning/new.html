@@ -32,7 +32,7 @@
       var opts = {
         ajax: {
           type: 'POST',
-          url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning/bundle",
+          url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning/bundles",
           data: JSON.stringify({
             metadataTypeXmlName: 'AuraDefinitionBundle',
             lightningType: '{{lightningType|capitalize}}',
@@ -48,7 +48,9 @@
       mavensmate.request(opts)
         .then(function(response) {
           console.log(response);
-          showToast(response.result.message, 'success');
+          setTimeout(function() {
+            window.location = '{{ mavensmate.ui.getBaseUrl() }}/app/lightning/bundles/'+response.result.id+'?pid={{project.id}}';
+          }, 1000);
         })
         .catch(function(err) {
           console.error('could not create lighting app', err);

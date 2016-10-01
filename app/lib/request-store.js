@@ -72,6 +72,7 @@ RequestStore.prototype.getResultForId = function(requestId) {
  */
 RequestStore.prototype._finish = function(requestId, error, result) {
   logger.debug('finishing requestId: '+requestId);
+  logger.silly('request result', error, result);
   if (error) {
     logger.error(error);
   } else if (result) {
@@ -83,8 +84,10 @@ RequestStore.prototype._finish = function(requestId, error, result) {
   } else if (result) {
     this.requests[requestId].result = result;
   } else {
-    logger.error('Could not set request', requestId, 'as finished', error, result)
-    throw new Error('Could not finish request '+requestId);
+    logger.warn(requestId, 'Request result was undefined');
+    this.requests[requestId].result = {
+      message: 'Success'
+    };
   }
   this.requests[requestId].complete = true;
 };

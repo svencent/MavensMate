@@ -21,7 +21,7 @@ Command.prototype.execute = function() {
   return new Promise(function(resolve, reject) {
     var project = self.getProject();
     var sfdcClient = project.sfdcClient;
-    sfdcClient.stopLogging(project.debug.users)
+    sfdcClient.stopLogging(project.debug.get('users'))
       .then(function() {
         resolve('Stopped logging for debug users');
       })

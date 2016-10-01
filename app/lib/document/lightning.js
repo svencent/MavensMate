@@ -3,6 +3,8 @@
 var inherits  = require('inherits');
 var Document  = require('./document');
 var _         = require('lodash');
+var path      = require('path');
+var fs        = require('fs-extra-promise');
 
 var lightningTypeToSourceFormat = {
   Application: 'xml',
@@ -15,7 +17,8 @@ var lightningTypeToSourceFormat = {
   Interface: 'xml',
   Renderer: 'js',
   Style: 'css',
-  Svg: 'svg'
+  Svg: 'svg',
+  Tokens: 'xml'
 };
 
 var lightningTypeToExtension = {
@@ -29,7 +32,8 @@ var lightningTypeToExtension = {
   Interface: 'intf',
   Renderer: 'js',
   Style: 'css',
-  Svg: 'svg'
+  Svg: 'svg',
+  Tokens: 'tokens'
 };
 
 var suffices = {
@@ -73,7 +77,7 @@ LightningDocument.prototype.getLightningType = function() {
  * @return {String}         - file name
  */
 LightningDocument.getFileNameForType = function(apiName, type) {
-  return (suffices[type] ? apiName + suffices[type] : apiName) + '.' + LightningDocument.getExtensionForType(type);
+  return (suffices[_.capitalize(type)] ? apiName + suffices[_.capitalize(type)] : apiName) + '.' + LightningDocument.getExtensionForType(_.capitalize(type));
 };
 
 /**
@@ -87,6 +91,21 @@ LightningDocument.getExtensionForType = function(type) {
 
 LightningDocument.getSourceFormatForType = function(type) {
   return lightningTypeToSourceFormat[_.capitalize(type)];
+};
+
+LightningDocument.getBundleType = function(project, bundleName) {
+  var bundlePath = path.join(project.path, 'src', 'aura', bundleName);
+  if (fs.existsSync(path.join(bundlePath, bundleName+'.app'))) {
+    return 'APPLICATION';
+  } else if (fs.existsSync(path.join(bundlePath, bundleName+'.cmp'))) {
+    return 'COMPONENT';
+  } else if (fs.existsSync(path.join(bundlePath, bundleName+'.intf'))) {
+    return 'INTERFACE';
+  } else if (fs.existsSync(path.join(bundlePath, bundleName+'.evt'))) {
+    return 'EVENT';
+  } else if (fs.existsSync(path.join(bundlePath, bundleName+'.tokens'))) {
+    return 'TOKENS';
+  }
 };
 
 

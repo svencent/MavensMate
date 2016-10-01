@@ -74,7 +74,22 @@ LightningService.prototype.deleteBundle = function(bundleId) {
   return new Promise(function(resolve, reject) {
     self.project.sfdcClient.conn.tooling.sobject('AuraDefinitionBundle').delete(bundleId, function(err, res) {
       if (err) {
+        logger.error(err);
         reject(new Error('Could not delete AuraBundle: '+err.message));
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
+
+LightningService.prototype.deleteBundleItem = function(bundleItemId) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    self.project.sfdcClient.conn.tooling.sobject('AuraDefinition').delete(bundleItemId, function(err, res) {
+      if (err) {
+        logger.error(err);
+        reject(new Error('Could not delete AuraDefinition: '+err.message));
       } else {
         resolve(res);
       }

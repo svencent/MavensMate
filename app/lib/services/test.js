@@ -13,89 +13,74 @@ var logger    = require('winston');
 var moment    = require('moment');
 var config    = require('../../config');
 var swig      = require('swig');
+var docUtil   = require('../document/util');
 
 /**
  * Represents an apex test execution
- * @param {Object} opts
- * @param {Array} opts.project - instance of Project
- * @param {Array} opts.tests - array of test names, either an array of paths ['/path/to/test1.cls'] or ['test1.cls']
- * @param {Boolean} opts.skipCoverage - set to true to ignore coverage results
+ * @param {Project} project - instance of Project
+ * @param {Boolean} skipCoverage - whether to ignore coverage and only return the result of the tests
  */
-function ApexTest(opts) {
-  opts.tests = opts.tests || opts.classes || opts.paths || [];
-  util.applyProperties(this, opts);
-  this._initialize();
+function ApexTest(project, skipCoverage) {
+  this.project = project;
+  this.skipCoverage = skipCoverage;
+  this.apexClassOrTriggerIdToName = {};
+  this.testClassIds = [];
 }
 
-ApexTest.prototype._initialize = function() {
+ApexTest.prototype.executeTestClasses = function(paths) {
   var self = this;
-  self.apexClassOrTriggerIdToName = {};
-  self.testClassNames = [];
-  _.each(this.tests, function(t) {
-    var testNameOrPath = _.isString(t) ? t : t.testNameOrPath;
-    if (testNameOrPath.indexOf(path.sep) !== -1) {
-      if (testNameOrPath.indexOf(self.project.path) === -1) {
-        throw new Error('Test does not exist in this project: '+testNameOrPath);
-      }
-    } else {
-      if (testNameOrPath.indexOf('.') === -1) {
-        testNameOrPath = testNameOrPath+'.cls';
-      }
-      var fullPath = path.join(self.project.path, 'src', 'classes', testNameOrPath);
-      if (fullPath.indexOf(self.project.path) === -1 || !fs.existsSync(fullPath)) {
-        throw new Error('Test does not exist in this project: '+testNameOrPath);
-      }
-    }
-    self.testClassNames.push(testNameOrPath.indexOf(path.sep) !== -1 ? path.basename(testNameOrPath) : testNameOrPath);
+  return new Promise(function(resolve, reject) {
+    var documents = docUtil.getDocumentsFromFilePaths(self.project, paths);
+    _.each(documents.apex, function(d) {
+      self.testClassIds.push(d.getLocalStoreProperties().id);
+    });
+    self.execute(self.testClassIds)
+      .then(function(result) {
+        resolve(result);
+      })
+      .catch(function(err) {
+        reject(err);
+      });
   });
 };
 
-ApexTest.prototype.getResultHtml = function(result) {
-  result.project = this.project;
-  return swig.renderFile('views/unit_test/result.html', result);
+ApexTest.prototype.executeTestMethods = function(testMethods) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    self.testMethods = testMethods;
+    var paths = [];
+    _.each(self.methods, function(m) {
+      paths.push(m.path);
+    })
+    var documents = docUtil.getDocumentsFromFilePaths(self.project, paths);
+    var testsPayload;
+    _.each(documents.apex, function(d) {
+      logger.debug('adding test to job', d);
+      var apexClassId = d.getLocalStoreProperties().id;
+      testsPayload.push({
+        classId: apexClassId,
+        testMethods: test.methodNames
+      });
+      self.testClassIds.push(apexClassId);
+    });
+    self.execute(testsPayload)
+      .then(function(result) {
+        resolve(result);
+      })
+      .catch(function(err) {
+        reject(err);
+      });
+  });
 };
 
 /**
  * Executes requested tests
  * @return {Promise} resolves with {Object}
  */
-ApexTest.prototype.execute = function() {
+ApexTest.prototype.execute = function(payload) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var localStore = self.project.getLocalStore();
-    logger.silly(localStore);
-
-    var testsPayload = []; // this will either be an array of class ids or an array of objects containing class names and methods
-    var testClassIds = [];
-
-    if (_.isString(self.tests[0])) { // an array of class ids
-      testsPayload = [];
-      _.each(self.testClassNames, function(testClassName) {
-        logger.debug('adding test to job', testClassName);
-        if (!localStore[testClassName]) {
-          return reject(new Error('Invalid project metadata cache. Run Index Metadata command to reset the cache.'));
-        }
-        var apexClassId = localStore[testClassName].id;
-        testsPayload.push(apexClassId);
-        testClassIds.push(apexClassId);
-      });
-    } else {
-      _.each(self.tests, function(test) {
-        logger.debug('adding test to job', test);
-        if (!localStore[path.basename(test.testNameOrPath)]) {
-          return reject(new Error('Invalid project metadata cache. Run Index Metadata command to reset the cache.'));
-        }
-        var apexClassId = localStore[path.basename(test.testNameOrPath)].id;
-        testsPayload.push({
-          classId: apexClassId,
-          testMethods: test.methodNames
-        });
-        testClassIds.push(apexClassId);
-      });
-    }
-
-    logger.debug('running the following tests: ');
-    logger.debug(testsPayload);
+    logger.debug('executing tests', payload);
 
     var classResults;
     var methodResults;
@@ -104,11 +89,11 @@ ApexTest.prototype.execute = function() {
     var coverageResults = {};
     var testResults = {};
 
-    self.project.sfdcClient.runTests(testsPayload)
+    self.project.sfdcClient.runTests(payload)
       .then(function(results) {
         classResults = results.classResults;
         methodResults = results.methodResults;
-        _.forOwn(self.project.getLocalStore(), function(value, key) {
+        _.forOwn(self.project.localStore.getAll(), function(value, key) {
           if (util.endsWith(key, '.cls')) {
             projectClassIds.push(value.id);
             self.apexClassOrTriggerIdToName[value.id] = value.fullName;
@@ -121,7 +106,7 @@ ApexTest.prototype.execute = function() {
         var logDownloadPromises = [];
         var logIdsToDownload = [];
 
-        if (config.get('mm_download_categorized_test_logs')) {
+        if (self.project.config.get('mm_download_categorized_test_logs')) {
           _.each(methodResults.records, function(r) {
             if (r.ApexLogId && logIdsToDownload.indexOf(r.ApexLogId) === -1) {
               logIdsToDownload.push(r.ApexLogId);
@@ -129,7 +114,6 @@ ApexTest.prototype.execute = function() {
             }
           });
         }
-
         return Promise.all(logDownloadPromises);
       })
       .then(function() {
@@ -144,10 +128,10 @@ ApexTest.prototype.execute = function() {
           resolve({ testResults: testResults });
         } else {
           logger.info('getting test coverage...');
-          self.getCoverage(projectClassIds, testClassIds)
+          self.getCoverage(projectClassIds, self.testClassIds)
             .then(function(classCoverageResults) {
               coverageResults.classes = classCoverageResults;
-              return self.getCoverage(projectTriggerIds, testClassIds);
+              return self.getCoverage(projectTriggerIds, self.testClassIds);
             })
             .then(function(triggerCoverageResults) {
               coverageResults.triggers = triggerCoverageResults;
@@ -170,6 +154,11 @@ ApexTest.prototype.execute = function() {
   });
 };
 
+ApexTest.prototype.getResultHtml = function(result) {
+  result.project = this.project;
+  return swig.renderFile('views/unit_test/result.html', result);
+};
+
 ApexTest.prototype.getOrgWideCoverage = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
@@ -184,18 +173,18 @@ ApexTest.prototype.getOrgWideCoverage = function() {
   });
 };
 
-ApexTest.prototype.getCoverage = function(classOrTriggerIds, testClassIds) {
+ApexTest.prototype.getCoverage = function(classOrTriggerIds) {
   var self = this;
   return new Promise(function(resolve, reject) {
     var coverageObject = 'ApexCodeCoverage';
-    if (testClassIds === undefined) {
+    if (!self.testClassIds) {
       coverageObject = 'ApexCodeCoverageAggregate';
     }
 
     var fields = ['NumLinesCovered', 'NumLinesUncovered', 'Coverage', 'ApexClassOrTriggerId'].join(',');
     var andTestClassIdQualifier;
-    if (testClassIds && testClassIds.length > 0) {
-      andTestClassIdQualifier = ' AND ApexTestClassId IN ('+util.joinForQuery(testClassIds)+')';
+    if (self.testClassIds && self.testClassIds.length > 0) {
+      andTestClassIdQualifier = ' AND ApexTestClassId IN ('+util.joinForQuery(self.testClassIds)+')';
     }
 
     function queryForCoverage(classOrTriggerIdChunk) {

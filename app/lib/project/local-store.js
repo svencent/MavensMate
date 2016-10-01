@@ -12,6 +12,10 @@ var LocalStore = function(project) {
   this._state = util.getFileBodySync(this._path, true);
 };
 
+LocalStore.prototype.getAll = function() {
+  return this._state;
+};
+
 /**
  * Returns project setting if it exists, otherwise defaults to global
  * @param  {String} key - config key

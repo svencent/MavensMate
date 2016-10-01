@@ -4,33 +4,50 @@
 <table class="slds-table slds-table--bordered slds-table--fixed-layout" role="grid">
   <thead>
     <tr class="slds-text-heading--label">
+      <td scope="col" style="width:7rem;">
+        <div class="" title="Class Name">Action</div>
+      </td>
       <th scope="col">
         <div class="" title="Class Name">Bundle Name</div>
-      </th>
-      <th scope="col">
-        <div class="" title="Class Name">Action</div>
       </th>
     </tr>
   </thead>
   <tbody>
       {% for b in bundles %}
-        <tr class="slds-hint-parent">
+        <tr class="slds-hint-parent" id="tr-{{b.Id}}">
+          <td scope="row" data-label="{{b.Id}}">
+            <div class="" title="{{b.Id}}">
+              <a class="slds-button slds-button--destructive" href="javascript:void(0)" onclick="confirmDelete('{{b.DeveloperName}}', '{{b.Id}}')">Delete</a>
+            </div>
+          </td>
           <th scope="row" data-label="{{b.MasterLabel}}">
             <div class="" title="{{b.MasterLabel}}">
               <a href="/app/lightning/bundles/{{b.Id}}?pid={{project.id}}">{{b.MasterLabel}}</a>
             </div>
           </th>
-          <td scope="row" data-label="{{b.Id}}">
-            <div class="" title="{{b.Id}}">
-              <a href="/app/lightning/bundles/{{b.Id}}?pid={{project.id}}">Manage</a>
-              &nbsp;|&nbsp;
-              <a href="/app/lightning/bundles/{{b.Id}}?pid={{project.id}}">Delete</a>
-            </div>
-          </td>
         </tr>
     {% endfor %}
   </tbody>
 </table>
+
+<!-- CONFIRM DELETE MODAL -->
+<div aria-hidden="false" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" role="alertdialog" class="slds-modal slds-modal--prompt slds-fade-in-open slds-hide" id="modal-confirm-delete-bundle">
+  <div class="slds-modal__container slds-modal--prompt" role="document" id="prompt-message-wrapper" tabindex="0">
+    <div class="slds-modal__header slds-theme--error slds-theme--alert-texture">
+      <h2 class="slds-text-heading--medium" id="prompt-heading-id">Are you sure?</h2>
+    </div>
+    <div class="slds-modal__content slds-p-around--medium">
+      <input type="hidden" id="txtDeleteBundleId"/>
+      <div>
+        <p><span id="span-delete-bundle-name"></span>&nbsp;<span>will be deleted permanently. There is no way to undo this.</span></p>
+      </div>
+    </div>
+    <div class="slds-modal__footer slds-theme--default">
+      <button class="slds-button slds-button--neutral" onclick="deleteBundle()">Delete</button>
+      <button class="slds-button slds-button--neutral" onclick="closeConfirmDeleteBundleModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
 
@@ -42,6 +59,41 @@
 
 {% block body_js %}
   <script type="text/javascript">
+    function confirmDelete(bundleName, bId) {
+      $('#span-delete-bundle-name').html(bundleName);
+      $('#modal-confirm-delete-bundle').modal('show');
+      $('#txtDeleteBundleId').val(bId);
+    }
 
+    function closeConfirmDeleteBundleModal() {
+      $('#modal-confirm-delete-bundle').modal('dismiss');
+    }
+
+    function deleteBundle() {
+      closeConfirmDeleteBundleModal();
+      var bundleId = $('#txtDeleteBundleId').val();
+      var opts = {
+        async: false,
+        ajax: {
+          type: 'DELETE',
+          url: '{{ mavensmate.ui.getBaseUrl() }}/app/lightning/bundles/'+bundleId+'?pid={{project.id}}'
+        },
+        message: {
+          label: 'Deleting Lightning bundle...'
+        }
+      };
+
+      mavensmate.request(opts)
+        .then(function(response) {
+          showToast('Lightning bundle deleted', 'success');
+          $('#tr-'+bundleId).remove();
+        })
+        .catch(function(err) {
+          console.error('could not delete lightning bundle', err);
+        })
+        .finally(function() {
+          hideLoading();
+        });
+    }
   </script>
 {% endblock %}

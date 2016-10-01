@@ -15,29 +15,48 @@ var inherits  = require('inherits');
 var logger    = require('winston');
 
 var LogService = function(project) {
-  this.project = project;
+  this.projectPath = project.path;
+  this.sfdcClient = project.sfdcClient;
+  this._listenForLogs();
 };
 
 inherits(LogService, events.EventEmitter);
+
+LogService.prototype._listenForLogs = function() {
+  var self = this;
+  self.sfdcClient.on('sfdcclient-new-log', function(message) {
+    logger.warn('woop', message);
+    if (message.sobject && message.sobject.Id) {
+      self.downloadLog(message.sobject.Id)
+        .then(function(filePath) {
+          logger.warn('woop emitting', filePath);
+          self.emit('new-log', filePath);
+        })
+        .catch(function(error) {
+          logger.debug('Could not download log: '+error.message);
+        });
+    }
+  });
+};
 
 LogService.prototype.downloadLog = function(logId) {
   var self = this;
   return new Promise(function(resolve, reject) {
     // create test name directory in debug/tests
-    if (!fs.existsSync(path.join(self.project.path, 'debug', 'logs'))) {
-      fs.mkdirpSync(path.join(self.project.path, 'debug', 'logs'));
+    if (!fs.existsSync(path.join(self.projectPath, 'debug', 'logs'))) {
+      fs.mkdirpSync(path.join(self.projectPath, 'debug', 'logs'));
     }
 
-    var url = self.project.sfdcClient.conn.tooling._baseUrl() + '/sobjects/ApexLog/'+logId+'/Body';
-    self.project.sfdcClient.conn.tooling.request(url, function(err, res) {
-      if (err) { 
-        reject(new Error('Could not download log: '+err.message));  
+    var url = self.sfdcClient.conn.tooling._baseUrl() + '/sobjects/ApexLog/'+logId+'/Body';
+    self.sfdcClient.conn.tooling.request(url, function(err, res) {
+      if (err) {
+        reject(new Error('Could not download log: '+err.message));
       } else {
-        var logFileName = [moment().format('YYYY-MM-DD HH-mm-ss'), 'log'].join('.');
-        var filePath = path.join(self.project.path, 'debug', 'logs', logFileName);
+        var logFileName = [moment().format('YYYY-MM-DD HH-mm-ss-SSS'), 'log'].join('.');
+        var filePath = path.join(self.projectPath, 'debug', 'logs', logFileName);
         fs.outputFile(filePath, res, function(e) {
           if (e) {
-            reject(new Error('Could not write log file: '+e.message));  
+            reject(new Error('Could not write log file: '+e.message));
           } else {
             self.emit('mavensmate-log-downloaded', filePath);
             resolve(filePath);
@@ -52,7 +71,7 @@ LogService.prototype.getLogs = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
-      var projectLogsPath = path.join(self.project.path, 'debug', 'logs');
+      var projectLogsPath = path.join(self.projectPath, 'debug', 'logs');
       var logPaths = [];
       fs.readdir(projectLogsPath, function(err, files) {
         _.each(files, function(f) {

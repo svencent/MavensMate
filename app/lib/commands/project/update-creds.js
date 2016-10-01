@@ -19,7 +19,7 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     var project = self.getProject();
-    project.updateCredentials(self.payload)
+    project.credentials.update(self.payload)
       .then(function() {
         resolve('Credentials updated successfully!');
       })

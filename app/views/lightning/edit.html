@@ -38,62 +38,148 @@
         </h2>
       </div>
     </header>
-    <div class="slds-no-flex">
-      <button class="slds-button slds-button--neutral">New</button>
+  </div>
+
+  {% set capitalizedLightningType = mavensmate.ui.getBundleType(project, bundle.DeveloperName) %}
+  {% if capitalizedLightningType === 'APPLICATION' || capitalizedLightningType === 'COMPONENT' %}
+    {% set possibleBundleItems = mavensmate.ui.getBundleItemsForType(capitalizedLightningType) %}
+    <div class="slds-card__body">
+      <table class="slds-table slds-table--bordered slds-no-row-hover slds-table--cell-buffer">
+        <thead>
+          <tr class="slds-text-title--caps">
+            <td scope="col" style="width:10rem;">
+              <div class="" title="Class Name">Action</div>
+            </td>
+            <th scope="col">
+              <div class="slds-truncate" title="Type">Type</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for possibleBundleItem in possibleBundleItems %}
+            {% set bundleItem = mavensmate.ui.getBundleItemForDefType(bundleItems, possibleBundleItem) %}
+            <tr class="slds-hint-parent" {% if bundleItem %}id="tr-{{bundleItem.Id}}"{% endif %}>
+              <td>
+                <div class="" title="{{b.Id}}">
+                  {% if !bundleItem %}
+                  <a class="slds-button slds-button--neutral" href="javascript:void(0)" onclick="createBundleItem('{{possibleBundleItem}}')">Create</a>
+                  {% else %}
+                  <a class="slds-button slds-button--destructive" href="javascript:void(0)" onclick="confirmDeleteBundleItem('{{possibleBundleItem}}', '{{bundleItem.Id}}')">Delete</a>
+                  {% endif %}
+                </div>
+              </td>
+              <th scope="row">
+                <div class="slds-truncate" title="{{possibleBundleItem}}">{{possibleBundleItem}}</div>
+              </th>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="slds-card__body">
+      <table class="slds-table slds-table--bordered slds-no-row-hover slds-table--cell-buffer">
+        <thead>
+          <tr class="slds-text-title--caps">
+            <th scope="col">
+              <div class="slds-truncate" title="Component Type">Component Type</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in bundleItems %}
+          <tr class="slds-hint-parent">
+            <th scope="row">
+              <div class="slds-truncate" title="{{b.DefType}}">{{b.DefType}}</div>
+            </th>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</article>
+
+<!-- CONFIRM DELETE BUNDLE ITEM MODAL -->
+<div aria-hidden="false" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" role="alertdialog" class="slds-modal slds-modal--prompt slds-fade-in-open slds-hide" id="modal-confirm-delete-bundle-item">
+  <div class="slds-modal__container slds-modal--prompt" role="document" id="prompt-message-wrapper" tabindex="0">
+    <div class="slds-modal__header slds-theme--error slds-theme--alert-texture">
+      <h2 class="slds-text-heading--medium" id="prompt-heading-id">Are you sure?</h2>
+    </div>
+    <div class="slds-modal__content slds-p-around--medium">
+      <input type="hidden" id="txtDeleteBundleItemId"/>
+      <div>
+        <p><span id="span-delete-bundle-item-name"></span>&nbsp;<span>will be deleted permanently. There is no way to undo this.</span></p>
+      </div>
+    </div>
+    <div class="slds-modal__footer slds-theme--default">
+      <button class="slds-button slds-button--neutral" onclick="deleteBundleItem()">Delete</button>
+      <button class="slds-button slds-button--neutral" onclick="closeConfirmDeleteBundleItemModal()">Cancel</button>
     </div>
   </div>
-  <div class="slds-card__body">
-    <table class="slds-table slds-table--bordered slds-no-row-hover slds-table--cell-buffer">
-      <thead>
-        <tr class="slds-text-title--caps">
-          <th scope="col">
-            <div class="slds-truncate" title="Name">Developer Name</div>
-          </th>
-          <th scope="col">
-            <div class="slds-truncate" title="Company">Label</div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for b in bundleItems %}
-        <tr class="slds-hint-parent">
-          <th scope="row">
-            <div class="slds-truncate" title="Adam Choi"><a href="javascript:void(0);">{{b.DefType}}</a></div>
-          </th>
-          <td>
-            <div class="slds-truncate" title="Company One"></div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</article>
+</div>
 
 {% endblock %}
 
 
 {% block buttons %}
-  <input type="button" id="btnSubmit" class="slds-button slds-button--brand" value="{{title}}" onclick='create();'>
   {% include 'views/partials/cancel_button.html' %}
 {% endblock %}
 
 {% block body_js %}
   <script type="text/javascript">
-    function create() {
+    function confirmDeleteBundleItem(bundleName, bId) {
+      $('#span-delete-bundle-item-name').html(bundleName);
+      $('#modal-confirm-delete-bundle-item').modal('show');
+      $('#txtDeleteBundleItemId').val(bId);
+    }
+
+    function closeConfirmDeleteBundleItemModal() {
+      $('#modal-confirm-delete-bundle-item').modal('dismiss');
+    }
+
+    function deleteBundleItem() {
+      closeConfirmDeleteBundleItemModal();
+      var bundleItemId = $('#txtDeleteBundleItemId').val();
+      var opts = {
+        async: false,
+        ajax: {
+          type: 'DELETE',
+          url: '{{ mavensmate.ui.getBaseUrl() }}/app/lightning/bundles/{{bundle.Id}}/'+bundleItemId+'?pid={{project.id}}'
+        },
+        message: {
+          label: 'Deleting Lightning Component...'
+        }
+      };
+
+      mavensmate.request(opts)
+        .then(function(response) {
+          showToast('Lightning bundle deleted', 'success');
+          setTimeout(function() {
+            window.location.reload();
+          }, 500);
+        })
+        .catch(function(err) {
+          console.error('could not delete lightning component', err);
+        })
+        .finally(function() {
+          hideLoading();
+        });
+    }
+
+    function createBundleItem(lightningType) {
       var opts = {
         ajax: {
           type: 'POST',
-          url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning/bundle",
+          url: "{{ mavensmate.ui.getBaseUrl() }}/app/lightning/bundles/{{bundle.Id}}",
           data: JSON.stringify({
-            metadataTypeXmlName: 'AuraDefinitionBundle',
-            lightningType: '{{lightningType|capitalize}}',
-            apiName : $("#apiName").val(),
-            description : $("#description").val()
+            bundleId: '{{bundle.Id}}',
+            lightningType: lightningType,
+            apiName: '{{bundle.DeveloperName}}'
           })
         },
         message: {
-          label: 'Creating new Lighting {{lightningType|capitalize}}...'
+          label: 'Creating new Lighting Component...'
         }
       };
 
@@ -101,9 +187,12 @@
         .then(function(response) {
           console.log(response);
           showToast(response.result.message, 'success');
+          setTimeout(function() {
+            window.location.reload();
+          }, 500);
         })
         .catch(function(err) {
-          console.error('could not create lighting app', err);
+          console.error('could not create lighting component', err);
         })
         .finally(function() {
           hideLoading();

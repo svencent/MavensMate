@@ -26,8 +26,18 @@
     <script src="{{ mavensmate.ui.getStaticResourcePath() }}/lds/assets/js/jquery.aljs-multi-select.min.js" type="text/javascript"></script>
     <script src="{{ mavensmate.ui.getStaticResourcePath() }}/js/prettify.js" type="text/javascript"></script>
     <script>
+        window.onbeforeunload = function() {
+           if (mavensmate.isRunningOperation) {
+            return 'Are you sure you want to navigate away from this page? Any unsaved information will be lost.';
+           } else {
+            return;
+           }
+        };
+
         var mavensmate = {};
+        mavensmate.isRunningOperation = false;
         mavensmate.request = function(opts) {
+          mavensmate.isRunningOperation = true;
           var self = this;
           if (opts.showPageHeaderLoading)
             showPageHeaderLoading();
@@ -87,13 +97,17 @@
                           })
                           .catch(function(err) {
                             reject(err);
-                          });
+                          })
+                          .finally(function() {
+                            mavensmate.isRunningOperation = false;
+                          })
                       } else {
                         console.error(res);
-                        showToast('Could not retrieve asynchronous response from server. Your request may have a synchronous request, in which case your mavensmate.request opts should include an async=false flag', 'error');
-                        reject(new Error('Could not retrieve asynchronous response from server. Your request may have a synchronous request, in which case your mavensmate.request opts should include an async=false flag'))
+                        showToast('Could not retrieve asynchronous response from server. Your request may have been a synchronous request, in which case your mavensmate.request opts should include an async=false flag', 'error');
+                        reject(new Error('Could not retrieve asynchronous response from server. Your request may have been a synchronous request, in which case your mavensmate.request opts should include an async=false flag'))
                       }
                     } else {
+                      mavensmate.isRunningOperation = false;
                       resolve(res);
                     }
                   })

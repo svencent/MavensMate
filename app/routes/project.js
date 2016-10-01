@@ -44,12 +44,15 @@ router.get('/auth/finish', function(req, res) {
   logger.debug('state!', state);
   var pid = state.pid;
   if (pid) {
-    // updating an existing project
-    var project = util.getProjectById(req.app, pid);
-    project.updateCredentials({
-      accessToken: req.query.access_token,
-      instanceUrl: req.query.instance_url,
-      refreshToken: req.query.refresh_token
+    // updating an existing project's credentials
+    commandExecutor.execute({
+      name: 'update-creds',
+      project: util.getProjectById(req.app, pid),
+      body: {
+        accessToken: req.query.access_token,
+        instanceUrl: req.query.instance_url,
+        refreshToken: req.query.refresh_token
+      }
     })
     .then(function(response) {
       res.redirect('/app/project/'+pid+'/edit?pid='+pid+'&update=1');

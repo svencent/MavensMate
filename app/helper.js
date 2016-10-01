@@ -5,13 +5,14 @@
 
 'use strict';
 
-var path        = require('path');
-var fs          = require('fs-extra');
-var util        = require('./lib/util');
-var _           = require('lodash');
-var config      = require('./config');
-var logger      = require('winston');
-var querystring = require('querystring');
+var path              = require('path');
+var fs                = require('fs-extra');
+var util              = require('./lib/util');
+var _                 = require('lodash');
+var config            = require('./config');
+var logger            = require('winston');
+var querystring       = require('querystring');
+var LightningDocument = require('./lib/document/lightning');
 
 var ViewHelper = function(opts) {
   util.applyProperties(this, opts);
@@ -22,6 +23,24 @@ ViewHelper.prototype.config = config;
 
 ViewHelper.prototype.getSupportedEditors = function() {
   return this.supportedEditors;
+};
+
+ViewHelper.prototype.getBundleType = function(project, bundleName) {
+  return LightningDocument.getBundleType(project, bundleName);
+};
+
+ViewHelper.prototype.getBundleItemsForType = function(type) {
+  if (type === 'APPLICATION') {
+    return [ 'APPLICATION', 'CONTROLLER', 'HELPER', 'STYLE', 'DOCUMENTATION', 'RENDERER', 'SVG' ];
+  } else if (type === 'COMPONENT') {
+    return [ 'COMPONENT', 'CONTROLLER', 'HELPER', 'STYLE', 'DOCUMENTATION', 'RENDERER', 'DESIGN', 'SVG' ];
+  }
+};
+
+ViewHelper.prototype.getBundleItemForDefType = function(bundleItems, defType) {
+  return _.find(bundleItems, function(bi) {
+    return bi.DefType === defType;
+  });
 };
 
 ViewHelper.prototype.isMenuItemActive = function(url, resource) {

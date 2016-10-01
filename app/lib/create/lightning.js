@@ -46,7 +46,7 @@ LightningCreator.prototype.createBundle = function() {
       return self._updateStores(newLightningDocument);
     })
     .then(function() {
-      resolve();
+      resolve(newBundle);
     })
     .catch(function(err) {
       reject(err);
@@ -58,24 +58,26 @@ LightningCreator.prototype.createBundleItem = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     var newLightningDocument;
+    var newBundleItem;
 
     createUtil.mergeLightningTemplateAndWriteToDisk(self.project, self.requestBody)
       .then(function(newLightningPath) {
         var newLightningType = self.requestBody.lightningType;
         newLightningDocument = documentUtil.getDocumentsFromFilePaths(self.project, [newLightningPath]).lightning[0];
         return self.lightningService.createBundleItem(
-                                          requestBody.bundleId,
+                                          self.requestBody.bundleId,
                                           newLightningType,
                                           LightningDocument.getSourceFormatForType(newLightningType),
                                           newLightningDocument.getBodySync());
 
       })
-      .then(function(newBundleItem) {
+      .then(function(res) {
+        newBundleItem = res;
         newLightningDocument.updateLocalStoryEntry({ id: newBundleItem.id });
         return self._updateStores(newLightningDocument);
       })
       .then(function() {
-        resolve();
+        resolve(newBundleItem);
       })
       .catch(function(err) {
         reject(err);

@@ -17,7 +17,7 @@ router.get('/', function(req, res) {
     res.render('error', { error: 'Error: No project attached to this request.' });
   } else {
     io.on('connection', function(socket) {
-      req.project.on('new-log', function(filePath) {
+      req.project.logService.on('new-log', function(filePath) {
         socket.emit('new-log', {
           location: filePath,
           locationBasename: path.basename(filePath)

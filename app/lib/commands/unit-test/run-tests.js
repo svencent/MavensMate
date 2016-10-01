@@ -35,9 +35,9 @@ Command.prototype.execute = function() {
           reject(error);
         });
     } else {
-      self.payload.project = self.getProject();
-      var test = new ApexTest(self.payload);
-      test.execute()
+      var test = new ApexTest(self.getProject(), self.payload.skipCoverage);
+      var executePromise = self.payload.paths ? test.executeTestClasses(self.payload.paths) : test.executeTestMethods(self.payload.tests);
+      executePromise
         .then(function(testResults) {
           if (self.payload.html) {
             resolve(test.getResultHtml(testResults));

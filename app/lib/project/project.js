@@ -14,6 +14,7 @@ var Credentials       = require('./credentials');
 var Debug             = require('./debug');
 var LocalStore        = require('./local-store');
 var ServerStore       = require('./server-store');
+var LogService        = require('../services/log');
 var SalesforceClient  = require('../sfdc-client');
 var Package           = require('../package');
 var packageExceptions = require('../package/exceptions');
@@ -32,7 +33,16 @@ var Project = function(path) {
 };
 
 Project.prototype.hasInvalidSalesforceConnection;
+Project.prototype.projectJson;
+Project.prototype.config;
+Project.prototype.debug;
+Project.prototype.packageXml;
+Project.prototype.localStore;
+Project.prototype.logService;
+Project.prototype.serverStore;
+Project.prototype.id;
 Project.prototype.sfdcClient;
+Project.prototype.credentials;
 Project.prototype._connections = []; // array of deployment connections
 
 Project.prototype.initialize = function() {
@@ -87,7 +97,8 @@ Project.prototype.initializeSalesforceClient = function() {
     }
     self.sfdcClient.initialize()
       .then(function() {
-        self.creds = new Credentials(self);
+        self.credentials = new Credentials(self);
+        self.logService = new LogService(self);
         self.hasInvalidSalesforceConnection = false;
         resolve();
       })

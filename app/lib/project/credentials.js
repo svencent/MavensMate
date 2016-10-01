@@ -1,3 +1,4 @@
+var Promise           = require('bluebird');
 var fs                = require('fs-extra-promise');
 var path              = require('path');
 var keychain          = require('../services/keychain');
@@ -6,7 +7,7 @@ var util              = require('../util');
 var logger            = require('winston');
 
 var Credentials = function(project) {
-  this._projectId = project.id;
+  this._project = project;
   this._credsJsonPath = path.join(project.path, '.mavensmate', 'credentials.json');
   this._observeCredentialsUpdates(project.sfdcClient);
 };
@@ -28,7 +29,11 @@ Credentials.prototype._observeCredentialsUpdates = function(sfdcClient) {
   sfdcClient.on('token-refresh', function() {
     logger.debug('project.sfdcClient emitted token-refresh, updating local credential store');
     try {
-      self.update(sfdcClient);
+      self.update({
+        instanceUrl: sfdcClient.getInstanceUrl(),
+        accessToken: sfdcClient.accessToken,
+        refreshToken: sfdcClient.refreshToken
+      });
     } catch(err) {
       logger.error('Could not update credentials', err);
       throw err;
@@ -37,33 +42,46 @@ Credentials.prototype._observeCredentialsUpdates = function(sfdcClient) {
 }
 
 /**
- * Stores credentials on local file system
+ * Updates credentials on local file system
  * 1. If keychain is enabled && user wants to use it, and they don't have a credentials.json file in their project/.mavensmate directory, store in keychain
  * 2. Otherwise, written to project config
  * @return {Nothing}
  */
-Credentials.prototype.update = function(sfdcClient) {
-  if (keychain.isAvailable() && config.get('mm_use_keyring') && !this.hasCredentialsJson()) {
-    if (sfdcClient.password) {
-      keychain.storePassword(this._projectId, sfdcClient.password, 'password');
-    } else {
-      keychain.storePassword(this._projectId, sfdcClient.accessToken, 'accessToken');
-      keychain.storePassword(this._projectId, sfdcClient.refreshToken, 'refreshToken');
+Credentials.prototype.update = function(creds) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    try {
+      logger.debug('updating credentials', creds);
+      if (creds.instanceUrl) {
+        self._project.projectJson.set('instanceUrl', creds.instanceUrl);
+      }
+      if (keychain.isAvailable() && config.get('mm_use_keyring') && !self.hasCredentialsJson()) {
+        if (creds.password) {
+          keychain.replacePassword(self._project.id, creds.password, 'password');
+        } else {
+          keychain.replacePassword(self._project.id, creds.accessToken, 'accessToken');
+          keychain.replacePassword(self._project.id, creds.refreshToken, 'refreshToken');
+        }
+      } else {
+        var credsBody;
+        if (creds.password) {
+          credsBody = {
+            password: creds.password
+          };
+        } else {
+          credsBody = {
+            accessToken: creds.accessToken,
+            refreshToken: creds.refreshToken
+          };
+        }
+        fs.outputFileSync(_credsJsonPath, JSON.stringify(credsBody, null, 4));
+      }
+      resolve();
+    } catch(e) {
+      logger.error('Could not update local creds', e);
+      reject(e);
     }
-  } else {
-    var credsBody;
-    if (sfdcClient.password) {
-      credsBody = {
-        password: sfdcClient.password
-      };
-    } else {
-      credsBody = {
-        accessToken: sfdcClient.accessToken,
-        refreshToken: sfdcClient.refreshToken
-      };
-    }
-    fs.outputFileSync(_credsJsonPath, JSON.stringify(credsBody, null, 4));
-  }
+  });
 };
 
 /**
@@ -76,10 +94,10 @@ Credentials.prototype.get = function() {
   if (keychain.isAvailable() && config.get('mm_use_keyring') && !this.hasCredentialsJson()) {
     var creds = {};
     if (sfdcClient.password) {
-      creds.password = keychain.getPassword(this._projectId, 'password');
+      creds.password = keychain.getPassword(this._project.id, 'password');
     } else {
-      creds.accessToken = keychain.getPassword(this._projectId, 'accessToken');
-      creds.refreshToken = keychain.getPassword(this._projectId, 'refreshToken');
+      creds.accessToken = keychain.getPassword(this._project.id, 'accessToken');
+      creds.refreshToken = keychain.getPassword(this._project.id, 'refreshToken');
     }
     return creds;
   } else {

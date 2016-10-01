@@ -176,7 +176,10 @@ SalesforceClient.prototype.initialize = function() {
         .then(function(res) {
           self.conn.userInfo = merge(self.conn.userInfo, res);
           self._configureJsForce();
-          return self.describeMetadata();
+          Promise.all([
+            self.startSystemStreamingListener(),
+            self.describeMetadata()
+          ]);
         })
         .then(function(res) {
           self.initialized = true;
@@ -205,7 +208,10 @@ SalesforceClient.prototype.initialize = function() {
         .then(function(res) {
           self.conn.userInfo = merge(self.conn.userInfo, res);
           self._configureJsForce();
-          return self.describeMetadata();
+          Promise.all([
+            self.startSystemStreamingListener(),
+            self.describeMetadata()
+          ]);
         })
         .then(function(res) {
           self.initialized = true;
@@ -957,9 +963,9 @@ SalesforceClient.prototype.startSystemStreamingListener = function() {
  */
 SalesforceClient.prototype.startLogging = function(debugSettings, expiration) {
   var self = this;
-  var userIds = debugSettings.users;
-  var debugLevels = debugSettings.levels || {};
-  var debugLevelName = debugSettings.debugLevelName || 'MAVENSMATE';
+  var userIds = debugSettings.get('users');
+  var debugLevels = debugSettings.get('levels') || {};
+  var debugLevelName = debugSettings.get('debugLevelName') || 'MAVENSMATE';
   logger.debug('attempting to start logging for: ');
   logger.debug(userIds);
   logger.debug('expiring: '+expiration);
