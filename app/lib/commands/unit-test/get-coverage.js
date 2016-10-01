@@ -9,7 +9,7 @@ var Promise         = require('bluebird');
 var inherits        = require('inherits');
 var BaseCommand     = require('../../command');
 var ApexTest        = require('../../services/test');
-var MavensMateFile  = require('../../file').MavensMateFile;
+var docUtil         = require('../../document/util');
 
 function Command() {
   BaseCommand.call(this, arguments);
@@ -20,16 +20,15 @@ inherits(Command, BaseCommand);
 Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var test = new ApexTest({
-      project: self.getProject()
-    });
+    var test = new ApexTest(self.getProject());
     var commandPromise;
     if (self.payload.global) {
       commandPromise = test.getOrgWideCoverage();
     } else {
-      var mmFile = new MavensMateFile({ project: self.getProject(), path: self.payload.paths[0] });
-      test.apexClassOrTriggerIdToName[mmFile.id] = mmFile.basename;
-      commandPromise = test.getCoverage([ mmFile.id ]);
+      var documents = docUtil.getDocumentsFromFilePaths(self.getProject(), self.payload.paths);
+      var apexDocumentEntry = documents.apex[0].getLocalStoreProperties();
+      test.apexClassOrTriggerIdToName[apexDocumentEntry.id] = apexDocumentEntry.fullName;
+      commandPromise = test.getCoverage([ apexDocumentEntry.id ]);
     }
     commandPromise
       .then(function(res) {
