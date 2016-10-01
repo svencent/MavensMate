@@ -45,25 +45,6 @@ Package.prototype.initializeFromDocuments = function(documents) {
 };
 
 /**
- * Refreshes package contents from the disk
- * TODO: should we watch the file instead and update project.packageXml accordingly?
- * @return {Promise} - resolves with void
- */
-Package.prototype.refreshContentsFromDisk = function() {
-  var self = this;
-  return new Promise(function(resolve, reject) {
-    self._deserialize(self.path)
-      .then(function(pkg) {
-        self.contents = pkg;
-        resolve();
-      })
-      .catch(function(err) {
-        reject(err);
-      });
-  });
-};
-
-/**
  * Populates package from an existing path on the disk
  * @param  {Array} components
  * @return {void}
@@ -74,6 +55,25 @@ Package.prototype.initializeFromPath = function(packagePath) {
     self._deserialize(packagePath)
       .then(function(pkg) {
         self.path = packagePath;
+        self.contents = pkg;
+        resolve();
+      })
+      .catch(function(err) {
+        reject(err);
+      });
+  });
+};
+
+/**
+ * Refreshes package contents from the disk
+ * TODO: should we watch the file instead and update project.packageXml accordingly?
+ * @return {Promise} - resolves with void
+ */
+Package.prototype.refreshContentsFromDisk = function() {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    self._deserialize(self.path)
+      .then(function(pkg) {
         self.contents = pkg;
         resolve();
       })

@@ -44,7 +44,7 @@
     var self = this;
     opts = opts || {};
     this.filterEnabled = opts.filterEnabled || true;
-    this.packageLocation = opts.packageLocation || 'package.xml';
+    this.packageLocation = opts.packageLocation;
     this.fancytree = null;
     this.allSelected = false;
     this.metadata = opts.metadata; // for new projects only
@@ -91,18 +91,9 @@
   mavensmate.MetadataTree.prototype.childMetadata = {{ mavensmate.ui.getChildTypes()|json|safe }}
 
   mavensmate.MetadataTree.prototype.getPackage = function() {
-    var self = this;
     var packageXml = {};
-
-    /*
-      Create a map of the tag name for a child metadata type ("fields") to the parent type ("CustomObject")
-     */
-    var childTagNameToParentType = {};
-    for (var item in self.childMetadata) {
-      childTagNameToParentType[self.childMetadata[item]['tagName']] = self.childMetadata[item]['xmlName'];
-    }
     try {
-      var records = self.fancytree.getSelectedNodes();
+      var records = this.fancytree.getSelectedNodes();
       $.each(records, function(index, rec) {
         if (rec.data.level === 1) {
           var childXmlNames = rec.data.type.childXmlNames || [];
@@ -174,9 +165,7 @@
    */
   mavensmate.MetadataTree.prototype.renderBuffered = function() {
     var self = this;
-    try {
-      $('#metadataTree').fancytree('destroy');
-    } catch(e) {}
+    try { $('#metadataTree').fancytree('destroy'); } catch(e) {}
 
     var defaultSubcription = {{ mavensmate.ui.getDefaultSubscription()|json|safe }};
 
@@ -260,7 +249,7 @@
         type: 'GET',
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
-        url: '/app/project/{{project.id}}/index?pid={{project.id}}&pkg='+encodeURI(self.packageLocation)
+        url: '/app/project/{{project.id}}/index?pid={{project.id}}&pkg='+(self.packageLocation ? encodeURI(self.packageLocation) : '')
       },
       extensions: ["filter"],
       filter: {
