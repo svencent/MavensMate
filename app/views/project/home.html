@@ -14,7 +14,7 @@
 
 <div class="app-launcher">
   <div class="slds-grid slds-wrap slds-grid--pull-padded">
-    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-4 slds-p-bottom--large">
       <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
         <a class="slds-button slds-icon_container slds-icon-standard-account" href="/app/project/{{project.id}}/edit?pid={{project.id}}">
           <svg aria-hidden="true" class="slds-icon slds-icon--large">
@@ -25,18 +25,7 @@
         <div class="slds-text-heading--label slds-p-top--medium">Edit Project</div>
       </div>
     </div>
-    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
-      <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
-        <a class="slds-button slds-icon_container slds-icon-standard-dashboard" href="/app/test/new?pid={{project.id}}">
-          <svg aria-hidden="true" class="slds-icon slds-icon--large">
-            <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#dashboard"></use>
-          </svg>
-          <span class="slds-assistive-text"></span>
-        </a>
-        <div class="slds-text-heading--label slds-p-top--medium">Run Apex Unit Tests</div>
-      </div>
-    </div>
-    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-4 slds-p-bottom--large">
       <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
         <a class="slds-button slds-icon_container slds-icon-standard-avatar" href="/app/project/{{project.id}}/auth?pid={{project.id}}">
           <svg aria-hidden="true" class="slds-icon slds-icon--large">
@@ -47,7 +36,29 @@
         <div class="slds-text-heading--label slds-p-top--medium">Authentication</div>
       </div>
     </div>
-    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-4 slds-p-bottom--large">
+      <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
+        <a class="slds-button slds-icon_container slds-icon-standard-dashboard" href="/app/test/new?pid={{project.id}}">
+          <svg aria-hidden="true" class="slds-icon slds-icon--large">
+            <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#dashboard"></use>
+          </svg>
+          <span class="slds-assistive-text"></span>
+        </a>
+        <div class="slds-text-heading--label slds-p-top--medium">Run Apex Unit Tests</div>
+      </div>
+    </div>
+    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-4 slds-p-bottom--large">
+      <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
+        <a class="slds-button slds-icon_container slds-icon-standard-connected-apps" href="/app/lightning/bundles?pid={{project.id}}">
+          <svg aria-hidden="true" class="slds-icon slds-icon--large">
+            <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#connected_apps"></use>
+          </svg>
+          <span class="slds-assistive-text"></span>
+        </a>
+        <div class="slds-text-heading--label slds-p-top--medium">Lightning Bundles</div>
+      </div>
+    </div>
+    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-4 slds-p-bottom--large">
       <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
         <a class="slds-button slds-icon_container slds-icon-standard-environment-hub" href="/app/deploy/new?pid={{project.id}}">
           <svg aria-hidden="true" class="slds-icon slds-icon--large">
@@ -58,7 +69,7 @@
         <div class="slds-text-heading--label slds-p-top--medium">Deploy to Server</div>
       </div>
     </div>
-    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-4 slds-p-bottom--large">
       <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
         <a class="slds-button slds-icon_container slds-icon-standard-document" href="/app/metadata/ApexClass/new?pid={{project.id}}">
           <svg aria-hidden="true" class="slds-icon slds-icon--large">
@@ -69,15 +80,26 @@
         <div class="slds-text-heading--label slds-p-top--medium">New Apex Class</div>
       </div>
     </div>
-    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--large">
+    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-4 slds-p-bottom--large">
       <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
-        <a class="slds-button slds-icon_container slds-icon-standard-connected-apps" href="/app/lightning/app/new?pid={{project.id}}">
+        <a class="slds-button slds-icon_container slds-icon-standard-connected-apps" href="/app/lightning/application/new?pid={{project.id}}">
           <svg aria-hidden="true" class="slds-icon slds-icon--large">
             <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#connected_apps"></use>
           </svg>
           <span class="slds-assistive-text"></span>
         </a>
-        <div class="slds-text-heading--label slds-p-top--medium">New Lightning App</div>
+        <div class="slds-text-heading--label slds-p-top--medium">New Lightning Application</div>
+      </div>
+    </div>
+    <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-4 slds-p-bottom--large">
+      <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center">
+        <a class="slds-button slds-icon_container slds-icon-standard-record" href="/app/logs?pid={{project.id}}">
+          <svg aria-hidden="true" class="slds-icon slds-icon--large">
+            <use xlink:href="/app/static/lds/assets/icons/standard-sprite/svg/symbols.svg#record"></use>
+          </svg>
+          <span class="slds-assistive-text"></span>
+        </a>
+        <div class="slds-text-heading--label slds-p-top--medium">Debug Logs</div>
       </div>
     </div>
   </div>
