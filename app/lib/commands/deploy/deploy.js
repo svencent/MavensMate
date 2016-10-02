@@ -7,11 +7,12 @@
 
 var Promise         = require('bluebird');
 var util            = require('../../util');
-var Deploy          = require('../../services/deploy');
+var RemoteDeploy    = require('../../deploy/remote');
 var inherits        = require('inherits');
 var BaseCommand     = require('../../command');
 var logger          = require('winston');
 var EditorService   = require('../../services/editor');
+var deployUtil      = require('../../deploy/util');
 
 function Command() {
   BaseCommand.call(this, arguments);
@@ -23,7 +24,6 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (self.isUICommand()) {
-
       self.editorService.launchUI('deploy/new', { pid: self.getProject().id })
         .then(function() {
           resolve('Success');
@@ -32,28 +32,31 @@ Command.prototype.execute = function() {
           reject(error);
         });
     } else {
-      var deployPayload = self.payload;
-      deployPayload.project = self.getProject();
-      logger.debug('initiating deploy: ', deployPayload.targets, deployPayload.package);
-      var deploy = new Deploy(deployPayload);
+      var remoteDeploy = new RemoteDeploy(
+                              self.getProject(),
+                              self.payload.package,
+                              self.payload.targets,
+                              self.payload.deployOptions,
+                              self.payload.deployName);
 
-      var deployOptions = deployPayload.deployOptions || undefined;
-
-      logger.debug('deploying: ');
-      logger.debug('deployOptions: ', deployOptions);
-
-      deploy.executeRemote(deployOptions)
-        .then(function(result) {
-          if (self.payload.ui) {
-            resolve(deploy.getResultHtml(deployPayload.targets, deployPayload.deployOptions, result));
+      remoteDeploy.execute()
+        .then(function(deployResult) {
+          if (self.payload.html) {
+            resolve(
+                deployUtil.renderDeployResult(
+                  self.getProject(),
+                  self.payload.targets,
+                  self.payload.deployOptions,
+                  deployResult
+                )
+            );
           } else {
-            resolve(result);
+            resolve(deployResult);
           }
         })
         .catch(function(error) {
           reject(error);
-        })
-        .done();
+        });
     }
   });
 };

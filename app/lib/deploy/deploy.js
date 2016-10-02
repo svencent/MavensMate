@@ -6,10 +6,10 @@ var _ = require('lodash');
 var logger = require('winston');
 var util = require('../util');
 
-function Deploy(project, documents, targets) {
-  this._project = project;
-  this._components = components;
-  this._targets = targets;
+function Deploy(sfdcClient, documents, deployOptions) {
+  this._sfdcClient = sfdcClient;
+  this._documents = documents;
+  this._deployOptions = deployOptions || { rollbackOnError : true, performRetrieve: true };
 }
 
 Deploy.prototype.execute = function() {
@@ -17,7 +17,7 @@ Deploy.prototype.execute = function() {
   return new Promise(function(resolve, reject) {
     self.stage()
       .then(function(zipStream) {
-        return self._project.sfdcClient.deploy(zipStream, { rollbackOnError : true, performRetrieve: true });
+        return self._sfdcClient.deploy(zipStream, self._deployOptions);
       })
       .then(function(res) {
         resolve(res);
@@ -41,7 +41,7 @@ Deploy.prototype.stage = function() {
       fs.mkdirpSync(unpackagedPath);
 
       var packageXml = new Package();
-      packageXml.initializeFromDocuments(self._components);
+      packageXml.initializeFromDocuments(self._documents);
       packageXml.writeToDisk(unpackagedPath);
 
       /*

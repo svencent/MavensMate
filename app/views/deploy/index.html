@@ -245,8 +245,8 @@
         data: JSON.stringify({
           targets: $('#deploy-targets').multiSelect('getSelectedItems'), // list of org connection ids
           package: metadataTree.getPackage(),
-          deploymentName: $("#new_deployment_name").val(),
-          ui: true,
+          deployName: $("#new_deployment_name").val(),
+          html: true,
           deployOptions: {
             rollbackOnError: isRollbackOnError(),
             performRetrieve: true,
