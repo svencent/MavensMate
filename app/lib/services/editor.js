@@ -188,7 +188,12 @@ EditorService.prototype.runCommand = function(commandName) {
 EditorService.prototype.open = function(path) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var editorExe = spawn(self.supportedEditors[self.editor], [ path ]);
+    var editorExe;
+    if (self.editor === 'vscode') {
+      editorExe = spawn(self.supportedEditors[self.editor], [ path, '--reuse-window' ]);
+    } else {
+      editorExe = spawn(self.supportedEditors[self.editor], [ path ]);
+    }
     editorExe.stdout.on('data', function (data) {
       logger.debug('editorExe STDOUT:');
       logger.debug(data);
