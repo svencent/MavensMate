@@ -10,6 +10,18 @@
       <th scope="col">
         <div class="" title="Class Name">Bundle Name</div>
       </th>
+      <td scope="col">
+        <div class="" title="Created Date">Created Date</div>
+      </td>
+      <td scope="col">
+        <div class="" title="Created By">Created By</div>
+      </td>
+      <td scope="col">
+        <div class="" title="Last Modified Date">Last Modified Date</div>
+      </td>
+      <td scope="col">
+        <div class="" title="Last Modified By">Last Modified By</div>
+      </td>
     </tr>
   </thead>
   <tbody>
@@ -25,6 +37,26 @@
               <a href="/app/lightning/bundles/{{b.Id}}?pid={{project.id}}">{{b.MasterLabel}}</a>
             </div>
           </th>
+          <td scope="row" data-label="{{b.CreatedDate}}">
+            <div class="slds-truncate" title="{{ mavensmate.ui.moment(b.CreatedDate) }}">
+              {{ mavensmate.ui.moment(b.CreatedDate) }}
+            </div>
+          </td>
+          <td scope="row" data-label="{{b.CreatedBy.Name}}">
+            <div class="slds-truncate" title="{{b.CreatedBy.Name}}">
+              {{b.CreatedBy.Name}}
+            </div>
+          </td>
+          <td scope="row" data-label="{{b.LastModifiedDate}}">
+            <div class="slds-truncate" title="{{ mavensmate.ui.moment(b.LastModifiedDate) }}">
+              {{ mavensmate.ui.moment(b.LastModifiedDate) }}
+            </div>
+          </td>
+          <td scope="row" data-label="{{b.LastModifiedBy.Name}}">
+            <div class="slds-truncate" title="{{b.LastModifiedBy.Name}}">
+              {{b.LastModifiedBy.Name}}
+            </div>
+          </td>
         </tr>
     {% endfor %}
   </tbody>

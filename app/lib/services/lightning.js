@@ -130,7 +130,7 @@ LightningService.prototype.getBundle = function(bundleId) {
 LightningService.prototype.getBundles = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    self.project.sfdcClient.conn.tooling.query('Select Id, ApiVersion, Description, DeveloperName, Language, MasterLabel, NamespacePrefix FROM AuraDefinitionBundle')
+    self.project.sfdcClient.conn.tooling.query('Select Id, ApiVersion, Description, DeveloperName, Language, MasterLabel, NamespacePrefix, CreatedDate, CreatedBy.Name, LastModifiedDate, LastModifiedBy.Name FROM AuraDefinitionBundle')
       .then(function(res) {
         resolve(res);
       })

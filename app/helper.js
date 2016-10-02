@@ -6,6 +6,7 @@
 'use strict';
 
 var path              = require('path');
+var moment            = require('moment');
 var fs                = require('fs-extra');
 var util              = require('./lib/util');
 var _                 = require('lodash');
@@ -23,6 +24,10 @@ ViewHelper.prototype.config = config;
 
 ViewHelper.prototype.getSupportedEditors = function() {
   return this.supportedEditors;
+};
+
+ViewHelper.prototype.moment = function(dateString) {
+  return moment(dateString).format('lll');
 };
 
 ViewHelper.prototype.getBundleType = function(project, bundleName) {
