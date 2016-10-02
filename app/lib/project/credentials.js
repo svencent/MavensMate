@@ -53,7 +53,9 @@ Credentials.prototype.update = function(creds) {
     try {
       logger.debug('updating credentials', creds);
       if (creds.instanceUrl) {
-        self._project.projectJson.set('instanceUrl', creds.instanceUrl);
+        self._project.projectJson.set({
+          instanceUrl: creds.instanceUrl
+        });
       }
       if (keychain.isAvailable() && self._project.config.get('mm_use_keyring') && !self.hasCredentialsJson()) {
         if (creds.password) {
