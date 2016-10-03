@@ -176,7 +176,7 @@ SalesforceClient.prototype.initialize = function() {
         .then(function(res) {
           self.conn.userInfo = merge(self.conn.userInfo, res);
           self._configureJsForce();
-          Promise.all([
+          return Promise.all([
             self.startSystemStreamingListener(),
             self.describeMetadata()
           ]);
@@ -208,7 +208,7 @@ SalesforceClient.prototype.initialize = function() {
         .then(function(res) {
           self.conn.userInfo = merge(self.conn.userInfo, res);
           self._configureJsForce();
-          Promise.all([
+          return Promise.all([
             self.startSystemStreamingListener(),
             self.describeMetadata()
           ]);

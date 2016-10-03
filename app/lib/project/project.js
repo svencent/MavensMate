@@ -142,7 +142,7 @@ Project.prototype.update = function(pkg) {
         return projectUtil.copy(tmpUnpackagedPath, srcPath, true);
       })
       .then(function() {
-        Promise.all([
+        return Promise.all([
           self.localStore.clean(serverProperties),
           self.serverStore.refresh(self.sfdcClient, self.projectJson.get('subscription'))
         ]);
