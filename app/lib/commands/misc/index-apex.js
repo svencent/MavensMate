@@ -8,6 +8,7 @@
 var Promise           = require('bluebird');
 var inherits          = require('inherits');
 var BaseCommand       = require('../../command');
+var ApexSymbols       = require('../../services/symbol');
 
 function Command() {
   BaseCommand.call(this, arguments);
@@ -18,15 +19,14 @@ inherits(Command, BaseCommand);
 Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    var project = self.getProject();
-    project.indexSymbols()
+    var apexSymbols = new ApexSymbols(self.getProject())
+    apexSymbols.index()
       .then(function() {
         resolve('Symbols successfully indexed');
       })
       .catch(function(error) {
         reject(error);
-      })
-      .done();
+      });
   });
 };
 

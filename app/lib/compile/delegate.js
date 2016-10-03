@@ -24,7 +24,7 @@ CompileDelegate.prototype.execute = function() {
                                   self.documents.lightning,
                                   self.documents.apex,
                                   self.documents.metadata);
-      documentUtil.ensureServerIndexForDocumentTypes(flattenedDocuments);
+      documentUtil.ensureServerIndexForDocumentTypes(flattenedDocuments)
         .then(function(res) {
           var compilePromises = [];
           if (self.documents.apex.length > 0)

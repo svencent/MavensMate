@@ -13,7 +13,8 @@ var fs      = require('fs-extra');
 var path    = require('path');
 
 var SymbolService = function(project) {
-  this.project = project;
+  this.projectPath = project.path;;
+  this.sfdcClient = project.sfdcClient;
 };
 
 /**
@@ -23,13 +24,13 @@ var SymbolService = function(project) {
 SymbolService.prototype.index = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    self._getApexClassNames()
-      .then(function(classNames) {
+    self._getApexClassIds()
+      .then(function(classIds) {
         var symbolPromises = [];
-        var classNameArrays = util.chunkArray(classNames, 10);
-        logger.debug(classNameArrays);
-        _.each(classNameArrays, function(classNames) {
-          symbolPromises.push(self._getSymbolsForClassNames(classNames));
+        var classIdChunks = util.chunkArray(classIds, 10);
+        logger.debug(classIdChunks);
+        _.each(classIdChunks, function(classIds) {
+          symbolPromises.push(self._getSymbolsForApexDocuments(classIds));
         });
         return Promise.all(symbolPromises);
       })
@@ -58,10 +59,16 @@ SymbolService.prototype.index = function() {
  * @param  {String} apexClassName - name of the apex class to be indexes
  * @return {Promise}
  */
-SymbolService.prototype.indexApexClass = function(apexClassName) {
+SymbolService.prototype.indexSymbolsForApexClassDocuments = function(apexDocuments) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    self._getSymbolsForClassNames([apexClassName])
+    var apexClassIds = [];
+    _.each(apexDocuments, function(d) {
+      if (d.getLocalStoreProperties()) {
+        apexClassIds.push(d.getLocalStoreProperties().id);
+      }
+    });
+    self._getSymbolsForApexDocuments(apexClassIds)
       .then(function(symbolQueryResult) {
         return self._writeSymbolTable(symbolQueryResult.records[0]);
       })
@@ -84,7 +91,17 @@ SymbolService.prototype.indexApexClass = function(apexClassName) {
 SymbolService.prototype._writeSymbolTable = function(symbolQueryResult) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    fs.outputFile(path.join(self.project.path, 'config', '.symbols', symbolQueryResult.Name+'.json'), JSON.stringify(symbolQueryResult.SymbolTable, null, 4), function(err) {
+    fs.outputFile(path.join(
+                    self.projectPath,
+                    '.mavensmate',
+                    '.symbols',
+                    symbolQueryResult.Name+'.json'
+                  ),
+                  JSON.stringify(
+                    symbolQueryResult.SymbolTable,
+                    null,
+                  4),
+    function(err) {
       if (err) {
         reject(err);
       } else {
@@ -99,16 +116,15 @@ SymbolService.prototype._writeSymbolTable = function(symbolQueryResult) {
  * @param  {Array} classNames - class names
  * @return {Promise}
  */
-SymbolService.prototype._getSymbolsForClassNames = function(classNames) {
+SymbolService.prototype._getSymbolsForApexDocuments = function(apexClassIds) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    logger.debug('_getSymbolsForClassNames:');
-    logger.debug(classNames);
+    logger.debug('_getSymbolsForApexDocument ids:', apexClassIds);
 
     var fields = ['NamespacePrefix', 'SymbolTable', 'Name'];
-    var query = 'SELECT '+fields.join(',')+' FROM ApexClass WHERE NAME IN ('+util.joinForQuery(classNames)+')';
+    var query = 'SELECT '+fields.join(',')+' FROM ApexClass WHERE ID IN ('+util.joinForQuery(apexClassIds)+')';
 
-    self.project.sfdcClient.conn.tooling.query(query, function(err, res) {
+    self.sfdcClient.conn.tooling.query(query, function(err, res) {
       if (err) {
         reject(new Error('error retrieving symbols: '+err.message));
       } else {
@@ -122,19 +138,19 @@ SymbolService.prototype._getSymbolsForClassNames = function(classNames) {
  * Returns a list of Apex classes in the org (from the server)
  * @return {Promise}
  */
-SymbolService.prototype._getApexClassNames = function() {
+SymbolService.prototype._getApexClassIds = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
-    self.project.sfdcClient.list('ApexClass')
+    self.sfdcClient.list('ApexClass')
       .then(function(res) {
-        var classNames = [];
+        var classIds = [];
         _.each(res.ApexClass, function(cls) {
-          classNames.push(cls.fullName);
+          classIds.push(cls.id);
         });
-        resolve(classNames);
+        resolve(classIds);
       })
       .catch(function(err) {
-        reject(new Error('Could not get class names: '+err.message));
+        reject(new Error('Could not get class ids: '+err.message));
       })
       .done();
   });

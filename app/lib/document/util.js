@@ -31,7 +31,7 @@ var _ensureProjectSubscriptionForDocumentTypes = function(project, documents) {
   });
 };
 
-var ensureServerIndexForDocumentTypes = function(project, documents) {
+module.exports.ensureServerIndexForDocumentTypes = function(project, documents) {
   return new Promise(function(resolve, reject) {
     var typesToIndex = [];
     _.each(documents, function(d) {
@@ -65,7 +65,7 @@ module.exports.getDocumentsFromFilePaths = function(project, paths) {
     documents.push(new Document(project, p));
   });
 
-  ensureProjectSubscriptionForDocumentTypes(project, documents);
+  _ensureProjectSubscriptionForDocumentTypes(project, documents);
 
   _.each(documents, function(d) {
 
@@ -82,11 +82,11 @@ module.exports.getDocumentsFromFilePaths = function(project, paths) {
     }
 
     if (ApexDocument.isApexType(d.getType())) {
-      result.apex.push(new ApexDocument(project, p));
+      result.apex.push(new ApexDocument(project, d.getPath()));
     } else if (d.isLightningBundle() || d.isLightningBundleItem()) {
-      result.lightning.push(new LightningDocument(project, p));
+      result.lightning.push(new LightningDocument(project, d.getPath()));
     } else {
-      result.metadata.push(new MetadataDocument(project, p));
+      result.metadata.push(new MetadataDocument(project, d.getPath()));
     }
 
   });

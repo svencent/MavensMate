@@ -135,9 +135,9 @@ Project.prototype._watchPackageXml = function() {
  */
 Project.prototype._isMavensMateProject = function() {
   if (
-    fs.existsSync(path.join(self.path, '.mavensmate') &&
-    fs.existsSync(path.join(self.path, 'src') &&
-    fs.existsSync(path.join(self.path, 'src', 'package.xml')
+    fs.existsSync(path.join(this.path, '.mavensmate')) &&
+    fs.existsSync(path.join(this.path, 'src')) &&
+    fs.existsSync(path.join(this.path, 'src', 'package.xml'))
   ) {
       return true;
     } else {
