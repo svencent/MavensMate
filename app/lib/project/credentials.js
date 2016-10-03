@@ -5,11 +5,11 @@ var keychain          = require('../services/keychain');
 var config            = require('../../config');
 var util              = require('../util');
 var logger            = require('winston');
+var SalesforceClient  = require('../sfdc-client');
 
 var Credentials = function(project) {
   this._project = project;
   this._credsJsonPath = path.join(project.path, '.mavensmate', 'credentials.json');
-  this._observeCredentialsUpdates(project.sfdcClient);
 };
 
 /**
@@ -24,7 +24,7 @@ Credentials.prototype.hasCredentialsJson = function() {
  * Observe for token refreshes and update accordingly
  * @return {Nothing}
  */
-Credentials.prototype._observeCredentialsUpdates = function(sfdcClient) {
+Credentials.prototype.observeTokenRefresh = function(sfdcClient) {
   var self = this;
   sfdcClient.on('token-refresh', function() {
     logger.debug('project.sfdcClient emitted token-refresh, updating local credential store');
@@ -78,11 +78,69 @@ Credentials.prototype.update = function(creds) {
         }
         fs.outputFileSync(_credsJsonPath, JSON.stringify(credsBody, null, 4));
       }
-      resolve();
+      self._replaceSalesforceClient(creds)
+        .then(function(res) {
+          self._updateProjectJson(creds);
+          self._project.debug.set({
+            users: [ self._project.sfdcClient.getUserId() ]
+          });
+          self.observeTokenRefresh(self._project.sfdcClient);
+          resolve();
+        })
+        .catch(function(err) {
+          reject(e)
+        });
     } catch(e) {
       logger.error('Could not update local creds', e);
       reject(e);
     }
+  });
+};
+
+Credentials.prototype._updateProjectJson = function(creds) {
+  var projectJsonUpdate = {};
+  if (creds.username) {
+    projectJsonUpdate.username = creds.username;
+  }
+  if (creds.orgType) {
+    projectJsonUpdate.orgType = creds.orgType;
+  }
+  if (creds.loginUrl) {
+    projectJsonUpdate.loginUrl = creds.loginUrl;
+  }
+  if (creds.instanceUrl) {
+    projectJsonUpdate.instanceUrl = creds.instanceUrl;
+  }
+  self._project.projectJson.set(projectJsonUpdate);
+};
+
+Credentials.prototype._replaceSalesforceClient = function(creds) {
+  return new Promise(function(resolve, reject) {
+    if (creds.username && creds.password) {
+      self._project.sfdcClient = new SalesforceClient({
+        username: username,
+        password: password,
+        orgType: orgType,
+        loginUrl: loginUrl,
+        instanceUrl: instanceUrl
+      });
+    } else {
+      self._project.sfdcClient = new SalesforceClient({
+        username: username,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        orgType: orgType,
+        loginUrl: loginUrl,
+        instanceUrl: instanceUrl
+      });
+    }
+    self._project.sfdcClient.initialize()
+      .then(function() {
+        resolve();
+      })
+      .catch(function(err) {
+        reject(err);
+      });
   });
 };
 

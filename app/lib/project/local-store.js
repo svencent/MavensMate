@@ -9,6 +9,9 @@ var MetadataHelper  = require('../metadata').MetadataHelper;
 
 var LocalStore = function(project) {
   this._path = path.join(project.path, '.mavensmate', 'local.json');
+  if (!fs.existsSync(this._path)) {
+    LocalStore.create(project.path, []);
+  }
   this._state = util.getFileBodySync(this._path, true);
 };
 

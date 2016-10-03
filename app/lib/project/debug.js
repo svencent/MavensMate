@@ -7,14 +7,18 @@ var util    = require('../util');
 
 var Debug = function(project) {
   this._path = path.join(project.path, '.mavensmate', 'debug.json');
+  if (!fs.existsSync(this._path)) {
+    Debug.create(project.path, project.sfdcClient);
+  }
   this._state = util.getFileBodySync(this._path, true);
   this._watch();
 };
 
 Debug.create = function(projectPath, sfdcClient) {
   var projectDebugPath = path.join(projectPath, '.mavensmate', 'debug.json');
+  var userIds = sfdcClient ? [ sfdcClient.getUserId() ] : [];
   var body = {
-    users: [sfdcClient.getUserId()],
+    users: userIds,
     logType: 'USER_DEBUG',
     debugLevelName: 'MAVENSMATE',
     levels: {

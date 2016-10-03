@@ -55,6 +55,7 @@ Project.prototype.initialize = function() {
     self.packageXml = new Package(self);
     self.localStore = new LocalStore(self);
     self.serverStore = new ServerStore(self);
+    self.credentials = new Credentials(self);
     self.name = self.projectJson.get('projectName');
     self.id = self.projectJson.get('id');
     Promise.all([
@@ -98,8 +99,8 @@ Project.prototype.initializeSalesforceClient = function() {
     }
     self.sfdcClient.initialize()
       .then(function() {
-        self.credentials = new Credentials(self);
         self.logService = new LogService(self);
+        self.credentials.observeTokenRefresh(self.sfdcClient);
         self.hasInvalidSalesforceConnection = false;
         resolve();
       })

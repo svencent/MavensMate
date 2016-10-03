@@ -9,6 +9,9 @@ var Indexer         = require('../org/index');
 
 var ServerStore = function(project) {
   this._path = path.join(project.path, '.mavensmate', 'server.json');
+  if (!fs.existsSync(this._path)) {
+    fs.outputJsonSync(this._path, []);
+  }
 };
 
 ServerStore.prototype.initialize = function() {
@@ -39,6 +42,13 @@ ServerStore.prototype.hasIndex = function() {
   return this._state !== undefined && this._state !== [] && this._state !== {};
 };
 
+ServerStore.prototype.hasIndexForType = function(type) {
+  var indexedType = _.find(this._state, function(s) {
+    s.xmlName === type;
+  });
+  return indexedType !== undefined;
+};
+
 /**
  * Returns a representation of the store based on the project's package xml (move to package.js?)
  * @param  {SalesforceClient} sfdcClient
@@ -48,7 +58,6 @@ ServerStore.prototype.hasIndex = function() {
 ServerStore.prototype.getIndexWithLocalSubscription = function(sfdcClient, packageXml) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    // var indexer = new Indexer(sfdcClient, subscription);
     resolve(self._state);
   });
 };

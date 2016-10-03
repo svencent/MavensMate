@@ -5,6 +5,11 @@ var util    = require('../util');
 
 var Config = function(project) {
   this._path = path.join(project.path, '.mavensmate', 'config.json');
+  if (!fs.existsSync(this._path)) {
+    Config.create(project.path, {
+      'mm_api_version' : config.get('mm_api_version')
+    });
+  }
   this._state = util.getFileBodySync(this._path, true);
   this._watch();
 };
