@@ -9,10 +9,10 @@ var _               = require('lodash');
 var fs              = require('fs-extra-promise');
 var path            = require('path');
 var Promise         = require('bluebird');
-var mavensMateFile  = require('../file');
+var Document        = require('../document').Document;
+var CompileDelegate = require('../compile/delegate');
 var util            = require('../util');
 var logger          = require('winston');
-var Deploy          = require('./deploy');
 var config          = require('../../config');
 
 var ResourceBundleService = function(project) {
@@ -21,7 +21,7 @@ var ResourceBundleService = function(project) {
 
 /**
  * Create resource bundles for the provided files
- * @param  {Array} files - list of static resources
+ * @param  {Array} staticResourcePaths - array of static resource paths
  * @return {Promise}
  */
 ResourceBundleService.prototype.create = function(staticResourcePaths) {
@@ -31,22 +31,21 @@ ResourceBundleService.prototype.create = function(staticResourcePaths) {
 
     var files = [];
     var writePromises = [];
-    _.each(staticResourcePaths, function(p) {
+    _.each(staticResourcePaths, function(filePath) {
       logger.debug(p);
-      var f = new mavensMateFile.MavensMateFile({ project: self.project, path: p });
-      if (!f.existsOnFileSystem) {
+      var d = new Document(self.project, filePath);
+      if (!d.existsOnFileSystem()) {
         throw new Error('Could not find static resource path');
       }
-      if (f.type.xmlName !== 'StaticResource') {
-        throw new Error('File is not a static resource');
+      if (d.getType() !== 'StaticResource') {
+        throw new Error('Path provided is not a static resource');
       } else {
-        files.push(f);
-        var bundlePath = path.join(self.project.path, 'resource-bundles', [f.name, 'resource'].join('.'));
+        var bundlePath = path.join(self.project.path, 'resource-bundles', [d.getName(), 'resource'].join('.'));
         if (fs.existsSync(bundlePath)) {
           throw new Error('Resource bundle path already exists.');
         }
         fs.ensureDirSync(bundlePath);
-        writePromises.push(self._write(f.path, bundlePath));
+        writePromises.push(self._write(d.getPath(), bundlePath));
       }
     });
 
@@ -92,29 +91,23 @@ ResourceBundleService.prototype.deploy = function(bundlePaths) {
     logger.debug('deploying resource bundle paths: ', bundlePaths);
 
     var zipPromises = [];
-    var mavensMateFiles = [];
+    var staticResourcePaths = [];
 
     _.each(bundlePaths, function(bp) {
       var staticResourcePath = path.join(self.project.path, 'src', 'staticresources', path.basename(bp));
-      logger.debug('static resource path is: '+staticResourcePath);
-      mavensMateFiles.push( new mavensMateFile.MavensMateFile({ project: self.project, path: staticResourcePath }) );
+      logger.debug('static resource path', staticResourcePath);
       zipPromises.push(self._zip(bp, staticResourcePath));
+      staticResourcePaths.push(staticResourcePath);
     });
-
-    var compileSubscription = mavensMateFile.createPackageSubscription(mavensMateFiles, self.project.packageXml);
 
     Promise.all(zipPromises)
       .then(function() {
-        logger.debug('directories zipped, prepping for deployment');
-        var deploy = new Deploy({ project: self.project });
-        deploy.compileWithMetadataApi(mavensMateFiles, compileSubscription)
-          .then(function(result) {
-            resolve(result);
-          })
-          .catch(function(error) {
-            reject(error);
-          })
-          .done();
+        logger.debug('resource bundles zipped, prepping to deploy static resources');
+        var compileDelegate = new CompileDelegate(self.project, staticResourcePaths);
+        return compileDelegate.execute();
+      })
+      .then(function(result) {
+        resolve(result);
       })
       .catch(function(error) {
         reject(error);
@@ -133,7 +126,12 @@ ResourceBundleService.prototype._zip = function(bundlePath, staticResourcePath) 
           var staticResourceFileName = path.basename(bundlePath);
           logger.debug('zipping '+bundlePath+', TO: '+path.dirname(staticResourcePath));
           // zip resource-bundle directory, place in static resource path
-          return util.zipDirectory(bundlePath, path.dirname(staticResourcePath), '', 'resource', staticResourceFileName.split('.')[0]);
+          return util.zipDirectory(
+                      bundlePath,
+                      path.dirname(staticResourcePath),
+                      '',
+                      'resource',
+                      staticResourceFileName.split('.')[0]);
         })
         .then(function() {
           resolve();

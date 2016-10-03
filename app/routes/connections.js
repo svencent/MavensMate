@@ -9,7 +9,6 @@ var express         = require('express');
 var router          = express.Router();
 var logger          = require('winston');
 var requestStore    = require('../lib/request-store');
-var Deploy          = require('../lib/services/deploy');
 var querystring     = require('querystring');
 var util            = require('../lib/util');
 

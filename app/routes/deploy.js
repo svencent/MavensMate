@@ -9,8 +9,7 @@ var express         = require('express');
 var router          = express.Router();
 var requestStore    = require('../lib/request-store');
 var logger          = require('winston');
-var Deploy          = require('../lib/services/deploy');
-var querystring     = require('querystring');
+var deployUtil      = require('../lib/deploy/util');
 
 router.get('/new', function(req, res) {
   if (!req.project) {
@@ -28,7 +27,7 @@ router.get('/new', function(req, res) {
     .then(function(response) {
       res.render('deploy/index.html', {
         connections: response,
-        namedDeployments: deployDelegate.getNamedDeployments(),
+        namedDeployments: deployUtil.getNamedDeployments(),
         hasIndexedMetadata: req.project.serverStore.hasIndex(),
         title: 'Deploy'
       });

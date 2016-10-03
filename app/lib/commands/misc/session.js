@@ -10,7 +10,6 @@ var util                  = require('../../util');
 var inherits              = require('inherits');
 var BaseCommand           = require('../../command');
 var SalesforceClient      = require('../../sfdc-client');
-var IndexService          = require('../../services/index');
 var config                = require('../../../config');
 var _                     = require('lodash');
 
