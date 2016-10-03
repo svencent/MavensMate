@@ -150,12 +150,12 @@
    */
   mavensmate.MetadataTree.prototype.check = function(yesOrNo) {
     this.fancytree.getRootNode().visit(function(node){
-      if ($("#txt-metadata-tree-search").val() == '') {
-        if (node.data.cls !== 'hidden')
-          node.setSelected(yesOrNo);
+      if ($("#txt-metadata-tree-search").val() === '') {
+        node.setSelected(yesOrNo);
       } else {
-        if (node.data.level !== 1 && node.data.cls !== 'hidden')
+        if ($(node.span).hasClass('fancytree-match')) {
           node.setSelected(yesOrNo);
+        }
       }
     });
   };
