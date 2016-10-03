@@ -1,4 +1,5 @@
 var Promise           = require('bluebird');
+var _                 = require('lodash');
 var gracefulRename    = Promise.promisify(require('graceful-fs').rename);
 var path              = require('path');
 var fs                = require('fs-extra-promise');
@@ -17,6 +18,7 @@ var ServerStore       = require('./server-store');
 var LogService        = require('../services/log');
 var SalesforceClient  = require('../sfdc-client');
 var Package           = require('../package');
+var EditorService     = require('../services/editor');
 var packageExceptions = require('../package/exceptions');
 
 // TODOS
@@ -240,6 +242,7 @@ Project.create = function(opts) {
     });
     Debug.create(projectPath, sfdcClient);
     Credentials.create(projectPath, projectId, sfdcClient);
+    EditorService.putConfig(projectPath);
 
     var fileProperties;
     // get server contents and write locally
@@ -309,6 +312,7 @@ Project.convert = function(opts) {
     Config.create(projectPath);
     Debug.create(projectPath, sfdcClient);
     Credentials.create(projectPath, projectId, sfdcClient);
+    EditorService.putConfig(projectPath);
     return new Project(projectPath);
   });
 }

@@ -221,4 +221,48 @@ EditorService.prototype.open = function(path) {
   });
 };
 
+EditorService.putConfig = function(projectPath) {
+  return new Promise(function(resolve, reject) {
+    // todo: make editor specific
+    var sublimeSettings = {
+      folders : [
+        {
+          "folder_exclude_patterns": [
+              ".mavensmate/.symbols"
+          ],
+          path : '.'
+        }
+      ],
+      settings : {
+        auto_complete_triggers : [
+          {
+              characters: '.',
+              selector: 'source - comment'
+          },
+          {
+              characters: ':',
+              selector: 'text.html - comment'
+          },
+          {
+              characters: '<',
+              selector: 'text.html - comment'
+          },
+          {
+              characters: ' ',
+              selector: 'text.html - comment'
+          }
+        ]
+      }
+    };
+    var filePath = path.join( projectPath, [ path.basename(projectPath), 'sublime-project' ].join('.') );
+    fs.outputFile(filePath, JSON.stringify(sublimeSettings, null, 4), function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
 module.exports = EditorService;
