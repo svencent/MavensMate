@@ -11,7 +11,9 @@ module.exports.getDocumentFolderBaseName = function(d) {
 };
 
 module.exports.getDocumentPackageXmlName = function(d) {
-  if (d.getDescribe().inFolder) {
+  if (d.isLightningBundle()) {
+    return d.getName();
+  } else if (d.getDescribe().inFolder) {
     if (d.getType() === 'Document') {
       return this.getComponentFolderBaseName() + '/' + d.getName() + '.' + d.getExtension();
     } else {

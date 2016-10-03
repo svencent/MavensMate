@@ -41,7 +41,7 @@ MetadataDeleter.prototype.onSuccess = function(deleteResult) {
   return new Promise(function(resolve, reject) {
     try {
       var successes = util.ensureArrayType(deleteResult.details.componentSuccesses);
-      _.each(documents, function(d) {
+      _.each(self.documents, function(d) {
         var deleteResult = _.find(successes, function(s) {
           return s.fileName.replace(/^unpackaged\//, 'src/') === d.getRelativePath();
         });

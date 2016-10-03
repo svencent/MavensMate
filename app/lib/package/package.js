@@ -153,7 +153,11 @@ Package.prototype.remove = function(documents) {
             newMembers.push(member);
           }
         });
-        self.contents[metadataTypeXmlName] = newMembers;
+        if (newMembers.length > 0) {
+          self.contents[metadataTypeXmlName] = newMembers;
+        } else {
+          delete self.contents[metadataTypeXmlName];
+        }
       }
     } else {
       self.contents[metadataTypeXmlName] = packageXmlName;

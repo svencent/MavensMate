@@ -63,6 +63,7 @@ Project.prototype.initialize = function() {
       self.packageXml.initializeFromPath(path.join(self.path,'src','package.xml')),
     ])
     .then(function() {
+      self._watchPackageXml();
       resolve(self);
     })
     .catch(function(err) {
@@ -111,6 +112,19 @@ Project.prototype.initializeSalesforceClient = function() {
           reject(err);
         }
       })
+  });
+};
+
+Project.prototype._watchPackageXml = function() {
+  var self = this;
+  fs.watchFile(self.packageXml.path, function() {
+    self.packageXml.refreshContentsFromDisk()
+      .then(function(res) {
+        logger.debug('package.xml refreshed from disk');
+      })
+      .catch(function(err) {
+        logger.error('could not refresh package.xml from disk')
+      });
   });
 };
 

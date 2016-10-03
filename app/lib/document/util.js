@@ -4,7 +4,7 @@ var _                   = require('lodash');
 var logger              = require('winston');
 var Document            = require('./document');
 var LightningDocument   = require('./lightning');
-var ApexComponent       = require('./apex');
+var ApexDocument        = require('./apex');
 var MetadataDocument    = require('./metadata');
 var util                = require('../util');
 
@@ -25,17 +25,19 @@ module.exports.getDocumentsFromFilePaths = function(project, paths) {
     lightning: []
   };
   _.each(paths, function(p) {
-    if (fs.statSync(p).isDirectory()) {
-      // todo: get contents
-    }
-    // } else if (_isMetaXmlFile(p)) {
-    //   var c = new Document(project, _getAssociatedDocumentPath(p));
+    // if (fs.statSync(p).isDirectory()) {
+    //   // todo: get contents
     // }
-    else {
-      var d = new Document(project, p);
-    }
+    // // } else if (_isMetaXmlFile(p)) {
+    // //   var c = new Document(project, _getAssociatedDocumentPath(p));
+    // // }
+    // else {
+    //   var d = new Document(project, p);
+    // }
 
-    if (!d.getLocalStoreProperties()) {
+    var d = new Document(project, p);
+
+    if (!d.getLocalStoreProperties() && !d.isDirectory()) {
       /*
         look in server store, as this is a file that MAY be on the server, but it's not in our local store yet
       */
@@ -47,9 +49,9 @@ module.exports.getDocumentsFromFilePaths = function(project, paths) {
       }
     }
 
-    if (ApexComponent.isApexType(d.getType())) {
-      result.apex.push(new ApexComponent(project, p));
-    } else if (d.getType() === 'AuraDefinitionBundle') {
+    if (ApexDocument.isApexType(d.getType())) {
+      result.apex.push(new ApexDocument(project, p));
+    } else if (d.isLightningBundle() || d.isLightningBundleItem()) {
       result.lightning.push(new LightningDocument(project, p));
     } else {
       result.metadata.push(new MetadataDocument(project, p));

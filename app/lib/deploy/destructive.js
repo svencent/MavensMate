@@ -1,14 +1,15 @@
+var Promise = require('bluebird');
 var Package = require('../package');
-var path = require('path');
-var fs = require('fs-extra-promise');
-var temp = require('temp');
-var _ = require('lodash');
-var logger = require('winston');
-var util = require('../util');
+var path    = require('path');
+var fs      = require('fs-extra-promise');
+var temp    = require('temp');
+var _       = require('lodash');
+var logger  = require('winston');
+var util    = require('../util');
 
 function Destructive(project, documents) {
   this._project = project;
-  this._components = components;
+  this._documents = documents;
 }
 
 Destructive.prototype.execute = function() {
@@ -45,7 +46,7 @@ Destructive.prototype.stage = function() {
       fs.mkdirpSync(unpackagedPath);
 
       var destructivePackageXml = new Package();
-      destructivePackageXml.initializeFromDocuments(self._components);
+      destructivePackageXml.initializeFromDocuments(self._documents);
       destructivePackageXml.writeToDisk(unpackagedPath, 'destructiveChanges.xml');
 
       var emptyPkgXml = new Package();

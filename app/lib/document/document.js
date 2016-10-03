@@ -178,7 +178,9 @@ Document.prototype.getBody = function() {
 Document.prototype.getType = function() {
   if (this.getLocalStoreProperties() && this.getLocalStoreProperties().type) {
     return this.getLocalStoreProperties().type;
-  } else if (this.isLightningBundleItem()) {
+  } else if (this.isLightningBundleItem() || this.isLightningBundle()) {
+    // todo: metadata api server properties refer to bundle items as "AuraDefinitionBundle"
+    // instead of "AuraDefinition"
     return 'AuraDefinitionBundle';
   } else {
     var self = this;
@@ -194,6 +196,10 @@ Document.prototype.isLightningBundleItem = function() {
   return path.basename(path.dirname(path.dirname(this.getPath()))) === 'aura';
 };
 
+Document.prototype.isLightningBundle = function() {
+  return path.basename(path.dirname(this.getPath())) === 'aura';
+};
+
 Document.prototype.existsOnFileSystem = function() {
   return fs.existsSync(this.getPath());
 };
@@ -207,10 +213,15 @@ Document.prototype.isFile = function() {
 };
 
 Document.prototype.deleteFromFileSystem = function() {
-  fs.removeSync(this.getPath());
-  logger.warn('meta path is ', this.getMetaXmlPath());
-  if (fs.existsSync(this.getMetaXmlPath())) {
-    fs.removeSync(this.getMetaXmlPath());
+  if (this.isDirectory()) {
+    util.emptyDirectoryRecursiveSync(this.getPath());
+    fs.removeSync(this.getPath());
+  } else {
+    fs.removeSync(this.getPath());
+    logger.warn('meta path is ', this.getMetaXmlPath());
+    if (fs.existsSync(this.getMetaXmlPath())) {
+      fs.removeSync(this.getMetaXmlPath());
+    }
   }
 };
 

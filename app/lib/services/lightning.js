@@ -83,6 +83,22 @@ LightningService.prototype.deleteBundle = function(bundleId) {
   });
 };
 
+LightningService.prototype.deleteBundleByName = function(developerName) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    self.project.sfdcClient.conn.tooling.query('Select Id FROM AuraDefinitionBundle WHERE DeveloperName = \''+developerName+'\'')
+      .then(function(res) {
+        return self.project.sfdcClient.conn.tooling.sobject('AuraDefinitionBundle').delete(res.records[0].Id);
+      })
+      .then(function(res) {
+        resolve(res);
+      })
+      .catch(function(err) {
+        reject(err);
+      });
+  });
+};
+
 LightningService.prototype.deleteBundleItem = function(bundleItemId) {
   var self = this;
   return new Promise(function(resolve, reject) {

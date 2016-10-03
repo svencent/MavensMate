@@ -78,6 +78,14 @@ LocalStore.prototype.removeById = function(ids) {
   self._save();
 };
 
+LocalStore.prototype.removeKeyByRegEx = function(regEx) {
+  var self = this;
+  self._state = _.pickBy(self._state, function(value, key) {
+    return regEx.exec(key) === null;
+  });
+  self._save();
+};
+
 LocalStore.prototype.update = function(serverProperties) {
   var self = this;
   serverProperties = util.ensureArrayType(serverProperties);
