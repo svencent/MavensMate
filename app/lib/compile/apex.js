@@ -17,10 +17,11 @@ ApexCompiler.prototype.compile = function() {
     var compileResult;
     conflict.check(self.project, self.documents, self.force)
       .then(function(res) {
-        if (res.hasConflict)
+        if (res.hasConflict) {
           return resolve(res);
-        else
+        } else {
           return self.project.sfdcClient.compileWithToolingApi(self.documents, self.project);
+        }
       })
       .then(function(result) {
         logger.debug('Compile result for ApexDocuments', result);
