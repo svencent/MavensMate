@@ -5,6 +5,15 @@
 
 <div class="slds-grid" id="settings-wrapper">
 	<div class="slds-container--medium">
+
+		<div class="slds-box slds-theme--shade slds-m-bottom--x-small" id="div-settings-filter">
+		  <div class="slds-grid">
+		    <div class="slds-col slds-has-flexi-truncate">
+		      <input type="text" placeholder="Search for settings" id="txt-filter-settings" class="slds-input" />
+		    </div>
+		  </div>
+		</div>
+
 		<div id="form" class="tab-pane active">
 			<div class="slds-form--stacked">
 				<fieldset style="padding-top:10px;">
@@ -134,8 +143,33 @@
 				updateSettings(settingValue, settingKey);
 			});
 
-			$('div.tab-content').focus();
+			$('input#txt-filter-settings').change(function() {
+	      var thevalue = $(this).val().toLowerCase();
+	      $('h3.slds-section-title--divider').each(function() {
+	          var settingName = $(this).html().toLowerCase();
+	          if (settingName.indexOf(thevalue) === -1) {
+	            $(this).parent().parent().hide().removeClass('slds-hide').addClass('slds-hide');
+	          } else {
+	            $(this).parent().parent().show().removeClass('slds-hide');
+	          }
+	      });
+	      $('label.slds-checkbox').each(function() {
+	          var settingName = $(this).find('span.slds-form-element__label').html().toLowerCase();
+	          if (settingName.indexOf(thevalue) === -1) {
+	            $(this).parent().parent().hide().removeClass('slds-hide').addClass('slds-hide');
+	          } else {
+	            $(this).parent().parent().show().removeClass('slds-hide');
+	          }
+	      });
+	    })
+	    .keyup(function() {
+	       $(this).change();
+	    });
 		});
+
+		function filterSettings() {
+
+		}
 
 		function updateSettings(settingValue, settingKey) {
 	 		var opts = {

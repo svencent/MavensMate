@@ -110,7 +110,8 @@ ul.ui-fancytree.fancytree-container.fancytree-plain:focus {
 
 div#div-metadata-tree-filter,
 div#div-test-classes-filter,
-div#div-project-list-filter {
+div#div-project-list-filter,
+div#div-settings-filter {
   padding:0.5rem;
 }
 
