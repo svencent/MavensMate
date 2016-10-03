@@ -1,10 +1,11 @@
-var Package = require('../package');
-var path = require('path');
-var fs = require('fs-extra-promise');
-var temp = require('temp');
-var _ = require('lodash');
-var logger = require('winston');
-var util = require('../util');
+var Promise   = require('bluebird');
+var Package   = require('../package');
+var path      = require('path');
+var fs        = require('fs-extra-promise');
+var temp      = require('temp');
+var _         = require('lodash');
+var logger    = require('winston');
+var util      = require('../util');
 
 function Deploy(sfdcClient, documents, deployOptions) {
   this._sfdcClient = sfdcClient;

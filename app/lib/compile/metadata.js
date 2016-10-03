@@ -1,12 +1,13 @@
-var Package = require('../package');
-var path = require('path');
-var fs = require('fs-extra-promise');
-var temp = require('temp');
-var _ = require('lodash');
-var logger = require('winston');
-var conflict = require('./conflict');
-var util = require('../util');
-var Deploy = require('../deploy');
+var Package     = require('../package');
+var path        = require('path');
+var fs          = require('fs-extra-promise');
+var temp        = require('temp');
+var Promise     = require('bluebird');
+var _           = require('lodash');
+var logger      = require('winston');
+var conflict    = require('./conflict');
+var util        = require('../util');
+var Deploy      = require('../deploy');
 
 function MetadataCompiler(project, documents, force) {
   this._project = project;

@@ -1,13 +1,14 @@
-var Package = require('../package');
-var path = require('path');
-var fs = require('fs-extra-promise');
-var temp = require('temp');
-var _ = require('lodash');
-var logger = require('winston');
-var util = require('../util');
-var keychain = require('../services/keychain');
-var Deploy = require('./deploy');
-var SalesforceClient = require('../sfdc-client');
+var Promise           = require('bluebird');
+var Package           = require('../package');
+var path              = require('path');
+var fs                = require('fs-extra-promise');
+var temp              = require('temp');
+var _                 = require('lodash');
+var logger            = require('winston');
+var util              = require('../util');
+var keychain          = require('../services/keychain');
+var Deploy            = require('./deploy');
+var SalesforceClient  = require('../sfdc-client');
 
 function RemoteDeploy(project, pkg, targets, deployOptions, deployName) {
   this._project = project;

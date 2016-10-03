@@ -1,6 +1,7 @@
 'use strict';
 
 var _         = require('lodash');
+var Promise   = require('bluebird');
 var logger    = require('winston');
 var conflict  = require('./conflict');
 
