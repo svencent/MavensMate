@@ -13,9 +13,7 @@ var util            = require('../util');
 var find            = require('findit');
 var logger          = require('winston');
 var parseXml        = require('xml2js').parseString;
-var MetadataHelper  = require('../metadata').MetadataHelper;
 var Package         = require('../package');
-var MavensMateFile  = require('../file').MavensMateFile;
 var Document        = require('../document').Document;
 var childTypes      = require('./helpers/child-types');
 
@@ -155,7 +153,7 @@ Indexer.prototype._indexType = function(typeListResult) {
         childNode.text = childNode.fullName;
         childNode.fullName = childNode.fullName;
         childNode.level = 2;
-        childNode.fullName = childNode.fullName || new MavensMateFile({ path : childNode.fileName }).name; // todo: MavensMateFile??
+        childNode.fullName = childNode.fullName;
         childNode.nodeType = nodeType;
         childNode.folder = parentHasChildTypes || parentIsFolderType;
         childNode.children = [];
@@ -243,8 +241,6 @@ Indexer.prototype._indexChildren = function(parentNode, xmlName, childNames) {
 
               _.forOwn(xmlObject[xmlName], function(value, tagName) {
 
-                // we're tracking this child type, now we need to add as a level 3 child
-                // var matchingChildType = _.find(self.metadataHelper.childTypes, { 'tagName': tagName }); // todo: reimplement
                 var matchingChildType = _.find(childTypes, { tagName: tagName });
                 if (matchingChildType) {
 
