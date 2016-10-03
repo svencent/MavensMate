@@ -20,7 +20,7 @@ var _getAssociatedDocumentPath = function(metaXmlFilePath) {
 };
 
 var _ensureProjectSubscriptionForDocumentTypes = function(project, documents) {
-  var projectSubscription = project.projectJson.subscription || [];
+  var projectSubscription = project.projectJson.get('subscription') || [];
   _.each(documents, function(d) {
     if (projectSubscription.indexOf(d.getType()) === -1) {
       projectSubscription.push(d.getType());
