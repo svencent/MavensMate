@@ -11,10 +11,6 @@ var util              = require('../../util');
 var inherits          = require('inherits');
 var BaseCommand       = require('../../command');
 var EditorService     = require('../../services/editor');
-var LightningService  = require('../../services/lightning');
-var MavensMateFile    = require('../../file').MavensMateFile;
-var path              = require('path');
-var RefreshDelegate   = require('../../refresh/delegate');
 
 function Command() {
   BaseCommand.call(this, arguments);

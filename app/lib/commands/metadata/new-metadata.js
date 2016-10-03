@@ -7,15 +7,9 @@
 
 var Promise         = require('bluebird');
 var util            = require('../../util');
-var mavensMateFile  = require('../../file');
-var Deploy          = require('../../services/deploy');
 var inherits        = require('inherits');
 var BaseCommand     = require('../../command');
 var EditorService   = require('../../services/editor');
-var path            = require('path');
-var Package         = require('../../package').Package;
-var temp            = require('temp');
-var fs              = require('fs-extra');
 var logger          = require('winston');
 var createUtil      = require('../../create/util');
 var CreateDelegate  = require('../../create/delegate');

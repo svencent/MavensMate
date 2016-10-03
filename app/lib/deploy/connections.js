@@ -17,7 +17,7 @@ var logger            = require('winston');
  * Service to get, add, update, remove org connections for a given project
  * @param {Object} project - project instance
  */
-function OrgConnectionService(project) {
+function DeployConnections(project) {
   this.project = project;
   this.path = path.join(this.project.path, '.mavensmate', 'connections.json');
 }
@@ -26,7 +26,7 @@ function OrgConnectionService(project) {
  * Lists all org connections for this project
  * @return {Array} - list of connections
  */
-OrgConnectionService.prototype.listAll = function() {
+DeployConnections.prototype.listAll = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     fs.readJson(self.path, function(err, connections) {
@@ -55,7 +55,7 @@ OrgConnectionService.prototype.listAll = function() {
  * Returns the org connection by id
  * @return {Object} - connection
  */
-OrgConnectionService.prototype.getById = function(id) {
+DeployConnections.prototype.getById = function(id) {
   try {
     var connections = fs.readJsonSync(path.join(this.project.path, '.mavensmate', 'connections.json'));
     return _.find(connections, function(c) { return c.id === id; });
@@ -81,7 +81,7 @@ OrgConnectionService.prototype.getById = function(id) {
  * @param {String} opts.loginUrl
  *
  */
-OrgConnectionService.prototype.add = function(opts) {
+DeployConnections.prototype.add = function(opts) {
   var self = this;
   return new Promise(function(resolve, reject) {
     var connectionId = uuid.v1();
@@ -181,7 +181,7 @@ OrgConnectionService.prototype.add = function(opts) {
  * @param {String} opts.loginUrl
  * @return {Promise}
  */
-OrgConnectionService.prototype.update = function(opts) {
+DeployConnections.prototype.update = function(opts) {
   var self = this;
   return new Promise(function(resolve, reject) {
     if (!fs.existsSync(self.path)) {
@@ -234,7 +234,7 @@ OrgConnectionService.prototype.update = function(opts) {
  * @param  {String} id
  * @return {Promise}
  */
-OrgConnectionService.prototype.remove = function(id) {
+DeployConnections.prototype.remove = function(id) {
   var self = this;
   return new Promise(function(resolve, reject) {
     fs.readJson(self.path, function(err, connections) {
@@ -259,4 +259,4 @@ OrgConnectionService.prototype.remove = function(id) {
   });
 };
 
-module.exports = OrgConnectionService;
+module.exports = DeployConnections;

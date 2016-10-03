@@ -7,7 +7,7 @@
 
 var Promise               = require('bluebird');
 var util                  = require('../../util');
-var OrgConnectionService  = require('../../services/org-connection');
+var DeployConnections     = require('../../deploy/connections');
 var inherits              = require('inherits');
 var BaseCommand           = require('../../command');
 
@@ -21,8 +21,8 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     var project = self.getProject();
-    var orgConnectionService = new OrgConnectionService(project);
-    orgConnectionService.remove(self.payload.id)
+    var deployConnections = new DeployConnections(project);
+    deployConnections.remove(self.payload.id)
       .then(function() {
         resolve('Successfully deleted org connection');
       })

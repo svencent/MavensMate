@@ -10,7 +10,6 @@ var util            = require('../../util');
 var inherits        = require('inherits');
 var BaseCommand     = require('../../command');
 var DeleteDelegate  = require('../../delete/delegate');
-var mavensMateFile  = require('../../file');
 
 function Command() {
   BaseCommand.call(this, arguments);

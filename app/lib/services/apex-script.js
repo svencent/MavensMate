@@ -16,9 +16,6 @@ var _         = require('lodash');
  * @param {Client} client
  */
 var ApexScriptService = function(project) {
-  if (!project) {
-    throw new Error('ApexScriptService requires a valid project instance');
-  }
   this.project = project;
 };
 
