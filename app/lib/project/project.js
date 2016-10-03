@@ -28,7 +28,7 @@ var Project = function(path) {
     throw new Error('Project path does not exist on the file system.');
   }
   if (!this._isMavensMateProject()) {
-    throw new Error('Invalid MavensMate project. Non-MavensMate projects can be converted with the "convert-project" command.');
+    throw new Error('Invalid MavensMate project structure. Non-MavensMate projects can be converted with the "convert-project" command.');
   }
 };
 
@@ -134,7 +134,15 @@ Project.prototype._watchPackageXml = function() {
  * @return {Boolean}
  */
 Project.prototype._isMavensMateProject = function() {
-  return true;
+  if (
+    fs.existsSync(path.join(self.path, '.mavensmate') &&
+    fs.existsSync(path.join(self.path, 'src') &&
+    fs.existsSync(path.join(self.path, 'src', 'package.xml')
+  ) {
+      return true;
+    } else {
+      return false;
+    }
 }
 
 /**
