@@ -21,9 +21,12 @@ Command.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     var project = self.getProject();
+    var retUrl = self.payload.retUrl || '/setup/forcecomHomepage.apexp?setupid=ForceCom';
     // http://docs.releasenotes.salesforce.com/en-us/winter14/release-notes/security_frontdoorjsp.htm
-    var setupUrl = project.sfdcClient.getInstanceUrl() + '/secur/frontdoor.jsp?sid=' + project.sfdcClient.getAccessToken() + '&retURL=/setup/forcecomHomepage.apexp?setupid=ForceCom';
-    logger.debug('attempting to open salesforce org. setupUrl is', setupUrl);
+    var setupUrl = project.sfdcClient.getInstanceUrl()
+                    + '/secur/frontdoor.jsp?sid='
+                    + project.sfdcClient.getAccessToken()
+                    + '&retURL='+retUrl;
     self.editorService.openUrl(setupUrl)
       .then(function() {
         resolve('Success');

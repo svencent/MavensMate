@@ -43,7 +43,9 @@ Command.prototype.execute = function() {
           });
         });
     } else {
-      var promise = self.payload.paths ? Promise.resolve(self.payload.paths) : createUtil.mergeTemplatesAndWriteToDisk(self.getProject(), self.payload);
+      var promise = self.payload.paths ?
+                      Promise.resolve(self.payload.paths) :
+                      createUtil.mergeTemplatesAndWriteToDisk(self.getProject(), self.payload);
       promise
         .then(function(paths) {
           var createDelegate = new CreateDelegate(self.getProject(), paths);
