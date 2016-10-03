@@ -18,24 +18,55 @@ var _getAssociatedDocumentPath = function(metaXmlFilePath) {
   return metaXmlFilePath.replace('-meta.xml', '');
 };
 
+var _ensureProjectSubscriptionForDocumentTypes = function(project, documents) {
+  var projectSubscription = project.projectJson.subscription || [];
+  _.each(documents, function(d) {
+    if (projectSubscription.indexOf(d.getType()) === -1) {
+      projectSubscription.push(d.getType());
+    }
+  });
+  project.projectJson.set({
+    subscription: projectSubscription
+  });
+};
+
+var ensureServerIndexForDocumentTypes = function(project, documents) {
+  return new Promise(function(resolve, reject) {
+    var typesToIndex = [];
+    _.each(documents, function(d) {
+      if (!project.serverStore.hasIndexForType(d.getType())) {
+        typesToIndex.push(d.getType());
+      }
+    });
+    if (typesToIndex.length > 0) {
+      project.serverStore.refreshTypes(project.sfdcClient, typesToIndex)
+        .then(function(res) {
+          resolve();
+        })
+        .catch(function(err) {
+          reject(err);
+        });
+    } else {
+      resolve();
+    }
+  });
+};
+
 module.exports.getDocumentsFromFilePaths = function(project, paths) {
   var result = {
     apex: [],
     metadata: [],
     lightning: []
   };
-  _.each(paths, function(p) {
-    // if (fs.statSync(p).isDirectory()) {
-    //   // todo: get contents
-    // }
-    // // } else if (_isMetaXmlFile(p)) {
-    // //   var c = new Document(project, _getAssociatedDocumentPath(p));
-    // // }
-    // else {
-    //   var d = new Document(project, p);
-    // }
 
-    var d = new Document(project, p);
+  var documents = [];
+  _.each(paths, function(p) {
+    documents.push(new Document(project, p));
+  });
+
+  ensureProjectSubscriptionForDocumentTypes(project, documents);
+
+  _.each(documents, function(d) {
 
     if (!d.getLocalStoreProperties() && !d.isDirectory()) {
       /*
@@ -56,6 +87,7 @@ module.exports.getDocumentsFromFilePaths = function(project, paths) {
     } else {
       result.metadata.push(new MetadataDocument(project, p));
     }
+
   });
   return result;
 };

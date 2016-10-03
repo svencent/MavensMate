@@ -20,14 +20,21 @@ CompileDelegate.prototype.execute = function() {
   var self = this;
   return new Promise(function(resolve, reject) {
     try {
-      var compilePromises = [];
-      if (self.documents.apex.length > 0)
-        compilePromises.push(ApexCompiler.compileAll(self.project, self.documents.apex, self.force));
-      if (self.documents.metadata.length > 0)
-        compilePromises.push(MetadataCompiler.compileAll(self.project, self.documents.metadata, self.force));
-      if (self.documents.lightning.length > 0)
-        compilePromises.push(LightningCompiler.compileAll(self.project, self.documents.lightning, self.force));
-      Promise.all(compilePromises)
+      var flattenedDocuments = _.flatten(
+                                  self.documents.lightning,
+                                  self.documents.apex,
+                                  self.documents.metadata);
+      documentUtil.ensureServerIndexForDocumentTypes(flattenedDocuments);
+        .then(function(res) {
+          var compilePromises = [];
+          if (self.documents.apex.length > 0)
+            compilePromises.push(ApexCompiler.compileAll(self.project, self.documents.apex, self.force));
+          if (self.documents.metadata.length > 0)
+            compilePromises.push(MetadataCompiler.compileAll(self.project, self.documents.metadata, self.force));
+          if (self.documents.lightning.length > 0)
+            compilePromises.push(LightningCompiler.compileAll(self.project, self.documents.lightning, self.force));
+          return Promise.all(compilePromises);
+        })
         .then(function(results) {
           logger.debug('Compile results', results);
           resolve(compileUtil.flattenResults(results));
