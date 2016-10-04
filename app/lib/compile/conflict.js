@@ -42,7 +42,7 @@ module.exports.check = function(project, documents, force) {
       _.each(documents, function(d) {
         if (d instanceof ApexDocument) {
           apexDocuments.push(d);
-        } else if (d instanceof LightningDocument && d.isLightingBundleItem()) {
+        } else if (d instanceof LightningDocument && d.isLightningBundleItem()) {
           lightningDocuments.push(d);
         }
       });
