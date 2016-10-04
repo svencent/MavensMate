@@ -72,7 +72,7 @@ Command.prototype.execute = function() {
 exports.command = Command;
 exports.addSubCommand = function(program) {
   program
-    .command('new-project-from-existing-directory')
+    .command('convert-project')
     .option('--ui', 'Launches the default UI for the selected command.')
     .option('-d, --directory [directory]', 'Directory to create new mavensmate project from')
     .description('Creates a new MavensMate project from an existing directory')

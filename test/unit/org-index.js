@@ -4,7 +4,7 @@ var _             = require('lodash');
 var helper        = require('../test-helper');
 var chai          = require('chai');
 var should        = chai.should();
-var IndexService  = require('../../app/lib/services/index');
+var IndexService  = require('../../app/lib/org/index');
 var fs            = require('fs-extra');
 var path          = require('path');
 

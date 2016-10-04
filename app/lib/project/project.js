@@ -26,12 +26,6 @@ var packageExceptions = require('../package/exceptions');
 
 var Project = function(path) {
   this.path = path;
-  if (!fs.existsSync(this.path)) {
-    throw new Error('Project path does not exist on the file system.');
-  }
-  if (!this._isMavensMateProject()) {
-    throw new Error('Invalid MavensMate project structure. Non-MavensMate projects can be converted with the "convert-project" command.');
-  }
 };
 
 Project.prototype.hasInvalidSalesforceConnection;
@@ -51,6 +45,13 @@ Project.prototype.initialize = function() {
   logger.debug('initializing project at path', this.path);
   var self = this;
   return new Promise(function(resolve, reject) {
+    if (!fs.existsSync(self.path)) {
+      return reject(new Error('Project path does not exist on the file system.'));
+    }
+    if (!self._isMavensMateProject()) {
+      return reject(new Error('Invalid MavensMate project structure. Non-MavensMate projects can be converted with the "convert-project" command.'));
+    }
+
     self.projectJson = new ProjectJson(self);
     self.config = new Config(self);
     self.debug = new Debug(self);
@@ -182,6 +183,37 @@ Project.prototype.update = function(pkg) {
 };
 
 /**
+ * Packages project src directory for compilation
+ * @return {Promise}
+ */
+Project.prototype.compile = function() {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    var newPath = temp.mkdirSync({ prefix: 'mm_' });
+    var deployResult;
+    fs.copy(path.join(self.path, 'src'), path.join(newPath, 'unpackaged'), function(err) {
+      if (err) { return reject(err); }
+      util.zipDirectory(path.join(newPath, 'unpackaged'), newPath)
+        .then(function() {
+          var zipStream = fs.createReadStream(path.join(newPath, 'unpackaged.zip'));
+          return self.sfdcClient.deploy(zipStream, { rollbackOnError : true, performRetrieve: true });
+        })
+        .then(function(result) {
+          logger.debug('Project compile result', result);
+          deployResult = result;
+          return self.localStore.update(deployResult.details.retrieveResult.fileProperties);
+        })
+        .then(function() {
+          resolve(deployResult);
+        })
+        .catch(function(error) {
+          reject(error);
+        });
+    });
+  });
+};
+
+/**
  * Removes from the local file system
  * @return {void}
  */
@@ -222,13 +254,13 @@ Project.create = function(opts) {
     var projectPath = path.join(workspace, name);
     var sfdcClient = opts.sfdcClient;
     var pkg = opts.package;
-    var subscription = Object.keys(pkg);
+    var subscription = pkg ? Object.keys(pkg) : [];
 
     if (fs.existsSync(projectPath)) {
-      throw new Error('Project path already exists on the file system. Did you mean to convert this project, instead?')
-    } else {
-      fs.mkdirSync(projectPath);
+      return reject(new Error('Project path already exists on the file system.'));
     }
+
+    fs.mkdirSync(projectPath);
 
     // initiate .mavensmate config
     ProjectJson.create(projectPath, sfdcClient, {

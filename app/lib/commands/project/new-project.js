@@ -62,10 +62,9 @@ Command.prototype.execute = function() {
             id: project.id
           });
         })
-        .catch(function(error) {
-          logger.debug('Could not create project: ');
-          logger.debug(error.stack);
-          reject(error);
+        .catch(function(err) {
+          logger.error('Could not create project', err);
+          reject(err);
         })
         .done();
     }

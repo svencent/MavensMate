@@ -17,25 +17,24 @@ describe('mavensmate new-project', function(){
   var commandExecutor;
 
   before(function(done) {
-    this.timeout(120000);
+    this.timeout(50000);
     helper.bootstrapEnvironment();
     commandExecutor = helper.getCommandExecutor();
     helper.unlinkEditor();
-    // helper.putTestProjectInTestWorkspace('new-project-existing');
-    // helper.addProject('new-project-existing')
-    //   .then(function(proj) {
-    //     project = proj;
-    //     done();
-    //   })
-    //   .catch(function(err) {
-    //     done(err);
-    //   });
-    done();
+    helper.putTestProjectInTestWorkspace('new-project-existing');
+    helper.addProject('new-project-existing')
+      .then(function(proj) {
+        project = proj;
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   after(function(done) {
-    // helper.cleanUpProject('new-project-existing');
-    // helper.cleanUpProject('new-project');
+    helper.cleanUpProject('new-project-existing');
+    helper.cleanUpProject('new-project');
     done();
   });
 
@@ -64,7 +63,7 @@ describe('mavensmate new-project', function(){
         body: payload
       })
       .catch(function(err) {
-        err.message.should.equal('Directory already exists!');
+        err.message.should.equal('Project path already exists on the file system.');
         done();
       });
   });
@@ -89,7 +88,7 @@ describe('mavensmate new-project', function(){
   });
 
   describe('credential storage', function(){
-    it.only('should use the .credentials when keychain is not enabled (right now this is the only state bc we cannot enable keychain during Travis build)', function(done) {
+    it('should use the .credentials when keychain is not enabled (right now this is the only state bc we cannot enable keychain during Travis build)', function(done) {
       config.set('mm_use_keyring', false);
       this.timeout(120000);
       var creds = helper.getTestCreds();

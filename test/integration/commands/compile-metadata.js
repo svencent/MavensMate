@@ -92,7 +92,8 @@ describe('mavensmate compile-metadata', function(){
     process.env.mm_compile_check_conflicts = true;
     helper.createNewMetadata(project, 'ApexClass', 'ConflictCheckClass')
       .then(function() {
-        return project.updateLocalStore({
+        project.localStore.set({
+          'src/classes/ConflictCheckClass.cls': {
             'createdById': '005o0000000TB1iAAG',
             'createdByName': 'Joseph Ferraro',
             'createdDate': '2014-08-18T16:09:51.000Z',
@@ -106,9 +107,8 @@ describe('mavensmate compile-metadata', function(){
             'namespacePrefix': 'mm2',
             'type': 'ApexClass',
             'mmState': 'clean'
-          })
-      })
-      .then(function() {
+          }
+        });
         var payload = {
           paths : [ path.join(project.path, 'src', 'classes', 'ConflictCheckClass.cls') ]
         };

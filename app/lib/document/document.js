@@ -87,11 +87,11 @@ Document.prototype.getPath = function() {
 };
 
 Document.prototype._getLocalStoreKey = function() {
-  return this.getPath().split(this._project.name+path.sep)[1];
+  return this.getPath().split(this._project.name+'/')[1]; // we use "/" bc that's what the m-api uses
 };
 
 Document.prototype._getServerStoreKey = function() {
-  return this.getPath().split(this._project.name+path.sep+'src'+path.sep)[1]; // todo: "src" could be any package name
+  return this.getPath().split(this._project.name+path.sep+'src'+path.sep)[1].replace(/\\/, '/'); // todo: "src" could be any package name
 };
 
 Document.prototype.getRelativePath = function() {

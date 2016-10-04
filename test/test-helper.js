@@ -10,7 +10,7 @@ var Promise           = require('bluebird');
 var sinon             = require('sinon');
 var sinonAsPromised   = require('sinon-as-promised');
 var EditorService     = require('../app/lib/services/editor');
-var TemplateService   = require('../app/lib/services/template');
+var TemplateService   = require('../app/lib/create/template');
 var SalesforceClient  = require('../app/lib/sfdc-client');
 var Project           = require('../app/lib/project');
 var commandExecutor   = require('../app/lib/commands')();
@@ -47,18 +47,38 @@ exports.putTestProjectInTestWorkspace = function(name) {
   }
   if (!fs.existsSync(path.join(testWorkspace, name))) {
     fs.copySync(path.join(self.baseTestDirectory(),'fixtures', 'test-project'), path.join(testWorkspace, name));
-    var settings = fs.readJsonSync(path.join(testWorkspace, name, 'config', '.settings'));
+    var settings = fs.readJsonSync(path.join(testWorkspace, name, '.mavensmate', 'project.json'));
     settings.id = uuid.v1();
     settings.projectName = name;
     settings.workspace = testWorkspace;
     settings.username = creds.username;
     settings.orgType = creds.orgType;
-    fs.writeJsonSync(path.join(testWorkspace, name, 'config', '.settings'), settings);
+    fs.writeJsonSync(path.join(testWorkspace, name, '.mavensmate', 'project.json'), settings);
 
     var credentials = {};
     credentials.password = creds.password;
-    fs.writeJsonSync(path.join(testWorkspace, name, 'config', '.credentials'), credentials);
+    fs.writeJsonSync(path.join(testWorkspace, name, '.mavensmate', 'credentials.json'), credentials);
   }
+};
+
+exports.addProject = function(projectName) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    var creds = self.getTestCreds();
+    var sfdcClient = new SalesforceClient({
+      username: creds.username,
+      password: creds.password,
+      orgType: creds.orgType
+    });
+    var project = new Project(path.join(self.baseTestDirectory(),'workspace', projectName));
+    project.initialize()
+      .then(function(proj) {
+        resolve(proj);
+      })
+      .catch(function(err) {
+        reject(err);
+      });
+  });
 };
 
 exports.bootstrapEnvironment = function() {
@@ -107,30 +127,6 @@ exports.stubSalesforceClient = function(sandbox) {
   sandbox.stub(SalesforceClient.prototype, 'initialize').resolves('ok');
   sandbox.stub(SalesforceClient.prototype, 'describe').resolves([]);
   sandbox.stub(SalesforceClient.prototype, 'startSystemStreamingListener').resolves('ok');
-};
-
-exports.addProject = function(projectName) {
-  var self = this;
-  return new Promise(function(resolve, reject) {
-    // process.env.mm_workspace = path.join(self.baseTestDirectory(),'workspace');
-    var creds = self.getTestCreds();
-    var sfdcClient = new SalesforceClient({
-      username: creds.username,
-      password: creds.password,
-      orgType: creds.orgType
-    });
-    var project = new Project({
-      path: path.join(self.baseTestDirectory(),'workspace', projectName),
-      sfdcClient: sfdcClient
-    });
-    project.initialize(false)
-      .then(function(proj) {
-        resolve(proj);
-      })
-      .catch(function(err) {
-        reject(err);
-      });
-  });
 };
 
 exports.cleanUpProject = function(name, testWorkspace) {
@@ -220,18 +216,17 @@ exports.getNewMetadataPayload = function(typeXmlName, apiName, templateFileName,
       var payload = {
         metadataTypeXmlName: typeXmlName,
         templateValues: templateValues || { 'api_name': apiName },
-        template: template
+        templatePath: path.join(typeXmlName, template.file_name)
       };
       resolve(payload);
     } else {
       var templateService = new TemplateService();
       templateService.getTemplatesForType(typeXmlName)
         .then(function(templates) {
-          var template = _.find(templates, { file_name : templateFileName });
           var payload = {
             metadataTypeXmlName: typeXmlName,
             templateValues: templateValues || { 'api_name': apiName },
-            template: template
+            templatePath: path.join(typeXmlName, templateFileName)
           };
           resolve(payload);
         })

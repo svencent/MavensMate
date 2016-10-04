@@ -12,7 +12,7 @@ var config        = require('../../../app/config');
 
 chai.use(require('chai-fs'));
 
-describe('mavensmate new-project-from-existing-directory', function(){
+describe('mavensmate convert-project', function(){
 
   var project;
   var commandExecutor;
@@ -38,7 +38,7 @@ describe('mavensmate new-project-from-existing-directory', function(){
     this.timeout(120000);
     var creds = helper.getTestCreds();
     commandExecutor.execute({
-      name: 'new-project-from-existing-directory',
+      name: 'convert-project',
       body: {
         name: 'foo',
         username: creds.username,
@@ -55,7 +55,7 @@ describe('mavensmate new-project-from-existing-directory', function(){
     this.timeout(120000);
     var creds = helper.getTestCreds();
     commandExecutor.execute({
-      name: 'new-project-from-existing-directory',
+      name: 'convert-project',
       body: {
         name: 'foo',
         username: creds.username,
@@ -73,7 +73,7 @@ describe('mavensmate new-project-from-existing-directory', function(){
     this.timeout(120000);
     var creds = helper.getTestCreds();
     commandExecutor.execute({
-      name: 'new-project-from-existing-directory',
+      name: 'convert-project',
       body: {
         name: 'new-project-from-existing-directory',
         origin: path.join(helper.baseTestDirectory(), 'fixtures', 'test-non-mavensmate-project-bad'),
@@ -100,7 +100,7 @@ describe('mavensmate new-project-from-existing-directory', function(){
       workspace: path.join(helper.baseTestDirectory(), 'workspace')
     };
     commandExecutor.execute({
-      name: 'new-project-from-existing-directory',
+      name: 'convert-project',
       body: payload
     })
     .then(function(response) {
@@ -137,7 +137,7 @@ describe('mavensmate new-project-from-existing-directory', function(){
       workspace: path.join(helper.baseTestDirectory(), 'workspace')
     };
     commandExecutor.execute({
-      name: 'new-project-from-existing-directory',
+      name: 'convert-project',
       body: payload
     })
     .then(function(response) {
