@@ -34,7 +34,7 @@ myProject.initialize(true)
 	.then(function(res) {
 		console.log('command result', res);
 	})
-	.catch(function(err)) {
+	.catch(function(err) {
 		console.error('womp', err);
 	});
 ```
