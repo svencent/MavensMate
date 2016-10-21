@@ -50,14 +50,21 @@ router.get('/callback', function(req, res) {
 
 router.post('/', function(req, res) {
   var orgType = req.body.orgType;
-  var instanceUrl = req.body.instanceUrl;
-  if (!instanceUrl) {
-    if (orgType === 'sandbox') {
-      instanceUrl = 'https://test.salesforce.com/';
-    } else {
-      instanceUrl = 'https://login.salesforce.com/';
-    }
+  
+  switch(orgType){
+    case 'production':
+    case 'developer':
+    case 'prerelease':
+        instanceUrl = 'https://login.salesforce.com/';
+        break;
+    case 'sandbox':
+        instanceUrl = 'https://test.salesforce.com/';
+        break;  
+    case 'custom':
+        var instanceUrl = req.body.instanceUrl;
+        break;
   }
+
   var params = {
     client_id: process.env.SFDC_OAUTH_CLIENT_ID || '3MVG9uudbyLbNPZP7kLgoRiWVRqiN8gFcKwdAlztVnjgbj9shSk1vMXJNmV7W0ciFbeYiaP9D4tLfBBD06l_7',
     redirect_uri: process.env.SFDC_OAUTH_CALLBACK_URL || 'https://localhost:56248/sfdc/auth/callback',
