@@ -161,7 +161,8 @@ SalesforceClient.prototype.initialize = function() {
       self.conn = new jsforce.Connection({
         oauth2: {
           clientId : self.clientId,
-          redirectUri : self.callbackUrl
+          redirectUri : self.callbackUrl,
+          loginUrl: self.instanceUrl
         },
         refreshFn: self._refreshFn,
         instanceUrl: self.instanceUrl || 'https://na1.salesforce.com',
