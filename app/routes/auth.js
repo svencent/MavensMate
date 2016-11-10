@@ -7,6 +7,7 @@ var logger          = require('winston');
 var querystring     = require('querystring');
 var path            = require('path');
 var util            = require('../lib/util');
+var _               = require('lodash');
 
 router.get('/new', function(req, res) {
   var project;
@@ -15,9 +16,25 @@ router.get('/new', function(req, res) {
   } else if (req.query.pid) {
     project = util.getProjectById(req.app, req.query.pid);
   }
+  
+  var envOptions = {
+    production : { name:'Production'},
+    sandbox : { name:'Sandbox'},
+    developer : { name:'Developer'},
+    prerelease : { name:'Prerelease'},
+    custom : { name:'Custom URL'}
+  };
+  
+  var instanceUrl;
+  if(project && project.settings && project.settings.instanceUrl){
+    envOptions.custom.selected = true;
+    instanceUrl = project.settings.instanceUrl;
+  }
 
   res.render('auth/index.html', {
     project: project,
+    envOptions: envOptions,
+    instanceUrl: instanceUrl,
     title: req.query.title,
     callback: req.query.callback,
     param1: req.query.param1,
@@ -33,14 +50,21 @@ router.get('/callback', function(req, res) {
 
 router.post('/', function(req, res) {
   var orgType = req.body.orgType;
-  var instanceUrl = req.body.instanceUrl;
-  if (!instanceUrl) {
-    if (orgType === 'sandbox') {
-      instanceUrl = 'https://test.salesforce.com/';
-    } else {
-      instanceUrl = 'https://login.salesforce.com/';
-    }
+  
+  switch(orgType){
+    case 'production':
+    case 'developer':
+    case 'prerelease':
+        instanceUrl = 'https://login.salesforce.com/';
+        break;
+    case 'sandbox':
+        instanceUrl = 'https://test.salesforce.com/';
+        break;  
+    case 'custom':
+        var instanceUrl = req.body.instanceUrl;
+        break;
   }
+
   var params = {
     client_id: process.env.SFDC_OAUTH_CLIENT_ID || '3MVG9uudbyLbNPZP7kLgoRiWVRqiN8gFcKwdAlztVnjgbj9shSk1vMXJNmV7W0ciFbeYiaP9D4tLfBBD06l_7',
     redirect_uri: process.env.SFDC_OAUTH_CALLBACK_URL || 'https://localhost:56248/sfdc/auth/callback',
