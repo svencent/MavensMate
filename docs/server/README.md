@@ -2,6 +2,10 @@
 
 **GitHub Project**: https://github.com/joeferraro/MavensMate
 
+## Prerequisites
+
+- Node v4+
+
 ## Installation
 
 `npm install mavensmate`
