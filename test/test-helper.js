@@ -1,6 +1,6 @@
 'use strict';
 
-var uuid              = require('node-uuid');
+var uuid              = require('uuid');
 var _                 = require('lodash');
 var config            = require('../app/config');
 var logger            = require('../app/lib/logger')();
