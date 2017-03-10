@@ -812,12 +812,13 @@ SalesforceClient.prototype.retrieveUnpackaged = function(metadataTypesOrPackage,
     zipStream.readable = true;
 
     retrieveRequest.complete(function(err, result) {
-      if (err) {
-        logger.error('unpackaged retrieveRequest error: '+err.message);
-        if (err.message.indexOf('polling time out') >= 0) {
+      if (err || result.success == 'false') {
+        var errorMessage = err != null ? err.message : result.errorMessage;
+        logger.error('unpackaged retrieveRequest error: ' + errorMessage);
+        if (errorMessage.indexOf('polling time out') >= 0) {
           reject(new Error('Request timed out. Timeout can be configured via mm_timeout setting.'));
         } else {
-          reject(err);
+          reject(new Error(errorMessage));
         }
       } else {
         if (writeToDisk) {
