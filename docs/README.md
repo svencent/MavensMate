@@ -1,5 +1,11 @@
 # [MavensMate](http://mavensmate.com) - Open Source IDEs for Salesforce
 
+## Update: August 7, 2017
+
+[MavensMate is no longer being actively developed or supported](http://mavensmate.com/). We recommend using Salesforce's [official Visual Studio Code plugin](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode) for building Salesforce applications.
+
+## Overview
+
 MavensMate is a collection of open source projects that aims to make building Salesforce applications accessible to developers who prefer to build applications using their local machine in text editors like Sublime Text, Atom, and Visual Studio Code. MavensMate is created and maintained by [Joe Ferraro](http://twitter.com/joeferraro) with support from [Mavens](https://mavens.com/?utm_source=github&utm_medium=mavensmate&utm_term=readme&utm_campaign=mavensmate%20github%20readme) and these amazing [contributors](https://github.com/joeferraro/MavensMate/tree/master/docs#contributors).
 
 Because there are several open source MavensMate projects, it can be somewhat confusing to navigate the ecosystem. In essence, there are three main components to the architecture: the [server](https://github.com/joeferraro/MavensMate/tree/master/docs/server), the [desktop application](https://github.com/joeferraro/MavensMate-Desktop), and the [editor plugins](#plugins).
