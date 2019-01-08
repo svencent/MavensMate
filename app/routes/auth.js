@@ -42,7 +42,7 @@ router.post('/', function(req, res) {
     }
   }
   var params = {
-    client_id: process.env.SFDC_OAUTH_CLIENT_ID || '3MVG9uudbyLbNPZP7kLgoRiWVRqiN8gFcKwdAlztVnjgbj9shSk1vMXJNmV7W0ciFbeYiaP9D4tLfBBD06l_7',
+    client_id: process.env.SFDC_OAUTH_CLIENT_ID || '3MVG9ZL0ppGP5UrBpxP7lXECLb2X0hg0Fyf2qMAaR2BlvXszIouRSaqudaF8h541opT9G1eyzJUAAQYi6GIS0',
     redirect_uri: process.env.SFDC_OAUTH_CALLBACK_URL || 'https://localhost:56248/sfdc/auth/callback',
     response_type: process.env.SFDC_OAUTH_RESPONSE_TYPE || 'token',
     display: 'popup',
